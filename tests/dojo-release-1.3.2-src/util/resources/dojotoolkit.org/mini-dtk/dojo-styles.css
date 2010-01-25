@@ -1,0 +1,114 @@
+/* undo center align in the text editor in ie */
+html body {
+	text-align: left;
+}
+
+/* fix stupid drupal css bug */
+fieldset legend {
+	display: block;
+}
+
+.DojoEditor {
+	border: solid 1px #999;
+}
+
+.DojoEditor table {
+	margin: 0;
+	width: auto;
+}
+
+.DojoEditor td, th {
+	padding: 0;
+}
+
+table.DojoGoogleMapsKeyTable input {
+	width: 100%;
+}
+
+/* undo styles to fix color pickers */
+span > table {
+	margin: 0;
+	width: auto;
+}
+
+.DojoSvnTree {
+	border: solid 1px #666;
+	height: 250px;
+	overflow: auto;
+}
+
+.DojoSvnTree table {
+	margin: 0;
+}
+
+.DojoSvnOutput {
+	border: solid 1px #666;
+	height: 300px;
+	overflow: auto;
+	white-space: nowrap;
+}
+
+.dojoDialog {
+	background: #fff;
+	border: 1px solid #999;
+	-moz-border-radius: 8px;
+	padding: 12px;
+}
+
+.dojoDialog span.Indicator {
+	color: #666;
+	background: url(/modules/dojo/indicator.gif) no-repeat left 0;
+	display: block;
+	font-size: 16px;
+	height: 24px;
+	line-height: 26px;
+	padding-left: 30px;
+	overflow: hidden;
+}
+
+.CustomizeToolbar:after {
+	clear: both;
+}
+
+.CustomizeToolbar div {
+	float: left;
+	margin-right: 10px;
+}
+
+.CustomizeToolbar .List {
+	border: solid 1px #999;
+	height: 260px;
+	overflow: auto;
+	width: 175px;
+}
+
+.CustomizeToolbar ul {
+	list-style-type: none;
+	margin: 0;
+	padding: 1px;
+}
+
+.CustomizeToolbar li {
+	background: none;
+	cursor: pointer;
+	list-style-type: none;
+	list-style-image: none;
+	margin: 0;
+	padding: 1px 1px 1px 5px;
+}
+
+.CustomizeToolbar li.Selected {
+	background-color: #3366ff;
+	border: dotted 1px #fff;
+	color: #FFF;
+	padding: 0px 0px 0px 4px;
+}
+
+.CustomizeToolbar .ButtonColumn {
+	padding-top: 100px;
+}
+
+.CustomizeToolbar .Button {
+	margin-bottom: 10px;
+	width: 90px;
+}

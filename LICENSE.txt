@@ -1,0 +1,36 @@
+CHOICESCRIPT LICENSE (CSL) v1.0
+
+Non-commercial usage and modification of the works is permitted
+provided that (1) the ChoiceScript license is retained with the works,
+so that any entity that uses the works is notified of this license,
+and (2) the user grants at no charge an unrestricted, transferrable,
+non-exclusive license to Dan Fabulich and Adam Morse for any
+modifications, if any, made to the ChoiceScript interpreter.  The user
+may not use the ChoiceScript interpreter or code written for use with
+the ChoiceScript interpreter for any commercial purposes, including
+sales of complete applications, use of the code to generate
+advertising revenue, or any other commercial purpose.  If you are
+interested in a commercial license, please contact
+support@choiceofgames.com.
+
+DISCLAIMER
+
+Unless required by applicable law or agreed to in writing, the
+licensor provides the work on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+CONDITIONS OF ANY KIND, either express or implied, including, without
+limitation, any warranties or conditions of TITLE, NON-INFRINGEMENT,
+MERCHANTABILITY, or FITNESS FOR A PARTICULAR PURPOSE. You are solely
+responsible for determining the appropriateness of using or
+redistributing the works and assume any risks associated with your
+exercise of permissions under this license.
+
+In no event and under no legal theory, whether in tort (including
+negligence), contract, or otherwise, unless required by applicable law
+(such as deliberate and grossly negligent acts) or agreed to in
+writing, shall the licensor be liable to you for damages, including
+any direct, indirect, special, incidental, or consequential damages of
+any character arising as a result of this license or out of the use or
+inability to use the works (including but not limited to damages for
+loss of goodwill, work stoppage, computer failure or malfunction, or
+any and all other commercial damages or losses), even if the licensor
+has been advised of the possibility of such damages.

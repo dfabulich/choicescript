@@ -1,0 +1,18 @@
+CDN build process
+===================
+First, generate the locale bundles for all available locales:
+> cd cldr
+> ant
+> cd ..
+
+Then run the build command below. This build command was updated for 1.2, when the console stripping was added, and more memory was specified for the java command. 
+
+1) Replace the xdDojoPath with the URL path that will contain the Dojo release. It should be the directory that contains the dojo, dijit and dojox directories, and SHOULD NOT end in a trailing slash. 
+
+2) Replace releaseName and version with the appropriate values.
+
+java -classpath ../shrinksafe/js.jar:../shrinksafe/shrinksafe.jar org.mozilla.javascript.tools.shell.Main build.js profile=standard releaseName=1.3.0 cssOptimize=comments.keepLines cssImportIgnore=../dijit.css optimize=shrinksafe stripConsole=normal loader=xdomain xdDojoPath=http://o.aolcdn.com/dojo/1.3.0 version=1.3.0 copyTests=false action=release xdDojoScopeName=window[\(typeof\(djConfig\)\!\=\"undefined\"\&\&djConfig.scopeMap\&\&djConfig.scopeMap[0][1]\)\|\|\"dojo\"]
+
+The result will be in the release/releaseName where releaseName matches the string above (1.3.0).
+
+After placing the build on the CDN, I normally update a link for the MAJOR.MINOR version number to the latest MAJOR.MINOR.PATCH number. So, if releaseName was 1.3.1, then update http://o.aolcdn.com/dojo/1.3 to point to http://o.aolcdn.com/dojo/1.3.1 (where http://o.aolcdn.com/dojo will be different based on the xdDojoPath build option).

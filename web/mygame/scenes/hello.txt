@@ -1,0 +1,149 @@
+*comment Copyright 2010 by Dan Fabulich.
+*comment 
+*comment Dan Fabulich licenses this file to you under the
+*comment ChoiceScript License, Version 1.0 (the "License"); you may
+*comment not use this file except in compliance with the License. 
+*comment You may obtain a copy of the License at
+*comment 
+*comment  http://www.choiceofgames.com/LICENSE-1.0.txt
+*comment 
+*comment See the License for the specific language governing
+*comment permissions and limitations under the License.
+*comment 
+*comment Unless required by applicable law or agreed to in writing,
+*comment software distributed under the License is distributed on an
+*comment "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+*comment either express or implied.
+
+Hello world!
+
+*temp foo
+*temp bar
+*set foo 1=1
+*if foo
+  Truly foo
+Fell out of if
+
+*set bar 1=0
+*set foo foo or bar
+*set foo foo or bar
+*rand foo 0 1
+*print foo
+*print {"fo"&"o"}
+*script temps["baz"] = 3;
+
+*set foo "bar"
+*setref foo 3
+bar = 
+*print bar
+
+baz = 
+*print baz
+
+*set foo 3
+*set bar "she \\said\\ it\\\" \\\\ was \"ironic\"!"
+bar = 
+*print bar
+
+*if foo=2
+    foo is 2
+    *goto x
+*elsif foo=3
+    foo is 3
+    *if bar="blah"
+        bar is blah
+        *goto x
+    *else
+        bar is something else
+        *goto x
+*else
+    foo is something else
+*label x
+*set foo (foo=2) or (foo=3)
+*set foo (true) and (false)
+*set foo true
+*set foo false
+*set foo (true) and (true)
+*set foo (true) or (false)
+*set foo (false) or (false)
+*set foo 2=2
+*set foo foo="blah"
+*set foo 2="2"
+*set foo 2>1
+*set foo 2<1
+*set foo 2<=1
+*set foo 2>=1
+*set foo 3
+*set bar 1
+*set foo ((foo>4) and (foo<8)) or (bar=0)
+*set foo 50
+*set foo +2
+*set foo %+ 30
+*set foo foo%+50
+*set foo foo%-50
+*set foo 2
+*set foo 2.3
+*set foo "fie"
+*set foo "she said it was \"ironic\"!"
+*set foo "c:\\foo"
+*set bar foo
+*set foo 2+2
+*set foo foo-3
+*set foo 2*3
+*set foo 8/2
+*set foo "2"/2
+*set foo foo&"bar"
+*set foo "foo"&foo
+*set foo 50
+*set foo +2
+*set foo %+ 30
+*set foo &"blah blah"
+*set bar 3
+
+foo =
+*print foo
+*goto something
+*label something
+
+message
+
+
+
+message
+message
+
+message
+message message
+message
+
+message mess
+*line_break
+mess message
+
+*choice thing name
+    *print "#foo=" & foo
+        #x
+            foo + x
+            *goto finish
+        #y
+            foo + y
+            that's close enough to bar + y
+            *goto bary
+    *if bar=3
+        #baz
+            #x
+                baz + x
+                *goto finish
+            #y
+                baz + y
+                *goto finish
+    #bar
+        #x
+            bar + x
+            *goto finish
+        #y
+            *label bary
+            bar + y
+            *goto something
+*label finish
+the end!

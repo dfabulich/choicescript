@@ -1,0 +1,295 @@
+<html><head><title>Introduction to ChoiceScript</title>
+<body>
+<h1>Introduction to ChoiceScript</h1>
+<p>A basic guide to the ChoiceScript programming language.  Please contact <a href="mailto:support@choiceofgames.com">support@choiceofgames.com</a> if you have questions about this document.</p>
+
+<h2>Trying it out</h2>
+
+Begin by dowloading a copy of ChoiceScript and opening the <code>web/index.html</code> file.  The game will immediately begin.
+
+<h2>Your First Scene: <code>*choice</code> and <code>*finish</code></h2>
+
+<p>Here's a simple scene written in ChoiceScript.  You can find it in <code>web/mygame/startup.txt</code>.</p>
+
+<code><pre>  Your majesty, your people are starving in the streets, and threaten revolution.
+  Our enemies to the west are weak, but they threaten soon to invade.  What will you do?
+  
+  *choice
+    #Make pre-emptive war on the western lands.
+      If you can seize their territory, your kingdom will flourish.  But your army's
+      morale is low and the kingdom's armory is empty.  How will you win the war?
+      *choice
+        #Drive the peasants like slaves; if we work hard enough, we'll win.
+          Unfortunately, morale doesn't work like that.  Your army soon turns against you
+          and the kingdom falls to the western barbarians.
+          *finish
+        #Appoint charismatic knights and give them land, peasants, and resources.
+          Your majesty's people are eminently resourceful.  Your knights win the day,
+          but take care: they may soon demand a convention of parliament.
+          *finish
+        #Steal food and weapons from the enemy in the dead of night.
+          A cunning plan.  Soon your army is a match for the westerners; they choose
+          not to invade for now, but how long can your majesty postpone the inevitable?
+          *finish
+    #Beat swords to plowshares and trade food to the westerners for protection.
+      The westerners have you at the point of a sword.  They demand unfair terms
+      from you.
+      *choice
+        #Accept the terms for now.
+          Eventually, the barbarian westerners conquer you anyway, destroying their
+          bread basket, and the entire region starves.
+          *finish
+        #Threaten to salt our fields if they don't offer better terms.
+          They blink.  Your majesty gets a fair price for wheat.
+          *finish
+    #Abdicate the throne. I have clearly mismanaged this kingdom!
+      The kingdom descends into chaos, but you manage to escape with your own hide.
+      Perhaps in time you can return to restore order to this fair land.
+      *finish</pre></code>
+
+<p>As you can see, the <code>*choice</code> command presents the user with a list of options; the result of choosing each option appears indented right below the option (in an "indented block").</p>
+
+<p>If you go to play this scene, you'll first be presented with three options:
+
+<ol><li>Make pre-emptive war on the western lands.</li>
+<li>Beat swords to plowshares and trade food to the westerners for protection.</li>
+<li>Abdicate the throne. I have clearly mismanaged this kingdom!</li>
+</ol>
+</p>
+
+<p>If you choose option #1, you get to choose how to win the war.  If you choose option #2, you may decide how to negotiate with the westerners.  If you choose option #3, the scene ends with no additional choices.</p>
+
+<p>As you can see, there's a lot you can do with just the <code>*choice</code> command and the <code>*finish</code> command.  Indeed, using only these two commands and a lot of time, you could develop an entire "Choose Your Own Adventure" book!</p>
+
+<h2>Indentation</h2>
+
+Note that indentation in ChoiceScript is mandatory.  Without those spaces for indentation, we would have no way to tell the difference between options nested within other choices and options on the main menu.
+
+You can indent blocks using spaces or with the Tab character (but not both in the same file).  You can use any number of spaces you want, but you must be consistent.  Code like this is not allowed:
+
+<code><pre>*choice
+    #Hold 'em.
+        He calls; you win!
+        *finish
+      #Fold'em.
+        Better luck next time.
+        *finish</pre></code>
+
+Option 1 has four spaces, but Option 2 has six spaces; since these don't line up, ChoiceScript will display an error message if you try to write scenes like this.
+
+<h2>Reusing Code: Goto and Label</h2>
+
+<p>ChoiceScript provides a way to jump around in a scene besides just making choices.  You can use the <code>*goto</code> command to jump to any line in the scene, as long as you first put a <code>*label</code> on the line you want to reach.</p>
+
+<code><pre>  What kind of animal will you be?
+  *choice
+    #Lion
+      *goto claws
+    #Tiger
+      *label claws
+      In that case, you'll have powerful claws and a mighty roar!
+      *finish
+    #Elephant
+      Well, elephants are interesting animals, too.
+      *finish</pre></code>
+
+<p>When we reach the line <code>*goto claws</code>, we automatically jump to the line <code>*label claws</code>.  You may create as many labels as you like, and use <code>*goto</code> to reach any of them.</p>
+
+<p>Note that every indented (nested) block must conclude with either a <code>*finish</code> command (which ends the scene) or a <code>*goto</code> line which jumps to another line in the scene.</p>
+
+<p>(You can also reuse code with the <code>*goto_scene</code> command, described later in this document.)</p>
+
+<h2>Setting and Checking Variables</h2>
+
+<p>In ChoiceScript, you can use variables to make scenes and decisions more interesting than a "Choose Your Own Adventure" book.</p>
+
+<p>To use a variable, you must begin by defining it and setting it, like this:</p>
+
+<code><pre>  *temp leadership
+  *set leadership 20</pre></code>
+
+<p>Once a variable has been set, you can check the value of the variable like this:</p>
+
+<code><pre>  #Run for class president
+    *if leadership > 15
+      You win the election.
+      *finish
+    You lose the election.
+    *finish</pre></code>
+
+<p>In this case, leadership is just set to 20, so the player is sure to win the election.  But you can choose to give the player a different amount of leadership depending on the player's earlier choices.  Using variables, the player's earlier leadership choices can have an effect on the story later in the game.</p>
+
+<p>You can also add leadership points to the current number of leadership points, like this:</p>
+
+<code><pre>  *set leadership +20</pre></code>
+
+<p>This would add 20 points to the player's current leadership score.</p>
+
+<p><strong>TODO: Discuss <code>*create</code> vs. <code>*temp</code>.</strong>  We will probably remove the *create command in the future, replacing it with something in <code>mygame.js</code>; we should document what the new thing will be.</p>
+
+<p><strong>TODO: Discuss <code>*else</code> and <code>*elseif</code>.</strong>  These commands are optional, but they do make the code easier to read.</p>
+
+<p>You can also show the player's current leadership score using the <code>*print</code> command:</p>
+
+<code><pre>  Your leadership score is:
+  *print leadership</pre></code>
+
+<h2>Advanced Expressions</h2>
+
+<p><strong>TODO</strong></p>
+
+<p><strong>TODO: Especially discuss %+ and %-</strong> and how it differs from ordinary + and -.</p>
+
+<h2>What Happens When We <code>*finish</code>?</h2>
+
+<p>When we <code>*finish</code>, we move on to the next scene in the game.  This is defined in a file called <code>mygame.js</code>.  Here's an example:</p>
+
+<pre><code>  // Specify the list of scenes here, separated by commas, with no final comma
+
+  nav = new SceneNavigator([
+      "startup"
+      ,"animal"
+      ,"variables"
+      ,"ending"
+      ,"death"
+      
+  ]);
+  
+  // Specify the default starting stats here
+  
+  stats = {
+      leadership: 50
+      ,strength: 50
+  };
+  
+  // Specify the stats to use in debug mode
+  
+  debugStats = {
+      leadership: 50
+      ,strength: 50
+  };
+  
+  // or just use defaults
+  // debugStats = stats</code></pre>
+
+<p>The first section defines the scene "navigator," which describes how we move from scene to scene.  If you <code>*finish</code> in the "startup" scene, we'll move right ahead to the "animal" scene, then the "variables" scene.  Finally, we reach the ending scene. Here's an example ending scene:</p>
+
+<pre><code>  This is the last scene!  The game is over!
+  
+  *ending</code></pre>
+
+<p>That final <code>*ending</code> command instructs the game to insert a "Play Again" button at the end of the scene.  If you choose to "Play Again", the game will begin again at the "startup" scene.</p>
+
+<p><strong>WARNING</strong>:  mygame.js is likely to change considerably very soon.  It's currently the absolute minimum amount of code that could possibly work; we'd like it to be in a nicer format that looks more like ChoiceScript and less like JavaScript.</p>
+
+<p>(Note that Choice of the Dragon doesn't even have a <code>mygame.js</code> file; that feature was developed after CotD was released.  You can see something similar in its <code>index.html</code> file.)</p>
+
+<p>You're not required to use <code>*finish</code> to move on to the next scene; you can also jump to any scene in the game using <code>*goto_scene</code>.  Here's an example:</p>
+
+<pre><code>  #Lift weights
+    *if strength > 15
+      You lift the weights.
+      *finish
+    You drop the weights and hurt yourself badly.  You never recover.
+    
+    *goto_scene death</code></pre>
+
+<p>When this happens, we jump directly to the death scene.  This allows you to provide a standard "death" message without copying and pasting all over the game.</p>
+
+<h2>Other Commands and Tricks</h2>
+
+<ul><li>*comment: This command does nothing; any text you put after <code>*comment</code> will be ignored.  It's helpful to put remarks in the text that only the author should read.
+
+<code><pre>  *comment TODO We should make this scene more interesting!</code></pre>
+
+<li>*page_break: Put in a "Next" button with no radio buttons.  The game will continue on the subsequent page.
+  
+<code><pre>  You turn the corner slowly.  Blood rushes through your ears.  As you open the door...
+  *page_break
+  ... the masked murderer attacks!</code></pre>
+
+<li>Labeled buttons: By default, <code>*finish</code> buttons say "Next Chapter" and <code>*page_break</code> buttons say "Next".  You can make the button say something else, instead:
+
+<code><pre>  *page_break On with the show!
+  *finish The show is over!</code></pre>
+
+<li>*line_break: Put just one line break in your text, like a <code>&lt;br&gt;</code> in HTML.  ChoiceScripts automatically converts single line breaks to spaces, and double line breaks to paragraphs.
+
+<code><pre>  So
+  this
+  is
+  all
+  one
+  line.
+  
+  But this is a new paragraph.
+  
+  And this
+  *line_break
+  is two lines.</code></pre>
+
+<p>That code would display like this:</p>
+<blockquote><p>So this is all one line</p><p>But this is a new paragraph.</p><p>And this<br>is two lines</p></blockquote>
+
+<li>*input_text: Provides a text box for the user to specify the value of a variable, e.g. the user's name.
+
+<code><pre>  Please enter your name.
+  *input_text name
+  
+  Your name is
+  *print name</code></pre>
+
+<li>*fake_choice: This convenience command behaves exactly like <code>*choice</code>, but no commands are allowed in the body of the choice; thus no <code>*goto</code>/<code>*finish</code> is required.
+
+<code><pre>  What color do you prefer?
+  
+  *fake_choice
+    #Red
+      Red is the color of roses.
+    #Blue
+      Blue is the color of the sea.
+    #Green
+      Green is the color of spring.
+  
+  What an excellent choice!  And what flavor of ice cream would you like?
+  
+  *fake_choice
+    #Vanilla
+    #Chocolate
+    #Strawberry
+  
+  Mmm, delicious!
+  *finish</code></pre>
+
+<li>Conditional options: This advanced technique lets you show/hide some options based on the player's variables.
+  
+<code><pre>  How will you handle this?
+  *choice
+    #Try to talk them out of it.
+      They cannot be dissuaded.
+      *finish
+    #Force them to relent.
+      They back down, for now.
+      *finish
+    *if president
+      #Abuse my presidential powers to silence them
+        This works; you will never hear from them again.
+        *finish</code></pre>
+
+<p>In this case, players have the option to abuse their presidential power only if they are president; if they are not president, then the option is completely hidden.</p>
+
+</ul>
+
+<h2>Examples</h2>
+
+<p>Here some example scenes from Choice of the Dragon.  Please don't copy their code without explicit permission from Choice of Games.</p>
+
+<ul><li><a href="http://www.choiceofgames.com/dragon/scenes/startup.txt">startup</li>
+<li><a href="http://www.choiceofgames.com/dragon/scenes/queenpolitics.txt">queenpolitics</a></li>
+</ul>
+
+<h2>Questions?</h2>
+
+Contact <a href="mailto:support@choiceofgames.com">support@choiceofgames.com</a> if you have questions about this document.
+</body>
+</html>
