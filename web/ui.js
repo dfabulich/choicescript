@@ -151,7 +151,9 @@ function printButton(name, parent, isSubmit, code) {
     button.appendChild(document.createTextNode(name));
   }
   setClass(button, "next");
-  if (code) button.onclick = code;
+  if (code) button.onclick = function() {
+    safeCall(null, code);
+  }
   if (!isMobile) try { button.focus(); } catch (e) {}
   parent.appendChild(button);
 }
