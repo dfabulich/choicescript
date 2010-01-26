@@ -205,7 +205,8 @@ function num(x) {
 }
 
 function findXhr() {
-  if (window.XMLHttpRequest) return new window.XMLHttpRequest();
+  var ieFile = isIE && isFile;
+  if (window.XMLHttpRequest && !ieFile) return new window.XMLHttpRequest();
   var ids = ['Msxml2.XMLHTTP', 'Microsoft.XMLHTTP', 'Msxml2.XMLHTTP.4.0'];
   for (var i = 0; i < 3; i++) {
     try {
