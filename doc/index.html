@@ -61,6 +61,10 @@ To begin, <a href="http://github.com/dfabulich/choicescript/">download the Choic
 
 <p>As you can see, there's a lot you can do with just the <code>*choice</code> command and the <code>*finish</code> command.  Indeed, using only these two commands and a lot of time, you could develop an entire "Choose Your Own Adventure" book!</p>
 
+<h2>Go On, Play with It!</h2>
+
+<p>Try opening up <code>web/mygame/startup.txt</code> in a simple text editor like Notepad or TextEdit.  If you change the text, save the file, and refresh the <code>web/mygame/index.html</code> page in your browser, you should be able to see the effect of your changes immediately.</p>
+
 <h2>Indentation</h2>
 
 Note that indentation in ChoiceScript is mandatory.  Without those spaces for indentation, we would have no way to tell the difference between options nested within other choices and options on the main menu.
@@ -71,7 +75,7 @@ You can indent blocks using spaces or with the Tab character (but not both in th
     #Hold 'em.
         He calls; you win!
         *finish
-      #Fold'em.
+      #Fold 'em.
         Better luck next time.
         *finish</pre></code>
 
@@ -108,6 +112,8 @@ Option 1 has four spaces, but Option 2 has six spaces; since these don't line up
 <code><pre>  *temp leadership
   *set leadership 20</pre></code>
 
+<p><strong>TODO: Discuss <code>*create</code> vs. <code>*temp</code>.</strong>  We will probably remove the <code>*create</code> command in the future, replacing it with something in <code>mygame.js</code>; we should document what the new thing will be.  (The basic idea is that <code>*temp</code> variables only last for the current scene, whereas permanent variables persist through the entire game.)</p>
+
 <p>Once a variable has been set, you can check the value of the variable like this:</p>
 
 <code><pre>  #Run for class president
@@ -123,22 +129,46 @@ Option 1 has four spaces, but Option 2 has six spaces; since these don't line up
 
 <code><pre>  *set leadership +20</pre></code>
 
-<p>This would add 20 points to the player's current leadership score.</p>
+<p>This would add 20 points to the player's current leadership score.  It's the same thing as writing <code>*set leadership leadership+20</code>.  You can also subtract points with "-", multiply with "*" or divide with "/".</p>
 
-<p><strong>TODO: Discuss <code>*create</code> vs. <code>*temp</code>.</strong>  We will probably remove the *create command in the future, replacing it with something in <code>mygame.js</code>; we should document what the new thing will be.</p>
-
-<p><strong>TODO: Discuss <code>*else</code> and <code>*elseif</code>.</strong>  These commands are optional, but they do make the code easier to read.</p>
+<p>If you need to use multiple operators at once (e.g. you need to do both division and addition), you must use parentheses, like this: <code>*set honesty (leadership + manners)*2</code>.  You may not omit the paretheses, even though it's perfectly understandable arithmetic: <code>*set honesty leadership + manners / 2</code>.</p>
 
 <p>You can also show the player's current leadership score using the <code>*print</code> command:</p>
 
 <code><pre>  Your leadership score is:
   *print leadership</pre></code>
 
-<h2>Advanced Expressions</h2>
+<p>By the way, variables aren't just for numbers.  You can also put text in a variable by using quotation marks:</p>
 
-<p><strong>TODO</strong></p>
+<code><pre>  *set lover_name "Jamie"</pre></code>
 
-<p><strong>TODO: Especially discuss %+ and %-</strong> and how it differs from ordinary + and -.</p>
+<h3>Using <code>*else</code> and <code>*elseif</code> to Improve Readability</h3>
+
+<p>We can rewrite the leadership example above to use the <code>*else</code> command; this will make it easier to read.</p>
+
+<code><pre>  #Run for class president
+    *if leadership > 15
+      You win the election.
+      *finish
+    *else
+      You lose the election.
+      *finish</pre></code>
+
+<p>This does exactly the same thing as before, but using <code>*else</code> makes it clearer that only one of these two options is possible, just by indenting the code.</p>
+
+<p>You can also use the <code>*elseif</code> command to define three possible branches, like this:</p>
+
+<code><pre>  #Run for class president
+    *if leadership > 25
+      You win the election by a landslide!
+      *finish
+    *elseif leadership > 15
+      You win the election, but just barely.
+      *finish
+    *else
+      You lose the election.
+      *finish</pre></code>
+
 
 <h2>What Happens When We <code>*finish</code>?</h2>
 
@@ -198,11 +228,11 @@ Option 1 has four spaces, but Option 2 has six spaces; since these don't line up
 
 <h2>Other Commands and Tricks</h2>
 
-<ul><li>*comment: This command does nothing; any text you put after <code>*comment</code> will be ignored.  It's helpful to put remarks in the text that only the author should read.
+<ul><li><code>*comment</code>: This command does nothing; any text you put after <code>*comment</code> will be ignored.  It's helpful to put remarks in the text that only the author should read.
 
 <code><pre>  *comment TODO We should make this scene more interesting!</code></pre>
 
-<li>*page_break: Put in a "Next" button with no radio buttons.  The game will continue on the subsequent page.
+<li><code>*page_break</code>: Put in a "Next" button with no radio buttons.  The game will continue on the subsequent page.
   
 <code><pre>  You turn the corner slowly.  Blood rushes through your ears.  As you open the door...
   *page_break
@@ -213,7 +243,7 @@ Option 1 has four spaces, but Option 2 has six spaces; since these don't line up
 <code><pre>  *page_break On with the show!
   *finish The show is over!</code></pre>
 
-<li>*line_break: Put just one line break in your text, like a <code>&lt;br&gt;</code> in HTML.  ChoiceScripts automatically converts single line breaks to spaces, and double line breaks to paragraphs.
+<li><code>*line_break</code>: Put just one line break in your text, like a <code>&lt;br&gt;</code> in HTML.  ChoiceScript automatically converts single line breaks to spaces, and double line breaks to paragraphs.
 
 <code><pre>  So
   this
@@ -231,7 +261,7 @@ Option 1 has four spaces, but Option 2 has six spaces; since these don't line up
 <p>That code would display like this:</p>
 <blockquote><p>So this is all one line</p><p>But this is a new paragraph.</p><p>And this<br>is two lines</p></blockquote>
 
-<li>*input_text: Provides a text box for the user to specify the value of a variable, e.g. the user's name.
+<li><code>*input_text</code>: Provides a text box for the user to specify the value of a variable, e.g. the user's name.
 
 <code><pre>  Please enter your name.
   *input_text name
@@ -239,7 +269,7 @@ Option 1 has four spaces, but Option 2 has six spaces; since these don't line up
   Your name is
   *print name</code></pre>
 
-<li>*fake_choice: This convenience command behaves exactly like <code>*choice</code>, but no commands are allowed in the body of the choice; thus no <code>*goto</code>/<code>*finish</code> is required.
+<li><code>*fake_choice</code>: This convenience command behaves exactly like <code>*choice</code>, but no commands are allowed in the body of the choice; thus no <code>*goto</code>/<code>*finish</code> is required.
 
 <code><pre>  What color do you prefer?
   
@@ -261,6 +291,8 @@ Option 1 has four spaces, but Option 2 has six spaces; since these don't line up
   Mmm, delicious!
   *finish</code></pre>
 
+<li><code>*rand</code>: Set a variable to a random number.  You set the minimum and maximum, we do the rest.  For example, this would set the variable <code>die_roll</code> to a value from 1 to 6 inclusive: <code><pre>  *rand die_roll 1 6</pre></code>  <p>Beware!  It can be very hard to adequately test scenes that use randomness.</p>
+
 <li>Conditional options: This advanced technique lets you show/hide some options based on the player's variables.
   
 <code><pre>  How will you handle this?
@@ -278,6 +310,72 @@ Option 1 has four spaces, but Option 2 has six spaces; since these don't line up
 
 <p>In this case, players have the option to abuse their presidential power only if they are president; if they are not president, then the option is completely hidden.</p>
 
+<li>Fairmath: ChoiceScript includes two rather strange operators specifically for use on variables that are percentages, called "%+" and "%-".  You use them like this:</p>
+
+<code><pre>  *set leadership 50
+  *set leadership %+ 20
+  *set leadership %- 40</pre></code>
+
+<p>The "%+" and "%-" operators are called the "fairmath" operators.  The idea is that as your leadership score gets higher, it becomes harder to increase, and easier to decrease.  According to fairmath:
+<ul>
+<li>Fair Addition: <code>(x  %+ y)  = (x + (100-x)*(y/100))</code></li><ul>
+<li>Large scores are hard to increase: <code>(90 %+ 20) = (90 + 2)     = 92</code>
+<li>Small scores are easy to increase: <code>(10 %+ 20) = (10 + 18)    = 28</code>
+</ul><li>Fair Subtraction: <code>(x  %- y)  = (x - x*(y/100))</code><ul>
+<li>Large scores are easy to decrease: <code>(90 %- 20) = (90 - 18)     = 72</code>
+<li>Small scores are hard to decrease: <code>(10 %- 20) = (10 - 2)    = 8</code>
+</ul><li>50 is equally easy to increase or decrease.<ul>
+<li><code>(50 %+ 20) = (50 + 10)  = 60</code>
+<li><code>(50 %- 20) = (50 - 10)  = 40</code>
+</ul></ul>
+</p>
+
+<p>Fairmath is great in expressions like: <code>*set leadership %+ 20</code>.  The player will get anywhere from 0 to 20 more points of leadership, depending on how high leadership is currently.</p>
+
+<li>Advanced <code>*if</code> statements: You can do a lot more with <code>*if</code> statements than <code>leadership > 15</code>.  Here's a few tricks:<ul>
+
+<li>Equality and Inequality<ul>
+  <li>Equal to: <code>leadership = 40</code> (Is leadership equal to forty?)
+  <li>Not equal to: <code>leadership != 40</code> (Is leadership different from forty?)
+  <li>Greater than: <code>leadership &gt;40</code> (Is leadership greater than forty?)
+  <li>Less than: <code>leadership &lt;40</code> (Is leadership less than forty?)
+  <li>Greater than OR equal to: <code>leadership &gt;=50</code> (Is leadership greater than or equal to fifty?)
+  <li>Less than OR equal to: <code>leadership &lt;=40</code> (Is leadership less than or equal to forty?)
+</ul><li>And/or (with mandatory parentheses)<ul>
+  <li>And: <code>(leadership > 30) and (strength > 40)</code>
+  <li>Or: <code>(leadership > 60) or (strength > 70)</code>
+  <li>Complex parentheses: <code>((leadership > 60) and (agility > 20)) or (strength > 80)</code>
+</ul>
+<li>Comparing text:<ul>
+  <li><code>lover_name = "Jamie"</code>
+  <li><code>"2" = 2</code> (this is true!)
+</ul>
+<li>Setting variables to <code>true</code> or <code>false</code>:<ul>
+  <li><code>*set finished false</code>
+  <li><code>*set correct guess = "blue"</code>
+</ul>
+</ul>
+
+<li>Text tricks:<ul>
+  <li>Concatenation: You can join text together like this: <code>*set murder "red"&"rum"</code>.  You can use variables in the same way: <code>*set title "Dr. " & last_name</code>
+  <li>Quotes: You can put quotes in your text by using backslashes, like this: <pre><code>  *set joke "she said it was \"ironic\"!"</code></pre>  If you <code>*print joke</code>, you'll get: <blockquote>she said it was "ironic"!</blockquote>
+  <li>Backslashes: You can put backslashes in your text by using even more backslashes, like this: <pre><code>  *set slashy "Here's one backslash: \\ and here's two backslashes: \\\\"</code></pre>If you <code>*print slashy</code>, you'll get: <blockquote>Here's one backslash: \ and here's two backslashes: \\</blockquote>
+</ul>
+<li><p>Truly bizarre references: Probably only programmers will appreciate these. Beware!  They add complexity without adding much value.</p><ul>
+  <li><code>*setref</code>: Set a variable by name, e.g. <code>*setref "leadership" 30</code> sets leadership to 30.  Use it in crazy code like this:
+<code><pre>  *set virtue "courage"
+  *setref virtue 30
+  *print courage</pre></code>
+
+  This code would set <code>courage</code> to 30.  If this still doesn't seem useful, consider that <code>virtue</code> could have been determined by earlier choices, so it might have set <code>honesty</code> to 30 instead.  <p>Still not convinced?  Don't worry about it; you'll probably never need it.</p>
+  <li><code>*gotoref</code>: Goto a label by name, e.g. <code>*gotoref "claws"</code>  <strong>TODO</strong> This doesn't work yet!
+  <li>Curly parens: Put some text in curly braces and we'll turn it into the value of the named variable.
+<code><pre>  *set honesty 30
+  *set virtue "honesty"
+  *print virtue
+  
+  *print {virtue}</pre></code> This would print: <blockquote><p>honesty</p><p>30</p></blockquote>
+
 </ul>
 
 <h2>Examples</h2>
@@ -290,6 +388,6 @@ Option 1 has four spaces, but Option 2 has six spaces; since these don't line up
 
 <h2>Questions?</h2>
 
-Please post on the <a href="http://groups.google.com/group/choicescript">ChoiceScript google group</a> if you have questions about this document.
+<p>Please post on the <a href="http://groups.google.com/group/choicescript">ChoiceScript google group</a> if you have questions about this document.</p>
 </body>
 </html>
