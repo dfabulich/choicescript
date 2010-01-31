@@ -3,6 +3,10 @@
 <h1>Introduction to ChoiceScript</h1>
 <p>A basic guide to the ChoiceScript programming language.  Please post on the <a href="http://groups.google.com/group/choicescript">ChoiceScript google group</a> if you have questions about this document.</p>
 
+<h2>What is ChoiceScript?</h2>
+
+<p>ChoiceScript is a simple programming language for writing multiple-choice games (MCGs) like <a href="http://www.choiceofgames.com/dragon/">Choice of the Dragon</a>.  Writing games with ChoiceScript is easy and fun, even for authors with no programming experience.</p>
+
 <h2>Trying it out</h2>
 
 To begin, <a href="http://github.com/dfabulich/choicescript/">download the ChoiceScript source from GitHub</a> (click the "Download Source" button in the upper-right corner) and open the <code>web/index.html</code> file.  The game will immediately begin.
@@ -226,158 +230,6 @@ Option 1 has four spaces, but Option 2 has six spaces; since these don't line up
 
 <p>When this happens, we jump directly to the death scene.  This allows you to provide a standard "death" message without copying and pasting all over the game.</p>
 
-<h2>Other Commands and Tricks</h2>
-
-<ul><li><code>*comment</code>: This command does nothing; any text you put after <code>*comment</code> will be ignored.  It's helpful to put remarks in the text that only the author should read.
-
-<code><pre>  *comment TODO We should make this scene more interesting!</code></pre>
-
-<li><code>*page_break</code>: Put in a "Next" button with no radio buttons.  The game will continue on the subsequent page.
-  
-<code><pre>  You turn the corner slowly.  Blood rushes through your ears.  As you open the door...
-  *page_break
-  ... the masked murderer attacks!</code></pre>
-
-<li>Labeled buttons: By default, <code>*finish</code> buttons say "Next Chapter" and <code>*page_break</code> buttons say "Next".  You can make the button say something else, instead:
-
-<code><pre>  *page_break On with the show!
-  *finish The show is over!</code></pre>
-
-<li><code>*line_break</code>: Put just one line break in your text, like a <code>&lt;br&gt;</code> in HTML.  ChoiceScript automatically converts single line breaks to spaces, and double line breaks to paragraphs.
-
-<code><pre>  So
-  this
-  is
-  all
-  one
-  line.
-  
-  But this is a new paragraph.
-  
-  And this
-  *line_break
-  is two lines.</code></pre>
-
-<p>That code would display like this:</p>
-<blockquote><p>So this is all one line</p><p>But this is a new paragraph.</p><p>And this<br>is two lines</p></blockquote>
-
-<li><code>*input_text</code>: Provides a text box for the user to specify the value of a variable, e.g. the user's name.
-
-<code><pre>  Please enter your name.
-  *input_text name
-  
-  Your name is
-  *print name</code></pre>
-
-<li><code>*fake_choice</code>: This convenience command behaves exactly like <code>*choice</code>, but no commands are allowed in the body of the choice; thus no <code>*goto</code>/<code>*finish</code> is required.
-
-<code><pre>  What color do you prefer?
-  
-  *fake_choice
-    #Red
-      Red is the color of roses.
-    #Blue
-      Blue is the color of the sea.
-    #Green
-      Green is the color of spring.
-  
-  What an excellent choice!  And what flavor of ice cream would you like?
-  
-  *fake_choice
-    #Vanilla
-    #Chocolate
-    #Strawberry
-  
-  Mmm, delicious!
-  *finish</code></pre>
-
-<li><code>*rand</code>: Set a variable to a random number.  You set the minimum and maximum, we do the rest.  For example, this would set the variable <code>die_roll</code> to a value from 1 to 6 inclusive: <code><pre>  *rand die_roll 1 6</pre></code>  <p>Beware!  It can be very hard to adequately test scenes that use randomness.</p>
-
-<li>Conditional options: This advanced technique lets you show/hide some options based on the player's variables.
-  
-<code><pre>  How will you handle this?
-  *choice
-    #Try to talk them out of it.
-      They cannot be dissuaded.
-      *finish
-    #Force them to relent.
-      They back down, for now.
-      *finish
-    *if president
-      #Abuse my presidential powers to silence them
-        This works; you will never hear from them again.
-        *finish</code></pre>
-
-<p>In this case, players have the option to abuse their presidential power only if they are president; if they are not president, then the option is completely hidden.</p>
-
-<li>Fairmath: ChoiceScript includes two rather strange operators specifically for use on variables that are percentages, called "%+" and "%-".  You use them like this:</p>
-
-<code><pre>  *set leadership 50
-  *set leadership %+ 20
-  *set leadership %- 40</pre></code>
-
-<p>The "%+" and "%-" operators are called the "fairmath" operators.  The idea is that as your leadership score gets higher, it becomes harder to increase, and easier to decrease.  According to fairmath:
-<ul>
-<li>Fair Addition: <code>(x  %+ y)  = (x + (100-x)*(y/100))</code></li><ul>
-<li>Large scores are hard to increase: <code>(90 %+ 20) = (90 + 2)     = 92</code>
-<li>Small scores are easy to increase: <code>(10 %+ 20) = (10 + 18)    = 28</code>
-</ul><li>Fair Subtraction: <code>(x  %- y)  = (x - x*(y/100))</code><ul>
-<li>Large scores are easy to decrease: <code>(90 %- 20) = (90 - 18)     = 72</code>
-<li>Small scores are hard to decrease: <code>(10 %- 20) = (10 - 2)    = 8</code>
-</ul><li>50 is equally easy to increase or decrease.<ul>
-<li><code>(50 %+ 20) = (50 + 10)  = 60</code>
-<li><code>(50 %- 20) = (50 - 10)  = 40</code>
-</ul></ul>
-</p>
-
-<p>Fairmath is great in expressions like: <code>*set leadership %+ 20</code>.  The player will get anywhere from 0 to 20 more points of leadership, depending on how high leadership is currently.</p>
-
-<li>Advanced <code>*if</code> statements: You can do a lot more with <code>*if</code> statements than <code>leadership > 15</code>.  Here's a few tricks:<ul>
-
-<li>Equality and Inequality<ul>
-  <li>Equal to: <code>leadership = 40</code> (Is leadership equal to forty?)
-  <li>Not equal to: <code>leadership != 40</code> (Is leadership different from forty?)
-  <li>Greater than: <code>leadership &gt;40</code> (Is leadership greater than forty?)
-  <li>Less than: <code>leadership &lt;40</code> (Is leadership less than forty?)
-  <li>Greater than OR equal to: <code>leadership &gt;=50</code> (Is leadership greater than or equal to fifty?)
-  <li>Less than OR equal to: <code>leadership &lt;=40</code> (Is leadership less than or equal to forty?)
-</ul><li>And/or (with mandatory parentheses)<ul>
-  <li>And: <code>(leadership > 30) and (strength > 40)</code>
-  <li>Or: <code>(leadership > 60) or (strength > 70)</code>
-  <li>Complex parentheses: <code>((leadership > 60) and (agility > 20)) or (strength > 80)</code>
-</ul>
-<li>Comparing text:<ul>
-  <li><code>lover_name = "Jamie"</code>
-  <li><code>"2" = 2</code> (this is true!)
-</ul>
-<li>Setting variables to <code>true</code> or <code>false</code>:<ul>
-  <li><code>*set finished false</code>
-  <li><code>*set correct guess = "blue"</code>
-</ul>
-</ul>
-
-<li>Text tricks:<ul>
-  <li>Concatenation: You can join text together like this: <code>*set murder "red"&"rum"</code>.  You can use variables in the same way: <code>*set title "Dr. " & last_name</code>
-  <li>Quotes: You can put quotes in your text by using backslashes, like this: <pre><code>  *set joke "she said it was \"ironic\"!"</code></pre>  If you <code>*print joke</code>, you'll get: <blockquote>she said it was "ironic"!</blockquote>
-  <li>Backslashes: You can put backslashes in your text by using even more backslashes, like this: <pre><code>  *set slashy "Here's one backslash: \\ and here's two backslashes: \\\\"</code></pre>If you <code>*print slashy</code>, you'll get: <blockquote>Here's one backslash: \ and here's two backslashes: \\</blockquote>
-</ul>
-<li><p>Truly bizarre references: Probably only programmers will appreciate these. Beware!  They add complexity without adding much value.</p><ul>
-  <li><code>*setref</code>: Set a variable by name, e.g. <code>*setref "leadership" 30</code> sets leadership to 30.  Use it in crazy code like this:
-<code><pre>  *set virtue "courage"
-  *setref virtue 30
-  *print courage</pre></code>
-
-  This code would set <code>courage</code> to 30.  If this still doesn't seem useful, consider that <code>virtue</code> could have been determined by earlier choices, so it might have set <code>honesty</code> to 30 instead.  <p>Still not convinced?  Don't worry about it; you'll probably never need it.</p>
-  <li><code>*gotoref</code>: Goto a label by name, e.g. <code>*gotoref "claws"</code>  <strong>TODO</strong> This doesn't work yet!
-  <li>Curly parens: Put some text in curly braces and we'll turn it into the value of the named variable.
-<code><pre>  *set honesty 30
-  *set virtue "honesty"
-  *print virtue
-  
-  *print {virtue}</pre></code> This would print: <blockquote><p>honesty</p><p>30</p></blockquote>
-
-</ul>
-
 <h2>Examples</h2>
 
 <p>Here some example scenes from Choice of the Dragon.  Please don't copy their code without explicit permission from Choice of Games.</p>
@@ -385,6 +237,12 @@ Option 1 has four spaces, but Option 2 has six spaces; since these don't line up
 <ul><li><a href="http://www.choiceofgames.com/dragon/scenes/startup.txt">startup</li>
 <li><a href="http://www.choiceofgames.com/dragon/scenes/queenpolitics.txt">queenpolitics</a></li>
 </ul>
+
+<h2><a href="more.html">Next: Other Commands and Tricks</a></h2>
+
+<h2>TODO: Troubleshooting Guide</h2>
+
+
 
 <h2>Questions?</h2>
 
