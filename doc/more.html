@@ -142,10 +142,11 @@
 </ul>
 
 <li>Text tricks:<ul>
+  <li>Capitalize first letter: You can capitalize just the first letter of a variable like this: <code>Behold! $!{He} is capitalized.</code>
   <li>Concatenation: You can join text together like this: <code>*set murder "red"&"rum"</code>.  You can use variables in the same way: <code>*set title "Dr. " & last_name</code>
   <li>Quotes: You can put quotes in your text by using backslashes, like this: <pre><code>  *set joke "she said it was \"ironic\"!"</code></pre>  If you write <code>${joke}</code>, you'll get: <blockquote>she said it was "ironic"!</blockquote>
   <li>Backslashes: You can put backslashes in your text by using even more backslashes, like this: <pre><code>  *set slashy "Here's one backslash: \\ and here's two backslashes: \\\\"</code></pre>If you write <code>${slashy}</code>, you'll get: <blockquote>Here's one backslash: \ and here's two backslashes: \\</blockquote>
-  <li><code>*print</code>: This command is mostly legacy; it just prints the value of the variable you specify.  Use <code>${}</code> variable substitution instead.</li>
+  <li><code>*print</code>: This command is no longer necessary; it just prints the value of the variable you specify.  Use <code>${}</code> variable substitution instead.</li>
 </ul>
 <li>Truly bizarre references: Probably only programmers will appreciate these. Beware!  They add complexity without adding much value.<ul>
   <li><code>*setref</code>: Set a variable by name, e.g. <code>*setref "leadership" 30</code> sets leadership to 30.  Use it in crazy code like this:
