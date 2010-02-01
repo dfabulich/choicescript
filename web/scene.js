@@ -92,7 +92,7 @@ Scene.prototype.printLoop = function printLoop() {
             }
             this.prevLineEmpty = false;
             this.screenEmpty = false;
-            printx(trim(line));
+            this.printLine(trim(line));
             printx(' ');
         }
     }
@@ -100,6 +100,21 @@ Scene.prototype.printLoop = function printLoop() {
         this.finish();
     }
     printFooter();
+}
+
+Scene.prototype.printLine = function printLine(line, parent) {
+    if (!line) return;
+    var self = this;
+    // replace ${variables} with values
+    line = line.replace(/\$\{([a-zA-Z]\w+)\}/g, function (matched, variable) {
+      return self.getVar(variable);
+    });
+    // double-check for unreplaced/invalid ${} expressions
+    var unreplaced = line.search(/\$\{/) + 1;
+    if (unreplaced) {
+      throw new Error(this.lineMsg() + "invalid ${} variable substitution at letter " + unreplaced);
+    }
+    printx(line, parent);
 }
 
 Scene.prototype.paragraph = function paragraph() {
@@ -684,7 +699,7 @@ Scene.prototype.printRadioButton = function printRadioButton(div, name, line, lo
         }
     }
     label.appendChild(radio);
-    printx(line, label);
+    this.printLine(line, label);
     
     div.appendChild(label);
 }
@@ -773,7 +788,7 @@ Scene.prototype.print = function scene_print(expr) {
     var value = this.evaluateExpr(this.tokenizeExpr(expr));
     this.prevLineEmpty = false;
     this.screenEmpty = false;
-    printx(value);
+    this.printLine(value);
     printx(' ');
 }
 

@@ -962,6 +962,31 @@ doh.registerGroup("choicescript.tests.LineBreaks", [
     ]
 );
 
+doh.registerGroup("choicescript.tests.VariableInterpolation", [
+        function replacement() {
+            printed = [];
+            var text = "This ${foo} is a ${bar}.";
+            var stats = {foo:"foo", bar:"bar"};
+            var scene = new Scene("test", stats);
+            scene.loadLines(text);
+            scene.execute();
+            doh.is("This foo is a bar. <br><br>", printed.join(""), "printed");
+        }
+        ,function unknownVariable() {
+            var text = "Unknown variable: ${foo}.";
+            var scene = new Scene();
+            scene.loadLines(text);
+            doh.assertError(Error, scene, "execute", null, "Unknown variable");
+        }
+        ,function invalidExpression() {
+            var text = "Invalid expression: ${foo.";
+            var scene = new Scene();
+            scene.loadLines(text);
+            doh.assertError(Error, scene, "execute", null, "Invalid expresison");
+        }
+    ]
+);
+
 /*
 doh.register("choicescript.tests.ExpressionParsing", [
         { name: "My Function Test [_myfunc()]", 
