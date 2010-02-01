@@ -984,6 +984,15 @@ doh.registerGroup("choicescript.tests.VariableInterpolation", [
             scene.loadLines(text);
             doh.assertError(Error, scene, "execute", null, "Invalid expresison");
         }
+        ,function capitalize() {
+            printed = [];
+            var text = "This ${foo} is a true $!{Foo}.";
+            var stats = {foo:"foo"};
+            var scene = new Scene("test", stats);
+            scene.loadLines(text);
+            scene.execute();
+            doh.is("This foo is a true Foo. <br><br>", printed.join(""), "printed");
+        }
     ]
 );
 

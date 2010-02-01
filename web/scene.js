@@ -106,8 +106,12 @@ Scene.prototype.printLine = function printLine(line, parent) {
     if (!line) return;
     var self = this;
     // replace ${variables} with values
-    line = line.replace(/\$\{([a-zA-Z]\w+)\}/g, function (matched, variable) {
-      return self.getVar(variable);
+    line = line.replace(/\$(\!?)\{([a-zA-Z]\w+)\}/g, function (matched, capitalize, variable) {
+      var value = self.getVar(variable);
+      if (capitalize) {
+        value = value.charAt(0).toUpperCase() + value.slice(1);
+      }
+      return value;
     });
     // double-check for unreplaced/invalid ${} expressions
     var unreplaced = line.search(/\$\{/) + 1;
