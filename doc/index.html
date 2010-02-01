@@ -139,10 +139,9 @@ Option 1 has four spaces, but Option 2 has six spaces; since these don't line up
 
 <p>If you need to use multiple operators at once (e.g. you need to do both division and addition), you must use parentheses, like this: <code>*set honesty (leadership + manners)*2</code>.  You may not omit the paretheses, even though it's perfectly understandable arithmetic: <code>*set honesty leadership + manners / 2</code>.</p>
 
-<p>You can also show the player's current leadership score using the <code>*print</code> command:</p>
+<p>You can also show the player's current leadership score by using <code>${}</code> (a dollar sign followed by curly braces), like this:</p>
 
-<code><pre>  Your leadership score is:
-  *print leadership</pre></code>
+<code><pre>  Your leadership score is: ${leadership}</pre></code>
 
 <p>By the way, variables aren't just for numbers.  You can also put text in a variable by using quotation marks:</p>
 

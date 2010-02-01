@@ -43,8 +43,7 @@
 <code><pre>  Please enter your name.
   *input_text name
   
-  Your name is
-  *print name</code></pre>
+  Your name is ${name}</code></pre>
 
 <li><code>*fake_choice</code>: This convenience command behaves exactly like <code>*choice</code>, but no commands are allowed in the body of the choice; thus no <code>*goto</code>/<code>*finish</code> is required.
 
@@ -144,23 +143,22 @@
 
 <li>Text tricks:<ul>
   <li>Concatenation: You can join text together like this: <code>*set murder "red"&"rum"</code>.  You can use variables in the same way: <code>*set title "Dr. " & last_name</code>
-  <li>Quotes: You can put quotes in your text by using backslashes, like this: <pre><code>  *set joke "she said it was \"ironic\"!"</code></pre>  If you <code>*print joke</code>, you'll get: <blockquote>she said it was "ironic"!</blockquote>
-  <li>Backslashes: You can put backslashes in your text by using even more backslashes, like this: <pre><code>  *set slashy "Here's one backslash: \\ and here's two backslashes: \\\\"</code></pre>If you <code>*print slashy</code>, you'll get: <blockquote>Here's one backslash: \ and here's two backslashes: \\</blockquote>
+  <li>Quotes: You can put quotes in your text by using backslashes, like this: <pre><code>  *set joke "she said it was \"ironic\"!"</code></pre>  If you write <code>${joke}</code>, you'll get: <blockquote>she said it was "ironic"!</blockquote>
+  <li>Backslashes: You can put backslashes in your text by using even more backslashes, like this: <pre><code>  *set slashy "Here's one backslash: \\ and here's two backslashes: \\\\"</code></pre>If you write <code>${slashy}</code>, you'll get: <blockquote>Here's one backslash: \ and here's two backslashes: \\</blockquote>
+  <li><code>*print</code>: This command is mostly legacy; it just prints the value of the variable you specify.  Use <code>${}</code> variable substitution instead.</li>
 </ul>
 <li>Truly bizarre references: Probably only programmers will appreciate these. Beware!  They add complexity without adding much value.<ul>
   <li><code>*setref</code>: Set a variable by name, e.g. <code>*setref "leadership" 30</code> sets leadership to 30.  Use it in crazy code like this:
 <code><pre>  *set virtue "courage"
-  *setref virtue 30
-  *print courage</pre></code>
+  *setref virtue 30</pre></code>
 
   This code would set <code>courage</code> to 30.  If this still doesn't seem useful, consider that <code>virtue</code> could have been determined by earlier choices, so it might have set <code>honesty</code> to 30 instead.  <p>Still not convinced?  Don't worry about it; you'll probably never need it.</p>
   <li><code>*gotoref</code>: Goto a label by name, e.g. <code>*gotoref "claws"</code>  <strong>TODO</strong> This doesn't work yet!
   <li>Curly parens: Put some text in curly braces and we'll turn it into the value of the named variable.
 <code><pre>  *set honesty 30
   *set virtue "honesty"
-  *print virtue
-  
-  *print {virtue}</pre></code> This would print: <blockquote><p>honesty</p><p>30</p></blockquote>
+  *set score {virtue}
+  Your ${virtue} score is ${score}</pre></code> This would print: <blockquote>Your honesty score is 30</blockquote>
 
 </ul>
 
