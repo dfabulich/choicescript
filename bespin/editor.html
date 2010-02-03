@@ -1,0 +1,109 @@
+<!-- ***** BEGIN LICENSE BLOCK *****
+- Version: MPL 1.1/GPL 2.0/LGPL 2.1
+-
+- The contents of this file are subject to the Mozilla Public License Version
+- 1.1 (the "License"); you may not use this file except in compliance with
+- the License. You may obtain a copy of the License at
+- http://www.mozilla.org/MPL/
+-
+- Software distributed under the License is distributed on an "AS IS" basis,
+- WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+- for the specific language governing rights and limitations under the
+- License.
+-
+- The Original Code is Bespin.
+-
+- The Initial Developer of the Original Code is
+- Mozilla.
+- Portions created by the Initial Developer are Copyright (C) 2009
+- the Initial Developer. All Rights Reserved.
+-
+- Contributor(s):
+-
+- Alternatively, the contents of this file may be used under the terms of
+- either the GNU General Public License Version 2 or later (the "GPL"), or
+- the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
+- in which case the provisions of the GPL or the LGPL are applicable instead
+- of those above. If you wish to allow use of your version of this file only
+- under the terms of either the GPL or the LGPL, and not to allow others to
+- use your version of this file under the terms of the MPL, indicate your
+- decision by deleting the provisions above and replace them with the notice
+- and other provisions required by the GPL or the LGPL. If you do not delete
+- the provisions above, a recipient may use your version of this file under
+- the terms of any one of the MPL, the GPL or the LGPL.
+-
+- ***** END LICENSE BLOCK ***** -->
+
+<!DOCTYPE html>
+<html><head>
+<title>Basic ChoiceScript Editor</title>
+<link href="BespinEmbedded.css" type="text/css" rel="stylesheet">
+
+<script type="text/javascript" src="BespinEmbedded.js"></script>
+<script>
+window.name = "editor";
+function tryIt() {
+  var testWindow = window.open("blankgame.html", "choicescript_testWindow");
+  document.getElementById("tryIt").blur();
+  document.getElementById("editor").focus();
+  setTimeout(function() {bespin.setFocus(true);}, 0);
+}
+</script>
+<style>
+  body { padding: 20px; font-family: Calibri, Helvetica, Arial; }
+  h1 { color: white; border-bottom: 1px solid #ddd; font-size:120%; }
+  .bespin { margin: 0; padding: 0; border: 0; height: 80%; border: 10px solid #ddd; -moz-border-radius: 10px; -webkit-border-radius: 10px; }
+</style>
+</head>
+<body>
+
+<h1>Basic ChoiceScript Editor</h1>
+<button id="tryIt" onclick="tryIt();">try it!</button>
+<div id="editor" class="bespin" data-bespinoptions='{ "settings": { "strictlines": true, "tabsize": 2 }, "stealFocus": true }'>Your majesty, your people are starving in the streets, and threaten revolution.
+Our enemies to the west are weak, but they threaten soon to invade.  What will you do?
+
+*choice
+  #Make pre-emptive war on the western lands.
+    If you can seize their territory, your kingdom will flourish.  But your army's
+    morale is low and the kingdom's armory is empty.  How will you win the war?
+    *choice
+      #Drive the peasants like slaves; if we work hard enough, we'll win.
+        Unfortunately, morale doesn't work like that.  Your army soon turns against you
+        and the kingdom falls to the western barbarians.
+        *finish
+      #Appoint charismatic knights and give them land, peasants, and resources.
+        Your majesty's people are eminently resourceful.  Your knights win the day,
+        but take care: they may soon demand a convention of parliament.
+        *finish
+      #Steal food and weapons from the enemy in the dead of night.
+        A cunning plan.  Soon your army is a match for the westerners; they choose
+        not to invade for now, but how long can your majesty postpone the inevitable?
+        *finish
+  #Beat swords to plowshares and trade food to the westerners for protection.
+    The westerners have you at the point of a sword.  They demand unfair terms
+    from you.
+    *choice
+      #Accept the terms for now.
+        Eventually, the barbarian westerners conquer you anyway, destroying their
+        bread basket, and the entire region starves.
+        *finish
+      #Threaten to salt our fields if they don't offer better terms.
+        They blink.  Your majesty gets a fair price for wheat.
+        *finish
+  #Abdicate the throne. I have clearly mismanaged this kingdom!
+    The kingdom descends into chaos, but you manage to escape with your own hide.
+    Perhaps in time you can return to restore order to this fair land.
+    *finish
+</div>
+
+
+
+<script>
+window.onBespinLoad = function() {
+    console.log("this is called when Bespin is loaded");
+    bespin = document.getElementById("editor").bespin;
+};
+
+</script>
+</body>
+</html>
