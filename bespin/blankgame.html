@@ -36,7 +36,7 @@ either express or implied.
 <script>
   window.onload = function() {
     window.main = document.getElementById("main");
-    var editor = window.open("", "editor");
+    var editor = window.opener;
     loadLines(editor.bespin.getContent());
   };
   function loadLines(lines) {
