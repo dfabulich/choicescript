@@ -35,10 +35,11 @@
 - ***** END LICENSE BLOCK ***** -->
 
 <!DOCTYPE html>
-<html><head>
+<html>
+<head>
 <title>Basic ChoiceScript Editor</title>
+<meta http-equiv="X-UA-Compatible" content="chrome=1">  
 <link href="BespinEmbedded.css" type="text/css" rel="stylesheet">
-
 <script type="text/javascript" src="BespinEmbedded.js"></script>
 <script>
 window.name = "editor";
@@ -100,6 +101,14 @@ Our enemies to the west are weak, but they threaten soon to invade.  What will y
     *finish
 </div>
 
+<script type="text/javascript" 
+src="http://ajax.googleapis.com/ajax/libs/chrome-frame/1/CFInstall.min.js"> </script>
+ 
+<div id="placeholder"></div>
+
+<script>
+ CFInstall.check({node: "placeholder"});
+</script>
 
 
 <script>
