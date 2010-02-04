@@ -50,9 +50,9 @@ function tryIt() {
   document.getElementById("editor").focus();
   setTimeout(function() {bespin.setFocus(true);}, 0);
 }
-
+window.modified = false;
 window.onbeforeunload = function() {
-  return "If you leave this page, all work will be lost!";
+  if (modified) return "If you leave this page, all work will be lost!";
 }
 </script>
 <style>
@@ -114,6 +114,7 @@ src="http://ajax.googleapis.com/ajax/libs/chrome-frame/1/CFInstall.min.js"> </sc
 
 <script>
 window.onBespinLoad = function() {
+    window.modified = true; // TODO detect dirty
     console.log("this is called when Bespin is loaded");
     bespin = document.getElementById("editor").bespin;
 };
