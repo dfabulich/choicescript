@@ -50,6 +50,9 @@ function tryIt() {
   document.getElementById("editor").focus();
   setTimeout(function() {bespin.setFocus(true);}, 0);
 }
+function getContent() {
+  return bespin.getContent();
+}
 window.modified = false;
 window.onbeforeunload = function() {
   if (modified) return "If you leave this page, all work will be lost!";

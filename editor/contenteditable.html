@@ -1,0 +1,141 @@
+<html>
+<style>
+body {
+  white-space: pre;
+  margin: 0;
+  padding: 0;
+  font-family: monospace;
+  font-size: 10pt;
+}
+
+#t {
+  word-wrap: normal;
+}
+
+#numbers {
+  padding-top: 1px;
+  padding-right: 1em;
+  background-color: #ccc;
+}
+#numberMask {
+  position: absolute;
+  overflow: hidden;
+}
+</style>
+<script>
+function tryIt() {
+  window.open("blankgame.html", "choicescript_testWindow");
+}
+function getContent() {
+  var ih = text.innerHTML;
+  ih = ih.replace(/<\/?div>/g, "");
+  ih = ih.replace(/<br>/g, "\n");
+  ih = ih.replace(/&amp;/g, "&");
+  return ih;
+}
+function keyDown(event) {
+  if (event.keyCode == 9) {
+    if (event.preventDefault) event.preventDefault();
+    event.returnValue = false;
+  }
+}
+
+function change() {
+  var lines, re;
+  var ih = text.innerHTML; 
+  if (ih) {
+    if (isWebKit) {
+      re = /(<br>|\n)/g;
+    } else {
+      re = /<br>/g;
+    }
+    var matches = ih.match(re);
+    if (matches) {
+      lines = matches.length + 1;
+    } else {
+      lines = 1;
+    }
+    if (isWebKit) lines++;
+  } else {
+    lines = 1;
+  }
+  numberMask.style.height = (lines * 16) + "px";
+  
+}
+
+function printLineNumbers(lines) {
+  if (lines == currentLines) return;
+  var stringBuffer = [];
+  for (var i = 0; i < lines; i++) {
+    if (i != 0) stringBuffer.push('</div>');
+    stringBuffer.push('<div>');
+    stringBuffer.push(i+1);
+  }
+  stringBuffer.push('</div>');
+  numbers.innerHTML = stringBuffer.join('');
+  currentLines = lines;
+}
+
+function bindEvent(target, eventName, fun) {
+  if (target.addEventListener) {
+    target.addEventListener(eventName, fun, true);
+  } else {
+    target.attachEvent("on" + eventName, function(){ fun(event); });
+  } 
+}
+
+window.onload = function() {
+  window.text = document.getElementById("t");
+  window.numbers = document.getElementById("numbers");
+  window.numberMask = document.getElementById("numberMask");
+  window.isWebKit = /WebKit/.test(navigator.userAgent)
+  currentLines = 1;
+  var lineNumbers = 1500;
+  printLineNumbers(lineNumbers);
+  text.style.marginLeft = (numbers.offsetWidth + 2) + "px";
+  bindEvent(text, "keydown", keyDown);
+  bindEvent(text, "change", change);
+  bindEvent(text, "keypress", change);
+  bindEvent(text, "keyup", change);
+  change();
+}
+</script>
+<body>
+<button onclick="tryIt();">try it!</button>
+<div id="numberMask" class="mask"><div id="numbers">1</div></div><div contenteditable="true" nowrap wrap="off" id="t">Your majesty, your people are starving in the streets, and threaten revolution.
+Our enemies to the west are weak, but they threaten soon to invade.  What will you do?
+
+*choice
+  #Make pre-emptive war on the western lands.
+    If you can seize their territory, your kingdom will flourish.  But your army's
+    morale is low and the kingdom's armory is empty.  How will you win the war?
+    *choice
+      #Drive the peasants like slaves; if we work hard enough, we'll win.
+        Unfortunately, morale doesn't work like that.  Your army soon turns against you
+        and the kingdom falls to the western barbarians.
+        *finish
+      #Appoint charismatic knights and give them land, peasants, and resources.
+        Your majesty's people are eminently resourceful.  Your knights win the day,
+        but take care: they may soon demand a convention of parliament.
+        *finish
+      #Steal food and weapons from the enemy in the dead of night.
+        A cunning plan.  Soon your army is a match for the westerners; they choose
+        not to invade for now, but how long can your majesty postpone the inevitable?
+        *finish
+  #Beat swords to plowshares and trade food to the westerners for protection.
+    The westerners have you at the point of a sword.  They demand unfair terms
+    from you.
+    *choice
+      #Accept the terms for now.
+        Eventually, the barbarian westerners conquer you anyway, destroying their
+        bread basket, and the entire region starves.
+        *finish
+      #Threaten to salt our fields if they don't offer better terms.
+        They blink.  Your majesty gets a fair price for wheat.
+        *finish
+  #Abdicate the throne. I have clearly mismanaged this kingdom!
+    The kingdom descends into chaos, but you manage to escape with your own hide.
+    Perhaps in time you can return to restore order to this fair land.
+    *finish</div>
+</body>
+</html>
