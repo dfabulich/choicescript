@@ -57138,7 +57138,8 @@ exports.EmbeddedEditor = SC.Object.extend({
         SC.RunLoop.begin();
         var textView = this.getPath("editorPane.editorView.textView");
         var point = {row: line-1, column: 0, partialFraction: 0};
-        textView.setSelection([{start: point, end: point}]);
+        // DGF previously called setSelection with an array of points
+        textView.setSelection({start: point, end: point});
         SC.RunLoop.end();
     }
 });
