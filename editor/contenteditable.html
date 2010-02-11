@@ -39,13 +39,14 @@ function tryIt() {
     autotester(getContent());
     window.open("blankgame.html", "choicescript_testWindow");
   } catch (e) {
+    var x = e;
     if (e.message) {
       var match = e.message.match(/^line (\d+)/);
       if (match) {
         highlightLine(match[1]);
       }
     }
-    alert(e);
+    alert(x);
   }
 }
 
@@ -62,6 +63,8 @@ function getContent() {
   var ih = text.innerHTML;
   ih = ih.replace(/<\/?div>/g, "");
   ih = ih.replace(/<br>/g, "\n");
+  ih = ih.replace(/&gt;/g, ">");
+  ih = ih.replace(/&lt;/g, "<");
   ih = ih.replace(/&amp;/g, "&");
   return ih;
 }
