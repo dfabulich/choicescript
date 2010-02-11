@@ -105,7 +105,7 @@ function autotester(sceneText) {
   	return r; // Object
   }
   
-  Scene.prototype.oldGoto = Scene.prototype["goto"];
+  if (!Scene.prototype.oldGoto) Scene.prototype.oldGoto = Scene.prototype["goto"];
   
   var seen = {};
   Scene.prototype["goto"] = function scene_goto(label, inChoice) {
@@ -128,7 +128,7 @@ function autotester(sceneText) {
   
   Scene.prototype.goto_scene = Scene.prototype.ending = Scene.prototype.finish;
   
-  Scene.prototype.oldIf = Scene.prototype["if"];
+  if (!Scene.prototype.oldIf) Scene.prototype.oldIf = Scene.prototype["if"];
   Scene.prototype["if"] = function test_if(line, inChoice) {
     if (inChoice) {
       this.oldIf(line);
