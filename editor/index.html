@@ -1,92 +1,187 @@
-<!DOCTYPE html>
 <html>
-<head>
-<title>Basic ChoiceScript Editor</title>
-<meta http-equiv="X-UA-Compatible" content="chrome=1">  
+<!-- TODO
+Shrinking
 
-<!-- ***** BEGIN LICENSE BLOCK *****
-- Version: MPL 1.1/GPL 2.0/LGPL 2.1
--
-- The contents of this file are subject to the Mozilla Public License Version
-- 1.1 (the "License"); you may not use this file except in compliance with
-- the License. You may obtain a copy of the License at
-- http://www.mozilla.org/MPL/
--
-- Software distributed under the License is distributed on an "AS IS" basis,
-- WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
-- for the specific language governing rights and limitations under the
-- License.
--
-- The Original Code is Bespin.
--
-- The Initial Developer of the Original Code is
-- Mozilla.
-- Portions created by the Initial Developer are Copyright (C) 2009
-- the Initial Developer. All Rights Reserved.
--
-- Contributor(s):
--
-- Alternatively, the contents of this file may be used under the terms of
-- either the GNU General Public License Version 2 or later (the "GPL"), or
-- the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
-- in which case the provisions of the GPL or the LGPL are applicable instead
-- of those above. If you wish to allow use of your version of this file only
-- under the terms of either the GPL or the LGPL, and not to allow others to
-- use your version of this file under the terms of the MPL, indicate your
-- decision by deleting the provisions above and replace them with the notice
-- and other provisions required by the GPL or the LGPL. If you do not delete
-- the provisions above, a recipient may use your version of this file under
-- the terms of any one of the MPL, the GPL or the LGPL.
--
-- ***** END LICENSE BLOCK ***** -->
+Test plan
+scroll width/height
+  copy/paste
+  typomatic
+tab insert
+multiline tab insert
+undo tab insert
 
-<link href="BespinEmbedded.css" type="text/css" rel="stylesheet">
-<script type="text/javascript" src="BespinEmbedded.js"></script>
+ -->
+<head><title>Basic ChoiceScript Editor</title>
 <script src="../web/util.js"></script>
 <script src="../headless.js"></script>
 <script src="../web/scene.js"></script>
 <script src="../web/navigator.js"></script>
 <script>window.version="DEVELOPMENT"</script>
-<script src="../web/mygame/mygame.js"></script>`
+<script src="../web/mygame/mygame.js"></script>
 <script src="embeddable-autotester.js"></script>
 <script>
-window.name = "editor";
 function tryIt() {
-  var sceneText = getContent();
+  window.highlight.style.display = "none";
   try {
-    autotester(sceneText);
+    autotester(getContent());
     window.open("blankgame.html", "choicescript_testWindow");
   } catch (e) {
+    var x = e;
     if (e.message) {
       var match = e.message.match(/^line (\d+)/);
       if (match) {
-        bespin.setLineNumber(match[1]);
+        highlightLine(match[1]);
       }
     }
-    alert(e);
+    alert(x);
   }
 }
 
-
-function getContent() {
-  return bespin.getContent();
+function highlightLine(num) {
+  window.highlight.style.display = "block";
+  highlight.style.top = (num*16+19) + "px";
 }
-window.modified = false;
-window.onbeforeunload = function() {
-  if (modified) return "If you leave this page, all work will be lost!";
+function getContent() {
+  return text.value;
 }
 </script>
 <style>
-  body { padding: 20px; font-family: Calibri, Helvetica, Arial; }
-  h1 { color: white; border-bottom: 1px solid #ddd; font-size:120%; }
-  .bespin { margin: 0; padding: 0; border: 0; height: 600px; border: 10px solid #ddd; -moz-border-radius: 10px; -webkit-border-radius: 10px; }
+body {
+  margin: 0;
+  padding: 0;
+  font-family: monospace;
+  font-size: 10pt;
+  background-color: #f0f0f0;
+}
+#numbers {
+  background-image: url('line-numbers.png');
+  background-repeat:repeat-y;
+  padding: 12px 0 0 26px;
+}
+textarea {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  overflow: visible;
+  word-wrap: normal;
+  font-family: monospace;
+  font-size: 10pt;
+  line-height: 16px;
+}
+#highlight {
+  display: none;
+  position: absolute;
+  width: 25px;
+  left: 0;
+  top: 0;
+  background-color: red;
+  opacity: 0.5;
+}
 </style>
+<script>
+function keyDown(event) {
+  if (event.keyCode == 9) {
+    function moveSelection(i) {
+      if (document.selection) {
+        range.move('character', ss + i);
+        range.select();
+      } else {
+        text.selectionStart = ss + i;
+        text.selectionEnd = se + i;
+      }
+    }
+    if (event.preventDefault) event.preventDefault();
+    event.returnValue = false;
+    var tab = "    ";
+    // via http://ajaxian.com/archives/handling-tabs-in-textareas
+    var ss = text.selectionStart;
+    var se = text.selectionEnd;
+    if( document.selection ){
+        // The current selection
+        var range = document.selection.createRange();
+        // We'll use this as a 'dummy'
+        var stored_range = range.duplicate();
+        // Select all text
+        stored_range.moveToElementText( text );
+        // Now move 'dummy' end point to end point of original range
+        stored_range.setEndPoint( 'EndToEnd', range );
+        // Now we can calculate start and end points
+        ss = stored_range.text.length - range.text.length;
+        se = ss + range.text.length;
+    }
+    // Special case of multi line selection
+    if (ss != se && text.value.slice(ss,se).indexOf("\n") != -1) {
+        // In case selection was not of entire lines (e.g. selection begins in the middle of a line)
+        // we ought to tab at the beginning as well as at the start of every following line.
+        var pre = text.value.slice(0,ss);
+        var sel = text.value.slice(ss,se).replace(/\n/g,"\n"+tab);
+        var post = text.value.slice(se,text.value.length);
+        text.value = pre.concat(tab).concat(sel).concat(post);
+        
+        moveSelection(tab.length);
+    }
+           
+    // "Normal" case (no selection or selection on one line only)
+    else {
+        text.value = text.value.slice(0,ss).concat(tab).concat(text.value.slice(ss,text.value.length));
+        moveSelection(tab.length);
+    }
+  }
+}
+
+function change() {
+  var lines;
+  if (window.oldValue == text.value) return;
+  if (text.value) {
+    var matches = text.value.match(/\n/g);
+    if (matches) {
+      lines = matches.length + 1;
+    } else {
+      lines = 1;
+    }
+  } else {
+    lines = 1;
+  }
+  window.oldValue = text.value;
+  var h = text.scrollHeight;
+  if (h < document.body.offsetHeight) {
+    text.style.height = "100%";
+  } else {
+    text.style.height = h + "px";
+  }
+  var w = text.scrollWidth;
+  if (w < document.body.offsetWidth) {
+    text.style.width = "100%";
+  } else {
+    text.style.width = w + "px";
+  }
+}
+
+function bindEvent(target, eventName, fun) {
+  if (target.addEventListener) {
+    target.addEventListener(eventName, fun, true);
+  } else {
+    target.attachEvent("on" + eventName, function(){ fun(event); });
+  } 
+}
+
+window.onload = function() {
+  window.text = document.getElementById("t");
+  window.highlight = document.getElementById("highlight");
+  bindEvent(text, "keydown", keyDown);
+  bindEvent(text, "change", change);
+  bindEvent(text, "keypress", change);
+  bindEvent(text, "keyup", change);
+  change();
+}
+</script>
 </head>
 <body>
-
-<h1>Basic ChoiceScript Editor</h1>
-<button id="tryIt" onclick="tryIt();">try it!</button>
-<div id="editor" class="bespin" data-bespinoptions='{ "settings": { "strictlines": true, "tabsize": 2 }, "stealFocus": true }'>Your majesty, your people are starving in the streets, and threaten revolution.
+<div id="highlight">&nbsp;</div>
+<button onclick="tryIt();">try it!</button>
+</div><div id="numbers"><textarea nowrap wrap="off" id="t">Your majesty, your people are starving in the streets, and threaten revolution.
 Our enemies to the west are weak, but they threaten soon to invade.  What will you do?
 
 *choice
@@ -120,26 +215,6 @@ Our enemies to the west are weak, but they threaten soon to invade.  What will y
   #Abdicate the throne. I have clearly mismanaged this kingdom!
     The kingdom descends into chaos, but you manage to escape with your own hide.
     Perhaps in time you can return to restore order to this fair land.
-    *finish
-</div>
-
-<script type="text/javascript" 
-src="http://ajax.googleapis.com/ajax/libs/chrome-frame/1/CFInstall.min.js"> </script>
- 
-<div id="placeholder"></div>
-
-<script>
-if (window.CFInstall) CFInstall.check({node: "placeholder"});
-</script>
-
-
-<script>
-window.onBespinLoad = function() {
-    window.modified = true; // TODO detect dirty
-    console.log("this is called when Bespin is loaded");
-    bespin = document.getElementById("editor").bespin;
-};
-
-</script>
+    *finish</textarea></div>
 </body>
 </html>
