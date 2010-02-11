@@ -1,4 +1,12 @@
 <html>
+<head><script src="../web/util.js"></script>
+<script src="../headless.js"></script>
+<script src="../web/scene.js"></script>
+<script src="../web/navigator.js"></script>
+<script>window.version="DEVELOPMENT"</script>
+<script src="../web/mygame/mygame.js"></script>
+<script src="embeddable-autotester.js"></script>
+
 <style>
 body {
   white-space: pre;
@@ -24,7 +32,31 @@ body {
 </style>
 <script>
 function tryIt() {
-  window.open("blankgame.html", "choicescript_testWindow");
+  if (window.highlighted) {
+    highlighted.style.backgroundColor = "#ccc";
+  }
+  try {
+    autotester(getContent());
+    window.open("blankgame.html", "choicescript_testWindow");
+  } catch (e) {
+    if (e.message) {
+      var match = e.message.match(/^line (\d+)/);
+      if (match) {
+        highlightLine(match[1]);
+      }
+    }
+    alert(e);
+  }
+}
+
+function highlightLine(num) {
+  var divs = numbers.getElementsByTagName("div");
+  if (divs.length < num) {
+    alert("Bug! Contact support: line " + num + " doesn't exist");
+  }
+  var div = divs[num-1];
+  div.style.backgroundColor = "red";
+  window.highlighted = div;
 }
 function getContent() {
   var ih = text.innerHTML;
@@ -100,6 +132,7 @@ window.onload = function() {
   change();
 }
 </script>
+</head>
 <body>
 <button onclick="tryIt();">try it!</button>
 <div id="numberMask" class="mask"><div id="numbers">1</div></div><div contenteditable="true" nowrap wrap="off" id="t">Your majesty, your people are starving in the streets, and threaten revolution.

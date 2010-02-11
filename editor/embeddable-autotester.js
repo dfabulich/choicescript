@@ -1,5 +1,7 @@
 function autotester(sceneText) {
-  function log(msg) {console.log(msg)}
+  function log(msg) {
+    //console.log(msg)
+  }
   var coverage = [1];
 
   var printed = [];
