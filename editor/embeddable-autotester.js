@@ -23,15 +23,19 @@ function autotester(sceneText) {
     coverage[lineNum]--;
   }
   
-  Scene.prototype.__defineGetter__("lineNum", function() { return this._lineNum; });
-  Scene.prototype.__defineSetter__("lineNum", function(val) {
-      if (coverage[val]) {
-          coverage[val]++;
-      } else {
-          coverage[val] = 1;
-      }
-      this._lineNum = val;
-  });
+  try {
+    Scene.prototype.__defineGetter__("lineNum", function() { return this._lineNum; });
+    Scene.prototype.__defineSetter__("lineNum", function(val) {
+        if (coverage[val]) {
+            coverage[val]++;
+        } else {
+            coverage[val] = 1;
+        }
+        this._lineNum = val;
+    });
+  } catch (e) {
+    // IE doesn't support getters/setters; no coverage for you!
+  }
   
   
   Scene.prototype.choice = function choice(data, fakeChoice) {
