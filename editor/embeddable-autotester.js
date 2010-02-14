@@ -150,10 +150,19 @@ function autotester(sceneText) {
   
   Scene.prototype.goto_scene = Scene.prototype.ending = Scene.prototype.finish;
   
+  if (!Scene.prototype.oldElse) Scene.prototype.oldElse = this["else"];
+  Scene.prototype["else"] = Scene.prototype.elsif = Scene.prototype.elseif = function test_else(data, inChoice) {
+    if (inChoice) {
+      this.oldIf("true");
+    } else {
+      this.oldElse();
+    }
+  }
+
   if (!Scene.prototype.oldIf) Scene.prototype.oldIf = Scene.prototype["if"];
   Scene.prototype["if"] = function test_if(line, inChoice) {
     if (inChoice) {
-      this.oldIf(line);
+      this.oldIf("true");
       return;
     }
     
