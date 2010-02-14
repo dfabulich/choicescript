@@ -1,6 +1,6 @@
 function autotester(sceneText) {
   function log(msg) {
-    //console.log(msg)
+    if (window.console) console.log(msg)
   }
   var coverage = [1];
 
@@ -39,30 +39,48 @@ function autotester(sceneText) {
   
   
   Scene.prototype.choice = function choice(data, fakeChoice) {
-      if (data) throw new Error(this.lineMsg() + "Groups not yet supported: " + data);
-      var groups = [];
+      var groups = ["choice"];
+      if (data) groups = data.split(/ /);
       var choiceLine = this.lineNum;
       var options = this.parseOptions(this.indent, groups);
-      for (var index = 0; index < options.length; index++) {
-          (function (index) {
-            var item = options[index];
-            var scene = this.clone();
-            if (fakeChoice) scene.temps.fakeChoiceEnd = this.lineNum;
-            scene.testFormValues = {choice:index};
-            scene.getFormValue = function(name) {return scene.testFormValues[name];}
-            scene.testOptions = options;
-            scene.testGroups = ["choice"];
-            scene.testChoiceLine = choiceLine;
-            scene.testPath.push(',');
-            scene.testPath.push(choiceLine+1);
-            scene.testPath.push('#');
-            scene.testPath.push(index+1);
-            scene.resume = function() {scene.resolveChoice(scene.testOptions, scene.testGroups);}
-            sceneList.push(scene);
-          }).call(this, index);
+      var flattenedOptions = [];
+      flattenOptions(flattenedOptions, options);
+      
+      for (var index = 0; index < flattenedOptions.length; index++) {
+          var item = flattenedOptions[index];
+          var scene = this.clone();
+          if (fakeChoice) scene.temps.fakeChoiceEnd = this.lineNum;
+          scene.testFormValues = item;
+          scene.getFormValue = function(name) {return this.testFormValues[name];}
+          scene.testOptions = options;
+          scene.testGroups = groups;
+          scene.testChoiceLine = choiceLine;
+          scene.testPath.push(',');
+          scene.testPath.push(choiceLine+1);
+          scene.testPath.push('#');
+          scene.testPath.push(index+1);
+          scene.testPath.push(' (');
+          scene.testPath.push(item.ultimateOption.line);
+          scene.testPath.push(')');
+          scene.resume = function() {this.resolveChoice(this.testOptions, this.testGroups);}
+          sceneList.push(scene);
       }
       
       this.finished = true;
+      
+      function flattenOptions(list, options, flattenedOption) {
+        if (!flattenedOption) flattenedOption = {};
+        for (var i = 0; i < options.length; i++) {
+          var option = options[i];
+          flattenedOption[option.group] = i;
+          if (option.suboptions) {
+            flattenOptions(list, option.suboptions, flattenedOption);
+          } else {
+            flattenedOption.ultimateOption = option;
+            list.push(dojoClone(flattenedOption));
+          }
+        }
+      }
   }
   
   Scene.prototype.clone = function clone() {

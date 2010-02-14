@@ -474,7 +474,7 @@ Scene.prototype.parseOptions = function parseOptions(startIndent, choicesRemaini
     var options = [];
     var line;  
     var currentChoice = choicesRemaining[0];
-    if (!currentChoice) currentChoice = "option";
+    if (!currentChoice) currentChoice = "choice";
     var suboptionsEncountered = false;
     var bodyExpected = false;
     var previousSubOptions;
@@ -557,7 +557,7 @@ Scene.prototype.parseOptions = function parseOptions(startIndent, choicesRemaini
             throw new Error(this.lineMsg() + "Expected option starting with #");
         }
         line = trim(trim(line).substring(1));
-        var option = {name:line};
+        var option = {name:line, group:currentChoice};
         option.line = this.lineNum + 1;
         if (namesEncountered[line]) {
             throw new Error(this.lineMsg() + "Invalid option; conflicts with option '"+option.name+"' on line " + namesEncountered[line]);
