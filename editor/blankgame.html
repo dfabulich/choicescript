@@ -37,11 +37,15 @@ either express or implied.
   window.onload = function() {
     window.main = document.getElementById("main");
     var editor = window.opener;
-    loadLines(editor.getContent());
+    var debug = false;
+    try {
+      debug = editor.document.getElementById('debug').checked;
+    } catch (e) {}
+    loadLines(editor.getContent(), debug);
   };
-  function loadLines(lines) {
+  function loadLines(lines, debug) {
     window.stats.sceneName = "test";
-    var scene = new Scene("test", window.stats, window.nav, false);
+    var scene = new Scene("test", window.stats, window.nav, debug);
     scene.loadLines(lines);
     safeCall(scene, scene.execute);
   }
