@@ -640,8 +640,9 @@ Scene.prototype.renderOptions = function renderOptions(groups, options) {
             textBuilder.push(group);
             textBuilder.push(":");
             
-            println("", form);
-            println(textBuilder.join(""), form);
+            var p = document.createElement("p");
+            p.appendChild(document.createTextNode(textBuilder.join("")));
+            div.appendChild(p);
         }
         for (var optionNum = 0; optionNum < currentOptions.length; optionNum++) {
             var option = currentOptions[optionNum];
