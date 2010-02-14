@@ -1,6 +1,5 @@
 <html>
 <!-- TODO
-Shrinking
 
 Test plan
 scroll width/height
@@ -132,30 +131,19 @@ function keyDown(event) {
 }
 
 function change() {
-  var lines;
-  if (window.oldValue == text.value) return;
-  if (text.value) {
-    var matches = text.value.match(/\n/g);
-    if (matches) {
-      lines = matches.length + 1;
-    } else {
-      lines = 1;
-    }
+  var scrollHeight = text.scrollHeight;
+  var bodyHeight = document.body.clientHeight;
+  if (scrollHeight < bodyHeight) {
+    text.style.height = bodyHeight + "px";
   } else {
-    lines = 1;
+    text.style.height = scrollHeight + "px";
   }
-  window.oldValue = text.value;
-  var h = text.scrollHeight;
-  if (h < document.body.offsetHeight) {
-    text.style.height = "100%";
+  var scrollWidth = text.scrollWidth;
+  var bodyWidth = document.body.clientWidth;
+  if (scrollWidth < bodyWidth) {
+    text.style.width = bodyWidth + "px";
   } else {
-    text.style.height = h + "px";
-  }
-  var w = text.scrollWidth;
-  if (w < document.body.offsetWidth) {
-    text.style.width = "100%";
-  } else {
-    text.style.width = w + "px";
+    text.style.width = scrollWidth + "px";
   }
 }
 
