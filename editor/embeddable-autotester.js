@@ -150,7 +150,7 @@ function autotester(sceneText) {
   
   Scene.prototype.goto_scene = Scene.prototype.ending = Scene.prototype.finish;
   
-  if (!Scene.prototype.oldElse) Scene.prototype.oldElse = this["else"];
+  if (!Scene.prototype.oldElse) Scene.prototype.oldElse = Scene.prototype["else"];
   Scene.prototype["else"] = Scene.prototype.elsif = Scene.prototype.elseif = function test_else(data, inChoice) {
     if (inChoice) {
       this.oldIf("true");
