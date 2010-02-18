@@ -50,6 +50,14 @@ doh.registerGroup("choicescript.tests.FullScene", [
             scene.execute();
             doh.is("foo bar <br><br>", printed.join(""), "wrong printed value");
         }
+        ,function gotoRef() {
+            printed = [];
+            var text = "foo\n*temp x\n*set x \"foo\"\n*gotoref x\nskip me!\n*label foo\nbar";
+            var scene = new Scene();
+            scene.loadLines(text);
+            scene.execute();
+            doh.is("foo bar <br><br>", printed.join(""), "wrong printed value");
+        }
         ,function mixedCaseLabels() {
             printed = [];
             var text = "foo\n*goto foo\nskip me!\n*Label Foo\nbar";
