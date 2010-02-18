@@ -75,28 +75,28 @@ doh.registerGroup("choicescript.tests.OptionParsing", [
             var scene = new Scene();
             scene.loadLines(text);
             var options = scene.parseOptions(0, []);
-            doh.is([{"name":"foo","line":2},{"name":"bar","line":4}], options, "options");
+            doh.is([{"name":"foo","line":2,"group":"choice"},{"name":"bar","line":4,"group":"choice"}], options, "options");
         }
         ,function singleTabs() {
             var text = "*choice\n\t#foo\n\t\tFoo!\n\t#bar\n\t\tBar!\nbaz";
             var scene = new Scene();
             scene.loadLines(text);
             var options = scene.parseOptions(0, []);
-            doh.is([{"name":"foo","line":2},{"name":"bar","line":4}], options, "options");
+            doh.is([{"name":"foo","line":2,"group":"choice"},{"name":"bar","line":4,"group":"choice"}], options, "options");
         }
         ,function blankLine() {
             var text = "*choice\n  #foo\n    Foo!\n\n    Foo, I say!\n  #bar\n    Bar!\nbaz";
             var scene = new Scene();
             scene.loadLines(text);
             var options = scene.parseOptions(0, []);
-            doh.is([{"name":"foo","line":2},{"name":"bar","line":6}], options, "options");
+            doh.is([{"name":"foo","line":2,"group":"choice"},{"name":"bar","line":6,"group":"choice"}], options, "options");
         }
         ,function singlePrint() {
             var text = "*choice\n  #foo\n    Foo!\n  *print \"#ba\"&\"r\"\n    Bar!\nbaz";
             var scene = new Scene();
             scene.loadLines(text);
             var options = scene.parseOptions(0, []);
-            doh.is([{"name":"foo","line":2},{"name":"bar","line":4}], options, "options");
+            doh.is([{"name":"foo","line":2,"group":"choice"},{"name":"bar","line":4,"group":"choice"}], options, "options");
         }
         ,function multi() {
             var text = 
@@ -116,16 +116,16 @@ doh.registerGroup("choicescript.tests.OptionParsing", [
             scene.loadLines(text);
             var options = scene.parseOptions(0, ["color", "toy"]);
             var expected = [
-                {"name":"red","line":2,
+                {"name":"red","line":2,"group":"color",
                     "suboptions":[
-                        {"name":"spaceship","line":3},
-                        {"name":"yo-yo","line":5}
+                        {"name":"spaceship","line":3,"group":"toy"},
+                        {"name":"yo-yo","line":5,"group":"toy"}
                     ]
                 },
-                {"name":"blue","line":7,
+                {"name":"blue","line":7,"group":"color",
                     "suboptions":[
-                        {"name":"spaceship","line":8},
-                        {"name":"yo-yo","line":10}
+                        {"name":"spaceship","line":8,"group":"toy"},
+                        {"name":"yo-yo","line":10,"group":"toy"}
                     ]
                 }
             ];
@@ -429,28 +429,28 @@ doh.registerGroup("choicescript.tests.ComplexChoice", [
             var scene = new Scene();
             scene.loadLines(text);
             var options = scene.parseOptions(0, []);
-            doh.is([{"name":"foo","line":2},{"name":"bar","line":5}], options, "options");
+            doh.is([{"name":"foo","line":2,"group":"choice"},{"name":"bar","line":5,"group":"choice"}], options, "options");
         }
         ,function falseNestedIf() {
             var text = "*choice\n  #foo\n    Foo!\n  *if false\n    #bar\n      Bar!\nbaz";
             var scene = new Scene();
             scene.loadLines(text);
             var options = scene.parseOptions(0, []);
-            doh.is([{"name":"foo","line":2}], options, "options");
+            doh.is([{"name":"foo","line":2,"group":"choice"}], options, "options");
         }
         ,function trueNestedElse() {
             var text = "*choice\n  #foo\n    Foo!\n  *if true\n    #bar\n      Bar!\n    *goto end\n  *else\n    #baz\n      Baz!\n  *label end\nbaz";
             var scene = new Scene();
             scene.loadLines(text);
             var options = scene.parseOptions(0, []);
-            doh.is([{"name":"foo","line":2},{"name":"bar","line":5}], options, "options");
+            doh.is([{"name":"foo","line":2,"group":"choice"},{"name":"bar","line":5,"group":"choice"}], options, "options");
         }
         ,function falseNestedElse() {
             var text = "*choice\n  #foo\n    Foo!\n  *if false\n    #bar\n      Bar!\n    *goto end\n  *else\n    #baz\n      Baz!\n*label end\nbaz";
             var scene = new Scene();
             scene.loadLines(text);
             var options = scene.parseOptions(0, []);
-            doh.is([{"name":"foo","line":2},{"name":"baz","line":9}], options, "options");
+            doh.is([{"name":"foo","line":2,"group":"choice"},{"name":"baz","line":9,"group":"choice"}], options, "options");
         }
         ,function twoFalseNestedElses() {
             var text = "*choice\n"+
@@ -475,7 +475,7 @@ doh.registerGroup("choicescript.tests.ComplexChoice", [
             var scene = new Scene();
             scene.loadLines(text);
             var options = scene.parseOptions(0, []);
-            doh.is([{"name":"foo","line":2},{"name":"baz","line":9},{"name":"quz","line":16}], options, "options");
+            doh.is([{"name":"foo","line":2,"group":"choice"},{"name":"baz","line":9,"group":"choice"},{"name":"quz","line":16,"group":"choice"}], options, "options");
         }
         ,function errorTwoFalseNestedElses() {
             var text = "*choice\n"+
@@ -522,7 +522,7 @@ doh.registerGroup("choicescript.tests.ComplexChoice", [
             var scene = new Scene("test", stats);
             scene.loadLines(text);
             var options = scene.parseOptions(0, []);
-            doh.is([{"name":"Adam","line":4},{"name":"Dan","line":4},{"name":"Kevin","line":4}], options, "options");
+            doh.is([{"name":"Adam","line":4,"group":"choice"},{"name":"Dan","line":4,"group":"choice"},{"name":"Kevin","line":4,"group":"choice"}], options, "options");
         }
     ]
 );
@@ -542,7 +542,7 @@ doh.registerGroup("choicescript.tests.ResolveChoice", [
             scene.getFormValue = function(name) {return formValues[name];}
             scene.reset = function() {};
             scene.execute();
-            doh.is([{"name":"foo","line":2},{"name":"bar","line":5}], options, "options");
+            doh.is([{"name":"foo","line":2,"group":"choice"},{"name":"bar","line":5,"group":"choice"}], options, "options");
             scene.resolveChoice(options,groups);
             doh.is("Foo! <br><br>", printed.join(""), "printed");
         }
@@ -560,7 +560,7 @@ doh.registerGroup("choicescript.tests.ResolveChoice", [
             scene.getFormValue = function(name) {return formValues[name];}
             scene.reset = function() {};
             scene.execute();
-            doh.is([{"name":"foo","line":2},{"name":"bar","line":6}], options, "options");
+            doh.is([{"name":"foo","line":2,"group":"choice"},{"name":"bar","line":6,"group":"choice"}], options, "options");
             scene.resolveChoice(options,groups);
             doh.is("Foo! <br><br>", printed.join(""), "printed");
         }
@@ -578,7 +578,7 @@ doh.registerGroup("choicescript.tests.ResolveChoice", [
             scene.getFormValue = function(name) {return formValues[name];}
             scene.reset = function() {};
             scene.execute();
-            doh.is([{"name":"foo","line":2},{"name":"bar","line":4}], options, "options");
+            doh.is([{"name":"foo","line":2,"group":"choice"},{"name":"bar","line":4,"group":"choice"}], options, "options");
             scene.resolveChoice(options,groups);
             doh.is("Foo! baz <br><br>", printed.join(""), "printed");
         }
@@ -596,7 +596,7 @@ doh.registerGroup("choicescript.tests.ResolveChoice", [
             scene.getFormValue = function(name) {return formValues[name];}
             scene.reset = function() {};
             scene.execute();
-            doh.is([{"name":"foo","line":2},{"name":"bar","line":3}], options, "options");
+            doh.is([{"name":"foo","line":2,"group":"choice"},{"name":"bar","line":3,"group":"choice"}], options, "options");
             scene.resolveChoice(options,groups);
             doh.is("baz <br><br>", printed.join(""), "printed");
         }
@@ -614,7 +614,7 @@ doh.registerGroup("choicescript.tests.ResolveChoice", [
             scene.getFormValue = function(name) {return formValues[name];}
             scene.reset = function() {};
             scene.execute();
-            doh.is([{"name":"foo","line":2},{"name":"bar","line":5}], options, "options");
+            doh.is([{"name":"foo","line":2,"group":"choice"},{"name":"bar","line":5,"group":"choice"}], options, "options");
             scene.resolveChoice(options,groups);
             doh.is("Foo! foo <br><br>", printed.join(""), "printed");
         }
@@ -644,9 +644,9 @@ doh.registerGroup("choicescript.tests.ResolveChoice", [
             scene.getFormValue = function(name) {return formValues[name];}
             scene.reset = function() {};
             scene.execute();
-            doh.is([{"name":"foo","line":2},{"name":"bar","line":5}], options, "options");
+            doh.is([{"name":"foo","line":2,"group":"choice"},{"name":"bar","line":5,"group":"choice"}], options, "options");
             scene.resolveChoice(options, groups);
-            doh.is([{"name":"one","line":9},{"name":"two","line":12}], options, "options");
+            doh.is([{"name":"one","line":9,"group":"choice"},{"name":"two","line":12,"group":"choice"}], options, "options");
             scene.resolveChoice(options, groups);
             doh.is("Bar baz two <br><br>", printed.join(""), "printed");
         }
