@@ -1,6 +1,6 @@
 function autotester(sceneText) {
   function log(msg) {
-    if (window.console) console.log(msg)
+    if (window.console) window.console.log(msg)
   }
   var coverage = [1];
 
