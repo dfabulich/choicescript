@@ -105,6 +105,7 @@ Scene.prototype.printLoop = function printLoop() {
 Scene.prototype.printLine = function printLine(line, parent) {
     if (!line) return;
     var self = this;
+    if (!line.replace) line = new String(line);
     // replace ${variables} with values
     line = line.replace(/\$(\!?)\{([a-zA-Z]\w+)\}/g, function (matched, capitalize, variable) {
       var value = self.getVar(variable);
