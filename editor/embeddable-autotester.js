@@ -48,6 +48,7 @@ function autotester(sceneText) {
       
       for (var index = 0; index < flattenedOptions.length; index++) {
           var item = flattenedOptions[index];
+          this.printLine(item.ultimateOption.name);
           var scene = this.clone();
           if (fakeChoice) scene.temps.fakeChoiceEnd = this.lineNum;
           scene.testFormValues = item;
