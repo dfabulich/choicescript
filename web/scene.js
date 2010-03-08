@@ -107,7 +107,7 @@ Scene.prototype.printLine = function printLine(line, parent) {
     var self = this;
     if (!line.replace) line = new String(line);
     // replace ${variables} with values
-    line = line.replace(/\$(\!?)\{([a-zA-Z]\w+)\}/g, function (matched, capitalize, variable) {
+    line = line.replace(/\$(\!?)\{([a-zA-Z][_\w]+)\}/g, function (matched, capitalize, variable) {
       var value = self.getVar(variable);
       if (capitalize) {
         value = value.charAt(0).toUpperCase() + value.slice(1);
