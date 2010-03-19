@@ -152,7 +152,7 @@ function autotester(sceneText) {
   Scene.prototype.goto_scene = Scene.prototype.ending = Scene.prototype.finish;
   
   if (!Scene.prototype.oldElse) Scene.prototype.oldElse = Scene.prototype["else"];
-  Scene.prototype["else"] = Scene.prototype.elsif = Scene.prototype.elseif = function test_else(data, inChoice) {
+  Scene.prototype["else"] = function test_else(data, inChoice) {
     if (inChoice) {
       this.oldIf("true");
     } else {
@@ -161,17 +161,17 @@ function autotester(sceneText) {
   }
 
   if (!Scene.prototype.oldIf) Scene.prototype.oldIf = Scene.prototype["if"];
-  Scene.prototype["if"] = function test_if(line, inChoice) {
-    if (inChoice) {
-      this.oldIf("true");
-      return;
-    }
-    
+  Scene.prototype["if"] = Scene.prototype.elsif = Scene.prototype.elseif = function test_if(line, inChoice) {
     // Does the expression evaluate to a boolean?
     var stack = this.tokenizeExpr(line);
     var result = this.evaluateExpr(stack);
     if ("boolean" != typeof result) {
         throw new Error(this.lineMsg() + "Invalid boolean expression; this isn't a boolean: " + result);
+    }
+    
+    if (inChoice) {
+      this.oldIf("true");
+      return;
     }
     
     // add false branch to sceneList
