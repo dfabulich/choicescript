@@ -106,7 +106,7 @@ Scene.prototype.printLoop = function printLoop() {
 }
 
 Scene.prototype.printLine = function printLine(line, parent) {
-    if (!line) return;
+    if (!line) return null;
     var self = this;
     if (!line.replace) line = new String(line);
     // replace ${variables} with values
@@ -123,7 +123,7 @@ Scene.prototype.printLine = function printLine(line, parent) {
       throw new Error(this.lineMsg() + "invalid ${} variable substitution at letter " + unreplaced);
     }
     if (!parent) parent = this.target;
-    printx(line, parent);
+    return printx(line, parent);
 }
 
 Scene.prototype.paragraph = function paragraph() {
@@ -1011,6 +1011,95 @@ Scene.prototype.ending = function ending() {
     if (self.debugMode) println(toJson(this.stats));
 }
 
+Scene.prototype.stat_chart = function stat_chart() {
+  var rows = this.parseStatChart();
+  var textBuilder = ["<table class='statChart'>"];
+  var barWidth = 15; /*em*/
+  // BEWARE: Can't use DOM to build this table due to IE bugs
+  for (var i = 0; i < rows.length; i++) {
+    var type = rows[i].type;
+    var variable = rows[i].variable;
+    var value = this.getVar(variable);
+    
+    textBuilder.push("<tr><td class='leftStatName'>");
+    textBuilder.push(variable);
+    textBuilder.push("</td><td>");
+    
+    if (type == "text") {
+      // TODO security problem
+      textBuilder.push(value);
+    } else if (type = "percent") {
+      var statWidth = barWidth / 100 * value;
+      textBuilder.push("<div class='rightStatBar'><div style='width: "+
+        statWidth+"em;' class='leftStatBar'>&nbsp;</div></div>");
+    } else {
+      throw new Error("Bug! Parser accepted an unknown row type: " + type);
+    }
+    textBuilder.push("</td></tr>");
+  }
+  this.target.innerHTML += textBuilder.join("");
+}
+
+Scene.prototype.parseStatChart = function parseStatChart() {
+    // nextIndent: the level of indentation after the current line
+    var nextIndent = null;
+    var rows = [];
+    var line;  
+    var startIndent = this.indent;
+    while(isDefined(line = this.lines[++this.lineNum])) {
+        if (!trim(line)) {
+            this.rollbackLineCoverage();
+            continue;
+        }
+        var indent = this.getIndent(line);
+        if (nextIndent == null) {
+            // initialize nextIndent with whatever indentation the line turns out to be
+            // ...unless it's not indented at all
+            if (indent <= startIndent) {
+                throw new Error(this.lineMsg() + "invalid indent, expected at least one row");
+            }
+            this.indent = nextIndent = indent;
+        }
+        if (indent <= startIndent) {
+            // it's over!
+            return rows;
+        }
+        if (indent < this.indent) {
+            // error: indentation has decreased, but not all the way back
+            // Example:
+            // *choice
+            //     red
+            //   blue
+            throw new Error(this.lineMsg() + "invalid indent, expected "+this.indent+", was " + indent);
+        }
+        
+        // 
+        // *stat_chart
+        //   text wounds
+        //     Wounds
+        //   percent Infamy
+        //     Infamy
+        //   opposed_pair brutality finesse
+        //     Brutality
+        //       Strength and cruelty
+        //     Finesse
+        //       Precision and aerial maneuverability
+        //     
+        
+        // TODO opposed_pair
+        // TODO definitions
+        line = trim(line);
+        var result = /^(text|percent)\s+(.*)/.exec(line);
+        if (!result) throw new Error(this.lineMsg() + "invalid line; this line should start with 'percent' or 'text'");
+        var type = result[1].toLowerCase();
+        var data = trim(result[2]);
+        this.getVar(data);
+        rows.push({type: type, variable: data});
+    }
+    return rows;
+}
+
+
 // *if booleanExpr
 // execute different code depending on whether the booleanExpr is true or false
 //
@@ -1341,4 +1430,4 @@ Scene.operators = {
 Scene.validCommands = {"comment":1, "goto":1, "gotoref":1, "label":1, "looplimit":1, "finish":1, "abort":1,
     "choice":1, "create":1, "temp":1, "delete":1, "set":1, "setref":1, "print":1, "if":1, "rand":1,
     "page_break":1, "line_break":1, "script":1, "else":1, "elseif":1, "elsif":1, "reset":1,
-    "goto_scene":1, "fake_choice":1, "input_text":1, "ending":1};
+    "goto_scene":1, "fake_choice":1, "input_text":1, "ending":1, "stat_chart":1};

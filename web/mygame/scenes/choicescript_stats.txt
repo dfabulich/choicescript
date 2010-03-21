@@ -1,5 +1,7 @@
 This is a stats screen!
 
-Leadership: ${leadership}
-
-Strength: ${strength}
+*stat_chart
+  percent Leadership
+  percent Strength
+  text Leadership
+  text Strength

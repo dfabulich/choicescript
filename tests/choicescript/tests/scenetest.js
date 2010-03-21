@@ -1004,6 +1004,27 @@ doh.registerGroup("choicescript.tests.VariableInterpolation", [
     ]
 );
 
+doh.registerGroup("choicescript.tests.ParseStatChart", [
+        function parse() {
+            var text = "*stat_chart\n"
+              + "  percent foo\n"
+              + "  percent bar\n"
+              + "  text baz\n"
+              + "  text quz\n";
+            var scene = new Scene("test", {foo:50, bar:50, baz: "blah", quz:"urk"});
+            scene.loadLines(text);
+            var rows = scene.parseStatChart();
+            var expected = '['
+              +'{"type":"percent","variable":"foo"},'
+              +'{"type":"percent","variable":"bar"},'
+              +'{"type":"text","variable":"baz"},'
+              +'{"type":"text","variable":"quz"}'
+              +']';
+            doh.is(expected, toJson(rows), "parsed");
+        }
+    ]
+);
+
 /*
 doh.register("choicescript.tests.ExpressionParsing", [
         { name: "My Function Test [_myfunc()]", 
