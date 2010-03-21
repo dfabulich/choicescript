@@ -46,35 +46,47 @@ function showStats() {
     
     statScreen.setAttribute("id", "stats");
     
-    
-    statScreen.innerHTML="TODO: Automatic stats screen (should this be a vignette?)";
-    
-    var restartLink = document.createElement("a");
-    restartLink.innerHTML="Start Over from the Beginning";
-    restartLink.onclick = function() {
-        if (window.confirm("Restart your game?  Did you click that intentionally?")) {
-            clearCookie();
-            document.body.removeChild(greyStuff);
-            document.body.removeChild(statScreen);
-            clearScreen(restoreGame);
-        }
-        return false;
+    var scene = new Scene("choicescript_stats", window.stats, this.nav);
+    scene.finish = function() {
+      this.finished = true;
+      this.paragraph();
+      var div = document.createElement("div");
+      var restartLink = document.createElement("a");
+      restartLink.setAttribute("style", "float: left; text-decoration: underline; cursor: pointer; text-align: left");
+      restartLink.onclick = function() {
+          if (window.confirm("Restart your game?  Did you click that intentionally?")) {
+              clearCookie();
+              document.body.removeChild(greyStuff);
+              document.body.removeChild(statScreen);
+              clearScreen(restoreGame);
+          }
+          return false;
+      }
+      restartLink.innerHTML = "Start Over from the Beginning";  
+      div.appendChild(restartLink);
+      this.target.appendChild(div);
+      
+      var button = document.createElement("button");
+      button.innerHTML="OK";
+      button.onclick = function() {
+          document.body.removeChild(greyStuff);
+          document.body.removeChild(statScreen);
+      }
+      div.appendChild(button);    
     }
     
-    var button = document.createElement("button");
-    button.innerHTML="OK";
-    button.onclick = function() {
-        document.body.removeChild(greyStuff);
-        document.body.removeChild(statScreen);
-    }
-    statScreen.appendChild(button);    
+    
+    
+    
     document.body.appendChild(statScreen);
     var ssWidth = statScreen.clientWidth;
     var bodyWidth = document.body.clientWidth;
     var bodyMarginLeft = 8; // getComputedStyle(document.body, null).marginLeft;
     var left = Math.floor((bodyWidth - ssWidth) / 2) + bodyMarginLeft;
     statScreen.style.left = left + "px";
-    document.getElementById('restart').appendChild(restartLink);
+    
+    scene.target = statScreen;
+    scene.execute();
 }
 
 function clearScreen(code) {

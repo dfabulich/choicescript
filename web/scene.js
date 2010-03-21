@@ -55,6 +55,9 @@ function Scene(name, stats, nav, debugMode) {
 
     // for easy reachability from the window
     this.stats.scene = this;
+    
+    // where should we print text?
+    this.target = null;
 }
 
 Scene.prototype.reexecute = function reexecute() {
@@ -93,7 +96,7 @@ Scene.prototype.printLoop = function printLoop() {
             this.prevLineEmpty = false;
             this.screenEmpty = false;
             this.printLine(trim(line));
-            printx(' ');
+            printx(' ', this.target);
         }
     }
     if (!this.finished) {
@@ -119,13 +122,14 @@ Scene.prototype.printLine = function printLine(line, parent) {
     if (unreplaced) {
       throw new Error(this.lineMsg() + "invalid ${} variable substitution at letter " + unreplaced);
     }
+    if (!parent) parent = this.target;
     printx(line, parent);
 }
 
 Scene.prototype.paragraph = function paragraph() {
     if (!this.prevLineEmpty) {
-        println("");
-        println("");
+        println("", this.target);
+        println("", this.target);
     }
     this.prevLineEmpty = true;
 }
@@ -746,7 +750,7 @@ Scene.prototype.page_break = function page_break(buttonName) {
 // *line_break
 // single line break in the middle of a paragraph
 Scene.prototype.line_break = function line_break() {
-    println("");
+    println("", this.target);
 }
 
 // how many spaces is this line indented?
@@ -810,7 +814,7 @@ Scene.prototype.print = function scene_print(expr) {
     this.prevLineEmpty = false;
     this.screenEmpty = false;
     this.printLine(value);
-    printx(' ');
+    printx(' ', this.target);
 }
 
 // *input_text var
@@ -995,7 +999,7 @@ Scene.prototype.ending = function ending() {
     var startupScene = self.nav.getStartupScene();
     this.paragraph();
     this.finished = true;
-    println("TODO Here, in the normal game, we'd include some Sharing links: post to Facebook, Twitter, Stumbleupon, etc.");
+    println("TODO Here, in the normal game, we'd include some Sharing links: post to Facebook, Twitter, Stumbleupon, etc.", this.target);
     printButton("Play Again", main, false, 
       function() { 
         safeCall(self, function() {
