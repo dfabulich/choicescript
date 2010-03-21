@@ -47,6 +47,7 @@ function showStats() {
     statScreen.setAttribute("id", "stats");
     
     var scene = new Scene("choicescript_stats", window.stats, this.nav);
+    // TODO ban *choice/*page_break/etc. in stats screen
     scene.finish = function() {
       this.finished = true;
       this.paragraph();

@@ -16,7 +16,7 @@ body {
     border-style: solid;
     border-width: 3px;
     border-color: white;
-    width: 30em;
+    width: 20em;
 }
 
 #stats button {
@@ -51,7 +51,7 @@ table {
     color: white;
 }
 .rightStatBar {
-    width: 15em;
+    width: 12em;
     background-color: #8888FF;
     height: 2em;
 }

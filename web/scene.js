@@ -1014,7 +1014,7 @@ Scene.prototype.ending = function ending() {
 Scene.prototype.stat_chart = function stat_chart() {
   var rows = this.parseStatChart();
   var textBuilder = ["<table class='statChart'>"];
-  var barWidth = 15; /*em*/
+  var barWidth = 12; /*em*/
   // BEWARE: Can't use DOM to build this table due to IE bugs
   for (var i = 0; i < rows.length; i++) {
     var type = rows[i].type;
@@ -1086,8 +1086,12 @@ Scene.prototype.parseStatChart = function parseStatChart() {
         //       Precision and aerial maneuverability
         //     
         
+        // TODO Alternate title
         // TODO opposed_pair
         // TODO definitions
+        // TODO variable substitutions
+        // TODO *if/*else
+        // TODO *line_break
         line = trim(line);
         var result = /^(text|percent)\s+(.*)/.exec(line);
         if (!result) throw new Error(this.lineMsg() + "invalid line; this line should start with 'percent' or 'text'");
