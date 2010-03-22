@@ -1033,7 +1033,7 @@ Scene.prototype.stat_chart = function stat_chart() {
     } else if (type == "percent") {
       var statWidth = barWidth / 100 * value;
       textBuilder.push("<div class='rightStatBar'><div style='width: "+
-        statWidth+"em;' class='leftStatBar'>&nbsp;</div></div>");
+        statWidth+"em;' class='leftStatBar'>&nbsp;"+value+"</div></div>");
     } else {
       throw new Error("Bug! Parser accepted an unknown row type: " + type);
     }
