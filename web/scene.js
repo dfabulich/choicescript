@@ -1003,6 +1003,7 @@ Scene.prototype.ending = function ending() {
     printButton("Play Again", main, false, 
       function() { 
         safeCall(self, function() {
+            this.reset();
             var scene = new Scene(startupScene, self.stats, self.nav, self.debugMode);
             scene.resetPage();
         });
