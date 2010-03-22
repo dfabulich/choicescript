@@ -1005,7 +1005,7 @@ doh.registerGroup("choicescript.tests.VariableInterpolation", [
 );
 
 doh.registerGroup("choicescript.tests.ParseStatChart", [
-        function parse() {
+        function noLabels() {
             var text = "*stat_chart\n"
               + "  percent foo\n"
               + "  percent bar\n"
@@ -1015,10 +1015,27 @@ doh.registerGroup("choicescript.tests.ParseStatChart", [
             scene.loadLines(text);
             var rows = scene.parseStatChart();
             var expected = '['
-              +'{"type":"percent","variable":"foo"},'
-              +'{"type":"percent","variable":"bar"},'
-              +'{"type":"text","variable":"baz"},'
-              +'{"type":"text","variable":"quz"}'
+              +'{"type":"percent","label":"foo","variable":"foo"},'
+              +'{"type":"percent","label":"bar","variable":"bar"},'
+              +'{"type":"text","label":"baz","variable":"baz"},'
+              +'{"type":"text","label":"quz","variable":"quz"}'
+              +']';
+            doh.is(expected, toJson(rows), "parsed");
+        }
+        ,function labels() {
+            var text = "*stat_chart\n"
+              + "  percent foo One\n"
+              + "  percent bar Two Three\n"
+              + "  text baz Four  Five\n"
+              + "  text quz Six Seven!\n";
+            var scene = new Scene("test", {foo:50, bar:50, baz: "blah", quz:"urk"});
+            scene.loadLines(text);
+            var rows = scene.parseStatChart();
+            var expected = '['
+              +'{"type":"percent","label":"One","variable":"foo"},'
+              +'{"type":"percent","label":"Two Three","variable":"bar"},'
+              +'{"type":"text","label":"Four  Five","variable":"baz"},'
+              +'{"type":"text","label":"Six Seven!","variable":"quz"}'
               +']';
             doh.is(expected, toJson(rows), "parsed");
         }

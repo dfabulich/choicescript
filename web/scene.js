@@ -1017,18 +1017,20 @@ Scene.prototype.stat_chart = function stat_chart() {
   var barWidth = 12; /*em*/
   // BEWARE: Can't use DOM to build this table due to IE bugs
   for (var i = 0; i < rows.length; i++) {
-    var type = rows[i].type;
-    var variable = rows[i].variable;
+    var row = rows[i];
+    var type = row.type;
+    var variable = row.variable;
     var value = this.getVar(variable);
+    var label = row.label;
     
     textBuilder.push("<tr><td class='leftStatName'>");
-    textBuilder.push(variable);
+    textBuilder.push(label);
     textBuilder.push("</td><td>");
     
     if (type == "text") {
       // TODO security problem
       textBuilder.push(value);
-    } else if (type = "percent") {
+    } else if (type == "percent") {
       var statWidth = barWidth / 100 * value;
       textBuilder.push("<div class='rightStatBar'><div style='width: "+
         statWidth+"em;' class='leftStatBar'>&nbsp;</div></div>");
@@ -1037,7 +1039,9 @@ Scene.prototype.stat_chart = function stat_chart() {
     }
     textBuilder.push("</td></tr>");
   }
-  this.target.innerHTML += textBuilder.join("");
+  var target = this.target;
+  if (!target) target = document.getElementById('text');
+  target.innerHTML += textBuilder.join("");
 }
 
 Scene.prototype.parseStatChart = function parseStatChart() {
@@ -1062,31 +1066,30 @@ Scene.prototype.parseStatChart = function parseStatChart() {
         }
         if (indent <= startIndent) {
             // it's over!
+            this.lineNum--;
+            this.rollbackLineCoverage();
             return rows;
         }
-        if (indent < this.indent) {
-            // error: indentation has decreased, but not all the way back
-            // Example:
-            // *choice
-            //     red
-            //   blue
+        if (indent != this.indent) {
+            // all chart rows are supposed to be at the same indentation level
+            // anything at the wrong indentation level might be a mis-indented title/definition
+            // or just a typo
             throw new Error(this.lineMsg() + "invalid indent, expected "+this.indent+", was " + indent);
         }
         
         // 
         // *stat_chart
-        //   text wounds
-        //     Wounds
-        //   percent Infamy
-        //     Infamy
-        //   opposed_pair brutality finesse
-        //     Brutality
+        //   text wounds Wounds
+        //     Definition
+        //   percent Infamy Infamy
+        //     Definition
+        //   opposed_pair
+        //     brutality Brutality
         //       Strength and cruelty
-        //     Finesse
+        //     finesse Finesse
         //       Precision and aerial maneuverability
         //     
         
-        // TODO Alternate title
         // TODO opposed_pair
         // TODO definitions
         // TODO variable substitutions
@@ -1097,8 +1100,19 @@ Scene.prototype.parseStatChart = function parseStatChart() {
         if (!result) throw new Error(this.lineMsg() + "invalid line; this line should start with 'percent' or 'text'");
         var type = result[1].toLowerCase();
         var data = trim(result[2]);
-        this.getVar(data);
-        rows.push({type: type, variable: data});
+        var variable, label;
+        if (!/ /.test(data)) {
+          variable = data;
+          label = data;
+        } else {
+          result = /^(\S+) (.*)/.exec(data);
+          if (!result) throw new Error(this.lineMsg() + "Bug! can't find a space when a space was found");
+          variable = result[1];
+          label = result[2];
+        }
+          
+        this.getVar(variable);
+        rows.push({type: type, variable: variable, label: label});
     }
     return rows;
 }
