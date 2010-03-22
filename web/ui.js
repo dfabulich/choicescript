@@ -210,6 +210,7 @@ window.onload=function() {
       s.setAttribute("src", "../file.js");
       document.getElementsByTagName("head")[0].appendChild(s);
     }
+    window.nav.setStartingStatsClone(window.stats);
     stats.sceneName = window.nav.getStartupScene();
     var map = parseQueryString(window.location.search);
         

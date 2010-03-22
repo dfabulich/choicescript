@@ -41,3 +41,19 @@ SceneNavigator.prototype.nextSceneName = function nextSceneName(currentSceneName
 SceneNavigator.prototype.getStartupScene = function getStartupScene() {
     return this._startupScene;
 }
+
+SceneNavigator.prototype.setStartingStatsClone = function setStartingStatsClone(stats) {
+  this.startingStats = {};
+  for (var i in stats) {
+    this.startingStats[i] = stats[i];
+  }
+}
+
+SceneNavigator.prototype.resetStats = function resetStats(stats) {
+  for (var i in stats) {
+    delete stats[i];
+  }
+  for (var i in this.startingStats) {
+    stats[i] = this.startingStats[i];
+  }
+} 

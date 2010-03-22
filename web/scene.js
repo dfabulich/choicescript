@@ -396,10 +396,7 @@ Scene.prototype.finish = function finish(buttonName) {
 // *reset
 // clear all stats
 Scene.prototype.reset = function reset() {
-    for (var stat in this.stats) {
-        // declare exclusion?
-        this.stats[stat] = null;
-    }
+    this.nav.resetStats(this.stats);
     this.stats.scene = this;
 }
 
