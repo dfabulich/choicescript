@@ -189,6 +189,10 @@ function autotester(sceneText) {
     this.oldIf("true");
   }
   
+  Scene.prototype.stat_chart = function() {
+    this.parseStatChart();
+  }
+  
   //Scene.prototype.choice = function() { this.finished = true;}
   
   var sceneName = "test";
