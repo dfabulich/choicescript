@@ -28,14 +28,12 @@ body {
 }
 
 table {
-    color:white;
     margin-bottom: 1em;
 }
 
 .leftStatName {
     font-weight: bold;
     text-align: right;
-    color: white;
 }
 .definition {
     font-weight: normal;
@@ -48,7 +46,6 @@ table {
 .rightStatName {
     text-align: left;
     font-weight: bold;
-    color: white;
 }
 .rightStatBar {
     width: 12em;
