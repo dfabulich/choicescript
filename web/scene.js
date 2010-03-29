@@ -405,6 +405,8 @@ Scene.prototype.reset = function reset() {
 Scene.prototype.goto_scene = function gotoScene(sceneName) {
     this.finished = true;
     var scene = new Scene(sceneName, this.stats, this.nav, this.debugMode);
+    scene.screenEmpty = this.screenEmpty;
+    scene.prevLineEmpty = this.prevLineEmpty;
     scene.execute();
 }
 
