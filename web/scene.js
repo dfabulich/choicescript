@@ -991,12 +991,34 @@ Scene.prototype.setref = function setref(line) {
 
 Scene.prototype.ending = function ending() {
     var self = this;
-    // TODO Get this from the Scene Navigator
-    // TODO Get the share URLs from metadata?
     var startupScene = self.nav.getStartupScene();
     this.paragraph();
     this.finished = true;
-    println("TODO Here, in the normal game, we'd include some Sharing links: post to Facebook, Twitter, Stumbleupon, etc.", this.target);
+    var msgDiv = document.createElement("div");
+    var mobileMesg = "";
+    if (isMobile && isFile) {
+      if (/Android/.test(navigator.userAgent)) {
+        //INSERT proper Android link
+        //mobileMesg = "  <li><a href='market://details?id=com.choiceofgames.blah'>Rate this app</a> in the Android Market</li>\n";
+      } else if (/iPhone/.test(navigator.userAgent)) {
+        //INSERT proper iTunes link
+        //mobileMesg = "  <li><a href='http://itunes.apple.com/us/app/choice-of-the-dragon/id348940932?mt=8'>Rate this app</a> in the iPhone App Store</li>\n";
+      }
+    }
+    var shareLinkText = "";
+    var headerShareTag = document.getElementById("share");
+    if (headerShareTag) {
+      var spans = headerShareTag.getElementsByTagName("span");
+      for (var i = 1; i < spans.length; i++) {
+        shareLinkText += "<li>" + spans[i].innerHTML;
+      }
+    }
+      
+    msgDiv.innerHTML = "<ul id='sharelist'>\n"+
+      mobileMesg+
+      shareLinkText+
+      "</ul>\n";
+    main.appendChild(msgDiv);
     printButton("Play Again", main, false, 
       function() { 
         safeCall(self, function() {
@@ -1008,7 +1030,6 @@ Scene.prototype.ending = function ending() {
     );
     if (self.debugMode) println(toJson(this.stats));
 }
-
 Scene.prototype.stat_chart = function stat_chart() {
   var rows = this.parseStatChart();
   var textBuilder = ["<table class='statChart'>"];
