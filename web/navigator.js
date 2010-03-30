@@ -56,4 +56,13 @@ SceneNavigator.prototype.resetStats = function resetStats(stats) {
   for (var i in this.startingStats) {
     stats[i] = this.startingStats[i];
   }
-} 
+}
+
+SceneNavigator.prototype.repairStats = function repairStats(stats) {
+  for (var i in this.startingStats) {
+    if (this.startingStats[i] == null) continue;
+    if (typeof(stats[i]) === "undefined" || stats[i] === null) {
+      stats[i] = this.startingStats[i];
+    }
+  }
+}

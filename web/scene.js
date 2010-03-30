@@ -173,6 +173,18 @@ Scene.prototype.loadScene = function loadScene(url) {
 }
 
 Scene.prototype.loadLines = function loadLines(str) {
+    var crc = crc32(str);
+    if (this.temps.choice_crc) {
+      if (this.temps.choice_crc != crc) {
+        // The scene has changed; restart the scene
+        this.temps = {choice_crc: crc};
+        this.lineNum = 0;
+        this.indent = 0;
+      }
+    } else {
+      this.temps.choice_crc = crc;
+    }
+
     this.lines = str.split('\n');
     this.parseLabels();
     this.loaded = true;
@@ -185,6 +197,7 @@ Scene.prototype.execute = function execute() {
         this.loadScene();
         return;
     }
+    this.nav.repairStats(stats);
     doneLoading();
     this.printLoop();
 }

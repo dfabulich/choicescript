@@ -87,7 +87,7 @@ function autotester(sceneText) {
   Scene.prototype.clone = function clone() {
     this.stats.scene = null;
     var clonedStats = dojoClone(this.stats);
-    var scene = new Scene(this.name, clonedStats);
+    var scene = new Scene(this.name, clonedStats, this.nav);
     scene.lines = this.lines;
     scene.labels = this.labels;
     scene.temps = dojoClone(this.temps);
@@ -202,9 +202,13 @@ function autotester(sceneText) {
     StartingStats.prototype[i] = stats[i];
   }
   
+  var nav = {
+    repairStats: function() {}
+  }
+  
   var startingStats = new StartingStats();
   
-  var scene = new Scene(sceneName, startingStats);
+  var scene = new Scene(sceneName, startingStats, nav);
   var originalScene = scene;
   scene.testPath = [];
   scene.loadLines(sceneText);
