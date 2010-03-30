@@ -198,6 +198,7 @@ window.onerror=function(msg, file, line) {
         if (line) body += "\nLine: " + line;
         body += "\nUser Agent: " + navigator.userAgent;
         body += "\nLoad time: " + window.loadTime;
+        if (window.Persist) body += "\nPersist: " + window.Persist.type;
         body += "\n\n" + statMsg + "\n\nversion=" + window.version;
         window.location.href=("mailto:support+external@choiceofgames.com?subject=Error Report&body=" + encodeURIComponent(body));
     }
