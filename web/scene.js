@@ -118,7 +118,7 @@ Scene.prototype.printLine = function printLine(line, parent) {
       return value;
     });
     // double-check for unreplaced/invalid ${} expressions
-    var unreplaced = line.search(/\$\{/) + 1;
+    var unreplaced = line.search(/\$(\!?)\{/) + 1;
     if (unreplaced) {
       throw new Error(this.lineMsg() + "invalid ${} variable substitution at letter " + unreplaced);
     }
