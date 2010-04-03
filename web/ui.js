@@ -45,8 +45,10 @@ function showStats() {
     
     
     statScreen.setAttribute("id", "stats");
+    var currentScene = window.stats.scene;
     
     var scene = new Scene("choicescript_stats", window.stats, this.nav);
+    scene.save = function() {}; // Don't save state in stats screen, issue #70
     // TODO ban *choice/*page_break/etc. in stats screen
     scene.finish = function() {
       this.finished = true;
@@ -72,6 +74,7 @@ function showStats() {
       button.onclick = function() {
           document.body.removeChild(greyStuff);
           document.body.removeChild(statScreen);
+          window.stats.scene = currentScene;
       }
       div.appendChild(button);    
     }
