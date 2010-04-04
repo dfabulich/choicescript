@@ -142,6 +142,7 @@ return r;},version:'0.2.1',enabled:false};me.enabled=alive.call(me);return me;}(
      */ 
     search_order: [
       // TODO: air
+      'androidStorage',
       'whatwg_db', 
       'localstorage',
       'globalstorage', 
@@ -541,6 +542,67 @@ return r;},version:'0.2.1',enabled:false};me.enabled=alive.call(me);return me;}(
 
         init: function() {
           this.store = localStorage;
+        },
+
+        get: function(key, fn, scope) {
+          // expand key
+          key = this.key(key);
+
+          if (fn)
+            fn.call(scope || this, true, this.store.getItem(key));
+        },
+
+        set: function(key, val, fn, scope) {
+          // expand key
+          key = this.key(key);
+
+          // set value
+          this.store.setItem(key, val);
+
+          if (fn)
+            fn.call(scope || this, true, val);
+        },
+
+        remove: function(key, fn, scope) {
+          var val;
+
+          // expand key
+          key = this.key(key);
+
+          // get value
+          val = this.getItem(key);
+
+          // delete value
+          this.store.removeItem(key);
+
+          if (fn)
+            fn.call(scope || this, (val !== null), val);
+        } 
+      }
+    }, 
+    
+    // DGF Fake local storage
+    androidStorage: {
+      // (unknown?)
+      // ie has the remainingSpace property, see:
+      // http://msdn.microsoft.com/en-us/library/cc197016(VS.85).aspx
+      size: -1,
+
+      test: function() {
+        try {
+          return window.androidStorage ? true : false;
+        } catch (e) {
+          return false;
+        }
+      },
+
+      methods: {
+        key: function(key) {
+          return esc(this.name) + esc(key);
+        },
+
+        init: function() {
+          this.store = androidStorage;
         },
 
         get: function(key, fn, scope) {
