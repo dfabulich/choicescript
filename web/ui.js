@@ -223,7 +223,7 @@ window.onload=function() {
       restoreGame({version:window.version, stats:stats, temps:{}, lineNum: 0, indent: 0, debug: map.debug});
       return;
     } else {
-      loadAndRestoreGame();
+      safeCall(null, loadAndRestoreGame);
     }
     if (window.Touch && window.isWeb) {
       // INSERT ADMOB AD

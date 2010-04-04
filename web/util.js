@@ -112,12 +112,12 @@ function initStore() {
 function loadAndRestoreGame() {
   if (!initStore()) return restoreGame();
   window.store.get("state", function(ok, value) {
-    var state = null;
-    if (ok && value) {
-      state = eval("state="+value);
-      //alert ("Error loading game state");
-    }
-    restoreGame(state);
+    safeCall(null, function() {var state = null;
+      if (ok && value) {
+        state = eval("state="+value);
+      }
+      restoreGame(state);
+    });
   });
 }
 
