@@ -129,6 +129,10 @@ h1 {
     font-size: small;
   }
   
+  #share span:first-child {
+    display: block;
+  }
+  
   #stats {
     font-size: small;
   }
