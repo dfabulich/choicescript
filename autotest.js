@@ -40,7 +40,19 @@ function debughelp() {
     debugger;
 }
 
-var sceneName = arguments[0];
-var sceneText = slurpFile("web/"+gameName+"/scenes/"+sceneName+".txt");
-window = {console: {log: function(msg) { print(msg); } }};
-autotester(sceneText);
+var list = arguments;
+if (!list.length || (list.length == 1 && !list[0])) {
+  list = [];
+  var name = nav.getStartupScene();
+  while (name) {
+    list.push(name);
+    name = nav.nextSceneName(name);
+  }
+}
+
+for (var i = 0; i < list.length; i++) {
+  print(list[i]);
+  var sceneText = slurpFile("web/"+gameName+"/scenes/"+list[i]+".txt");
+  window = {console: {log: function(msg) { print(msg); } }};
+  autotester(sceneText);
+}

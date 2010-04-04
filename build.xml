@@ -49,7 +49,7 @@ either express or implied.
   </target>
   
   <target name="autotest" depends="rhino">
-    <fail unless="vig">You must specify a vignette, e.g. ant autotest -Dvig=startup</fail>
+    <property name="vig" value="" />
     <rhino>
       <arg value="autotest.js"/>
       <arg value="${vig}" />
