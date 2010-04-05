@@ -82,6 +82,11 @@ label{
     border-bottom-right-radius:8px;
     border-bottom-left-radius:8px;
 }
+.onlyChild{
+    border-width:1px;
+    -webkit-border-radius:8px;
+    -moz-border-radius:8px;
+}
 .next {
     display:block;
     width:100%;

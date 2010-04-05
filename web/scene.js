@@ -717,7 +717,11 @@ Scene.prototype.printRadioButton = function printRadioButton(div, name, line, lo
     var label = document.createElement("label");
     label.setAttribute("for", id);
     if (localChoiceNumber == 0) {
-      setClass(label, "firstChild");
+      if (isLast) {
+        setClass(label, "onlyChild");
+      } else {
+        setClass(label, "firstChild");
+      }
     } else if (isLast) {
       setClass(label, "lastChild");
     }
