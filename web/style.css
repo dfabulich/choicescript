@@ -98,6 +98,10 @@ h1 {
   font-size: x-large;
 }
 
+h2 {
+  font-size: large;
+}
+
 #footer {
   margin:10px 0px 75px 0px;
 }
