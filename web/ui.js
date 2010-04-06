@@ -209,10 +209,16 @@ window.onerror=function(msg, file, line) {
 
 window.onload=function() {
     window.main = document.getElementById("main");
+    var head = document.getElementsByTagName("head")[0];
     if (window.isFile) {
       var s = document.createElement('script');
       s.setAttribute("src", "../file.js");
-      document.getElementsByTagName("head")[0].appendChild(s);
+      head.appendChild(s);
+    }
+    if (window.isWeb) {
+      var webOnly = document.createElement('style');
+      webOnly.innerHTML = ".webOnly { display: block !important; }";
+      head.appendChild(webOnly);
     }
     window.nav.setStartingStatsClone(window.stats);
     stats.sceneName = window.nav.getStartupScene();
