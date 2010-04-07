@@ -142,17 +142,50 @@ function setClass(element, classString) {
 }
   
 function printFooter() {
-  var footer = document.getElementById('footer');
-  var body = document.body;
-  if (footer) {
-    footer.parentNode.removeChild(footer);
-    body.appendChild(footer);
-  } else {
-    footer = document.createElement("div");
-    footer.setAttribute("id", "footer");
-    footer.innerHTML=""; // INSERT footer links here
-    body.appendChild(footer);
+  // var footer = document.getElementById('footer');
+  // We could put anything we want in the footer here, but perhaps we should avoid it.
+}
+
+function printShareLinks() {
+  var msgDiv = document.createElement("div");
+  var mobileMesg = "";
+  if (isMobile && isFile) {
+    if (/Android/.test(navigator.userAgent)) {
+      var androidLink = document.getElementById('androidLink');
+      var androidUrl;
+      if (androidLink) {
+        androidUrl = androidLink.href;
+        if (androidUrl) {
+          mobileMesg = "  <li><a href='"+androidUrl+"'>Rate this app</a> in the Android Market</li>\n";
+        }
+      }
+    } else if (/iPhone/.test(navigator.userAgent)) {
+      var iphoneLink = document.getElementById('iphoneLink');
+      var iphoneUrl;
+      if (iphoneLink) {
+        iphoneUrl = iphoneLink.href;
+        if (iphoneUrl) {
+          mobileMesg = "  <li><a href='"+iphoneUrl+"'>Rate this app</a> in the iTunes App Store</li>\n";
+        }
+      }
+    }
   }
+  var shareLinkText = "";
+  var headerShareTag = document.getElementById("share");
+  if (headerShareTag) {
+    var spans = headerShareTag.getElementsByTagName("span");
+    for (var i = 1; i < spans.length; i++) {
+      shareLinkText += "<li>" + spans[i].innerHTML;
+    }
+  } else {
+    shareLinkText = "<li>TODO Share Link 1, e.g. StumbleUpon<li>TODO Share Link 2, e.g. Facebook<li>TODO Share Link 3, e.g. Twitter"
+  }
+    
+  msgDiv.innerHTML = "<ul id='sharelist'>\n"+
+    mobileMesg+
+    shareLinkText+
+    "</ul>\n";
+  main.appendChild(msgDiv);
 }
 
 function printButton(name, parent, isSubmit, code) {

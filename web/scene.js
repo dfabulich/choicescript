@@ -1013,31 +1013,7 @@ Scene.prototype.ending = function ending() {
     var startupScene = self.nav.getStartupScene();
     this.paragraph();
     this.finished = true;
-    var msgDiv = document.createElement("div");
-    var mobileMesg = "";
-    if (isMobile && isFile) {
-      if (/Android/.test(navigator.userAgent)) {
-        //INSERT proper Android link
-        //mobileMesg = "  <li><a href='market://details?id=com.choiceofgames.blah'>Rate this app</a> in the Android Market</li>\n";
-      } else if (/iPhone/.test(navigator.userAgent)) {
-        //INSERT proper iTunes link
-        //mobileMesg = "  <li><a href='http://itunes.apple.com/us/app/choice-of-the-dragon/id348940932?mt=8'>Rate this app</a> in the iPhone App Store</li>\n";
-      }
-    }
-    var shareLinkText = "";
-    var headerShareTag = document.getElementById("share");
-    if (headerShareTag) {
-      var spans = headerShareTag.getElementsByTagName("span");
-      for (var i = 1; i < spans.length; i++) {
-        shareLinkText += "<li>" + spans[i].innerHTML;
-      }
-    }
-      
-    msgDiv.innerHTML = "<ul id='sharelist'>\n"+
-      mobileMesg+
-      shareLinkText+
-      "</ul>\n";
-    main.appendChild(msgDiv);
+    printShareLinks();
     printButton("Play Again", main, false, 
       function() { 
         safeCall(self, function() {
