@@ -50,9 +50,16 @@ if (!list.length || (list.length == 1 && !list[0])) {
   }
 }
 
+var statsFile = new java.io.File("web/"+gameName+"/scenes/choicescript_stats.txt");
+if (statsFile.exists()) {
+  list.push("choicescript_stats");
+}
+
 for (var i = 0; i < list.length; i++) {
   print(list[i]);
+  // TODO check file name capitalization here
   var sceneText = slurpFile("web/"+gameName+"/scenes/"+list[i]+".txt");
   window = {console: {log: function(msg) { print(msg); } }};
   autotester(sceneText);
 }
+
