@@ -106,8 +106,13 @@ h2 {
   margin:10px 0px 75px 0px;
 }
 
-#footer a img {
+#mobileLinks a img {
   border: 0;
+}
+
+.mobileBadges {
+  float: left;
+  margin: 16px 0 16px 0;
 }
 
 .spacedLink {

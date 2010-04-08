@@ -165,7 +165,7 @@ function printShareLinks() {
       if (iphoneLink) {
         iphoneUrl = iphoneLink.href;
         if (iphoneUrl) {
-          mobileMesg = "  <li><a href='"+iphoneUrl+"'>Rate this app</a> in the iTunes App Store</li>\n";
+          mobileMesg = "  <li><a href='"+iphoneUrl+"'>Rate this app</a> in the App Store</li>\n";
         }
       }
     }
@@ -248,11 +248,6 @@ window.onload=function() {
       s.setAttribute("src", "../file.js");
       head.appendChild(s);
     }
-    if (window.isWeb) {
-      var webOnly = document.createElement('style');
-      webOnly.innerHTML = ".webOnly { display: block !important; }";
-      head.appendChild(webOnly);
-    }
     window.nav.setStartingStatsClone(window.stats);
     stats.sceneName = window.nav.getStartupScene();
     var map = parseQueryString(window.location.search);
@@ -268,3 +263,7 @@ window.onload=function() {
       // INSERT ADMOB AD
     }
 };
+
+if (window.isWeb) {
+  document.write("<style>.webOnly { display: block !important; }</style>");
+}
