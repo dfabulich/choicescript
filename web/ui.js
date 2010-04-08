@@ -219,7 +219,7 @@ window.loadTime = new Date().getTime();
 window.onerror=function(msg, file, line) {
     if (window.Event && msg instanceof window.Event && /WebKit/.test(navigator.userAgent)) {
       return; // ignore "adsense offline" error
-    } else if (/(Error loading script|Script error)/.test(msg) && /(show_ads|google-analytics)/.test(file)) {
+    } else if (/(Error loading script|Script error)/.test(msg) && /(show_ads|google-analytics|version\.js)/.test(file)) {
       return; // ignore "adsense offline" error
     }
     alert(msg);
