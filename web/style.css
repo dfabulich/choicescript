@@ -92,6 +92,7 @@ label{
     width:100%;
     font-size:25px;
     font-weight:bolder;
+    margin-bottom: 16px; /* reset button margin */
 }
 
 h1 {
@@ -112,7 +113,7 @@ h2 {
 
 .mobileBadges {
   float: left;
-  margin: 16px 0 16px 0;
+  margin: 0;
 }
 
 .spacedLink {
