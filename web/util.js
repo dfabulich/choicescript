@@ -102,10 +102,10 @@ function clearCookie() {
 }
 
 function initStore() {
-  return false; // TODO turn persistence back on; it's confusing for first-time users
+  if (!window.storeName) return false;
   if (window.store) return window.store;
   try {
-    window.store = new Persist.Store('MyGame'); // INSERT real store name
+    window.store = new Persist.Store(window.storeName);
   } catch (e) {}
   return window.store;
 }
