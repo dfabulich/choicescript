@@ -71,6 +71,7 @@ for (var i = 0; i < list.length; i++) {
 
 for (var i = 0; i < uncoveredScenes.length; i++) {
   var uncoveredScene = uncoveredScenes[i];
+  uncoveredScene.lines.push("");
   print(uncoveredScene.lines.join(" UNCOVERED " + uncoveredScene.name + "\n"));
 }
 
