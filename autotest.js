@@ -55,11 +55,23 @@ if (statsFile.exists()) {
   list.push("choicescript_stats");
 }
 
+var uncoveredScenes = [];
+var uncovered;
+
 for (var i = 0; i < list.length; i++) {
   print(list[i]);
   // TODO check file name capitalization here
   var sceneText = slurpFile("web/"+gameName+"/scenes/"+list[i]+".txt");
   window = {console: {log: function(msg) { print(msg); } }};
-  autotester(sceneText);
+  uncovered = autotester(sceneText);
+  if (uncovered) {
+    uncoveredScenes.push({name:list[i], lines:uncovered});
+  }
 }
+
+for (var i = 0; i < uncoveredScenes.length; i++) {
+  var uncoveredScene = uncoveredScenes[i];
+  print(uncoveredScene.lines.join(" UNCOVERED " + uncoveredScene.name + "\n"));
+}
+
 

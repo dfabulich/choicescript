@@ -235,5 +235,7 @@ function autotester(sceneText) {
   if (uncovered.length) {
       log("UNCOVERED:");
       log(uncovered.join('\n'));
+      return uncovered;
   }
+  return false;
 }
