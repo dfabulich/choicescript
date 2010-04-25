@@ -160,14 +160,7 @@ h2 {
     display: none;
   }
 
-  iframe {
-  /* Force AdMob to position statically
-    This fixes a bug on Android where the
-    frame scrolls wide despite explicit restrictions */
-  position: static !important;
-  }
-  #admob_ad {
-    height: 48px;
+  #advertisement {
     margin: -8px;
   }
   
