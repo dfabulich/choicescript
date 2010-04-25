@@ -48,11 +48,10 @@ if (!list.length || (list.length == 1 && !list[0])) {
     list.push(name);
     name = nav.nextSceneName(name);
   }
-}
-
-var statsFile = new java.io.File("web/"+gameName+"/scenes/choicescript_stats.txt");
-if (statsFile.exists()) {
-  list.push("choicescript_stats");
+  var statsFile = new java.io.File("web/"+gameName+"/scenes/choicescript_stats.txt");
+  if (statsFile.exists()) {
+    list.push("choicescript_stats");
+  }
 }
 
 var uncoveredScenes = [];
