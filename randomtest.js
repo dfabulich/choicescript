@@ -81,6 +81,35 @@ Scene.prototype.loadLines = function cached_loadLines(str) {
   }
 }
 
+cachedNonBlankLines = {};
+Scene.prototype.oldNextNonBlankLine = Scene.prototype.nextNonBlankLine;
+
+Scene.prototype.nextNonBlankLine = function cached_nextNonBlankLine(includingThisOne) {
+  var key = this.name+this.lineNum +""+ !!includingThisOne;
+  var cached = cachedNonBlankLines[key];
+  if (cached) {
+    return cached;
+  }
+  cached = this.oldNextNonBlankLine(includingThisOne);
+  cachedNonBlankLines[key] = cached;
+  return cached;
+}
+
+cachedSkippedTrueBranches = {};
+Scene.prototype.oldSkipTrueBranch = Scene.prototype.skipTrueBranch;
+Scene.prototype.skipTrueBranch = function cached_skipTrueBranch() {
+  var key = this.name+this.lineNum;
+  var cached = cachedSkippedTrueBranches[key];
+  if (cached) {
+    this.lineNum = cached.lineNum;
+    this.indent = cached.indent;
+    return;
+  }
+  this.oldSkipTrueBranch();
+  cached = {lineNum:this.lineNum, indent:this.indent};
+  cachedSkippedTrueBranches[key] = cached;
+}
+
 Scene.prototype.oldParseOptions = Scene.prototype.parseOptions;
 parsedOptions = {};
 Scene.prototype.parseOptions = function cached_parseOptions(indent, groups, expectedSuboptions) {
