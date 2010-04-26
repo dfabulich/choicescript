@@ -21,7 +21,10 @@ load("web/scene.js");
 load("web/navigator.js");
 load("web/util.js");
 load("headless.js");
+load("seedrandom.js");
 load("web/"+gameName+"/"+"mygame.js");
+
+Math.seedrandom(1);
 
 function log(msg) {
   print(msg);
@@ -33,14 +36,18 @@ printx = println = function printx(msg, parent) {
 }
 
 
-function slurpFile(name) {
+function slurpFileLines(name) {
     var lines = [];
     var reader = new java.io.BufferedReader(new java.io.FileReader(name));
     var line;
     while (line = reader.readLine()) {
          lines.push(line);
     }
-    return lines.join('\n');
+    return lines;
+}
+
+function slurpFile(name) {
+  return slurpFileLines(name).join('\n');
 }
 
 function debughelp() {
@@ -54,6 +61,7 @@ Scene.prototype.stat_chart = noop;
 crc32 = noop;
 
 Scene.prototype.ending = function () {
+  this.reset();
   this.finished = true;
 }
 
@@ -63,6 +71,7 @@ Scene.prototype.input_text = function(variable) {
 
 Scene.prototype.finish = function random_finish() {
     var nextSceneName = this.nav && nav.nextSceneName(this.name);
+    this.finished = true;
     // if there are no more scenes, then just halt
     if (!nextSceneName) {
         return;
@@ -70,6 +79,7 @@ Scene.prototype.finish = function random_finish() {
     var scene = new Scene(nextSceneName, this.stats, this.nav, this.debugMode);
     scene.resetPage();
 }
+    
 
 Scene.prototype.choice = function choice(data, fakeChoice) {
     var groups = ["choice"];
@@ -83,9 +93,12 @@ Scene.prototype.choice = function choice(data, fakeChoice) {
 
     var item = flattenedOptions[index];
     if (fakeChoice) scene.temps.fakeChoiceEnd = this.lineNum;
-    scene.getFormValue = function(name) {return item[name];}
+    this.getFormValue = function(name) {return item[name];}
 
-    log((this.lineNum+1)+'#'+(index+1)+' ('+item.ultimateOption.line+')');
+    log(this.name + " " + (this.lineNum+1)+'#'+(index+1)+' ('+item.ultimateOption.line+')');
+    var self = this;
+    timeout = function() {self.resolveChoice(options, groups);}
+    this.finished = true;
 
     function flattenOptions(list, options, flattenedOption) {
       if (!flattenedOption) flattenedOption = {};
@@ -144,6 +157,52 @@ Scene.prototype.choice = function choice(data, fakeChoice) {
   }
     
 
-var scene = new Scene(nav.getStartupScene(), stats, nav, false);
-scene.execute();
+    var coverage = {};
+var sceneNames = [];
 
+  Scene.prototype.rollbackLineCoverage = function(lineNum) {
+    if (!lineNum) lineNum = this.lineNum;
+    coverage[this.name][lineNum]--;
+  }
+  
+  try {
+    Scene.prototype.__defineGetter__("lineNum", function() { return this._lineNum; });
+    Scene.prototype.__defineSetter__("lineNum", function(val) {
+	var sceneCoverage;
+	if (!coverage[this.name]) {
+	  sceneNames.push(this.name);
+	  coverage[this.name] = [];
+	}
+	sceneCoverage = coverage[this.name];
+	
+        if (sceneCoverage[val]) {
+            sceneCoverage[val]++;
+        } else {
+            sceneCoverage[val] = 1;
+        }
+        this._lineNum = val;
+    });
+  } catch (e) {
+    // IE doesn't support getters/setters; no coverage for you!
+  }
+
+var iterations = 2
+for (i = 0; i < iterations; i++) {
+  log("*****" + i);
+  var scene = new Scene(nav.getStartupScene(), stats, nav, false)
+  scene.execute();
+  while (timeout) {
+    var fn = timeout;
+    timeout = null;
+    fn();
+  }
+}
+
+  for (i = 0; i < sceneNames.length; i++) {
+    var sceneName = sceneNames[i];
+    var sceneLines = slurpFileLines('web/'+gameName+'/scenes/'+sceneName+'.txt');
+    var sceneCoverage = coverage[sceneName];
+    for (var j = 0; j < sceneCoverage.length; j++) {
+      log(sceneName + " "+ (sceneCoverage[j] || 0) + ": " + sceneLines[j]);
+    }
+  }
