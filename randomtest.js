@@ -59,6 +59,8 @@ function debughelp() {
 
 function noop() {}
 Scene.prototype.page_break = noop;
+Scene.prototype.printLine = noop;
+Scene.prototype.save = noop;
 Scene.prototype.stat_chart = function() {
   this.parseStatChart();
 }
@@ -77,6 +79,22 @@ Scene.prototype.loadLines = function cached_loadLines(str) {
     this.oldLoadLines(str);
     parsedLines[str] = {labels: this.labels, lines: this.lines};
   }
+}
+
+Scene.prototype.oldParseOptions = Scene.prototype.parseOptions;
+parsedOptions = {};
+Scene.prototype.parseOptions = function cached_parseOptions(indent, groups, expectedSuboptions) {
+  if (expectedSuboptions) return this.oldParseOptions(indent, groups, expectedSuboptions);
+  var key = this.name + this.lineNum;
+  var parsed = parsedOptions[key];
+  if (parsed) {
+    this.lineNum = parsed.lineNum;
+    this.indent = parsed.indent;
+    return parsed.result;
+  }
+  var result = this.oldParseOptions(indent, groups, expectedSuboptions);
+  parsedOptions[key] = {lineNum:this.lineNum, indent:this.indent, result:result};
+  return result;
 }
 
 Scene.prototype.ending = function () {
