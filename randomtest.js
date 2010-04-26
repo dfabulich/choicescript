@@ -56,7 +56,9 @@ function debughelp() {
 
 function noop() {}
 Scene.prototype.page_break = noop;
-Scene.prototype.stat_chart = noop;
+Scene.prototype.stat_chart = function() {
+  this.parseStatChart();
+}
 
 crc32 = noop;
 
@@ -92,7 +94,7 @@ Scene.prototype.choice = function choice(data, fakeChoice) {
     var index = Math.floor(Math.random()*(flattenedOptions.length));
 
     var item = flattenedOptions[index];
-    if (fakeChoice) scene.temps.fakeChoiceEnd = this.lineNum;
+    if (fakeChoice) this.temps.fakeChoiceEnd = this.lineNum;
     this.getFormValue = function(name) {return item[name];}
 
     log(this.name + " " + (choiceLine+1)+'#'+(index+1)+' ('+item.ultimateOption.line+')');
@@ -186,11 +188,13 @@ var sceneNames = [];
     // IE doesn't support getters/setters; no coverage for you!
   }
 
-var iterations = 2
+nav.setStartingStatsClone(stats);
+
+var iterations = 10;
 for (i = 0; i < iterations; i++) {
   log("*****" + i);
   timeout = null;
-  var scene = new Scene(nav.getStartupScene(), stats, nav, false)
+  var scene = new Scene(nav.getStartupScene(), stats, nav, false);
   scene.execute();
   while (timeout) {
     var fn = timeout;
@@ -199,11 +203,11 @@ for (i = 0; i < iterations; i++) {
   }
 }
 
-  for (i = 0; i < sceneNames.length; i++) {
-    var sceneName = sceneNames[i];
-    var sceneLines = slurpFileLines('web/'+gameName+'/scenes/'+sceneName+'.txt');
-    var sceneCoverage = coverage[sceneName];
-    for (var j = 0; j < sceneCoverage.length; j++) {
-      log(sceneName + " "+ (sceneCoverage[j] || 0) + ": " + sceneLines[j]);
-    }
+for (i = 0; i < sceneNames.length; i++) {
+  var sceneName = sceneNames[i];
+  var sceneLines = slurpFileLines('web/'+gameName+'/scenes/'+sceneName+'.txt');
+  var sceneCoverage = coverage[sceneName];
+  for (var j = 0; j < sceneCoverage.length; j++) {
+    log(sceneName + " "+ (sceneCoverage[j] || 0) + ": " + sceneLines[j]);
   }
+}
