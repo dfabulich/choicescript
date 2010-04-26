@@ -17,7 +17,7 @@
  * either express or implied.
  */
 var gameName = "mygame";
-if (arguments[0]) gameName = arguments[0];
+if (arguments[1]) gameName = arguments[1];
 load("web/scene.js");
 load("web/navigator.js");
 load("web/util.js");
@@ -273,6 +273,7 @@ var sceneNames = [];
 nav.setStartingStatsClone(stats);
 
 var iterations = 100;
+if (arguments[0]) iterations = arguments[0];
 for (i = 0; i < iterations; i++) {
   log("*****" + i);
   timeout = null;

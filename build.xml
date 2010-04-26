@@ -47,6 +47,18 @@ either express or implied.
       <arg line="runner.js testUrl=../../../loader.js testModule=choicescript.tests.scenetest,choicescript.tests.utiltest" />
     </rhino>
   </target>
+
+  <target name="randomtest" depends="rhino">
+    <property name="num" value="10000" />
+    <property name="game" value="mygame" />
+    <property name="output" value="randomtest-output.txt" />
+    <echo>Executing randomtest, writing to ${output}</echo>
+    <rhino output="${output}">
+      <arg value="randomtest.js" />
+      <arg value="${num}" />
+      <arg value="${game}" />
+    </rhino>
+  </target>
   
   <target name="autotest" depends="rhino">
     <property name="vig" value="" />
