@@ -17,6 +17,7 @@
  * either express or implied.
  */
 var gameName = "mygame";
+if (arguments[0]) gameName = arguments[0];
 load("web/scene.js");
 load("web/navigator.js");
 load("web/util.js");
@@ -46,8 +47,10 @@ function slurpFileLines(name) {
     return lines;
 }
 
+slurps = {}
 function slurpFile(name) {
-  return slurpFileLines(name).join('\n');
+  if (!slurps[name]) slurps[name] = slurpFileLines(name).join('\n');
+  return slurps[name];
 }
 
 function debughelp() {
@@ -61,6 +64,20 @@ Scene.prototype.stat_chart = function() {
 }
 
 crc32 = noop;
+
+parsedLines = {};
+Scene.prototype.oldLoadLines = Scene.prototype.loadLines;
+Scene.prototype.loadLines = function cached_loadLines(str) {
+  var parsed = parsedLines[str];
+  if (parsed) {
+    this.labels = parsed.labels;
+    this.lines = parsed.lines;
+    return;
+  } else {
+    this.oldLoadLines(str);
+    parsedLines[str] = {labels: this.labels, lines: this.lines};
+  }
+}
 
 Scene.prototype.ending = function () {
   this.reset();
@@ -190,7 +207,7 @@ var sceneNames = [];
 
 nav.setStartingStatsClone(stats);
 
-var iterations = 10;
+var iterations = 100;
 for (i = 0; i < iterations; i++) {
   log("*****" + i);
   timeout = null;
