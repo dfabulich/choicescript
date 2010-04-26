@@ -99,6 +99,7 @@ Scene.prototype.printLoop = function printLoop() {
             printx(' ', this.target);
         }
     }
+    this.rollbackLineCoverage();
     if (!this.finished) {
         this.finish();
     }

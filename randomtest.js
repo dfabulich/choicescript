@@ -51,7 +51,7 @@ function slurpFile(name) {
 }
 
 function debughelp() {
-  //    debugger;
+    debugger;
 }
 
 function noop() {}
@@ -95,7 +95,7 @@ Scene.prototype.choice = function choice(data, fakeChoice) {
     if (fakeChoice) scene.temps.fakeChoiceEnd = this.lineNum;
     this.getFormValue = function(name) {return item[name];}
 
-    log(this.name + " " + (this.lineNum+1)+'#'+(index+1)+' ('+item.ultimateOption.line+')');
+    log(this.name + " " + (choiceLine+1)+'#'+(index+1)+' ('+item.ultimateOption.line+')');
     var self = this;
     timeout = function() {self.resolveChoice(options, groups);}
     this.finished = true;
@@ -189,6 +189,7 @@ var sceneNames = [];
 var iterations = 2
 for (i = 0; i < iterations; i++) {
   log("*****" + i);
+  timeout = null;
   var scene = new Scene(nav.getStartupScene(), stats, nav, false)
   scene.execute();
   while (timeout) {
