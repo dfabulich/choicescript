@@ -110,6 +110,24 @@ Scene.prototype.skipTrueBranch = function cached_skipTrueBranch() {
   cachedSkippedTrueBranches[key] = cached;
 }
 
+cachedTokenizedExpressions = {};
+Scene.prototype.oldTokenizeExpr = Scene.prototype.tokenizeExpr;
+Scene.prototype.tokenizeExpr = function cached_tokenizeExpr(str) {
+  var cached = cachedTokenizedExpressions[str];
+  if (cached) return cloneStack(cached);
+  cached = this.oldTokenizeExpr(str);
+  cachedTokenizedExpressions[str] = cloneStack(cached);
+  return cached;
+  function cloneStack(stack) {
+    var twin = new Array(stack.length);
+    var i = stack.length;
+    while (i--) {
+      twin[i] = stack[i];
+    }
+    return twin;
+  }
+}
+
 Scene.prototype.oldParseOptions = Scene.prototype.parseOptions;
 parsedOptions = {};
 Scene.prototype.parseOptions = function cached_parseOptions(indent, groups, expectedSuboptions) {
