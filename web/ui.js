@@ -35,6 +35,8 @@ function println(msg, parent) {
 
 
 function showStats() {
+    if (window.showingStatsAlready) return;
+    window.showingStatsAlready = true;
     
     var greyStuff = document.createElement("div");
     greyStuff.setAttribute("id", "greybackground");
@@ -58,6 +60,7 @@ function showStats() {
       restartLink.setAttribute("style", "float: left; text-decoration: underline; cursor: pointer; text-align: left");
       restartLink.onclick = function() {
           if (window.confirm("Restart your game?  Did you click that intentionally?")) {
+              window.showingStatsAlready = false;
               clearCookie();
               document.body.removeChild(greyStuff);
               document.body.removeChild(statScreen);
@@ -75,6 +78,7 @@ function showStats() {
           document.body.removeChild(greyStuff);
           document.body.removeChild(statScreen);
           window.stats.scene = currentScene;
+	  window.showingStatsAlready = false;
       }
       div.appendChild(button);    
     }
