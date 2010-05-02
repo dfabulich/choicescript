@@ -131,13 +131,11 @@ function isStateValid(state) {
 function restoreGame(state) {
     if (!isStateValid(state)) {
         var scene = new Scene(window.nav.getStartupScene(), window.stats, window.nav, false);
-        scene.loadScene();
         safeCall(scene, scene.execute);
     } else {
       window.stats = state.stats;
       // Someday, inflate the navigator using the state object
       var scene = new Scene(state.stats.sceneName, state.stats, window.nav, state.debug);
-      scene.loadScene();
       scene.temps = state.temps;
       scene.lineNum = state.lineNum;
       scene.indent = state.indent;

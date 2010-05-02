@@ -135,6 +135,34 @@ Scene.prototype.paragraph = function paragraph() {
     this.prevLineEmpty = true;
 }
 
+Scene.prototype.loadSceneFast = function loadSceneFast(url) {
+  if (this.loading) return;
+  this.loading = true;
+  startLoading();
+  if (!url) {
+    url = Scene.baseUrl + "/" + this.name + ".txt.js";
+  }
+  var tag = document.createElement("script");
+  tag.setAttribute("src", url);
+  var head = document.getElementsByTagName("head")[0];
+  head.appendChild(tag);
+}
+
+Scene.prototype.loadLinesFast = function loadLinesFast(crc, lines, labels) {
+  this.checkSum(crc);
+  this.lines = lines;
+  this.labels = labels;
+  this.loading = false;
+  this.loaded = true;
+  var self = this;
+  if (this.executing) {
+    safeCall(this, function() {
+      doneLoading();
+      self.execute();
+    });
+  }
+}
+
 // load the scene file from the specified URL (or from default URL by name)
 Scene.prototype.loadScene = function loadScene(url) {
     if (this.loading) return;
@@ -173,19 +201,22 @@ Scene.prototype.loadScene = function loadScene(url) {
     }
 }
 
+Scene.prototype.checkSum = function checkSum(crc) {
+  if (this.temps.choice_crc) {
+    if (this.temps.choice_crc != crc) {
+      // The scene has changed; restart the scene
+      this.temps = {choice_crc: crc};
+      this.lineNum = 0;
+      this.indent = 0;
+    }
+  } else {
+    this.temps.choice_crc = crc;
+  }
+}
+
 Scene.prototype.loadLines = function loadLines(str) {
     var crc = crc32(str);
-    if (this.temps.choice_crc) {
-      if (this.temps.choice_crc != crc) {
-        // The scene has changed; restart the scene
-        this.temps = {choice_crc: crc};
-        this.lineNum = 0;
-        this.indent = 0;
-      }
-    } else {
-      this.temps.choice_crc = crc;
-    }
-
+    this.checkSum(crc);
     this.lines = str.split('\n');
     this.parseLabels();
     this.loaded = true;
@@ -195,7 +226,11 @@ Scene.prototype.loadLines = function loadLines(str) {
 Scene.prototype.execute = function execute() {
     if (!this.loaded) {
         this.executing = true;
-        this.loadScene();
+        if (Scene.generatedFast) {
+          this.loadSceneFast();
+        } else {
+          this.loadScene();
+        }
         return;
     }
     this.nav.repairStats(stats);
