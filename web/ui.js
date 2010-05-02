@@ -163,6 +163,15 @@ function printShareLinks() {
           mobileMesg = "  <li><a href='"+androidUrl+"'>Rate this app</a> in the Android Market</li>\n";
         }
       }
+    } else if (/iPad/.test(navigator.userAgent)) {
+      var ipadLink = document.getElementById('ipadLink');
+      var ipadUrl;
+      if (ipadLink) {
+        ipadUrl = ipadLink.href;
+        if (ipadUrl) {
+          mobileMesg = "  <li><a href='"+ipadUrl+"'>Rate this app</a> in the App Store</li>\n";
+        }
+      }
     } else if (/iPhone/.test(navigator.userAgent)) {
       var iphoneLink = document.getElementById('iphoneLink');
       var iphoneUrl;
