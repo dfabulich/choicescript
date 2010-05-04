@@ -233,7 +233,7 @@ Scene.prototype.execute = function execute() {
         }
         return;
     }
-    this.nav.repairStats(stats);
+    if (this.nav) this.nav.repairStats(stats);
     doneLoading();
     this.printLoop();
 }
