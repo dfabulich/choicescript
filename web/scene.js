@@ -1262,7 +1262,7 @@ Scene.prototype.skipTrueBranch = function skipTrueBranch() {
   }
 }
 
-Scene.prototype["else"] = this.elsif = this.elseif = function scene_else() {
+Scene.prototype["else"] = Scene.prototype.elsif = Scene.prototype.elseif = function scene_else() {
     throw new Error(this.lineMsg() + "It is illegal to fall in to an *else statement; you must *goto or *finish before the end of the indented block.");
 }
 
