@@ -5,7 +5,8 @@ android/assets
 android/bin
 android/gen
 iphone/build
-iphone/ChoiceOfTheDragon.xcodeproj/*.pbxuser
-iphone/ChoiceOfTheDragon.xcodeproj/*.mode1v3
+*.pbxuser
+*.mode1v3
 */.DS_Store
 .DS_Store
+*.svn
