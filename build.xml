@@ -40,6 +40,7 @@ either express or implied.
         <arg line="-w -opt -1 -debug"/>
       </java>
     </presetdef>
+    <property name="gen.dir" location="${basedir}/web/mygame/scenes" />
   </target>
   
   <target name="unittest" depends="rhino">
@@ -69,12 +70,14 @@ either express or implied.
   </target>
   
   <target name="generator" depends="rhino">
-    <rhino>
-      <arg value="generator.js"/>
+    <rhino fork="true">
+      <arg file="generator.js"/>
+      <arg value="${gen.dir}" />
     </rhino>
   </target>
   
   <target name="cleangen">
+    <property name="gen.dir" location="${basedir}" />
     <delete>
       <fileset dir="web/mygame/scenes">
         <include name="*.js" />
