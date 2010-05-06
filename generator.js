@@ -1,4 +1,4 @@
-var gameName = "mygame";
+var dir = arguments[0] || "web/mygame/scenes";
 load("web/scene.js");
 load("web/util.js");
 
@@ -13,7 +13,7 @@ function slurpFile(name) {
     return lines.join('\n');
 }
 
-var list = new java.io.File("web/"+gameName+"/scenes").listFiles();
+var list = new java.io.File(dir).listFiles();
 
 var i = list.length;
 while (i--) {
