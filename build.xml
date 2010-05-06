@@ -68,4 +68,17 @@ either express or implied.
     </rhino>
   </target>
   
+  <target name="generator" depends="rhino">
+    <rhino>
+      <arg value="generator.js"/>
+    </rhino>
+  </target>
+  
+  <target name="cleangen">
+    <delete>
+      <fileset dir="web/mygame/scenes">
+        <include name="*.js" />
+      </fileset>
+    </delete>
+  </target>
 </project>
