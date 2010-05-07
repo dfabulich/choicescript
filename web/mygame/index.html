@@ -48,7 +48,17 @@ window.storeName = null;
 <!-- INSERT JS AD VARIABLES HERE -->
 </head>
 <body>
-<!-- INSERT JS AD ELEMENT HERE -->
+<div id="advertisement">
+<script type="text/javascript">
+if (isWeb) {
+  if (window.Touch && window.admob_vars) {
+    document.write(unescape("%3Cscript src='http://mmv.admob.com/static/iphone/iadmob.js' type='text/javascript'%3E%3C/script%3E"));
+  } else if (!isMobile && window.google_ad_slot) {
+    document.write(unescape("%3Cscript src='http://pagead2.googlesyndication.com/pagead/show_ads.js' type='text/javascript'%3E%3C/script%3E"));
+  }
+}
+</script>
+</div>
 <div id="header"><h1 class="gameTitle">My First ChoiceScript Game</h1>
   <p>
       <!-- INSERT proper share links here
