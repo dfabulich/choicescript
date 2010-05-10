@@ -1175,7 +1175,7 @@ Scene.prototype.parseStatChart = function parseStatChart() {
               // two lines: first label, second label            
               rows.push({type: type, variable: data, label: trim(line1), opposed_label: trim(line2)});
             } else {
-              throw new Error(this.lineMsg() + "invalid indent; expected a second line with indent " + line1indent + " to match line " + (this.lineNum - 1) + ", or else no more opposed_pair lines");
+              throw new Error(this.lineMsg() + "invalid indent; expected a second line with indent " + line1indent + " to match line " + this.lineNum + ", or else no more opposed_pair lines");
             }
           }
         } else {
