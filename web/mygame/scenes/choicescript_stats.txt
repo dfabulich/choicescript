@@ -2,6 +2,7 @@ This is a stats screen!
 
 *stat_chart
   percent Leadership
-  percent Strength
+  opposed_pair Strength
+    Weakness
   text Leadership
   text Strength

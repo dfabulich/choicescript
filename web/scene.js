@@ -1065,6 +1065,7 @@ Scene.prototype.stat_chart = function stat_chart() {
   var rows = this.parseStatChart();
   var textBuilder = ["<table class='statChart'>"];
   var barWidth = 12; /*em*/
+  var barWidthOpposed = 6; /*em*/
   // BEWARE: Can't use DOM to build this table due to IE bugs
   for (var i = 0; i < rows.length; i++) {
     var row = rows[i];
@@ -1075,15 +1076,23 @@ Scene.prototype.stat_chart = function stat_chart() {
     
     textBuilder.push("<tr><td class='leftStatName'>");
     textBuilder.push(label);
-    textBuilder.push("</td><td>");
+    textBuilder.push("</td>");
     
     if (type == "text") {
+      textBuilder.push("<td colspan='2'>");
       // TODO security problem
       textBuilder.push(value);
     } else if (type == "percent") {
       var statWidth = barWidth / 100 * value;
-      textBuilder.push("<div class='rightStatBar'><div style='width: "+
+      textBuilder.push("<td colspan='2'><div class='rightStatBar'><div style='width: "+
         statWidth+"em;' class='leftStatBar'>&nbsp;"+value+"</div></div>");
+    } else if (type == "opposed_pair") {
+      var statWidth = barWidthOpposed / 100 * value;
+      textBuilder.push("<td><div class='rightStatBarOpposed'><div style='width: "+
+        statWidth+"em;' class='leftStatBar'>&nbsp;"+value+"</div></div>");
+      textBuilder.push("<td class='rightStatName'>");
+      // TODO security problem
+      textBuilder.push(row.opposed_label);
     } else {
       throw new Error("Bug! Parser accepted an unknown row type: " + type);
     }
@@ -1133,10 +1142,10 @@ Scene.prototype.parseStatChart = function parseStatChart() {
         //     Definition
         //   percent Infamy Infamy
         //     Definition
-        //   opposed_pair
-        //     brutality Brutality
+        //   opposed_pair brutality
+        //     Brutality
         //       Strength and cruelty
-        //     finesse Finesse
+        //     Finesse
         //       Precision and aerial maneuverability
         //     
         
@@ -1146,26 +1155,49 @@ Scene.prototype.parseStatChart = function parseStatChart() {
         // TODO *if/*else
         // TODO *line_break
         line = trim(line);
-        var result = /^(text|percent)\s+(.*)/.exec(line);
-        if (!result) throw new Error(this.lineMsg() + "invalid line; this line should start with 'percent' or 'text'");
+        var result = /^(text|percent|opposed_pair)\s+(.*)/.exec(line);
+        if (!result) throw new Error(this.lineMsg() + "invalid line; this line should start with 'percent', 'text', or 'opposed_pair'");
         var type = result[1].toLowerCase();
         var data = trim(result[2]);
-        var variable, label;
-        if (!/ /.test(data)) {
-          variable = data;
-          label = data;
+        if ("opposed_pair" == type) {
+          this.getVar(data);
+          var line1 = this.lines[++this.lineNum];
+          var line1indent = this.getIndent(line1);
+          if (line1indent <= this.indent) throw new Error(this.lineMsg() + "invalid indent; expected one indented line to indicate opposed pair name. indent: " + line1indent + ", expected greater than " + this.indent);
+          var line2 = this.lines[this.lineNum + 1];
+          var line2indent = this.getIndent(line2);
+          if (line2indent <= this.indent) {
+            // line1 was the only line
+            rows.push({type: type, variable: data, label: data, opposed_label: trim(line1)});
+          } else {
+            this.lineNum++;
+            if (line2indent == line1indent) {
+              // two lines: first label, second label            
+              rows.push({type: type, variable: data, label: trim(line1), opposed_label: trim(line2)});
+            } else {
+              throw new Error(this.lineMsg() + "invalid indent; expected a second line with indent " + line1indent + " to match line " + (this.lineNum - 1) + ", or else no more opposed_pair lines");
+            }
+          }
         } else {
-          result = /^(\S+) (.*)/.exec(data);
-          if (!result) throw new Error(this.lineMsg() + "Bug! can't find a space when a space was found");
-          variable = result[1];
-          label = result[2];
+          var variable, label;
+          if (!/ /.test(data)) {
+            variable = data;
+            label = data;
+          } else {
+            result = /^(\S+) (.*)/.exec(data);
+            if (!result) throw new Error(this.lineMsg() + "Bug! can't find a space when a space was found");
+            variable = result[1];
+            label = result[2];
+          }
+
+          this.getVar(variable);
+          rows.push({type: type, variable: variable, label: label});
         }
-          
-        this.getVar(variable);
-        rows.push({type: type, variable: variable, label: label});
     }
     return rows;
 }
+
+
 
 
 // *if booleanExpr

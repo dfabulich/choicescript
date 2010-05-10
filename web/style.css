@@ -55,6 +55,12 @@ table {
     height: 2em;
 }
 
+.rightStatBarOpposed {
+    width: 6em;
+    background-color: #8888FF;
+    height: 2em;
+}
+
 label{
     background-color: white;
     color: black;

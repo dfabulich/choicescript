@@ -1039,6 +1039,22 @@ doh.registerGroup("choicescript.tests.ParseStatChart", [
               +']';
             doh.is(expected, toJson(rows), "parsed");
         }
+        ,function opposedPairs() {
+            var text = "*stat_chart\n"
+              + "  opposed_pair Leadership\n"
+              + "    Honesty\n"
+              + "  opposed_pair strength\n"
+              + "    Strength\n"
+              + "    Weakness\n"
+            var scene = new Scene("test", {leadership:50, strength:50});
+            scene.loadLines(text);
+            var rows = scene.parseStatChart();
+            var expected = '['
+              +'{"opposed_label":"Honesty","type":"opposed_pair","variable":"Leadership","label":"Leadership"},'
+              +'{"opposed_label":"Weakness","type":"opposed_pair","variable":"strength","label":"Strength"}'
+              +']';
+            doh.is(expected, toJson(rows), "parsed");
+        }
     ]
 );
 
