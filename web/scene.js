@@ -1073,9 +1073,16 @@ Scene.prototype.stat_chart = function stat_chart() {
     var variable = row.variable;
     var value = this.getVar(variable);
     var label = row.label;
+    var definition = row.definition;
     
     textBuilder.push("<tr><td class='leftStatName'>");
     textBuilder.push(label);
+    if (definition) {
+      textBuilder.push("<div class='definition'>");
+      // TODO security problem
+      textBuilder.push(definition);
+      textBuilder.push("</div>");
+    }
     textBuilder.push("</td>");
     
     if (type == "text") {
@@ -1093,6 +1100,12 @@ Scene.prototype.stat_chart = function stat_chart() {
       textBuilder.push("<td class='rightStatName'>");
       // TODO security problem
       textBuilder.push(row.opposed_label);
+      if (definition) {
+        textBuilder.push("<div class='definition'>");
+        // TODO security problem
+        textBuilder.push(row.opposed_definition);
+        textBuilder.push("</div>");
+      }
     } else {
       throw new Error("Bug! Parser accepted an unknown row type: " + type);
     }
@@ -1163,7 +1176,7 @@ Scene.prototype.parseStatChart = function parseStatChart() {
           this.getVar(data);
           var line1 = this.lines[++this.lineNum];
           var line1indent = this.getIndent(line1);
-          if (line1indent <= this.indent) throw new Error(this.lineMsg() + "invalid indent; expected one indented line to indicate opposed pair name. indent: " + line1indent + ", expected greater than " + this.indent);
+          if (line1indent <= this.indent) throw new Error(this.lineMsg() + "invalid indent; expected at least one indented line to indicate opposed pair name. indent: " + line1indent + ", expected greater than " + this.indent);
           var line2 = this.lines[this.lineNum + 1];
           var line2indent = this.getIndent(line2);
           if (line2indent <= this.indent) {
@@ -1174,6 +1187,16 @@ Scene.prototype.parseStatChart = function parseStatChart() {
             if (line2indent == line1indent) {
               // two lines: first label, second label            
               rows.push({type: type, variable: data, label: trim(line1), opposed_label: trim(line2)});
+            } else if (line2indent > line1indent) {
+              // line 2 is a definition; therefore the opposed_label and its definition must be on lines 3 and 4
+              var line1definition = line2;
+              var line3 = this.lines[++this.lineNum];
+              var line3indent = this.getIndent(line3);
+              if (line3indent != line1indent) throw new Error(this.lineMsg() + "invalid indent; this line should be the opposing label name. expected " + line1indent + " was " + line3indent);
+              var line4 = this.lines[++this.lineNum];
+              var line4indent = this.getIndent(line4);
+              if (line4indent != line2indent) throw new Error(this.lineMsg() + "invalid indent; this line should be the opposing label definition. expected " + line2indent + " was " + line4indent);
+              rows.push({type: type, variable: data, label: trim(line1), definition:trim(line2), opposed_label: trim(line3), opposed_definition: trim(line4)});
             } else {
               throw new Error(this.lineMsg() + "invalid indent; expected a second line with indent " + line1indent + " to match line " + this.lineNum + ", or else no more opposed_pair lines");
             }
@@ -1189,9 +1212,16 @@ Scene.prototype.parseStatChart = function parseStatChart() {
             variable = result[1];
             label = result[2];
           }
-
           this.getVar(variable);
-          rows.push({type: type, variable: variable, label: label});
+          var line2 = this.lines[this.lineNum + 1];
+          var line2indent = this.getIndent(line2);
+          if (line2indent <= this.indent) {
+            // No definition line
+            rows.push({type: type, variable: variable, label: label});
+          } else {
+            this.lineNum++;
+            rows.push({type: type, variable: variable, label: label, definition: trim(line2)});
+          }
         }
     }
     return rows;
