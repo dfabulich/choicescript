@@ -16,6 +16,12 @@
           <source>1.6</source>
         </configuration>
       </plugin>
+      <plugin>
+        <artifactId>maven-eclipse-plugin</artifactId>
+        <configuration>
+          <buildOutputDirectory>target-eclipse</buildOutputDirectory>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
   <dependencies>
