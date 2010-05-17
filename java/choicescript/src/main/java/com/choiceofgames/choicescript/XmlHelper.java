@@ -66,7 +66,7 @@ public class XmlHelper {
 	public static List<Element> getChildElementsByName(Element parent, String name) {
 		List<Element> childElements = new ArrayList<Element>();
 		for (Node childNode : i(parent.getChildNodes())) {
-			if (childNode.getNodeType() == Node.ELEMENT_NODE) {
+			if (isElement(childNode)) {
 				Element childElement = (Element) childNode;
 				if (name == null || name.equals(childElement.getTagName())) {
 					childElements.add((Element) childNode);
@@ -74,6 +74,27 @@ public class XmlHelper {
 			}
 		}
 		return childElements;
+	}
+	
+	public static Element getFirstChildElement(Element parent) {
+		for (Node childNode : i(parent.getChildNodes())) {
+			if (isElement(childNode)) {
+				return (Element) childNode;
+			}
+		}
+		throw new RuntimeException("No elements!");
+	}
+	
+	public static boolean isElement(Node n) {
+		return n.getNodeType() == Node.ELEMENT_NODE;
+	}
+	
+	public static Element getNextSiblingElement(Element current) {
+		Node sibling = current;
+		while ((sibling = sibling.getNextSibling()) != null) {
+			if (isElement(sibling)) return (Element) sibling;
+		}
+		return null;
 	}
 	
 	public static List<Element> getChildElements(Element parent) {

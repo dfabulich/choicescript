@@ -3,6 +3,7 @@ package com.choiceofgames.choicescript;
 import static com.choiceofgames.choicescript.XmlHelper.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -13,8 +14,6 @@ import javax.xml.xpath.XPathFactory;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 public class Vignette implements IVignette {
 	public Vignette(IInputOutput io, Navigator nav, Document vignetteXml,
@@ -23,7 +22,8 @@ public class Vignette implements IVignette {
 		this.nav = nav;
 		this.vignetteXml = vignetteXml;
 		this.stats = stats;
-		this.currentElement = vignetteXml.getDocumentElement();
+		this.temps = new HashMap<String, Object>();
+		currentElement = getFirstChildElement(vignetteXml.getDocumentElement());
 	}
 	
 	public Vignette(IInputOutput io, Navigator nav, Document vignetteXml,
@@ -33,7 +33,7 @@ public class Vignette implements IVignette {
 		this.vignetteXml = vignetteXml;
 		this.stats = stats;
 		this.temps = temps;
-		this.currentElement = vignetteXml.getDocumentElement();
+		currentElement = getFirstChildElement(vignetteXml.getDocumentElement());
 	}
 
 	final IInputOutput io;
@@ -44,34 +44,48 @@ public class Vignette implements IVignette {
 	Map<String, Object> temps;
 	boolean debugMode;
 	boolean finished;
+	boolean resuming;
 	final Document vignetteXml;
 	Element currentElement;
 
 	@Override
 	public void execute() {
-		if (currentElement == null) {
-			currentElement = vignetteXml.getDocumentElement();
-		}
-		NodeList childNodes = currentElement.getChildNodes();
-		for (Node node : i(childNodes)) {
-			if (node.getNodeType() == Node.ELEMENT_NODE) {
-				Element child = (Element) node;
-				String tagName = child.getTagName();
-				if ("p".equals(tagName)) {
-					io.print(child.getTextContent());
-					io.print("\n\n");
-				} else if ("choice".equals(tagName)) {
-					choice(child);
-				} else if ("finish".equals(tagName)) {
-					finish(child);
-				} else if ("switch".equals(tagName)) {
-					switchTag(child);
-				} else {
-					throw new RuntimeException("Unknown element name: " + tagName);
-				}
+		while(currentElement != null) {		
+			String tagName = currentElement.getTagName();
+			if ("p".equals(tagName)) {
+				io.print(currentElement.getTextContent());
+				io.print("\n\n");
+			} else if ("choice".equals(tagName)) {
+				choice(currentElement);
+			} else if ("finish".equals(tagName)) {
+				finish(currentElement);
+			} else if ("switch".equals(tagName)) {
+				switchTag(currentElement);
+			} else if ("label".equals(tagName)) {
+			} else if ("include".equals(tagName)) {
+				String labelId = currentElement.getAttribute("label");
+				currentElement = vignetteXml.getElementById(labelId);
+			} else {
+				throw new RuntimeException("Unknown element name: " + tagName);
 			}
 			if (finished) break;
+			if (resuming) {
+				resuming = false;
+			} else {
+				getNextElement();
+			}
 		}
+	}
+	
+	private void getNextElement() {
+		Element oldElement = currentElement;
+		currentElement = getNextSiblingElement(currentElement);
+		if (currentElement != null) return;
+		if (oldElement.getParentNode().isSameNode(vignetteXml.getDocumentElement())) {
+			return;
+		}
+		currentElement = (Element) oldElement.getParentNode();
+		getNextElement();
 	}
 
 	/*
@@ -98,15 +112,17 @@ public class Vignette implements IVignette {
 		List<Element> ifTags = getChildElementsByName(tag, "if");
 		for (Element ifTag : ifTags) {
 			List<Element> ifChildren = getChildElements(ifTag);
-			Element test = ifChildren.get(0);
+			Element test = getFirstChildElement(ifChildren.get(0));
 			if (evaluateBooleanExpression(test)) {
-				currentElement = ifChildren.get(1);
+				currentElement = getFirstChildElement(ifChildren.get(1));
+				resuming = true;
 				return;
 			}
 		}
 		List<Element> elseTag = getChildElementsByName(tag, "else"); 
 		if (elseTag.isEmpty()) return;
-		currentElement = elseTag.get(0);
+		currentElement = getFirstChildElement(elseTag.get(0));
+		resuming = true;
 	}
 	
 	private boolean evaluateBooleanExpression(Element tag) {
@@ -120,29 +136,28 @@ public class Vignette implements IVignette {
 	
 	private class ExpressionEvaluator {
 		public Object evaluate(Element tag) {
-			Element child = getChildElements(tag).get(0);
-			String tagName = child.getTagName();
+			String tagName = tag.getTagName();
 			if ("literal".equals(tagName)) {
-				return child.getAttribute("value");
+				return tag.getAttribute("value");
 			} else if ("variable".equals(tagName)) {
-				String name = child.getAttribute("name");
+				String name = tag.getAttribute("name");
 				return getVariable(name);
 			} else if ("math".equals(tagName)) {
-				return math(child);
+				return math(tag);
 			} else if ("equals".equals(tagName)) {
-				return expressionEquals(child);
+				return expressionEquals(tag);
 			} else if ("not".equals(tagName)) {
-				return not(child);
+				return not(tag);
 			} else if ("and".equals(tagName)) {
-				return and(child);
+				return and(tag);
 			} else if ("or".equals(tagName)) {
-				return or(child);
+				return or(tag);
 			} else if ("gt".equals(tagName)) {
-				return inequality(child);
+				return inequality(tag);
 			} else if ("lt".equals(tagName)) {
-				return inequality(child);
+				return inequality(tag);
 			} else if ("concatenate".equals(tagName)) {
-				return concatenate(child);
+				return concatenate(tag);
 			}
 			return null;
 		}
@@ -155,8 +170,8 @@ public class Vignette implements IVignette {
 		}
 
 		private boolean not(Element tag) {
-			List<Element> children = getChildElements(tag);
-			Boolean object1 = (Boolean) evaluate(children.get(0));
+			Element test = getFirstChildElement(tag);
+			Boolean object1 = (Boolean) evaluate(test);
 			return !object1;
 		}
 		
@@ -330,7 +345,11 @@ public class Vignette implements IVignette {
 	}
 	
 	private Object getVariable(String name) {
-		return null;
+		Object value = temps.get(name);
+		if (value != null) return value;
+		value = stats.get(name);
+		if (value == null) throw new RuntimeException("Unset variable" + name);
+		return value;
 	}
 	
 
@@ -382,7 +401,7 @@ public class Vignette implements IVignette {
 	public void resolveChoice(List<Integer> selections) {
 		for (int selection : selections) {
 			List<Element> options = getChildElementsByName(currentElement, "option");
-			currentElement = options.get(selection);
+			currentElement = getFirstChildElement(options.get(selection));
 		}
 	}
 
