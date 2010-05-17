@@ -44,12 +44,14 @@
   <choice>
     <option text='Red'>
       <p>Red!</p>
-      <finish />
+
     </option>
     <option text='Blue'>
       <p>Blue!</p>
       <set variable="leadership"><math operator="-"><variable name="leadership"/><literal value="20"/></math></set>
-      <finish />
+
     </option>
   </choice>
+  Done!
+  <finish/>
 </vignette>
