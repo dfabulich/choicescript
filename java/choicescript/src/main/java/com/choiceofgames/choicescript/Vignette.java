@@ -47,6 +47,7 @@ public class Vignette implements IVignette {
 	boolean resuming;
 	final Document vignetteXml;
 	Element currentElement;
+	enum Undefined { UNDEFINED };
 
 	@Override
 	public void execute() {
@@ -64,6 +65,29 @@ public class Vignette implements IVignette {
 				switchTag();
 			} else if ("set".equals(tagName)) {
 				set();
+			} else if ("set-ref".equals(tagName)) {
+				setRef();
+			} else if ("goto-ref".equals(tagName)) {
+				gotoRef();
+			} else if ("print".equals(tagName)) {
+				print();
+			} else if ("temp".equals(tagName)) {
+				temps.put(currentElement.getAttribute("variable"), Undefined.UNDEFINED);
+			} else if ("input-text".equals(tagName)) {
+				io.inputText(currentElement.getAttribute("variable"));
+				finished = true;
+			} else if ("page-break".equals(tagName)) {
+				pageBreak();
+				finished = true;
+			} else if ("random".equals(tagName)) {
+				rand();
+			} else if ("goto-scene".equals(tagName)) {
+				gotoScene();
+			} else if ("ending".equals(tagName)) {
+				io.ending();
+				finished = true;
+			} else if ("stat-chart".equals(tagName)) {
+				statChart();
 			} else if ("label".equals(tagName)) {
 			} else if ("include".equals(tagName)) {
 				String labelId = currentElement.getAttribute("label");
@@ -79,11 +103,52 @@ public class Vignette implements IVignette {
 			}
 		}
 	}
+
+
+	private void statChart() {
+		// TODO XXX
+		throw new RuntimeException("stat-chart not implemented yet");
+	}
+	
+	private void rand() {
+		// TODO XXX
+		throw new RuntimeException("random not implemented yet");
+	}
+	
+	private void gotoScene() {
+		// TODO XXX
+		throw new RuntimeException("goto-scene not implemented yet");
+	}
+	
+	private void print() {
+		Element tag = getFirstChildElement(currentElement);
+		Object value = evaluateExpression(tag);
+		io.print(value.toString());
+	}
+	
+	private void gotoRef() {
+		Element tag = getFirstChildElement(currentElement);
+		String labelId = evaluateExpression(tag).toString();
+		currentElement = vignetteXml.getElementById(labelId);
+	}
+	
+	private void setRef() {
+		List<Element> children = getChildElements(currentElement);
+		Element nameExpression = getFirstChildElement(children.get(0));
+		String variableName = evaluateStringExpression(nameExpression);
+		Element valueExpression = getFirstChildElement(children.get(1));
+		Object value = evaluateExpression(valueExpression);
+		setVariable(variableName, value);
+	}
 	
 	private void set() {
 		String variableName = currentElement.getAttribute("variable");
 		Element expressionElement = getFirstChildElement(currentElement);
 		Object value = evaluateExpression(expressionElement);
+		setVariable(variableName, value);
+	}
+
+	private void setVariable(String variableName, Object value) {
 		if (temps.containsKey(variableName)) {
 			temps.put(variableName, value);
 		} else if (stats.containsKey(variableName)) {
@@ -97,31 +162,23 @@ public class Vignette implements IVignette {
 		Element oldElement = currentElement;
 		currentElement = getNextSiblingElement(currentElement);
 		if (currentElement != null) return;
-		if (oldElement.getParentNode().isSameNode(vignetteXml.getDocumentElement())) {
-			return;
+		Element parent = (Element) oldElement.getParentNode();
+		currentElement = findValidParent(parent);
+		if (currentElement != null) getNextElement();
+	}
+	
+	private Element findValidParent(Element tag) {
+		Element parent = (Element) tag.getParentNode();
+		if (parent == null) return null;
+		String tagName = parent.getTagName();
+		if (tagName.matches("(vignette|option|result|else)")) {
+			// What about multi-options?
+			return tag;
 		}
-		currentElement = (Element) oldElement.getParentNode();
-		getNextElement();
+		return findValidParent(parent);
 	}
 
-	/*
-	 * comment
-	 * goto
-	 * gotoref
-	 * label
-	 * create
-	 * temp
-	 * set
-	 * setref
-	 * print
-	 * if
-	 * rand
-	 * goto_scene
-	 * fake_choice
-	 * input_text
-	 * ending
-	 * stat_chart
-	 */
+
 
 	
 	private void switchTag() {
@@ -146,6 +203,11 @@ public class Vignette implements IVignette {
 		return (Boolean) o;
 	}
 	
+	private String evaluateStringExpression(Element tag) {
+		Object o = evaluateExpression(tag);
+		return (String) o;
+	}
+	
 	private Object evaluateExpression(Element tag) {
 		return ee.evaluate(tag);
 	}
@@ -160,12 +222,23 @@ public class Vignette implements IVignette {
 		if ("true".equals(name)) return true;
 		if ("false".equals(name)) return false;
 		Object value = temps.get(name);
-		if (value != null) return value;
+		if (value != null) {
+			if (value == Undefined.UNDEFINED) {
+				throw new RuntimeException("Temporary variable defined but has no value: " + name);
+			}
+			return value;
+		}
 		value = stats.get(name);
 		if (value == null) throw new RuntimeException("Unset variable" + name);
 		return value;
 	}
 	
+	private void pageBreak() {
+		String promptMessage = currentElement.getAttribute("text");
+		if (promptMessage == null || promptMessage.isEmpty()) promptMessage = "Next";
+		io.pageBreak(promptMessage);
+		finished = true;
+	}
 
 
 	private void finish() {
@@ -201,8 +274,7 @@ public class Vignette implements IVignette {
 		
 	@Override
 	public void inputText(String variable, String text) {
-		// TODO Auto-generated method stub
-
+		setVariable(variable, text);
 	}
 
 	@Override

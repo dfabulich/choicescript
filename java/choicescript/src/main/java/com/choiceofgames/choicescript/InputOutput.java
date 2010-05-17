@@ -13,7 +13,8 @@ public class InputOutput implements IInputOutput {
 	final Navigator nav;
 	Map<String, Object> stats, temps;
 	List<OptionDisplayGroup> optionDisplayGroups;
-	enum Action { CHOICE, PAGE_BREAK, FINISH, ENDING };
+	enum Action { CHOICE, INPUT_TEXT, PAGE_BREAK, FINISH, ENDING };
+	String inputTextVariable;
 	Action action = null;
 	String resumePoint;
 	
@@ -29,6 +30,13 @@ public class InputOutput implements IInputOutput {
 		action = Action.CHOICE;
 	}
 
+	@Override
+	public void inputText(String variableName) {
+		this.inputTextVariable = variableName;
+		System.out.println(">Type Something");
+		action = Action.INPUT_TEXT;
+	}
+	
 	@Override
 	public void ending() {
 		// TODO Auto-generated method stub
@@ -71,6 +79,9 @@ public class InputOutput implements IInputOutput {
 				} else {
 					vig.resolveChoice(Arrays.asList(1));
 				}
+				break;
+			case INPUT_TEXT:
+				vig.inputText(inputTextVariable, line);
 				break;
 			case PAGE_BREAK:
 				vig.setResumePoint(resumePoint);

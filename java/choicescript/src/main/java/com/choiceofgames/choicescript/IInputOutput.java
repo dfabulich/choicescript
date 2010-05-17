@@ -49,6 +49,13 @@ public interface IInputOutput {
 	public void choice(List<OptionDisplayGroup> optionDisplayGroups);
 	
 	/**
+	 * Prompt the user to type something, e.g. their own name.
+	 * 
+	 * @param variableName we'll put the user's input in this variable
+	 */
+	public void inputText(String variableName);
+	
+	/**
 	 * Accept user input, possibly using the navigator to select the next scene.
 	 * @return the next scene to execute
 	 */
