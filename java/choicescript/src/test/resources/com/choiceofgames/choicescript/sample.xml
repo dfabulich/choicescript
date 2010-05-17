@@ -1,11 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE vignette [ 
+
+<!ELEMENT VIGNETTE (P+, CHOICE+, SET+, SWITCH+, include+, label+, finish+, if+)>
+<!ELEMENT choice (option+)>
+<!ELEMENT option (P+, CHOICE+, SET+, SWITCH+, include+, label+, finish+, if+)>
+<!ELEMENT include (#PCDATA)>
+<!ELEMENT label (#PCDATA)>
+<!ELEMENT switch (if+, else)>
+<!ELEMENT if (test, result)>
+<!ELEMENT test (equals, not, and, or, gt, lt)>
+<!ELEMENT result (P+, CHOICE+, SET+, SWITCH+, include+, label+, finish+, if+)>
+<!ELEMENT else (P+, CHOICE+, SET+, SWITCH+, include+, label+, finish+, if+)>
+<!ELEMENT literal (#PCDATA)>
+<!ELEMENT variable (#PCDATA)>
+<!ELEMENT math (literal+, variable+)>
+<!ELEMENT equals (literal+, variable+, math+, concatenate+)>
+<!ELEMENT gt (literal+, variable+, math+, concatenate+)>
+<!ELEMENT lt (literal+, variable+, math+, concatenate+)>
+<!ELEMENT not (equals, and, or, gt, lt)>
+<!ELEMENT and (equals+, and+, or+, gt+, lt+)>
+<!ELEMENT or (equals+, and+, or+, gt+, lt+)>
+
+<!ATTLIST option title CDATA #REQUIRED>
+<!ATTLIST include label IDREF #REQUIRED>
+<!ATTLIST label id ID #REQUIRED>
+<!ATTLIST math operator CDATA #REQUIRED>
+<!ATTLIST literal value CDATA #REQUIRED>
+<!ATTLIST variable name CDATA #REQUIRED>
+
+]> 
+
 <vignette>
   <p>Hello!</p>
   <switch>
     <if><test><gt><variable name="leadership"/><literal value="40"/></gt></test>
-    <result><p>Your leadership is great!</p></result>
+    <result><p>Your leadership is great!</p>
+    <include label="decision"/>
+    </result>
     </if>
+    <else><p>Your leadership is not so great.</p></else>
   </switch>
+  <label id="decision" />
   <choice>
     <option text='Red'>
       <p>Red!</p>
@@ -13,6 +48,7 @@
     </option>
     <option text='Blue'>
       <p>Blue!</p>
+      <set variable="leadership"><math operator="-"><variable name="leadership"/><literal value="20"/></math></set>
       <finish />
     </option>
   </choice>
