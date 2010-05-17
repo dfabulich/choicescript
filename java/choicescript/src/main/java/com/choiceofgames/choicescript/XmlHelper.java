@@ -2,6 +2,8 @@ package com.choiceofgames.choicescript;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -41,7 +43,10 @@ public class XmlHelper {
 			throw new RuntimeException("Bug!", e);
 		}
 		ByteArrayInputStream bais = new ByteArrayInputStream(xmlString.getBytes());
-		InputSource is = new InputSource(bais);
+		String xname = "/com/choiceofgames/choicescript/sample.xml";
+		URL u = XmlHelper.class.getResource(xname);
+		InputStream stream = XmlHelper.class.getResourceAsStream(xname);
+		InputSource is = new InputSource(stream);
 		Document document = builder.parse(is);
 		return document;
 	}

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<vignette>
+  <p>Hello!</p>
+  <!-- <switch>
+    <if><gt><variable>leadership</variable>60</gt></if>
+    
+  </switch> -->
+  <choice>
+    <option text='Red'>
+      <p>Red!</p>
+      <finish />
+    </option>
+    <option text='Blue'>
+      <p>Blue!</p>
+      <finish />
+    </option>
+  </choice>
+</vignette>
