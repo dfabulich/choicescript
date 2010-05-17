@@ -10,3 +10,7 @@ iphone/build
 */.DS_Store
 .DS_Store
 *.svn
+java/choicescript/target
+java/choicescript/.classpath
+java/choicescript/.project
+java/choicescript/.settings
