@@ -51,19 +51,36 @@ XmlScene.prototype.paragraph  = function xmlParagraph() {
   closePara();
 }
 
-XmlScene.prototype.page_break = function xmlPageBreak(data) {
+function printElement(tagName, attributeName, data) {
   closePara();
-  writer.write("<page-break ");
-  if (data) writer.write("text='" + xmlEscape(data) + "'");
-  writer.write("/>\n"); 
+  writer.write("<");
+  writer.write(tagName);
+  writer.write(" ")
+  if (data) {
+    writer.write(attributeName);
+    writer.write("='");
+    writer.write(xmlEscape(data));
+    writer.write("'");
+  }
+  writer.write("/>\n");
+}
+
+XmlScene.prototype.page_break = function xmlPageBreak(data) {
+  printElement("page-break", "text", data);
 }
 
 XmlScene.prototype.finish = function xmlFinish(data) {
-  closePara();
-  writer.write("<finish ");
-  if (data) writer.write("text='" + xmlEscape(data) + "'");
-  writer.write("/>\n");
+  printElement("finish", "text", data);
   this.finished = true;
+}
+
+XmlScene.prototype["goto"] = function xmlGoto(data) {
+  printElement("include", "label", data);
+  this.finished = true;
+}
+
+XmlScene.prototype.label = function xmlLabel(data) {
+  printElement("label", "id", data);
 }
 
 XmlScene.prototype.choice = function xmlChoice(data) {
@@ -100,7 +117,7 @@ XmlScene.prototype.choice = function xmlChoice(data) {
 }
 
 var list = new java.io.File(dir).listFiles();
-list = [new java.io.File(dir, "startup.txt")];
+list = [new java.io.File(dir, "animal.txt")];
 
 var i = list.length;
 while (i--) {
@@ -111,6 +128,9 @@ while (i--) {
   scene.loadLines(str);
   
   var writer = new java.io.BufferedWriter(new java.io.FileWriter("/tp/" + list[i].getName() + ".xml"));
+  writer.write("<!DOCTYPE vignette [ \n" + 
+			"<!ATTLIST label id ID #REQUIRED>\n" + 
+			"]>");
   writer.write("<vignette>\n");
   scene.execute();
   writer.write("</vignette>\n");
