@@ -128,14 +128,13 @@ XmlScene.prototype.goto_scene = function xmlGotoScene(data) {
   this.finished = true;
 }
 
-XmlScene.prototype.evaluateValueToken = function xmlEvaluateValueToken(token) {
+XmlScene.prototype.evaluateValueToken = function xmlEvaluateValueToken(token, stack) {
   var name = token.name;
   if ("OPEN_PARENTHESIS" == name) {
       return this.evaluateExpr(stack, "CLOSE_PARENTHESIS");
   } else if ("OPEN_CURLY" == name) {
-      throw new Error("meta curly not implemented");
       var value = this.evaluateExpr(stack, "CLOSE_CURLY");
-      return this.getVar(value);
+      return "<reference>" + value + "</reference>";
   } else if ("NUMBER" == name) {
       return "<literal value='" + xmlEscape(token.value) + "'/>";
   } else if ("STRING" == name) {

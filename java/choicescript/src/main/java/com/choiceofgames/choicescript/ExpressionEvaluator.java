@@ -25,6 +25,8 @@ class ExpressionEvaluator {
 			return map.get(name);
 		} else if ("math".equals(tagName)) {
 			return math(tag);
+		} else if ("reference".equals(tagName)) {
+			return reference(tag);
 		} else if ("equals".equals(tagName)) {
 			return expressionEquals(tag);
 		} else if ("not".equals(tagName)) {
@@ -43,6 +45,11 @@ class ExpressionEvaluator {
 		return null;
 	}
 	
+	private Object reference(Element tag) {
+		Element child = getFirstChildElement(tag);
+		Object value = evaluate(child);
+		return map.get(value.toString());
+	}
 	private String concatenate(Element tag) {
 		Pair pair = extract(tag);
 		String s1 = String.valueOf(pair.v1);
