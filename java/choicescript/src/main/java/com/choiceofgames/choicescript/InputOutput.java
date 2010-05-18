@@ -74,11 +74,8 @@ public class InputOutput implements IInputOutput {
 		switch (action) {
 			case CHOICE:
 				vig.setResumePoint(resumePoint);
-				if (line.startsWith("1")) {
-					vig.resolveChoice(Arrays.asList(0));
-				} else {
-					vig.resolveChoice(Arrays.asList(1));
-				}
+				int decision = Integer.parseInt(line);
+				vig.resolveChoice(Arrays.asList(decision-1));
 				break;
 			case INPUT_TEXT:
 				vig.inputText(inputTextVariable, line);
