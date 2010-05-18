@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
@@ -120,8 +121,31 @@ public class Vignette implements IVignette {
 	}
 	
 	private void rand() {
-		// TODO XXX
-		throw new RuntimeException("random not implemented yet");
+		String variableName = currentElement.getAttribute("variable");
+		List<Element> children = getChildElements(currentElement);
+		Element minExpression = getFirstChildElement(children.get(0));
+		Number min = (Number) evaluateExpression(minExpression);
+		Element maxExpression = getFirstChildElement(children.get(1));
+		Number max = (Number) evaluateExpression(maxExpression);
+		Number value;
+		if (min instanceof Integer && max instanceof Integer) {
+			value = randomInt(min.intValue(), max.intValue());
+		} else {
+			value = randomDouble(min.doubleValue(), max.doubleValue());
+		}
+		setVariable(variableName, value);
+	}
+	
+	private int randomInt(int min, int max) {
+		int diff = max - min;
+		double random = Math.random();
+		return min + (int)Math.floor(random * diff + 1);
+	}
+	
+	private double randomDouble(double min, double max) {
+		double diff = max - min;
+		double random = Math.random();
+		return min + random * diff;
 	}
 	
 	private void gotoScene() {

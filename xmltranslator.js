@@ -237,6 +237,17 @@ XmlScene.prototype.choice = function xmlChoice(data) {
   writer.write("</choice>\n");
 }
 
+XmlScene.prototype.rand = function xmlRand(data) {
+  var args = data.split(/ /);
+  var variable, minimum, maximum;
+  variable = args[0];
+  writer.writeln("<random variable='" + variable + "'><minimum>");
+  minimum = this.evaluateValueExpr(args[1]);
+  writer.writeln("</minimum><maximum>");
+  maximum = this.evaluateValueExpr(args[2]);
+  writer.writeln("</maximum></rand>\n");
+}
+
 var list = new java.io.File(dir).listFiles();
 list = [new java.io.File(dir, "hello.txt")];
 

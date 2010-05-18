@@ -141,7 +141,7 @@ class ExpressionEvaluator {
 		if (number1 instanceof Integer && number2 instanceof Integer) {
 			return integerMath(operator, (Integer)number1, (Integer)number2);
 		} else {
-			return doubleMath(operator, (Double)number1, (Double)number2);
+			return doubleMath(operator, number1.doubleValue(), number2.doubleValue());
 		}
 	}
 	
