@@ -1,9 +1,7 @@
 package com.choiceofgames.choicescript;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -23,28 +21,13 @@ import org.xml.sax.SAXException;
 public class XmlHelper {
 
 	public static Document xmlFromResource(String name) throws SAXException, IOException {
-		String xmlString = "<vignette>\n" + 
-				"  <p>Hello!</p>\n" + 
-				"  <choice>\n" + 
-				"    <option text='Red'>\n" + 
-				"      <p>Red!</p>\n" + 
-				"      <finish />\n" + 
-				"    </option>\n" + 
-				"    <option text='Blue'>\n" + 
-				"      <p>Blue!</p>\n" + 
-				"      <finish />\n" + 
-				"    </option>\n" + 
-				"  </choice>\n" + 
-				"</vignette>";
 		DocumentBuilder builder;
 		try {
 			builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 		} catch (ParserConfigurationException e) {
 			throw new RuntimeException("Bug!", e);
 		}
-		ByteArrayInputStream bais = new ByteArrayInputStream(xmlString.getBytes());
 		String xname = "/com/choiceofgames/choicescript/sample.xml";
-		URL u = XmlHelper.class.getResource(xname);
 		InputStream stream = XmlHelper.class.getResourceAsStream(xname);
 		InputSource is = new InputSource(stream);
 		Document document = builder.parse(is);
