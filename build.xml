@@ -76,6 +76,13 @@ either express or implied.
     </rhino>
   </target>
   
+  <target name="xmltranslator" depends="rhino">
+    <rhino fork="true">
+      <arg file="xmltranslator.js"/>
+      <arg value="${gen.dir}" />
+    </rhino>
+  </target>
+  
   <target name="cleangen">
     <property name="gen.dir" location="${basedir}" />
     <delete>
