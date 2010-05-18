@@ -36,11 +36,13 @@ public class XmlHelper {
 	
 	public static String getResumePoint(Element e) {
 		Element root = e.getOwnerDocument().getDocumentElement();
-		String tagName = e.getTagName();
-		NodeList tags = root.getElementsByTagName(tagName);
-		for (int i = 0; i < tags.getLength(); i++) {
-			if (e.isSameNode(tags.item(i))) {
-				return "//" + tagName + "[" + (i+1) + "]";
+		if (root.isSameNode(e)) return "/vignette";
+		Element parentElement = (Element) e.getParentNode();
+		List<Element> siblings = getChildElementsByName(parentElement, e.getTagName());
+		for (int i = 0; i < siblings.size(); i++) {
+			Element sibling = siblings.get(i);
+			if (e.isSameNode(sibling)) {
+				return getResumePoint(parentElement) + "/" + e.getTagName() + "[" + (i+1) + "]";
 			}
 		}
 		throw new RuntimeException("Bug! Couldn't find element in the document");

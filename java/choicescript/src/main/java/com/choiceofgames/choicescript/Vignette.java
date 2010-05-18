@@ -99,8 +99,11 @@ public class Vignette implements IVignette {
 			if (resuming) {
 				resuming = false;
 			} else {
-				getNextElement();
+				currentElement = getNextElement(currentElement);
 			}
+		}
+		if (!finished) {
+			io.finish("Next Chapter");
 		}
 	}
 
@@ -158,18 +161,20 @@ public class Vignette implements IVignette {
 		}
 	}
 
-	private void getNextElement() {
-		Element oldElement = currentElement;
-		currentElement = getNextSiblingElement(currentElement);
-		if (currentElement != null) return;
-		Element parent = (Element) oldElement.getParentNode();
-		currentElement = findValidParent(parent);
-		if (currentElement != null) getNextElement();
+	private Element getNextElement(Element tag) {
+		Element newTag = getNextSiblingElement(tag);
+		if (newTag != null) return newTag;
+		Element parent = (Element) tag.getParentNode();
+		newTag = findValidParent(parent);
+		if (newTag != null) return getNextElement(newTag);
+		return null;
 	}
 	
 	private Element findValidParent(Element tag) {
+		if (vignetteXml.getDocumentElement().isSameNode(tag)) {
+			return null;
+		}
 		Element parent = (Element) tag.getParentNode();
-		if (parent == null) return null;
 		String tagName = parent.getTagName();
 		if (tagName.matches("(vignette|option|result|else)")) {
 			// What about multi-options?
@@ -238,6 +243,8 @@ public class Vignette implements IVignette {
 		String promptMessage = currentElement.getAttribute("text");
 		if (promptMessage == null || promptMessage.isEmpty()) promptMessage = "Next";
 		io.pageBreak(promptMessage);
+		Element resume = getNextSiblingElement(currentElement);
+		io.saveState(stats, temps, getResumePoint(resume));
 		finished = true;
 	}
 
@@ -299,7 +306,7 @@ public class Vignette implements IVignette {
 	@Override
 	public void setResumePoint(String resumePoint) {
 		try {
-			currentElement = (Element) xpath.evaluate(resumePoint, vignetteXml, XPathConstants.NODE);
+			currentElement = (Element) xpath.evaluate(resumePoint, vignetteXml, XPathConstants.NODE); 
 		} catch (XPathExpressionException e) {
 			throw new RuntimeException("Bug", e);
 		}

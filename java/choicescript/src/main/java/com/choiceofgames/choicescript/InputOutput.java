@@ -101,7 +101,7 @@ public class InputOutput implements IInputOutput {
 	
 	@Override
 	public void pageBreak(String promptMessage) {
-		// TODO Auto-generated method stub
+		System.out.println(">" + promptMessage);
 		action = Action.PAGE_BREAK;
 	}
 
