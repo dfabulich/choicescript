@@ -1,5 +1,6 @@
 package com.choiceofgames.choicescript;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -28,7 +29,8 @@ public class XmlHelper {
 			throw new RuntimeException("Bug!", e);
 		}
 		String xname = "/com/choiceofgames/choicescript/sample.xml";
-		InputStream stream = XmlHelper.class.getResourceAsStream(xname);
+		//InputStream stream = XmlHelper.class.getResourceAsStream(xname);
+		FileInputStream stream = new FileInputStream("/tp/" +name +".txt.xml");
 		InputSource is = new InputSource(stream);
 		Document document = builder.parse(is);
 		return document;

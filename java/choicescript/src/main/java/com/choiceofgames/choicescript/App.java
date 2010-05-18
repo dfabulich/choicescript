@@ -12,13 +12,13 @@ public class App {
 		Map<String, Object> startingStats = new HashMap<String, Object>();
 		startingStats.put("leadership", 50);
 		startingStats.put("strength", 50);
-		Navigator nav = Navigator.fromSceneList(startingStats, Arrays.asList("first", "second", "third"));
+		Navigator nav = Navigator.fromSceneList(startingStats, Arrays.asList("startup", "animal", "variables", "ending", "death"));
 		Map<String, Object> stats = new HashMap<String, Object>();
 		nav.resetStats(stats);
 		String startupSceneName = nav.getStartupSceneName();
 		InputOutput io = new InputOutput(nav);
 		Document xml = XmlHelper.xmlFromResource(startupSceneName);
-		IVignette scene = new Vignette(io, nav, xml, stats);
+		IVignette scene = new Vignette(startupSceneName, io, nav, xml, stats);
 		while (true) {
 			scene.execute();
 			scene = io.handleUserInput();

@@ -10,7 +10,7 @@ import java.util.Map;
 import org.w3c.dom.Document;
 
 public class InputOutput implements IInputOutput {
-	final Navigator nav;
+	final INavigator nav;
 	Map<String, Object> stats, temps;
 	enum Action { CHOICE, INPUT_TEXT, PAGE_BREAK, FINISH, ENDING };
 	String inputTextVariable;
@@ -74,39 +74,57 @@ public class InputOutput implements IInputOutput {
 			throw new RuntimeException(e);
 		}
 		
-		String sceneName = (String) stats.get("sceneName");
+		IVignette vig;
 		Document xml;
-		try {
-			xml = XmlHelper.xmlFromResource(sceneName);
-		} catch (Exception e) {
-			throw new RuntimeException("How should we have handled this?", e);
-		}
-		IVignette vig = new Vignette(this, nav, xml, stats, temps);
 		
 		
 		switch (action) {
 			case CHOICE:
-				vig.setResumePoint(resumePoint);
+				vig = reinflateVignette();
 				int decision = Integer.parseInt(line);
 				vig.resolveChoice(Arrays.asList(decision-1));
 				break;
 			case INPUT_TEXT:
+				vig = reinflateVignette();
 				vig.inputText(inputTextVariable, line);
 				break;
 			case PAGE_BREAK:
-				vig.setResumePoint(resumePoint);
+				vig = reinflateVignette();
 				break;
 			case FINISH:
-				// TODO go on the navigator's next scene
+				String nextSceneName = nav.getNextSceneName((String) stats.get("sceneName"));
+				xml = loadDocument(nextSceneName);
+				vig = new Vignette(nextSceneName, this, nav, xml, stats);
 				break;
 			case ENDING:
-				// TODO restart from navigator's start scene
+				nav.resetStats(stats);
+				String startupSceneName = nav.getStartupSceneName();
+				xml = loadDocument(startupSceneName);
+				vig = new Vignette(startupSceneName, this, nav, xml, stats);
 				break;
 			default:
 				throw new RuntimeException("Bug! Unrecognized action: " + action);
 		}
 		
 		return vig;
+	}
+	
+	private IVignette reinflateVignette() {
+		String sceneName = (String) stats.get("sceneName");
+		Document xml = loadDocument(sceneName);
+		IVignette vig = new Vignette(sceneName, this, nav, xml, stats, temps);
+		vig.setResumePoint(resumePoint);
+		return vig;
+	}
+
+	private Document loadDocument(String sceneName) {
+		Document xml;
+		try {
+			xml = XmlHelper.xmlFromResource(sceneName);
+		} catch (Exception e) {
+			throw new RuntimeException("How should we have handled this?", e);
+		}
+		return xml;
 	}
 	
 	@Override
@@ -135,9 +153,11 @@ public class InputOutput implements IInputOutput {
 	}
 
 	@Override
-	public void saveState(Map<String, Object> stats, Map<String, Object> temps,
-			String resumePoint) {
+	public void saveState(String sceneName, Map<String, Object> stats,
+			Map<String, Object> temps, String resumePoint) {
 		this.stats = stats;
+		this.stats.remove("scene");
+		this.stats.put("sceneName", sceneName);
 		this.temps = temps;
 		this.resumePoint = resumePoint;
 		

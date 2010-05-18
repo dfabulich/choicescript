@@ -63,9 +63,10 @@ public interface IInputOutput {
 	
 	/**
 	 * Record the current state of the game
+	 * @param sceneName TODO
 	 * @param stats the permanent "stat" variables
 	 * @param temps the temporary variables, destroyed when each scene finishes
 	 * @param resumePoint TODO
 	 */
-	public void saveState(Map<String, Object> stats, Map<String, Object> temps, String resumePoint);
+	public void saveState(String sceneName, Map<String, Object> stats, Map<String, Object> temps, String resumePoint);
 }

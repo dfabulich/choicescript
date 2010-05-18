@@ -16,28 +16,28 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 public class Vignette implements IVignette {
-	public Vignette(IInputOutput io, Navigator nav, Document vignetteXml,
-			Map<String, Object> stats) {
-		this.io = io;
-		this.nav = nav;
-		this.vignetteXml = vignetteXml;
-		this.stats = stats;
-		this.temps = new HashMap<String, Object>();
-		currentElement = getFirstChildElement(vignetteXml.getDocumentElement());
+	
+	
+	public Vignette(String name, IInputOutput io, INavigator nav,
+			Document vignetteXml, Map<String, Object> stats) {
+		this(name, io, nav, vignetteXml, stats, new HashMap<String, Object>());
 	}
 	
-	public Vignette(IInputOutput io, Navigator nav, Document vignetteXml,
-			Map<String, Object> stats, Map<String, Object> temps) {
+	public Vignette(String name, IInputOutput io, INavigator nav,
+			Document vignetteXml, Map<String, Object> stats, Map<String, Object> temps) {
+		this.name = name;
 		this.io = io;
 		this.nav = nav;
 		this.vignetteXml = vignetteXml;
 		this.stats = stats;
 		this.temps = temps;
+		this.stats.put("scene", this);
 		currentElement = getFirstChildElement(vignetteXml.getDocumentElement());
 	}
 
+	final String name;
 	final IInputOutput io;
-	final Navigator nav;
+	final INavigator nav;
 	final Map<String, Object> stats;
 	final ExpressionEvaluator ee = new ExpressionEvaluator(new VariableMap());
 	private static final XPath xpath = XPathFactory.newInstance().newXPath();
@@ -250,7 +250,7 @@ public class Vignette implements IVignette {
 		if (promptMessage == null || promptMessage.isEmpty()) promptMessage = "Next";
 		io.pageBreak(promptMessage);
 		Element resume = getNextSiblingElement(currentElement);
-		io.saveState(stats, temps, getResumePoint(resume));
+		io.saveState(this.name, stats, temps, getResumePoint(resume));
 		finished = true;
 	}
 
@@ -265,7 +265,7 @@ public class Vignette implements IVignette {
 	private void choice() {
 		List<OptionDisplayGroup> odg = parseChoice(currentElement);
 		io.choice(odg);
-		io.saveState(stats, temps, getResumePoint(currentElement));
+		io.saveState(this.name, stats, temps, getResumePoint(currentElement));
 		finished = true;
 	}
 	
