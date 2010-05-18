@@ -99,7 +99,28 @@ XmlScene.prototype.set = function xmlSet(data) {
   writer.write("</set>\n");
 }
 
-XmlScene.prototype["if"] = function xmlIf(data) {
+XmlScene.prototype["if"] = XmlScene.prototype.elseif = XmlScene.prototype.elsif = function xmlIf(data) {
+  writer.write("<switch>");
+  writer.write("<if>");
+  writer.write("<test>");
+  var stack = this.tokenizeExpr(data);
+  writer.write(this.evaluateExpr(stack));
+  writer.write("</test><result>");  
+  var trueLine = this.lineNum + 1;
+  var trueIndent = this.getIndent(this.nextNonBlankLine());
+  this.skipTrueBranch();
+  var subSceneLines = this.lines.slice(trueLine, this.lineNum+1);
+  var subScene = new XmlScene();
+  subScene.lines = subSceneLines;
+  subScene.loaded = true;
+  subScene.indent = trueIndent;
+  subScene.execute();
+  writer.write("</result></if>");
+  writer.write("</switch>");
+}
+
+XmlScene.prototype.goto_scene = function xmlGotoScene(data) {
+  printElement("goto-scene", "name", data);
   this.finished = true;
 }
 
