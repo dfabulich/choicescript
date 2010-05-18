@@ -49,14 +49,12 @@ function closePara() {
 
 XmlScene.prototype.paragraph  = function xmlParagraph() {
   closePara();
-  writer.write("<p>");
-  inPara = true;
 }
 
 XmlScene.prototype.page_break = function xmlPageBreak(data) {
   writer.write("<page-break ");
   if (data) writer.write("text='" + xmlEscape(data) + "'");
-  writer.write("/>"); 
+  writer.write("/>\n"); 
 }
 
 XmlScene.prototype.choice = function xmlChoice(data) {
