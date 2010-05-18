@@ -83,6 +83,77 @@ XmlScene.prototype.label = function xmlLabel(data) {
   printElement("label", "id", data);
 }
 
+XmlScene.prototype.temp = function xmlTemp(data) {
+  printElement("temp", "variable", data);
+}
+
+XmlScene.prototype.set = function xmlSet(data) {
+  var result = /^(\w*)(.*)/.exec(data);
+  var variable = result[1];
+  var expr = result[2];
+  var stack = this.tokenizeExpr(expr);
+  // if the first token is an operator, then it's implicitly based on the variable
+  if (/OPERATOR|FAIRMATH/.test(stack[0].name)) stack.unshift({name:"VAR", value:variable, pos:"(implicit)"});
+  writer.write("<set variable='" + variable + "'>");
+  writer.write(this.evaluateExpr(stack));
+  writer.write("</set>\n");
+}
+
+XmlScene.prototype["if"] = function xmlIf(data) {
+  this.finished = true;
+}
+
+XmlScene.prototype.evaluateValueToken = function xmlEvaluateValueToken(token) {
+  var name = token.name;
+  if ("OPEN_PARENTHESIS" == name) {
+      return this.evaluateExpr(stack, "CLOSE_PARENTHESIS");
+  } else if ("OPEN_CURLY" == name) {
+      var value = this.evaluateExpr(stack, "CLOSE_CURLY");
+      throw new Error("meta curly not implemented");
+      return this.getVar(value);
+  } else if ("NUMBER" == name) {
+      return "<literal value='" + xmlEscape(token.value) + "'/>";
+  } else if ("STRING" == name) {
+      // strip off the quotes and unescape backslashes
+      return "<literal value='" + xmlEscape(token.value.slice(1,-1).replace(/\\(.)/g, "$1")) + "'/>";
+  } else if ("VAR" == name) {
+      return "<variable name='" + token.value + "' />";
+  } else {
+      throw new Error(this.lineMsg() + "Invalid expression at char "+token.pos+", expected NUMBER, STRING, VAR or PARENTHETICAL, was: " + name + " [" + token.value + "]");
+  }
+}
+
+function mathOperator(operator, v1, v2) {
+  return "<math operator='"+operator+"'>"+ v1+ v2+"</math>";
+}
+
+function binaryOperator(element, v1, v2) {
+  return "<"+element+">" + v1 + v2 + "</" + element + ">";
+}
+
+function not(text) {
+  return "<not>" + text + "</not>";
+}
+
+Scene.operators = {
+    "+": function add(v1,v2) { return mathOperator("+", v1, v2); }
+    ,"-": function subtract(v1,v2) { return mathOperator("-", v1, v2); }
+    ,"*": function multiply(v1,v2) { return mathOperator("*", v1, v2); }
+    ,"/": function divide(v1,v2) { return mathOperator("/", v1, v2); }
+    ,"&": function concatenate(v1,v2) { return binaryOperator("concatenate", v1, v2) }
+    ,"%+": function fairAdd(v1, v2, line) { return mathOperator("%+", v1, v2); }
+    ,"%-": function fairSubtract(v1, v2) { return mathOperator("%-", v1, v2); }
+    ,"=": function equals(v1,v2) { return binaryOperator("equals", v1, v2) }
+    ,"<": function lessThan(v1,v2) { return binaryOperator("lt", v1, v2) }
+    ,">": function greaterThan(v1,v2) { return binaryOperator("gt", v1, v2) }
+    ,"<=": function lessThanOrEquals(v1,v2) { return not(binaryOperator("gt", v1, v2)) }
+    ,">=": function greaterThanOrEquals(v1,v2) { return not(binaryOperator("lt", v1, v2)) }
+    ,"!=": function notEquals(v1,v2) { return not(binaryOperator("equals", v1, v2)) }
+    ,"and": function and(v1, v2, line) { return binaryOperator("and", v1, v2); }
+    ,"or": function or(v1, v2, line) { return binaryOperator("or", v1, v2); }
+};
+
+
 XmlScene.prototype.choice = function xmlChoice(data) {
   closePara();
   var groups = data.split(/ /);
@@ -117,7 +188,7 @@ XmlScene.prototype.choice = function xmlChoice(data) {
 }
 
 var list = new java.io.File(dir).listFiles();
-list = [new java.io.File(dir, "animal.txt")];
+list = [new java.io.File(dir, "variables.txt")];
 
 var i = list.length;
 while (i--) {
