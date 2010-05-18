@@ -90,8 +90,7 @@ public class Vignette implements IVignette {
 				statChart();
 			} else if ("label".equals(tagName)) {
 			} else if ("include".equals(tagName)) {
-				String labelId = currentElement.getAttribute("label");
-				currentElement = vignetteXml.getElementById(labelId);
+				include();
 			} else {
 				throw new RuntimeException("Unknown element name: " + tagName);
 			}
@@ -105,6 +104,13 @@ public class Vignette implements IVignette {
 		if (!finished) {
 			io.finish("Next Chapter");
 		}
+	}
+
+	private void include() {
+		String labelId = currentElement.getAttribute("label");
+		Element tag = vignetteXml.getElementById(labelId);
+		if (tag == null) throw new RuntimeException("Invalid label; possibly no ID attlist? " + labelId);
+		currentElement = tag;
 	}
 
 
