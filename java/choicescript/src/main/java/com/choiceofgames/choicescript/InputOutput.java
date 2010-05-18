@@ -12,7 +12,6 @@ import org.w3c.dom.Document;
 public class InputOutput implements IInputOutput {
 	final Navigator nav;
 	Map<String, Object> stats, temps;
-	List<OptionDisplayGroup> optionDisplayGroups;
 	enum Action { CHOICE, INPUT_TEXT, PAGE_BREAK, FINISH, ENDING };
 	String inputTextVariable;
 	Action action = null;
@@ -24,10 +23,24 @@ public class InputOutput implements IInputOutput {
 
 	@Override
 	public void choice(List<OptionDisplayGroup> optionDisplayGroups) {
-		// TODO Auto-generated method stub
-		this.optionDisplayGroups = optionDisplayGroups;
-		System.out.println(">Choose 1 or 2");
+		if (optionDisplayGroups.size() == 1) {
+			printOptions(optionDisplayGroups.get(0).getOptionTitles());
+		} else {
+			for (OptionDisplayGroup group : optionDisplayGroups) {
+				System.out.println("\nChoose a(n)" + group.getGroupName());
+				printOptions(group.getOptionTitles());
+			}
+		}
+		System.out.print("> ");
 		action = Action.CHOICE;
+	}
+	
+	private void printOptions(List<String> options) {
+		for (int i = 0; i < options.size(); i++) {
+			System.out.print(""+(i+1));
+			System.out.print(": ");
+			System.out.println(options.get(i));
+		}
 	}
 
 	@Override

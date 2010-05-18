@@ -276,7 +276,7 @@ public class Vignette implements IVignette {
 		List<Element> optionTags = XmlHelper.getChildElementsByName(tag, "option");		
 		List<String> optionTitles = new ArrayList<String>();
 		for (Element optionTag : optionTags) {
-			String name = optionTag.getAttribute("title");
+			String name = optionTag.getAttribute("text");
 			optionTitles.add(name);
 		}
 		odgs.add(new OptionDisplayGroup(groupName, optionTitles));
