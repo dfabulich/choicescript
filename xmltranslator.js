@@ -87,8 +87,34 @@ XmlScene.prototype.temp = function xmlTemp(data) {
   printElement("temp", "variable", data);
 }
 
-XmlScene.prototype.ending = function xmlTemp(data) {
+XmlScene.prototype.ending = function xmlEnding(data) {
   printElement("ending");
+}
+
+XmlScene.prototype.line_break = function xmlLineBreak(data) {
+  printElement("line-break");
+}
+
+XmlScene.prototype.gotoref = function xmlGotoRef(data) {
+  writer.write("<goto-ref>");
+  this.evaluateExpr(this.tokenizeExr(data));
+  writer.write("</goto-ref>\n");
+}
+
+XmlScene.prototype.print = function xmlPrint(data) {
+  writer.write("<print>");
+  this.evaluateExpr(this.tokenizeExr(data));
+  writer.write("</print>\n");
+}
+
+XmlScene.prototype.setref = function xmlSetRef() {
+  writer.write("<set-ref><name>");
+  var stack = this.tokenizeExpr(line);
+  var reference = this.evaluateValueToken(stack.shift(), stack);
+  writer.write("</name><value>");
+  var value = this.evaluateExpr(stack);
+  this.setVar(reference, value);
+  writer.write("</value></set-ref>");
 }
 
 XmlScene.prototype.set = function xmlSet(data) {
@@ -234,17 +260,14 @@ while (i--) {
 }
 
 /*
-gotoref
-create
-setref
-print
 rand
-line_break
 else
 elseif
 fake_choice
 input_text
 stat_chart
+
+where should we closePara?
 */
 
 /*Scene.validCommands = {"comment":1, "goto":1, "gotoref":1, "label":1, "looplimit":1, "finish":1, "abort":1,
