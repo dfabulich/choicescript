@@ -125,8 +125,11 @@ public class Vignette implements IVignette {
 	}
 	
 	private void gotoScene() {
-		// TODO XXX
-		throw new RuntimeException("goto-scene not implemented yet");
+		finished = true;
+		String name = currentElement.getAttribute("name");
+		Document doc = io.loadDocument(name);
+		IVignette vig = new Vignette(name, io, nav, doc, stats);
+		vig.execute();
 	}
 	
 	private void print() {

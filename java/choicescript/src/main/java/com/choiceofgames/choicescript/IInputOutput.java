@@ -3,6 +3,8 @@ package com.choiceofgames.choicescript;
 import java.util.List;
 import java.util.Map;
 
+import org.w3c.dom.Document;
+
 public interface IInputOutput {
 	/**
 	 * Prints the specified message on the console with no trailing line break.
@@ -69,4 +71,6 @@ public interface IInputOutput {
 	 * @param resumePoint TODO
 	 */
 	public void saveState(String sceneName, Map<String, Object> stats, Map<String, Object> temps, String resumePoint);
+	
+	public Document loadDocument(String name);
 }

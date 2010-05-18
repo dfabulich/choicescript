@@ -117,7 +117,7 @@ public class InputOutput implements IInputOutput {
 		return vig;
 	}
 
-	private Document loadDocument(String sceneName) {
+	public Document loadDocument(String sceneName) {
 		Document xml;
 		try {
 			xml = XmlHelper.xmlFromResource(sceneName);
