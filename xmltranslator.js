@@ -87,6 +87,10 @@ XmlScene.prototype.temp = function xmlTemp(data) {
   printElement("temp", "variable", data);
 }
 
+XmlScene.prototype.ending = function xmlTemp(data) {
+  printElement("ending");
+}
+
 XmlScene.prototype.set = function xmlSet(data) {
   var result = /^(\w*)(.*)/.exec(data);
   var variable = result[1];
@@ -129,8 +133,8 @@ XmlScene.prototype.evaluateValueToken = function xmlEvaluateValueToken(token) {
   if ("OPEN_PARENTHESIS" == name) {
       return this.evaluateExpr(stack, "CLOSE_PARENTHESIS");
   } else if ("OPEN_CURLY" == name) {
-      var value = this.evaluateExpr(stack, "CLOSE_CURLY");
       throw new Error("meta curly not implemented");
+      var value = this.evaluateExpr(stack, "CLOSE_CURLY");
       return this.getVar(value);
   } else if ("NUMBER" == name) {
       return "<literal value='" + xmlEscape(token.value) + "'/>";
@@ -209,7 +213,7 @@ XmlScene.prototype.choice = function xmlChoice(data) {
 }
 
 var list = new java.io.File(dir).listFiles();
-list = [new java.io.File(dir, "variables.txt")];
+list = [new java.io.File(dir, "death.txt")];
 
 var i = list.length;
 while (i--) {
