@@ -204,7 +204,7 @@ Scene.operators = {
 };
 
 
-XmlScene.prototype.choice = function xmlChoice(data) {
+XmlScene.prototype.choice = XmlScene.prototype.fake_choice = function xmlChoice(data) {
   closePara();
   var groups = data.split(/ /);
   var options = this.parseOptions(this.indent, groups);
@@ -271,10 +271,8 @@ while (i--) {
 }
 
 /*
-rand
 else
 elseif
-fake_choice
 input_text
 stat_chart
 
