@@ -52,9 +52,18 @@ XmlScene.prototype.paragraph  = function xmlParagraph() {
 }
 
 XmlScene.prototype.page_break = function xmlPageBreak(data) {
+  closePara();
   writer.write("<page-break ");
   if (data) writer.write("text='" + xmlEscape(data) + "'");
   writer.write("/>\n"); 
+}
+
+XmlScene.prototype.finish = function xmlFinish(data) {
+  closePara();
+  writer.write("<finish ");
+  if (data) writer.write("text='" + xmlEscape(data) + "'");
+  writer.write("/>\n");
+  this.finished = true;
 }
 
 XmlScene.prototype.choice = function xmlChoice(data) {
