@@ -234,6 +234,7 @@ public class Vignette implements IVignette {
 	}
 	
 	private void pageBreak() {
+		// TODO if screen empty, skip it...
 		String promptMessage = currentElement.getAttribute("text");
 		if (promptMessage == null || promptMessage.isEmpty()) promptMessage = "Next";
 		io.pageBreak(promptMessage);
