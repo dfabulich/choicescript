@@ -252,6 +252,28 @@ XmlScene.prototype.rand = function xmlRand(data) {
   writer.write("</maximum></rand>\n");
 }
 
+XmlScene.prototype.stat_chart = function xmlStatChart() {
+  var rows = this.parseStatChart();
+  writer.write("<stat-chart>\n");
+  for (var i = 0; i < rows.length; i++) {
+    var row = rows[i];
+    if ("text" == row.type || "percent" == row.type) {
+      writer.write("<"+row.type+" label='"+xmlEscape(row.label)+"' variable='"+row.variable+"' ")
+      if (row.definition) writer.write(" definition='" + row.definition + "' ");
+      writer.write("/>\n");
+    } else if ("opposed_pair" == row.type) {
+      writer.write("<opposed-pair variable='"+row.variable+"'>\n");
+      writer.write("<label text='"+xmlEscape(row.label)+"' ")
+      if (row.definition) writer.write(" definition='" + row.definition + "' ");
+      writer.write("/>\n");
+      writer.write("<label text='"+xmlEscape(row.opposed_label)+"' ")
+      if (row.opposed_definition) writer.write(" definition='" + row.opposed_definition + "' ");
+      writer.write("/>\n</opposed-pair>\n");
+    }
+  }
+  writer.write("</stat-chart>\n");
+}
+
 var list = new java.io.File(dir).listFiles();
 list = [new java.io.File(dir, "hello.txt")];
 
@@ -277,7 +299,6 @@ while (i--) {
 /*
 else
 elseif
-input_text
 stat_chart
 
 where should we closePara?
