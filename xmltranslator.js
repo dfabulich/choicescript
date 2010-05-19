@@ -160,6 +160,12 @@ XmlScene.prototype["if"] = XmlScene.prototype.elseif = XmlScene.prototype.elsif 
     subScene.indent = trueIndent;
     subScene.execute();
     writer.write("</result></if>");
+    if ("*else" == trim(this.lines[this.lineNum])) {
+      writer.write("<else>");
+      this.lineNum++;
+      this.execute();
+      writer.write("</else>");
+    }
   }
   writer.write("</switch>");
 }
