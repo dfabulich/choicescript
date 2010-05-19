@@ -95,6 +95,10 @@ XmlScene.prototype.line_break = function xmlLineBreak(data) {
   printElement("line-break");
 }
 
+XmlScene.prototype.input_text = function xmlLineBreak(data) {
+  printElement("input-text", "variable", data);
+}
+
 XmlScene.prototype.gotoref = function xmlGotoRef(data) {
   writer.write("<goto-ref>");
   this.evaluateExpr(this.tokenizeExr(data));
