@@ -135,21 +135,32 @@ XmlScene.prototype.set = function xmlSet(data) {
 
 XmlScene.prototype["if"] = XmlScene.prototype.elseif = XmlScene.prototype.elsif = function xmlIf(data) {
   writer.write("<switch>");
-  writer.write("<if>");
-  writer.write("<test>");
-  var stack = this.tokenizeExpr(data);
-  writer.write(this.evaluateExpr(stack));
-  writer.write("</test><result>");  
-  var trueLine = this.lineNum + 1;
-  var trueIndent = this.getIndent(this.nextNonBlankLine());
-  this.skipTrueBranch();
-  var subSceneLines = this.lines.slice(trueLine, this.lineNum+1);
-  var subScene = new XmlScene();
-  subScene.lines = subSceneLines;
-  subScene.loaded = true;
-  subScene.indent = trueIndent;
-  subScene.execute();
-  writer.write("</result></if>");
+  var ifChainData = [data];
+  while (ifChainData.length) {
+    var currentData = ifChainData.pop();
+    writer.write("<if>");
+    writer.write("<test>");
+    var stack = this.tokenizeExpr(currentData);
+    writer.write(this.evaluateExpr(stack));
+    writer.write("</test><result>");
+
+    var trueLine = this.lineNum + 1;
+    var trueIndent = this.getIndent(this.nextNonBlankLine());
+    var oldIf = this["if"];
+    this["if"] = function(data) {
+      ifChainData.push(data);
+    }
+    this.skipTrueBranch();
+    this["if"] = oldIf;
+    var subSceneLines = this.lines.slice(0, this.lineNum+1);
+    var subScene = new XmlScene();
+    subScene.lines = subSceneLines;
+    subScene.loaded = true;
+    subScene.lineNum = trueLine;
+    subScene.indent = trueIndent;
+    subScene.execute();
+    writer.write("</result></if>");
+  }
   writer.write("</switch>");
 }
 
@@ -275,7 +286,7 @@ XmlScene.prototype.stat_chart = function xmlStatChart() {
 }
 
 var list = new java.io.File(dir).listFiles();
-list = [new java.io.File(dir, "hello.txt")];
+list = [new java.io.File(dir, "else.txt")];
 
 var i = list.length;
 while (i--) {
@@ -298,9 +309,8 @@ while (i--) {
 
 /*
 else
-elseif
-stat_chart
-
+trailing *goto in last choice
+if blocks in *choice
 where should we closePara?
 */
 
