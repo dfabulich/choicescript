@@ -20,9 +20,8 @@ public interface IInputOutput {
 	
 	/**
 	 * Prints a chart of the specified variables.
-	 * @param stats
 	 */
-	public void printStatChart(Map<String, Object> variables, List<StatChartRow> rows);
+	public void printStatChart(List<StatChartRow> rows);
 	
 	/**
 	 * End the current scene and launch the next scene.

@@ -146,10 +146,27 @@ public class InputOutput implements IInputOutput {
 	}
 
 	@Override
-	public void printStatChart(Map<String, Object> variables,
-			List<StatChartRow> rows) {
-		// TODO Auto-generated method stub
-		
+	public void printStatChart(List<StatChartRow> rows) {
+		for (StatChartRow row : rows) {
+			StatChartRow.Label label = row.chartLabel;
+			String value = row.value;
+			switch (row.type) {
+				case OPPOSED_PAIR:
+					System.out.print("  ");
+					System.out.print(row.value + "% " + label.label);
+					System.out.print(" vs. ");
+					int intValue = Integer.parseInt(row.value);
+					System.out.print(100 - intValue);
+					System.out.print("% " + row.opposite.label);
+					System.out.println();
+					break;
+				case PERCENT:
+					value += "%";
+					// fall through
+				case TEXT:
+					System.out.println(label.label + ": " + value);
+			}
+		}		
 	}
 
 	@Override

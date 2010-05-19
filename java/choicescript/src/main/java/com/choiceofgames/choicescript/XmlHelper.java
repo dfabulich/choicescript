@@ -129,5 +129,10 @@ public class XmlHelper {
 		}
 		
 	}
+	
+	public static String getAttribute(Element tag, String name) {
+		if (!tag.hasAttribute(name)) return null;
+		return tag.getAttribute(name);
+	}
 
 }

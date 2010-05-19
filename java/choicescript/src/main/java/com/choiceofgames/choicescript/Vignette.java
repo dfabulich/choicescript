@@ -116,8 +116,29 @@ public class Vignette implements IVignette {
 
 
 	private void statChart() {
-		// TODO XXX
-		throw new RuntimeException("stat-chart not implemented yet");
+		List<StatChartRow> rows = new ArrayList<StatChartRow>();
+		List<Element> rowTags = getChildElements(currentElement);
+		for (Element rowTag : rowTags) {
+			String name = rowTag.getTagName();
+			String varName = rowTag.getAttribute("variable");
+			String value = getVariable(varName).toString();
+			if ("opposed-pair".equals(name)) {
+				Element leftTag = getFirstChildElement(rowTag);
+				Element rightTag = getNextSiblingElement(leftTag);
+				StatChartRow.Label left, right;
+				left = new StatChartRow.Label(getAttribute(leftTag, "text"), getAttribute(leftTag, "definition"));
+				right = new StatChartRow.Label(getAttribute(rightTag, "text"), getAttribute(rightTag, "definition"));
+				StatChartRow row = new StatChartRow(name, value, left, right);
+				rows.add(row);
+			} else {
+				String definition = getAttribute(rowTag, "definition");
+				StatChartRow.Label label;
+				label = new StatChartRow.Label(getAttribute(rowTag, "label"), definition);
+				StatChartRow row = new StatChartRow(name, value, label);
+				rows.add(row);
+			}
+		}
+		io.printStatChart(rows);
 	}
 	
 	private void rand() {
