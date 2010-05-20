@@ -81,6 +81,8 @@ Scene.prototype.printLoop = function printLoop() {
         var indent = this.getIndent(line);
         if (indent > this.indent) {
             throw new Error(this.lineMsg() + "increasing indent not allowed, expected " + this.indent + " was " + indent);
+        } else if (indent < this.indent) {
+            this.dedent(indent);
         }
         this.indent = indent;
         if (!this.runCommand(line)) {
@@ -105,6 +107,8 @@ Scene.prototype.printLoop = function printLoop() {
     }
     printFooter();
 }
+
+Scene.prototype.dedent = function dedent(newDent) {};
 
 Scene.prototype.printLine = function printLine(line, parent) {
     if (!line) return null;

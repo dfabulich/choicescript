@@ -17,6 +17,7 @@ var writer;
 
 function XmlScene(name, stats, nav) {
   Scene.call(this, name, stats, nav);
+  this.dedentChain = [];
 };
 
 function xmlEscape(str) {
@@ -134,15 +135,16 @@ XmlScene.prototype.set = function xmlSet(data) {
 }
 
 XmlScene.prototype["if"] = XmlScene.prototype.elseif = XmlScene.prototype.elsif = function xmlIf(data) {
-  writer.write("<switch>");
+  writer.write("<switch>\n");
   var ifChainData = [data];
+  var oldDent = this.indent;
   while (ifChainData.length) {
     var currentData = ifChainData.pop();
-    writer.write("<if>");
+    writer.write("<if>\n");
     writer.write("<test>");
     var stack = this.tokenizeExpr(currentData);
     writer.write(this.evaluateExpr(stack));
-    writer.write("</test><result>");
+    writer.write("</test>\n<result>");
 
     var trueLine = this.lineNum + 1;
     var trueIndent = this.getIndent(this.nextNonBlankLine());
@@ -158,8 +160,20 @@ XmlScene.prototype["if"] = XmlScene.prototype.elseif = XmlScene.prototype.elsif 
     subScene.loaded = true;
     subScene.lineNum = trueLine;
     subScene.indent = trueIndent;
+    var closedTag = false;
+    this.dedentChain.push(function (newDent) {
+      if (!closedTag && newDent <= oldDent) {
+        closedTag = true;
+        closePara();
+        writer.write("</result></if>\n");
+      }
+    });
     subScene.execute();
-    writer.write("</result></if>");
+    if (!closedTag) {
+      closedTag = true;
+      closePara();
+      writer.write("</result></if>\n");
+    }
     if ("*else" == trim(this.lines[this.lineNum])) {
       writer.write("<else>");
       this.lineNum++;
@@ -224,7 +238,12 @@ Scene.operators = {
     ,"or": function or(v1, v2, line) { return binaryOperator("or", v1, v2); }
 };
 
-
+XmlScene.prototype.dedent = function xmlDedent(newDent) {
+  var i = this.dedentChain.length;
+  while (i--) {
+    this.dedentChain[i].call(this, newDent);
+  }
+}
 XmlScene.prototype.choice = XmlScene.prototype.fake_choice = function xmlChoice(data) {
   closePara();
   var groups = data.split(/ /);
@@ -237,6 +256,7 @@ XmlScene.prototype.choice = XmlScene.prototype.fake_choice = function xmlChoice(
     }
     writer.write("</groups>\n");
   }
+  var oldDent = this.indent;
   this.writeOption = function writeOption(option) {
     writer.write("<option text='" + xmlEscape(option.name) + "'>\n");
     if (option.suboptions) {
@@ -248,9 +268,20 @@ XmlScene.prototype.choice = XmlScene.prototype.fake_choice = function xmlChoice(
     this.lineNum = option.line;
     this.indent = this.getIndent(this.nextNonBlankLine(true/*includingThisOne*/));
     this.finished = false;
+    var closedTag = false;
+    this.dedentChain.push(function (newDent) {
+      if (!closedTag && newDent <= oldDent) {
+        closedTag = true;
+        closePara();
+        writer.write("</option>\n");
+      }
+    });
     this.execute();
-    closePara();
-    writer.write("</option>\n");
+    if (!closedTag) {
+      closedTag = true;
+      closePara();
+      writer.write("</option>\n");
+    }
   }
   for (var i = 0; i < options.length; i++) {
     this.writeOption(options[i]);
@@ -303,6 +334,7 @@ while (i--) {
   scene.loadLines(str);
   
   var writer = new java.io.BufferedWriter(new java.io.FileWriter("/tp/" + list[i].getName() + ".xml"));
+  //writer = {write: function(x){java.lang.System.out.print(x)}, close: function(){java.lang.System.out.println()}};
   writer.write("<!DOCTYPE vignette [ \n" + 
 			"<!ATTLIST label id ID #REQUIRED>\n" + 
 			"]>");
