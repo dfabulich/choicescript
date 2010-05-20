@@ -182,6 +182,7 @@ XmlScene.prototype["if"] = XmlScene.prototype.elseif = XmlScene.prototype.elsif 
       writer.write("<else>");
       this.lineNum++;
       this.execute();
+      this.finished = false;
       writer.write("</else>");
     }
   }
@@ -281,6 +282,7 @@ XmlScene.prototype.choice = XmlScene.prototype.fake_choice = function xmlChoice(
       }
     });
     this.execute();
+    this.finished = false;
     if (!closedTag) {
       closedTag = true;
       closePara();
@@ -352,8 +354,6 @@ while (i--) {
 }
 
 /*
-else
-trailing *goto in last choice
 if blocks in *choice
 where should we closePara?
 */
