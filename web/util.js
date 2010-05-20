@@ -18,7 +18,7 @@
  */
 
 function safeCall(obj, fn) {
-    var debug = false;
+    var debug = false || window.debug;
     var userAgent = this.window && window.navigator && window.navigator.userAgent;
     var isSafari = /Safari/.test(userAgent);
     var isIE = /MSIE/.test(userAgent);
@@ -40,9 +40,10 @@ function safeCall(obj, fn) {
             // On Safari we call this because it won't get called otherwise
             // On Firefox we call this because it gives us the full stack
             window.onerror(toJson(e, '\n'));
+            if (window.console) window.console.error(e);
             // Rethrow here so the debugger can handle it
             // On Firefox this causes a second prompt.  Meh!
-            throw e;
+            if (debug) throw e;
         }
     }
 }

@@ -230,6 +230,11 @@ window.isIE = /MSIE/.test(navigator.userAgent);
 window.loadTime = new Date().getTime();
 
 window.onerror=function(msg, file, line) {
+    if (window.console) {
+      window.console.error(msg);
+      if (file) window.console.error("file: " + file);
+      if (line) window.console.error("line: " + line);
+    }
     if (window.Event && msg instanceof window.Event && /WebKit/.test(navigator.userAgent)) {
       return; // ignore "adsense offline" error
     } else if (/(Error loading script|Script error)/.test(msg) && /(show_ads|google-analytics|version\.js)/.test(file)) {
@@ -266,6 +271,12 @@ window.onload=function() {
     var map = parseQueryString(window.location.search);
         
     if (map) {
+      window.debug = map.debug;
+      if (window.debug) {
+        window.onbeforeunload = function() {
+          return "Debugging!";
+        }
+      }
       if (map.scene) stats.sceneName = map.scene;
       restoreGame({version:window.version, stats:stats, temps:{}, lineNum: 0, indent: 0, debug: map.debug});
       return;
