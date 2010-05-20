@@ -101,28 +101,31 @@ XmlScene.prototype.input_text = function xmlLineBreak(data) {
 }
 
 XmlScene.prototype.gotoref = function xmlGotoRef(data) {
+  closePara();
   writer.write("<goto-ref>");
   this.evaluateExpr(this.tokenizeExr(data));
   writer.write("</goto-ref>\n");
 }
 
 XmlScene.prototype.print = function xmlPrint(data) {
+  closePara();
   writer.write("<print>");
-  this.evaluateExpr(this.tokenizeExr(data));
+  this.evaluateExpr(this.tokenizeExpr(data));
   writer.write("</print>\n");
 }
 
-XmlScene.prototype.setref = function xmlSetRef() {
+XmlScene.prototype.setref = function xmlSetRef(data) {
+  closePara();
   writer.write("<set-ref><name>");
-  var stack = this.tokenizeExpr(line);
+  var stack = this.tokenizeExpr(data);
   var reference = this.evaluateValueToken(stack.shift(), stack);
   writer.write("</name><value>");
   var value = this.evaluateExpr(stack);
-  this.setVar(reference, value);
   writer.write("</value></set-ref>");
 }
 
 XmlScene.prototype.set = function xmlSet(data) {
+  closePara();
   var result = /^(\w*)(.*)/.exec(data);
   var variable = result[1];
   var expr = result[2];
@@ -135,6 +138,7 @@ XmlScene.prototype.set = function xmlSet(data) {
 }
 
 XmlScene.prototype["if"] = XmlScene.prototype.elseif = XmlScene.prototype.elsif = function xmlIf(data) {
+  closePara();
   writer.write("<switch>\n");
   var ifChainData = [data];
   var oldDent = this.indent;
@@ -290,6 +294,7 @@ XmlScene.prototype.choice = XmlScene.prototype.fake_choice = function xmlChoice(
 }
 
 XmlScene.prototype.rand = function xmlRand(data) {
+  closePara();
   var args = data.split(/ /);
   var variable, minimum, maximum;
   variable = args[0];
@@ -297,10 +302,11 @@ XmlScene.prototype.rand = function xmlRand(data) {
   minimum = this.evaluateValueExpr(args[1]);
   writer.write("</minimum><maximum>");
   maximum = this.evaluateValueExpr(args[2]);
-  writer.write("</maximum></rand>\n");
+  writer.write("</maximum></random>\n");
 }
 
 XmlScene.prototype.stat_chart = function xmlStatChart() {
+  closePara();
   var rows = this.parseStatChart();
   writer.write("<stat-chart>\n");
   for (var i = 0; i < rows.length; i++) {
@@ -323,7 +329,7 @@ XmlScene.prototype.stat_chart = function xmlStatChart() {
 }
 
 var list = new java.io.File(dir).listFiles();
-list = [new java.io.File(dir, "else.txt")];
+list = [new java.io.File(dir, "hello.txt")];
 
 var i = list.length;
 while (i--) {
