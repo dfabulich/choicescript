@@ -722,7 +722,16 @@ Scene.prototype.renderOptions = function renderOptions(groups, options) {
     }
 
     form.appendChild(document.createElement("br"));
-    printButton("Next", form, false);
+
+    var useRealForm = false;
+    if (useRealForm) {
+      printButton("Next", form, false);      
+    } else {
+      printButton("Next", main, false, function() {
+        form.onsubmit();
+      });
+    }
+
     if (this.debugMode) println(toJson(this.stats));
 }
 
@@ -906,7 +915,7 @@ Scene.prototype.input_text = function input_text(variable) {
 
     form.appendChild(document.createElement("br"));
     form.appendChild(document.createElement("br"));
-    printButton("Next", form, false);
+    printButton("Next", main, false, function() {form.onsubmit();});
     if (this.debugMode) println(toJson(this.stats));
 }
 
