@@ -12,11 +12,9 @@ public interface IInputOutput {
 	 */
 	public void print(String message);
 	
-	/**
-	 * Prints the specified message on the console followed by a line break.
-	 * @param message the message to print
-	 */
-	public void printLine(String message);
+	public void paragraphBreak();
+	
+	public void lineBreak();
 	
 	/**
 	 * Prints a chart of the specified variables.

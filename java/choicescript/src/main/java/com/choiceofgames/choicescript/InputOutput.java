@@ -140,12 +140,6 @@ public class InputOutput implements IInputOutput {
 	}
 
 	@Override
-	public void printLine(String message) {
-		// TODO Auto-generated method stub
-		System.out.println(message);
-	}
-
-	@Override
 	public void printStatChart(List<StatChartRow> rows) {
 		for (StatChartRow row : rows) {
 			StatChartRow.Label label = row.chartLabel;
@@ -177,6 +171,18 @@ public class InputOutput implements IInputOutput {
 		this.stats.put("sceneName", sceneName);
 		this.temps = temps;
 		this.resumePoint = resumePoint;
+		
+	}
+
+	@Override
+	public void lineBreak() {
+		System.out.println();
+		
+	}
+
+	@Override
+	public void paragraphBreak() {
+		System.out.print("\n\n");
 		
 	}
 

@@ -57,7 +57,10 @@ public class Vignette implements IVignette {
 			String tagName = currentElement.getTagName();
 			if ("p".equals(tagName)) {
 				io.print(currentElement.getTextContent());
-				io.print("\n\n");
+			} else if ("paragraph-break".equals(tagName)) {
+				io.paragraphBreak();
+			} else if ("line-break".equals(tagName)) {
+				io.lineBreak();
 			} else if ("choice".equals(tagName)) {
 				choice();
 			} else if ("finish".equals(tagName)) {

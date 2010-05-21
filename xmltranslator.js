@@ -49,7 +49,7 @@ function closePara() {
 }
 
 XmlScene.prototype.paragraph  = function xmlParagraph() {
-  closePara();
+  printElement("paragraph-break");
 }
 
 function printElement(tagName, attributeName, data) {
@@ -355,7 +355,6 @@ while (i--) {
 
 /*
 if blocks in *choice
-where should we closePara?
 */
 
 /*Scene.validCommands = {"comment":1, "goto":1, "gotoref":1, "label":1, "looplimit":1, "finish":1, "abort":1,
