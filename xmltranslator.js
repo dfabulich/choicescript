@@ -137,7 +137,8 @@ XmlScene.prototype.set = function xmlSet(data) {
   writer.write("</set>\n");
 }
 
-XmlScene.prototype["if"] = XmlScene.prototype.elseif = XmlScene.prototype.elsif = function xmlIf(data) {
+XmlScene.prototype["if"] = XmlScene.prototype.elseif = XmlScene.prototype.elsif = function xmlIf(data, inChoice) {
+  if (inChoice) return this.ifInChoice(data);
   closePara();
   writer.write("<switch>\n");
   var ifChainData = [data];
@@ -187,6 +188,18 @@ XmlScene.prototype["if"] = XmlScene.prototype.elseif = XmlScene.prototype.elsif 
     }
   }
   writer.write("</switch>");
+}
+
+XmlScene.prototype.ifInChoice = function xmlIfInChoice(data) {
+  var oldDisplayOptionCondition = this.displayOptionCondition;
+  var oldDent = this.indent;
+  this.displayOptionCondition = data;
+  this.dedentChain.push(function(newDent) {
+    if (newDent <= oldDent) {
+      this.displayOptionCondition = oldDisplayOptionCondition;
+    }
+  });
+  this.indent = this.getIndent(this.nextNonBlankLine());
 }
 
 XmlScene.prototype.goto_scene = function xmlGotoScene(data) {
@@ -263,6 +276,11 @@ XmlScene.prototype.choice = XmlScene.prototype.fake_choice = function xmlChoice(
   }
   var oldDent = this.indent;
   this.writeOption = function writeOption(option) {
+    if (option.displayIf) {
+      writer.write("<if><test>\n");
+      writer.write(this.evaluateExpr(this.tokenizeExpr(option.displayIf)));
+      writer.write("</test>\n");
+    }
     writer.write("<option text='" + xmlEscape(option.name) + "'>\n");
     if (option.suboptions) {
       for (var i = 0; i < option.suboptions.length; i++) {
@@ -279,6 +297,7 @@ XmlScene.prototype.choice = XmlScene.prototype.fake_choice = function xmlChoice(
         closedTag = true;
         closePara();
         writer.write("</option>\n");
+        if (option.displayIf) writer.write("</if>\n");
       }
     });
     this.execute();
@@ -287,6 +306,7 @@ XmlScene.prototype.choice = XmlScene.prototype.fake_choice = function xmlChoice(
       closedTag = true;
       closePara();
       writer.write("</option>\n");
+      if (option.displayIf) writer.write("</if>\n");
     }
   }
   for (var i = 0; i < options.length; i++) {
@@ -354,7 +374,7 @@ while (i--) {
 }
 
 /*
-if blocks in *choice
+${}
 */
 
 /*Scene.validCommands = {"comment":1, "goto":1, "gotoref":1, "label":1, "looplimit":1, "finish":1, "abort":1,

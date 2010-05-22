@@ -630,6 +630,7 @@ Scene.prototype.parseOptions = function parseOptions(startIndent, choicesRemaini
         }
         line = trim(trim(line).substring(1));
         var option = {name:line, group:currentChoice};
+        if (this.displayOptionCondition) option.displayIf = this.displayOptionCondition;
         option.line = this.lineNum + 1;
         if (namesEncountered[line]) {
             throw new Error(this.lineMsg() + "Invalid option; conflicts with option '"+option.name+"' on line " + namesEncountered[line]);

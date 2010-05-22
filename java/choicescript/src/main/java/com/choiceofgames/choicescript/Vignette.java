@@ -4,9 +4,9 @@ import static com.choiceofgames.choicescript.XmlHelper.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
@@ -324,11 +324,22 @@ public class Vignette implements IVignette {
 		List<OptionDisplayGroup> odgs = new ArrayList<OptionDisplayGroup>();
 		// TODO multichoice
 		String groupName = "choice";
-		List<Element> optionTags = XmlHelper.getChildElementsByName(tag, "option");		
+		List<Element> optionTags = XmlHelper.getChildElements(tag);		
 		List<String> optionTitles = new ArrayList<String>();
 		for (Element optionTag : optionTags) {
+			if ("if".equals(optionTag.getTagName())) {
+				List<Element> ifChildren = getChildElements(optionTag);
+				Element test = getFirstChildElement(ifChildren.get(0));
+				if (evaluateBooleanExpression(test)) {
+					optionTag = ifChildren.get(1);
+				} else {
+					continue;
+				}
+			}
+			
 			String name = optionTag.getAttribute("text");
 			optionTitles.add(name);
+			
 		}
 		odgs.add(new OptionDisplayGroup(groupName, optionTitles));
 		return odgs;
@@ -350,7 +361,21 @@ public class Vignette implements IVignette {
 	@Override
 	public void resolveChoice(List<Integer> selections) {
 		for (int selection : selections) {
-			List<Element> options = getChildElementsByName(currentElement, "option");
+			List<Element> options = getChildElements(currentElement);
+			for (int i = 0; i < options.size(); i++) {
+				Element optionTag = options.get(i);
+				if ("if".equals(optionTag.getTagName())) {
+					List<Element> ifChildren = getChildElements(optionTag);
+					Element test = ifChildren.get(0);
+					if (evaluateBooleanExpression(getFirstChildElement(test))) {
+						options.set(i, ifChildren.get(1));
+						i--;
+					} else {
+						options.remove(i);
+						i--;
+					}
+				}
+			}
 			currentElement = getFirstChildElement(options.get(selection));
 		}
 	}
