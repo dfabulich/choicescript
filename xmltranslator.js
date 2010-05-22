@@ -75,9 +75,10 @@ XmlScene.prototype.finish = function xmlFinish(data) {
   this.finished = true;
 }
 
+XmlScene.prototype.autofinish = function xmlAutoFinish() {}
+
 XmlScene.prototype["goto"] = function xmlGoto(data) {
   printElement("include", "label", data);
-  this.finished = true;
 }
 
 XmlScene.prototype.label = function xmlLabel(data) {
@@ -137,6 +138,16 @@ XmlScene.prototype.set = function xmlSet(data) {
   writer.write("</set>\n");
 }
 
+XmlScene.prototype.executeSubScene = function(lineNum, indent) {
+  var subSceneLines = this.lines.slice(0, lineNum);
+  var subScene = new XmlScene();
+  subScene.lines = subSceneLines;
+  subScene.loaded = true;
+  subScene.lineNum = lineNum;
+  subScene.indent = indent;
+  subScene.execute();
+}
+
 XmlScene.prototype["if"] = XmlScene.prototype.elseif = XmlScene.prototype.elsif = function xmlIf(data, inChoice) {
   if (inChoice) return this.ifInChoice(data);
   closePara();
@@ -159,12 +170,6 @@ XmlScene.prototype["if"] = XmlScene.prototype.elseif = XmlScene.prototype.elsif 
     }
     this.skipTrueBranch();
     this["if"] = oldIf;
-    var subSceneLines = this.lines.slice(0, this.lineNum+1);
-    var subScene = new XmlScene();
-    subScene.lines = subSceneLines;
-    subScene.loaded = true;
-    subScene.lineNum = trueLine;
-    subScene.indent = trueIndent;
     var closedTag = false;
     this.dedentChain.push(function (newDent) {
       if (!closedTag && newDent <= oldDent) {
@@ -173,7 +178,7 @@ XmlScene.prototype["if"] = XmlScene.prototype.elseif = XmlScene.prototype.elsif 
         writer.write("</result></if>\n");
       }
     });
-    subScene.execute();
+    this.executeSubScene(trueLine, trueIndent);
     if (!closedTag) {
       closedTag = true;
       closePara();
@@ -262,7 +267,7 @@ XmlScene.prototype.dedent = function xmlDedent(newDent) {
     this.dedentChain[i].call(this, newDent);
   }
 }
-XmlScene.prototype.choice = XmlScene.prototype.fake_choice = function xmlChoice(data) {
+XmlScene.prototype.choice = function xmlChoice(data) {
   closePara();
   var groups = data.split(/ /);
   var options = this.parseOptions(this.indent, groups);
@@ -300,7 +305,7 @@ XmlScene.prototype.choice = XmlScene.prototype.fake_choice = function xmlChoice(
         if (option.displayIf) writer.write("</if>\n");
       }
     });
-    this.execute();
+    this.executeSubScene(option.line, this.indent);
     this.finished = false;
     if (!closedTag) {
       closedTag = true;

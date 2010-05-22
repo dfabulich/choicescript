@@ -103,7 +103,7 @@ Scene.prototype.printLoop = function printLoop() {
     }
     this.rollbackLineCoverage();
     if (!this.finished) {
-        this.finish();
+        this.autofinish();
     }
     printFooter();
 }
@@ -424,7 +424,7 @@ Scene.prototype["gotoref"] = function scene_gotoref(expression) {
    
 // *finish
 // halt the scene
-Scene.prototype.finish = function finish(buttonName) {
+Scene.prototype.finish = Scene.prototype.autofinish = function finish(buttonName) {
     this.paragraph();
     this.finished = true;
     var nextSceneName = this.nav && nav.nextSceneName(this.name);
