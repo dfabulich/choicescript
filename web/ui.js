@@ -64,6 +64,7 @@ function showStats() {
               clearCookie();
               document.body.removeChild(greyStuff);
               document.body.removeChild(statScreen);
+              window.nav.resetStats(window.stats);
               clearScreen(restoreGame);
           }
           return false;
