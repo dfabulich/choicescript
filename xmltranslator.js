@@ -138,12 +138,12 @@ XmlScene.prototype.set = function xmlSet(data) {
   writer.write("</set>\n");
 }
 
-XmlScene.prototype.executeSubScene = function(lineNum, indent) {
-  var subSceneLines = this.lines.slice(0, lineNum);
+XmlScene.prototype.executeSubScene = function(startLine, endLine, indent) {
+  var subSceneLines = this.lines.slice(0, endLine);
   var subScene = new XmlScene();
   subScene.lines = subSceneLines;
   subScene.loaded = true;
-  subScene.lineNum = lineNum;
+  subScene.lineNum = startLine;
   subScene.indent = indent;
   subScene.execute();
 }
@@ -178,7 +178,7 @@ XmlScene.prototype["if"] = XmlScene.prototype.elseif = XmlScene.prototype.elsif 
         writer.write("</result></if>\n");
       }
     });
-    this.executeSubScene(trueLine, trueIndent);
+    this.executeSubScene(trueLine, this.lineNum, trueIndent);
     if (!closedTag) {
       closedTag = true;
       closePara();
@@ -271,6 +271,7 @@ XmlScene.prototype.choice = function xmlChoice(data) {
   closePara();
   var groups = data.split(/ /);
   var options = this.parseOptions(this.indent, groups);
+  var endLine = this.lineNum;
   writer.write("<choice>\n");
   if (groups.length && groups[0]) {
     writer.write("<groups>\n");
@@ -280,7 +281,7 @@ XmlScene.prototype.choice = function xmlChoice(data) {
     writer.write("</groups>\n");
   }
   var oldDent = this.indent;
-  this.writeOption = function writeOption(option) {
+  this.writeOption = function writeOption(option, endLine) {
     if (option.displayIf) {
       writer.write("<if><test>\n");
       writer.write(this.evaluateExpr(this.tokenizeExpr(option.displayIf)));
@@ -305,7 +306,7 @@ XmlScene.prototype.choice = function xmlChoice(data) {
         if (option.displayIf) writer.write("</if>\n");
       }
     });
-    this.executeSubScene(option.line, this.indent);
+    this.executeSubScene(option.line, endLine, this.indent);
     this.finished = false;
     if (!closedTag) {
       closedTag = true;
@@ -315,7 +316,11 @@ XmlScene.prototype.choice = function xmlChoice(data) {
     }
   }
   for (var i = 0; i < options.length; i++) {
-    this.writeOption(options[i]);
+    var nextEndLine = endLine;
+    if (options[i+1]) {
+      nextEndLine = options[i+1].line - 1;
+    }
+    this.writeOption(options[i], nextEndLine);
   }
   writer.write("</choice>\n");
 }
