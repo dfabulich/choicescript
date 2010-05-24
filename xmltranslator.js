@@ -108,6 +108,11 @@ XmlScene.prototype.gotoref = function xmlGotoRef(data) {
   writer.write("</goto-ref>\n");
 }
 
+XmlScene.prototype.printLine = function xmlPrintLine(data) {
+  // TODO ${}
+  printx(data);
+}
+
 XmlScene.prototype.print = function xmlPrint(data) {
   closePara();
   writer.write("<print>");
