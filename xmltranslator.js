@@ -150,6 +150,7 @@ XmlScene.prototype.set = function xmlSet(data) {
 }
 
 XmlScene.prototype.executeSubScene = function executeSubScene(startLine, endLine, indent) {
+  //print(startLine + ":" + endLine);
   var subSceneLines = this.lines.slice(0, endLine);
   var subScene = new XmlScene();
   subScene.lines = subSceneLines;
@@ -180,6 +181,14 @@ XmlScene.prototype["if"] = XmlScene.prototype.elseif = XmlScene.prototype.elsif 
       ifChainData.push(data);
     }
     this.skipTrueBranch();
+    var endLine = this.lineNum;
+    if (!/\s*\*else/.test(this.lines[this.lineNum])) {
+      // skipTrueBranch retreats one step from the last line
+      // except for *else commands, which it skips
+      // our endLine is this.lineNum if the block ends with *else
+      // or this.lineNum+1 if the block just ends naturally.
+      endLine++;
+    }
     this["if"] = oldIf;
     var closedTag = false;
     this.dedentChain.push(function (newDent) {
@@ -189,7 +198,7 @@ XmlScene.prototype["if"] = XmlScene.prototype.elseif = XmlScene.prototype.elsif 
         writer.write("</result></if>\n");
       }
     });
-    this.executeSubScene(trueLine, this.lineNum, trueIndent);
+    this.executeSubScene(trueLine, endLine, trueIndent);
     if (!closedTag) {
       closedTag = true;
       closePara();
