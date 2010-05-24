@@ -128,7 +128,8 @@ public class InputOutput implements IInputOutput {
 		try {
 			xml = XmlHelper.xmlFromResource(sceneName);
 		} catch (Exception e) {
-			throw new RuntimeException("How should we have handled this?", e);
+			// TODO How should we have handled this?
+			throw new RuntimeException("Parse failure in "+sceneName, e);
 		}
 		return xml;
 	}
