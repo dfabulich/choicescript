@@ -305,6 +305,7 @@ XmlScene.prototype.choice = function xmlChoice(data) {
       for (var i = 0; i < option.suboptions.length; i++) {
         this.writeOption(option.suboptions[i]);
       }
+      writer.write("</option>\n");
       return;
     }
     this.lineNum = option.line;
