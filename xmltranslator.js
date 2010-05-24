@@ -138,7 +138,7 @@ XmlScene.prototype.set = function xmlSet(data) {
   writer.write("</set>\n");
 }
 
-XmlScene.prototype.executeSubScene = function(startLine, endLine, indent) {
+XmlScene.prototype.executeSubScene = function executeSubScene(startLine, endLine, indent) {
   var subSceneLines = this.lines.slice(0, endLine);
   var subScene = new XmlScene();
   subScene.lines = subSceneLines;
@@ -272,6 +272,7 @@ XmlScene.prototype.choice = function xmlChoice(data) {
   var groups = data.split(/ /);
   var options = this.parseOptions(this.indent, groups);
   var endLine = this.lineNum;
+  var endIndent = this.indent;
   writer.write("<choice>\n");
   if (groups.length && groups[0]) {
     writer.write("<groups>\n");
@@ -323,6 +324,8 @@ XmlScene.prototype.choice = function xmlChoice(data) {
     this.writeOption(options[i], nextEndLine);
   }
   writer.write("</choice>\n");
+  this.lineNum = endLine;
+  this.indent = endIndent;
 }
 
 XmlScene.prototype.rand = function xmlRand(data) {
