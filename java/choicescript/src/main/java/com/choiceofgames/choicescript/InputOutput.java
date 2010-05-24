@@ -16,6 +16,7 @@ public class InputOutput implements IInputOutput {
 	String inputTextVariable;
 	Action action = null;
 	String resumePoint;
+	boolean prevLineEmpty, screenEmpty;
 	
 	public InputOutput(Navigator nav) {
 		this.nav = nav;
@@ -31,11 +32,12 @@ public class InputOutput implements IInputOutput {
 				printOptions(group.getOptionTitles());
 			}
 		}
-		System.out.print("> ");
+		System.out.print("\n> ");
 		action = Action.CHOICE;
 	}
 	
 	private void printOptions(List<String> options) {
+		paragraphBreak();
 		for (int i = 0; i < options.size(); i++) {
 			System.out.print(""+(i+1));
 			System.out.print(": ");
@@ -45,6 +47,7 @@ public class InputOutput implements IInputOutput {
 
 	@Override
 	public void inputText(String variableName) {
+		paragraphBreak();
 		this.inputTextVariable = variableName;
 		System.out.println(">Type Something");
 		action = Action.INPUT_TEXT;
@@ -52,20 +55,20 @@ public class InputOutput implements IInputOutput {
 	
 	@Override
 	public void ending() {
-		// TODO Auto-generated method stub
+		paragraphBreak();
 		System.out.println(">Play again");
 		action = Action.ENDING;
 	}
 
 	@Override
 	public void finish(String promptMessage) {
+		paragraphBreak();
 		System.out.println(">" + promptMessage);
 		action = Action.FINISH;
 	}
 
 	@Override
 	public IVignette handleUserInput() {
-		// TODO Auto-generated method stub
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		String line = null;
 		try {
@@ -76,6 +79,8 @@ public class InputOutput implements IInputOutput {
 		
 		IVignette vig;
 		Document xml;
+		prevLineEmpty = true;
+		screenEmpty = true;
 		
 		
 		switch (action) {
@@ -129,18 +134,22 @@ public class InputOutput implements IInputOutput {
 	
 	@Override
 	public void pageBreak(String promptMessage) {
+		paragraphBreak();
 		System.out.println(">" + promptMessage);
 		action = Action.PAGE_BREAK;
 	}
 
 	@Override
 	public void print(String message) {
-		// TODO Auto-generated method stub
+		screenEmpty = false;
+		prevLineEmpty = false;
 		System.out.print(message);
 	}
 
 	@Override
 	public void printStatChart(List<StatChartRow> rows) {
+		screenEmpty = false;
+		prevLineEmpty = false;
 		for (StatChartRow row : rows) {
 			StatChartRow.Label label = row.chartLabel;
 			String value = row.value;
@@ -176,12 +185,16 @@ public class InputOutput implements IInputOutput {
 
 	@Override
 	public void lineBreak() {
+		screenEmpty = false;
+		prevLineEmpty = true;
 		System.out.println();
 		
 	}
 
 	@Override
 	public void paragraphBreak() {
+		if (screenEmpty || prevLineEmpty) return;
+		prevLineEmpty = true;
 		System.out.print("\n\n");
 		
 	}
