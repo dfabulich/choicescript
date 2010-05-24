@@ -86,6 +86,7 @@ public class InputOutput implements IInputOutput {
 		switch (action) {
 			case CHOICE:
 				vig = reinflateVignette();
+				// TODO error handling
 				int decision = Integer.parseInt(line);
 				vig.resolveChoice(Arrays.asList(decision-1));
 				break;
