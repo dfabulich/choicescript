@@ -80,6 +80,8 @@ Scene.prototype.printLoop = function printLoop() {
         }
         var indent = this.getIndent(line);
         if (indent > this.indent) {
+            // ignore indentation level of *comments
+            if (/\s*\*comment\b/.test(line)) continue;
             throw new Error(this.lineMsg() + "increasing indent not allowed, expected " + this.indent + " was " + indent);
         } else if (indent < this.indent) {
             this.dedent(indent);
