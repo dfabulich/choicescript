@@ -587,6 +587,7 @@ Scene.prototype.parseOptions = function parseOptions(startIndent, choicesRemaini
         if (indent < this.indent) {
             if (indent == nextIndent) {
                 // we must be falling out of a sub-block
+                this.dedent(indent);
                 this.indent = indent;
             } else {
                 // error: indentation has decreased, but not all the way back
