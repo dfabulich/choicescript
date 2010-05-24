@@ -72,7 +72,7 @@ XmlScene.prototype.page_break = function xmlPageBreak(data) {
 
 XmlScene.prototype.finish = function xmlFinish(data) {
   printElement("finish", "text", data);
-  this.finished = true;
+  this.indent = this.getIndent(this.nextNonBlankLine());
 }
 
 XmlScene.prototype.autofinish = function xmlAutoFinish() {}
