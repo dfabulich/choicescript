@@ -298,7 +298,7 @@ XmlScene.prototype.choice = function xmlChoice(data) {
     writer.write("<option text='" + xmlEscape(option.name) + "'>\n");
     if (option.suboptions) {
       for (var i = 0; i < option.suboptions.length; i++) {
-        writeOption(option.suboptions[i]);
+        this.writeOption(option.suboptions[i]);
       }
       return;
     }
