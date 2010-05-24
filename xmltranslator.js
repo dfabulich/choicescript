@@ -370,7 +370,9 @@ XmlScene.prototype.stat_chart = function xmlStatChart() {
 }
 
 var list = new java.io.File(dir).listFiles();
-list = [new java.io.File(dir, "hello.txt")];
+if (arguments[1]) {
+  list = [new java.io.File(dir, arguments[1] + ".txt")];
+}
 
 var i = list.length;
 while (i--) {

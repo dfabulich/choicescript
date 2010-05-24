@@ -77,9 +77,11 @@ either express or implied.
   </target>
   
   <target name="xmltranslator" depends="rhino">
+    <property name="vig" value="" />
     <rhino fork="true">
       <arg file="xmltranslator.js"/>
       <arg value="${gen.dir}" />
+      <arg value="${vig}" />
     </rhino>
   </target>
   
