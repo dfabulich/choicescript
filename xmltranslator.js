@@ -139,7 +139,7 @@ XmlScene.prototype.set = function xmlSet(data) {
 }
 
 XmlScene.prototype.executeSubScene = function executeSubScene(startLine, endLine, indent) {
-  var subSceneLines = this.lines.slice(0, endLine);
+  var subSceneLines = this.lines.slice(0, endLine - 1);
   var subScene = new XmlScene();
   subScene.lines = subSceneLines;
   subScene.loaded = true;
@@ -189,6 +189,7 @@ XmlScene.prototype["if"] = XmlScene.prototype.elseif = XmlScene.prototype.elsif 
       this.lineNum++;
       this.execute();
       this.finished = false;
+      closePara()
       writer.write("</else>");
     }
   }
