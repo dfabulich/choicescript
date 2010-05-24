@@ -19,5 +19,8 @@ public class OptionDisplayGroup {
 		return optionTitles;
 	}
 	
-	
+	@Override
+	public String toString() {
+		return groupName + ": " + optionTitles;
+	}
 }

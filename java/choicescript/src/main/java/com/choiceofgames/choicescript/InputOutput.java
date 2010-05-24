@@ -3,7 +3,7 @@ package com.choiceofgames.choicescript;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -28,7 +28,7 @@ public class InputOutput implements IInputOutput {
 			printOptions(optionDisplayGroups.get(0).getOptionTitles());
 		} else {
 			for (OptionDisplayGroup group : optionDisplayGroups) {
-				System.out.println("\nChoose a(n)" + group.getGroupName());
+				System.out.println("\nChoose a(n) " + group.getGroupName());
 				printOptions(group.getOptionTitles());
 			}
 		}
@@ -87,8 +87,11 @@ public class InputOutput implements IInputOutput {
 			case CHOICE:
 				vig = reinflateVignette();
 				// TODO error handling
-				int decision = Integer.parseInt(line);
-				vig.resolveChoice(Arrays.asList(decision-1));
+				List<Integer> selections = new ArrayList<Integer>();
+				for (String decisionString : line.split(" ")) {
+					selections.add(Integer.parseInt(decisionString)-1);
+				}
+				vig.resolveChoice(selections);
 				break;
 			case INPUT_TEXT:
 				vig = reinflateVignette();

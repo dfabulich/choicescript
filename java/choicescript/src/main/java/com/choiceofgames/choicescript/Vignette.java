@@ -328,30 +328,47 @@ public class Vignette implements IVignette {
 	
 	private List<OptionDisplayGroup> parseChoice(Element tag) {
 		List<OptionDisplayGroup> odgs = new ArrayList<OptionDisplayGroup>();
-		// TODO multichoice
-		String groupName = "choice";
-		List<Element> optionTags = XmlHelper.getChildElements(tag);		
-		List<String> optionTitles = new ArrayList<String>();
-		for (Element optionTag : optionTags) {
-			if ("if".equals(optionTag.getTagName())) {
-				List<Element> ifChildren = getChildElements(optionTag);
-				Element test = getFirstChildElement(ifChildren.get(0));
-				if (evaluateBooleanExpression(test)) {
-					optionTag = ifChildren.get(1);
-				} else {
+		List<String> groupNames = groupNames(tag);
+		for (String groupName : groupNames) {
+			List<Element> optionTags = XmlHelper.getChildElements(tag);		
+			List<String> optionTitles = new ArrayList<String>();
+			for (Element optionTag : optionTags) {
+				if ("if".equals(optionTag.getTagName())) {
+					List<Element> ifChildren = getChildElements(optionTag);
+					Element test = getFirstChildElement(ifChildren.get(0));
+					if (evaluateBooleanExpression(test)) {
+						optionTag = ifChildren.get(1);
+					} else {
+						continue;
+					}
+				} else if ("groups".equals(optionTag.getTagName())) {
 					continue;
 				}
+				
+				String name = optionTag.getAttribute("text");
+				optionTitles.add(name);
+				
 			}
-			
-			String name = optionTag.getAttribute("text");
-			optionTitles.add(name);
-			
+			odgs.add(new OptionDisplayGroup(groupName, optionTitles));
+			tag = getChildElementsByName(tag, "option").get(0);
 		}
-		odgs.add(new OptionDisplayGroup(groupName, optionTitles));
 		return odgs;
 	}
 	
-	
+	private List<String> groupNames(Element tag) {
+		List<String> groupNames = new ArrayList<String>();
+		List<Element> groups = getChildElementsByName(tag, "groups");
+		if (groups.isEmpty()) {
+			groupNames.add("choice");
+			return groupNames;
+		}
+		
+		groups = getChildElementsByName(groups.get(0), "group");
+		for (Element groupTag : groups) {
+			groupNames.add(groupTag.getAttribute("name"));
+		}
+		return groupNames;
+	}
 	
 		
 	@Override
@@ -372,7 +389,9 @@ public class Vignette implements IVignette {
 			List<Element> options = getChildElements(currentElement);
 			for (int i = 0; i < options.size(); i++) {
 				Element optionTag = options.get(i);
-				if ("if".equals(optionTag.getTagName())) {
+				if ("groups".equals(optionTag.getTagName())) {
+					options.remove(i);
+				} else if ("if".equals(optionTag.getTagName())) {
 					List<Element> ifChildren = getChildElements(optionTag);
 					Element test = ifChildren.get(0);
 					if (evaluateBooleanExpression(getFirstChildElement(test))) {
@@ -388,16 +407,22 @@ public class Vignette implements IVignette {
 			Element parent = options.get(selection);
 			List<Element> children = getChildElements(parent);
 			
-			if (children.isEmpty() && it.hasNext()) {
-				throw new RuntimeException("Bug, expected suboptions but option element was empty");
-			} else if (children.isEmpty()) {
-				do {
-					currentElement = (Element) parent.getParentNode();
-				} while (!currentElement.getTagName().equals("choice"));
-				currentElement = getNextElement(currentElement);
-				
+			if (it.hasNext()) {
+				if (children.isEmpty()) {
+					throw new RuntimeException("Bug, expected suboptions but option element was empty");
+				} else {
+					currentElement = parent;
+				}
 			} else {
-				currentElement = children.get(0);
+				// fake_choice with empty option
+				if (children.isEmpty()) {
+					do {
+						currentElement = (Element) parent.getParentNode();
+					} while (!currentElement.getTagName().equals("choice"));
+					currentElement = getNextElement(currentElement);
+				} else {
+					currentElement = children.get(0);
+				}
 			}
 		}
 	}
