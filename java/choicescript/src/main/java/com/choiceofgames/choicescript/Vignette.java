@@ -329,7 +329,8 @@ public class Vignette implements IVignette {
 	private List<OptionDisplayGroup> parseChoice(Element tag) {
 		List<OptionDisplayGroup> odgs = new ArrayList<OptionDisplayGroup>();
 		List<String> groupNames = groupNames(tag);
-		for (String groupName : groupNames) {
+		for (Iterator<String> i = groupNames.iterator(); i.hasNext();) {
+			String groupName = i.next();
 			List<Element> optionTags = XmlHelper.getChildElements(tag);		
 			List<String> optionTitles = new ArrayList<String>();
 			for (Element optionTag : optionTags) {
@@ -350,7 +351,7 @@ public class Vignette implements IVignette {
 				
 			}
 			odgs.add(new OptionDisplayGroup(groupName, optionTitles));
-			tag = getChildElementsByName(tag, "option").get(0);
+			if (i.hasNext()) tag = getChildElementsByName(tag, "option").get(0);
 		}
 		return odgs;
 	}
