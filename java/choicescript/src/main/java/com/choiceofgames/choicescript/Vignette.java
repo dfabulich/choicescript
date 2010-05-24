@@ -353,6 +353,7 @@ public class Vignette implements IVignette {
 	@Override
 	public void inputText(String variable, String text) {
 		setVariable(variable, text);
+		currentElement = getNextElement(currentElement);
 	}
 
 	@Override
