@@ -293,7 +293,7 @@ public class Vignette implements IVignette {
 			return value;
 		}
 		value = stats.get(name);
-		if (value == null) throw new RuntimeException("Unset variable" + name);
+		if (value == null) throw new RuntimeException("Unset variable: " + name);
 		return value;
 	}
 	

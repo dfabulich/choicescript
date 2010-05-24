@@ -359,11 +359,11 @@ XmlScene.prototype.stat_chart = function xmlStatChart() {
   for (var i = 0; i < rows.length; i++) {
     var row = rows[i];
     if ("text" == row.type || "percent" == row.type) {
-      writer.write("<"+row.type+" label='"+xmlEscape(row.label)+"' variable='"+row.variable+"' ")
+      writer.write("<"+row.type+" label='"+xmlEscape(row.label)+"' variable='"+row.variable.toLowerCase()+"' ")
       if (row.definition) writer.write(" definition='" + row.definition + "' ");
       writer.write("/>\n");
     } else if ("opposed_pair" == row.type) {
-      writer.write("<opposed-pair variable='"+row.variable+"'>\n");
+      writer.write("<opposed-pair variable='"+row.variable.toLowerCase()+"'>\n");
       writer.write("<label text='"+xmlEscape(row.label)+"' ")
       if (row.definition) writer.write(" definition='" + row.definition + "' ");
       writer.write("/>\n");
