@@ -144,7 +144,7 @@ XmlScene.prototype.set = function xmlSet(data) {
 }
 
 XmlScene.prototype.executeSubScene = function executeSubScene(startLine, endLine, indent) {
-  var subSceneLines = this.lines.slice(0, endLine + 1);
+  var subSceneLines = this.lines.slice(0, endLine);
   var subScene = new XmlScene();
   subScene.lines = subSceneLines;
   subScene.loaded = true;

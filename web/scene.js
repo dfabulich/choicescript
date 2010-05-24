@@ -608,7 +608,7 @@ Scene.prototype.parseOptions = function parseOptions(startIndent, choicesRemaini
         // here's the end of the previous option
         if (options.length) {
           var prevOption = options[options.length-1];
-          if (!prevOption.endLine) prevOption.endLine = this.lineNum - 1;
+          if (!prevOption.endLine) prevOption.endLine = this.lineNum;
         }
         
         // Execute *if commands (etc.) during option loop
