@@ -79,6 +79,7 @@ XmlScene.prototype.autofinish = function xmlAutoFinish() {}
 
 XmlScene.prototype["goto"] = function xmlGoto(data) {
   printElement("include", "label", data);
+  this.indent = this.getIndent(this.nextNonBlankLine());
 }
 
 XmlScene.prototype.label = function xmlLabel(data) {
