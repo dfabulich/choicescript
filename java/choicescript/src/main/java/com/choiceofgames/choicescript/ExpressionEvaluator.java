@@ -16,6 +16,11 @@ class ExpressionEvaluator {
 	public ExpressionEvaluator(VariableMap map) {
 		this.map = map;
 	}
+	
+	public Number evaluateNumeric(Element tag) {
+		return coerceNumber(evaluate(tag));
+	}
+	
 	public Object evaluate(Element tag) {
 		String tagName = tag.getTagName();
 		if ("literal".equals(tagName)) {

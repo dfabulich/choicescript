@@ -150,9 +150,9 @@ public class Vignette implements IVignette {
 		String variableName = currentElement.getAttribute("variable");
 		List<Element> children = getChildElements(currentElement);
 		Element minExpression = getFirstChildElement(children.get(0));
-		Number min = (Number) evaluateExpression(minExpression);
+		Number min = (Number) evaluateNumericExpression(minExpression);
 		Element maxExpression = getFirstChildElement(children.get(1));
-		Number max = (Number) evaluateExpression(maxExpression);
+		Number max = (Number) evaluateNumericExpression(maxExpression);
 		Number value;
 		if (min instanceof Integer && max instanceof Integer) {
 			value = randomInt(min.intValue(), max.intValue());
@@ -270,6 +270,10 @@ public class Vignette implements IVignette {
 	private String evaluateStringExpression(Element tag) {
 		Object o = evaluateExpression(tag);
 		return (String) o;
+	}
+	
+	private Number evaluateNumericExpression(Element tag) {
+		return ee.evaluateNumeric(tag);
 	}
 	
 	private Object evaluateExpression(Element tag) {
