@@ -343,6 +343,10 @@ XmlScene.prototype.rand = function xmlRand(data) {
   writer.write("</maximum></random>\n");
 }
 
+XmlScene.prototype.getVar = function xmlGetVar() {
+  // Just don't throw when the variables aren't defined
+}
+
 XmlScene.prototype.stat_chart = function xmlStatChart() {
   closePara();
   var rows = this.parseStatChart();
