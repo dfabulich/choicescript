@@ -90,6 +90,11 @@ XmlScene.prototype.temp = function xmlTemp(data) {
   printElement("temp", "variable", data);
 }
 
+XmlScene.prototype.create = function xmlCreate(data) {
+  printElement("create", "variable", data);
+}
+
+
 XmlScene.prototype.ending = function xmlEnding(data) {
   printElement("ending");
 }
@@ -396,6 +401,7 @@ while (i--) {
 }
 
 /*
+else dedentChain
 ${}
 */
 

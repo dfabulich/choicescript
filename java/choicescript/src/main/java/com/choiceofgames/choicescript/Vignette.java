@@ -77,6 +77,8 @@ public class Vignette implements IVignette {
 				print();
 			} else if ("temp".equals(tagName)) {
 				temps.put(currentElement.getAttribute("variable"), Undefined.UNDEFINED);
+			} else if ("create".equals(tagName)) {
+				stats.put(currentElement.getAttribute("variable"), Undefined.UNDEFINED);
 			} else if ("input-text".equals(tagName)) {
 				io.inputText(currentElement.getAttribute("variable"));
 				finished = true;
