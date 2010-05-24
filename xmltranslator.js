@@ -144,7 +144,7 @@ XmlScene.prototype.set = function xmlSet(data) {
 }
 
 XmlScene.prototype.executeSubScene = function executeSubScene(startLine, endLine, indent) {
-  var subSceneLines = this.lines.slice(0, endLine - 1);
+  var subSceneLines = this.lines.slice(0, endLine + 1);
   var subScene = new XmlScene();
   subScene.lines = subSceneLines;
   subScene.loaded = true;
@@ -313,7 +313,7 @@ XmlScene.prototype.choice = function xmlChoice(data) {
         if (option.displayIf) writer.write("</if>\n");
       }
     });
-    this.executeSubScene(option.line, endLine, this.indent);
+    this.executeSubScene(option.line, option.endLine, this.indent);
     this.finished = false;
     if (!closedTag) {
       closedTag = true;
@@ -323,11 +323,7 @@ XmlScene.prototype.choice = function xmlChoice(data) {
     }
   }
   for (var i = 0; i < options.length; i++) {
-    var nextEndLine = endLine;
-    if (options[i+1]) {
-      nextEndLine = options[i+1].line - 1;
-    }
-    this.writeOption(options[i], nextEndLine);
+    this.writeOption(options[i]);
   }
   writer.write("</choice>\n");
   this.lineNum = endLine;

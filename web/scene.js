@@ -577,6 +577,7 @@ Scene.prototype.parseOptions = function parseOptions(startIndent, choicesRemaini
             if (expectedSubOptions) {
                 this.verifyOptionsMatch(expectedSubOptions, options);
             }
+            options[options.length-1].endLine = this.lineNum - 1;
             this.lineNum--;
             this.rollbackLineCoverage();
             return options;
@@ -603,6 +604,13 @@ Scene.prototype.parseOptions = function parseOptions(startIndent, choicesRemaini
             bodyExpected = false;
             continue;
         }
+        
+        // here's the end of the previous option
+        if (options.length) {
+          var prevOption = options[options.length-1];
+          if (!prevOption.endLine) prevOption.endLine = this.lineNum - 1;
+        }
+        
         // Execute *if commands (etc.) during option loop
         // sub-commands may modify this.indent
         var parsed = /^\s*\*(\w+)(.*)/.exec(line);
