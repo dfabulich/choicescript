@@ -110,7 +110,7 @@ XmlScene.prototype.input_text = function xmlLineBreak(data) {
 XmlScene.prototype.gotoref = function xmlGotoRef(data) {
   closePara();
   writer.write("<goto-ref>");
-  this.evaluateExpr(this.tokenizeExr(data));
+  writer.write(this.evaluateExpr(this.tokenizeExr(data)));
   writer.write("</goto-ref>\n");
 }
 
@@ -130,9 +130,9 @@ XmlScene.prototype.setref = function xmlSetRef(data) {
   closePara();
   writer.write("<set-ref><name>");
   var stack = this.tokenizeExpr(data);
-  var reference = this.evaluateValueToken(stack.shift(), stack);
+  writer.write(this.evaluateValueToken(stack.shift(), stack));
   writer.write("</name><value>");
-  var value = this.evaluateExpr(stack);
+  writer.write(this.evaluateExpr(stack));
   writer.write("</value></set-ref>");
 }
 
@@ -342,9 +342,9 @@ XmlScene.prototype.rand = function xmlRand(data) {
   var variable, minimum, maximum;
   variable = args[0];
   writer.write("<random variable='" + variable.toLowerCase() + "'><minimum>");
-  minimum = this.evaluateValueExpr(args[1]);
+  writer.write(this.evaluateValueExpr(args[1]));
   writer.write("</minimum><maximum>");
-  maximum = this.evaluateValueExpr(args[2]);
+  writer.write(this.evaluateValueExpr(args[2]));
   writer.write("</maximum></random>\n");
 }
 
