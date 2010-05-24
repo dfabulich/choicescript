@@ -104,7 +104,7 @@ XmlScene.prototype.line_break = function xmlLineBreak(data) {
 }
 
 XmlScene.prototype.input_text = function xmlLineBreak(data) {
-  printElement("input-text", "variable", data);
+  printElement("input-text", "variable", data.toLowerCase());
 }
 
 XmlScene.prototype.gotoref = function xmlGotoRef(data) {
@@ -341,7 +341,7 @@ XmlScene.prototype.rand = function xmlRand(data) {
   var args = data.split(/ /);
   var variable, minimum, maximum;
   variable = args[0];
-  writer.write("<random variable='" + variable + "'><minimum>");
+  writer.write("<random variable='" + variable.toLowerCase() + "'><minimum>");
   minimum = this.evaluateValueExpr(args[1]);
   writer.write("</minimum><maximum>");
   maximum = this.evaluateValueExpr(args[2]);
