@@ -1,0 +1,15 @@
+*choice color toy
+   #red
+     #spaceship
+       Nice red spaceship
+       *finish
+     #train
+       Nice red train
+       *finish
+   #blue
+      #spaceship
+        Nice blue spaceship
+       *finish
+      #train
+        Nice blue train
+       *finish

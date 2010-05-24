@@ -1,0 +1,49 @@
+*temp job
+*set job "cable"
+You turn your attention back to the task at hand: fighting your way through the mass of bodies to the 
+*if job = "cable"
+    cable.
+*if job = "rigging"
+    main mast.
+*if job = "steer"
+    wheel.
+
+
+OK!
+
+*temp foo
+*set foo 1
+*temp bar
+*set bar 2
+*choice
+    #1
+        *set foo 1
+        *goto display
+    #2
+        *set foo 2
+        *goto display
+    #3
+      *if bar = 2
+        *set foo 3
+        *goto display
+      *else
+        *set foo 3.9
+        *goto display
+    *if foo = 1
+      #4
+        *if bar = 2
+          *set foo 4
+          *goto display
+
+*label display
+*if foo = 1
+  one
+  *finish
+*elseif foo = 2
+  two
+  *finish
+*elseif foo = 3
+  three
+  *finish
+*else
+  four
