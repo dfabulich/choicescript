@@ -363,7 +363,8 @@ public class Vignette implements IVignette {
 
 	@Override
 	public void resolveChoice(List<Integer> selections) {
-		for (int selection : selections) {
+		for (Iterator<Integer> it = selections.iterator(); it.hasNext();) {
+			int selection = it.next();
 			List<Element> options = getChildElements(currentElement);
 			for (int i = 0; i < options.size(); i++) {
 				Element optionTag = options.get(i);
@@ -379,7 +380,21 @@ public class Vignette implements IVignette {
 					}
 				}
 			}
-			currentElement = getFirstChildElement(options.get(selection));
+			
+			Element parent = options.get(selection);
+			List<Element> children = getChildElements(parent);
+			
+			if (children.isEmpty() && it.hasNext()) {
+				throw new RuntimeException("Bug, expected suboptions but option element was empty");
+			} else if (children.isEmpty()) {
+				do {
+					currentElement = (Element) parent.getParentNode();
+				} while (!currentElement.getTagName().equals("choice"));
+				currentElement = getNextElement(currentElement);
+				
+			} else {
+				currentElement = children.get(0);
+			}
 		}
 	}
 
