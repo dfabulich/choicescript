@@ -78,20 +78,20 @@ XmlScene.prototype.finish = function xmlFinish(data) {
 XmlScene.prototype.autofinish = function xmlAutoFinish() {}
 
 XmlScene.prototype["goto"] = function xmlGoto(data) {
-  printElement("include", "label", data);
+  printElement("include", "label", (""+data).toLowerCase());
   this.indent = this.getIndent(this.nextNonBlankLine());
 }
 
 XmlScene.prototype.label = function xmlLabel(data) {
-  printElement("label", "id", data);
+  printElement("label", "id", (""+data).toLowerCase());
 }
 
 XmlScene.prototype.temp = function xmlTemp(data) {
-  printElement("temp", "variable", data);
+  printElement("temp", "variable", (""+data).toLowerCase());
 }
 
 XmlScene.prototype.create = function xmlCreate(data) {
-  printElement("create", "variable", data);
+  printElement("create", "variable", (""+data).toLowerCase());
 }
 
 
@@ -122,7 +122,7 @@ XmlScene.prototype.printLine = function xmlPrintLine(data) {
 XmlScene.prototype.print = function xmlPrint(data) {
   closePara();
   writer.write("<print>");
-  this.evaluateExpr(this.tokenizeExpr(data));
+  writer.write(this.evaluateExpr(this.tokenizeExpr(data)));
   writer.write("</print>\n");
 }
 
@@ -144,7 +144,7 @@ XmlScene.prototype.set = function xmlSet(data) {
   var stack = this.tokenizeExpr(expr);
   // if the first token is an operator, then it's implicitly based on the variable
   if (/OPERATOR|FAIRMATH/.test(stack[0].name)) stack.unshift({name:"VAR", value:variable, pos:"(implicit)"});
-  writer.write("<set variable='" + variable + "'>");
+  writer.write("<set variable='" + (""+variable).toLowerCase() + "'>");
   writer.write(this.evaluateExpr(stack));
   writer.write("</set>\n");
 }
@@ -237,7 +237,7 @@ XmlScene.prototype.evaluateValueToken = function xmlEvaluateValueToken(token, st
       // strip off the quotes and unescape backslashes
       return "<literal value='" + xmlEscape(token.value.slice(1,-1).replace(/\\(.)/g, "$1")) + "'/>";
   } else if ("VAR" == name) {
-      return "<variable name='" + token.value + "' />";
+      return "<variable name='" + token.value.toLowerCase() + "' />";
   } else {
       throw new Error(this.lineMsg() + "Invalid expression at char "+token.pos+", expected NUMBER, STRING, VAR or PARENTHETICAL, was: " + name + " [" + token.value + "]");
   }
