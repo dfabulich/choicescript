@@ -5,6 +5,18 @@ public class StatChartRow {
 		PERCENT, TEXT, OPPOSED_PAIR;
 	}
 	
+	private static RowType fromTagName(String name) {
+		if ("percent".equals(name)) {
+			return RowType.PERCENT;
+		} else if ("text".equals(name)) {
+			return RowType.TEXT;
+		} else if ("opposed-pair".equals(name)) {
+			return RowType.OPPOSED_PAIR;
+		} else {
+			throw new RuntimeException("Invalid row type tag name: " + name);
+		}
+	}
+	
 	public static class Label {
 		final String label, definition;
 		
@@ -25,7 +37,7 @@ public class StatChartRow {
 	}
 	
 	public StatChartRow(String typeName, String value, Label chartLabel, Label opposite) {
-		this.type = RowType.valueOf(typeName);
+		this.type = fromTagName(typeName);
 		this.value = value;
 		this.chartLabel = chartLabel;
 		this.opposite = opposite;
