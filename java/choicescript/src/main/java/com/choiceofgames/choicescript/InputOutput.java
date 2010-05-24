@@ -144,6 +144,7 @@ public class InputOutput implements IInputOutput {
 		screenEmpty = false;
 		prevLineEmpty = false;
 		System.out.print(message);
+		if (!message.endsWith(" ")) System.out.print(' ');
 	}
 
 	@Override
