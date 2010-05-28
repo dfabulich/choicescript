@@ -292,7 +292,9 @@ XmlScene.prototype.choice = function xmlChoice(data) {
   closePara();
   var groups = data.split(/ /);
   var options = this.parseOptions(this.indent, groups);
+
   var endLine = this.lineNum;
+  options[options.length-1].endLine = endLine;
   var endIndent = this.indent;
   writer.write("<choice>\n");
   if (groups.length && groups[0]) {
