@@ -93,6 +93,17 @@ if (isWeb) {
 <p>This game requires JavaScript; please enable JavaScript and refresh this page.</p>
 <p>If you can't get the game to work, please write to us at <a href="mailto:support+external@choiceofgames.com">support+external@choiceofgames.com</a> for assistance.</p>
 </noscript>
-<!-- INSERT GOOGLE ANALYTICS STUFF HERE -->
+<!-- INSERT GOOGLE ANALYTICS TRACKER HERE -->
+<script type="text/javascript">
+window.googleAnalyticsTracker = "";
+if (isWeb && googleAnalyticsTracker) document.write(unescape("%3Cscript src='http://www.google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+  if (googleAnalyticsTracker) {
+    var pageTracker = _gat._getTracker(googleAnalyticsTracker);
+    pageTracker._trackPageview();
+  }
+} catch(err) {}</script>
 </body>
 </html>
