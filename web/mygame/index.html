@@ -21,7 +21,7 @@ either express or implied.
 -->
 <head>
 <meta http-equiv="X-UA-Compatible" content="IE=7" />
-<meta name = "viewport" content = "width = 320">
+<meta name = "viewport" content = "width = device-width">
 <!-- INSERT correct meta values -->
 <title>Multiple Choice Example Game | My First ChoiceScript Game</title>
 <meta name = "description" content = "This is a description of the game that search engines can see.">
@@ -51,9 +51,9 @@ window.storeName = null;
 <div id="advertisement">
 <script type="text/javascript">
 if (isWeb) {
-  if (window.Touch && window.admob_vars) {
+  if (window.Touch && !isIPad && window.admob_vars) {
     document.write(unescape("%3Cscript src='http://mmv.admob.com/static/iphone/iadmob.js' type='text/javascript'%3E%3C/script%3E"));
-  } else if (!isMobile && window.google_ad_slot) {
+  } else if ((!isMobile || isIPad) && window.google_ad_slot) {
     document.write(unescape("%3Cscript src='http://pagead2.googlesyndication.com/pagead/show_ads.js' type='text/javascript'%3E%3C/script%3E"));
   }
 }

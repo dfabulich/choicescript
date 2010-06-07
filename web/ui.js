@@ -227,6 +227,7 @@ window.isFile = /^file:/.test(window.location.href);
 window.isWeb = /^https?:/.test(window.location.href);
 window.isSafari = /Safari/.test(navigator.userAgent);
 window.isIE = /MSIE/.test(navigator.userAgent);
+window.isIPad = /iPad/.test(navigator.userAgent);
 
 window.loadTime = new Date().getTime();
 
