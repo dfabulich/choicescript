@@ -43,11 +43,20 @@ either express or implied.
     <property name="gen.dir" location="${basedir}/web/mygame/scenes" />
   </target>
   
-  <target name="unittest" depends="rhino">
+  <target name="unittest-core" depends="rhino">
     <rhino fork="true" dir="${doh}" >
       <arg line="runner.js testUrl=../../../loader.js testModule=choicescript.tests.scenetest,choicescript.tests.utiltest" />
     </rhino>
+
   </target>
+  
+  <target name="unittest-autotest" depends="rhino">
+    <rhino fork="true" dir="${doh}" >
+      <arg line="runner.js testUrl=../../../loader.js testModule=choicescript.tests.autotesttest" />
+    </rhino>
+  </target>
+  
+  <target name="unittest" depends="unittest-core, unittest-autotest" />
 
   <target name="randomtest" depends="rhino">
     <property name="num" value="10000" />
