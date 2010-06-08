@@ -161,7 +161,7 @@ function autotester(sceneText) {
   }
 
   if (!Scene.prototype.oldIf) Scene.prototype.oldIf = Scene.prototype["if"];
-  Scene.prototype["if"] = Scene.prototype.elsif = Scene.prototype.elseif = function test_if(line, inChoice) {
+  Scene.prototype["if"] = function test_if(line, inChoice) {
     // Does the expression evaluate to a boolean?
     var stack = this.tokenizeExpr(line);
     var result = this.evaluateExpr(stack);

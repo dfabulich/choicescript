@@ -51,6 +51,18 @@ doh.registerGroup("choicescript.tests.Basic", [
           doh.is(uncovered.length, 1);
           doh.is(uncovered[0], 3);
         }
+        ,function badElseIf() {
+          stats = {};
+          nav = fixture.nav;
+          var scene = ""
+            +"\n*temp blah"
+            +"\n*set blah 2"
+            +"\n*if blah = 2"
+            +"\n  two"
+            +"\n*elseif blah = 3"
+            "+\n  three";
+          doh.assertError(Error, null, "autotester", scene, "Fall out of if statement");
+        }
     ]
 );
 
