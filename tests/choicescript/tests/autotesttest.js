@@ -66,6 +66,21 @@ doh.registerGroup("choicescript.tests.Autotest", [
           ;
           autotestScene(scene,  [1,1,1,1,1,1,1,1,1,1,0]);
         }
+        ,function basicChoice() {
+          var scene = ""
+            +"\nFoo"
+            +"\n*choice"
+            +"\n  #foo"
+            +"\n    *finish"
+            +"\n  #bar"
+            +"\n    *finish"
+            +"\n  #baz"
+            +"\n    *finish"
+            +"\n  #quz"
+            +"\n    *finish"
+          ;
+          autotestScene(scene,  [1,1,1,1,1,1,1,1,1,1,1,1,0]);
+        }
         ,function badElseIf() {
           stats = {};
           nav = fixture.nav;
