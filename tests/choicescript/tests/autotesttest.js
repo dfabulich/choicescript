@@ -35,25 +35,36 @@ function debughelp() {
     debugger;
 }
 
-doh.registerGroup("choicescript.tests.Basic", [
+function autotestScene(text, expectedCoverage, expectedUncovered) {
+  stats = {};
+  nav = fixture.nav;
+  var result = autotester(text);
+  doh.is(toJson(expectedCoverage), toJson(result[0]), "coverage");
+  var uncovered = result[1];
+  doh.is(expectedUncovered, uncovered);
+}
+
+doh.registerGroup("choicescript.tests.Autotest", [
         function textOnly() {
-            stats = {};
-            nav = fixture.nav;
-            var scene = "foo\nbar\nbaz";
-            var result = autotester(scene);
-            doh.is(toJson([1,1,1,0]), toJson(result[0]), "coverage");
-            var uncovered = result[1];
-            doh.f(uncovered);
+          var scene = "foo\nbar\nbaz";
+          autotestScene(scene, [1,1,1,0]);
         }
         ,function unreachable() {
-          stats = {};
-          nav = fixture.nav;
           var scene = "foo\n*goto baz\nbar\n*label baz\nbaz";
-          var result = autotester(scene);
-          doh.is(toJson([1,1,0,1,1,0]), toJson(result[0]), "coverage");
-          var uncovered = result[1];
-          doh.is(uncovered.length, 1);
-          doh.is(uncovered[0], 3);
+          autotestScene(scene, [1,1,0,1,1,0], [3]);
+        }
+        ,function basicIf() {
+          return;
+          var scene = ""
+            +"\n*temp blah"
+            +"\n*set blah 2"
+            +"\n*if blah = 2"
+            +"\n  *finish"
+            +"\n*elseif blah = 3"
+            "+\n  *finish";
+            +"\n*elseif blah = 4"
+            "+\n  *finish";
+          autotestScene(scene,  [1,1,1,2,1,2,1,"x"]);
         }
         ,function badElseIf() {
           stats = {};
