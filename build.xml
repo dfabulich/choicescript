@@ -63,7 +63,7 @@ either express or implied.
     <property name="game" value="mygame" />
     <property name="output" value="randomtest-output.txt" />
     <echo>Executing randomtest, writing to ${output}</echo>
-    <rhino output="${output}">
+    <rhino fork="true" output="${output}">
       <arg value="randomtest.js" />
       <arg value="${num}" />
       <arg value="${game}" />
@@ -72,7 +72,7 @@ either express or implied.
   
   <target name="autotest" depends="rhino">
     <property name="vig" value="" />
-    <rhino>
+    <rhino fork="true">
       <arg value="autotest.js"/>
       <arg value="${vig}" />
     </rhino>
