@@ -95,21 +95,6 @@ Scene.prototype.nextNonBlankLine = function cached_nextNonBlankLine(includingThi
   return cached;
 }
 
-cachedSkippedTrueBranches = {};
-Scene.prototype.oldSkipTrueBranch = Scene.prototype.skipTrueBranch;
-Scene.prototype.skipTrueBranch = function cached_skipTrueBranch() {
-  var key = this.name+this.lineNum;
-  var cached = cachedSkippedTrueBranches[key];
-  if (cached) {
-    this.lineNum = cached.lineNum;
-    this.indent = cached.indent;
-    return;
-  }
-  this.oldSkipTrueBranch();
-  cached = {lineNum:this.lineNum, indent:this.indent};
-  cachedSkippedTrueBranches[key] = cached;
-}
-
 cachedTokenizedExpressions = {};
 Scene.prototype.oldTokenizeExpr = Scene.prototype.tokenizeExpr;
 Scene.prototype.tokenizeExpr = function cached_tokenizeExpr(str) {
