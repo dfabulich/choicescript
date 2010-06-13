@@ -62,7 +62,7 @@ for (var i = 0; i < list.length; i++) {
   // TODO check file name capitalization here
   var sceneText = slurpFile("web/"+gameName+"/scenes/"+list[i]+".txt");
   window = {console: {log: function(msg) { print(msg); } }};
-  uncovered = autotester(sceneText);
+  uncovered = autotester(sceneText)[1];
   if (uncovered) {
     uncoveredScenes.push({name:list[i], lines:uncovered});
   }

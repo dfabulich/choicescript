@@ -40,14 +40,18 @@ doh.registerGroup("choicescript.tests.Basic", [
             stats = {};
             nav = fixture.nav;
             var scene = "foo\nbar\nbaz";
-            var uncovered = autotester(scene);
+            var result = autotester(scene);
+            doh.is(toJson([1,1,1,0]), toJson(result[0]), "coverage");
+            var uncovered = result[1];
             doh.f(uncovered);
         }
         ,function unreachable() {
           stats = {};
           nav = fixture.nav;
           var scene = "foo\n*goto baz\nbar\n*label baz\nbaz";
-          var uncovered = autotester(scene);
+          var result = autotester(scene);
+          doh.is(toJson([1,1,0,1,1,0]), toJson(result[0]), "coverage");
+          var uncovered = result[1];
           doh.is(uncovered.length, 1);
           doh.is(uncovered[0], 3);
         }

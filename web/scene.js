@@ -37,6 +37,7 @@ function Scene(name, stats, nav, debugMode) {
     
     // the current line number (WARNING 0-based!)
     this.lineNum = 0;
+    this.rollbackLineCoverage();
     
     // when this is true, the main printLoop will halt
     this.finished = false;
@@ -257,6 +258,7 @@ Scene.prototype.parseLabels = function parseLabels() {
             this.labels[data] = this.lineNum;
         }
     }
+    this.rollbackLineCoverage();
     this.lineNum = oldLineNum;
 }
 

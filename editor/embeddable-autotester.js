@@ -2,7 +2,7 @@ function autotester(sceneText) {
   function log(msg) {
     if (typeof(window) != "undefined" && window.console) window.console.log(msg)
   }
-  var coverage = [1];
+  var coverage = [];
 
   var printed = [];
   printx = function printx(msg, parent) {
@@ -21,6 +21,7 @@ function autotester(sceneText) {
   Scene.prototype.rollbackLineCoverage = function(lineNum) {
     if (!lineNum) lineNum = this.lineNum;
     coverage[lineNum]--;
+    //print("un-covered: " + lineNum);
   }
   
   try {
@@ -31,6 +32,7 @@ function autotester(sceneText) {
         } else {
             coverage[val] = 1;
         }
+        //print("covered: " + val);
         this._lineNum = val;
     });
   } catch (e) {
@@ -235,7 +237,7 @@ function autotester(sceneText) {
   if (uncovered.length) {
       log("UNCOVERED:");
       log(uncovered.join('\n'));
-      return uncovered;
+      return [coverage, uncovered];
   }
-  return false;
+  return [coverage];
 }
