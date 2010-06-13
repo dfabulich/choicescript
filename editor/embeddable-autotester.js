@@ -182,6 +182,7 @@ function autotester(sceneText) {
     scene.testPath.push(this.lineNum+1);
     scene.testPath.push('F');
     scene.lineNum = this.lineNum;
+    scene.rollbackLineCoverage();
     scene.indent = this.indent;
     scene.skipTrueBranch();
     scene.lineNum++;

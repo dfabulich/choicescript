@@ -54,17 +54,17 @@ doh.registerGroup("choicescript.tests.Autotest", [
           autotestScene(scene, [1,1,0,1,1,0], [3]);
         }
         ,function basicIf() {
-          return;
           var scene = ""
             +"\n*temp blah"
             +"\n*set blah 2"
             +"\n*if blah = 2"
             +"\n  *finish"
             +"\n*elseif blah = 3"
-            "+\n  *finish";
+            +"\n  *finish"
             +"\n*elseif blah = 4"
-            "+\n  *finish";
-          autotestScene(scene,  [1,1,1,2,1,2,1,"x"]);
+            +"\n  *finish"
+          ;
+          autotestScene(scene,  [1,1,1,1,1,1,1,1,1,1,0]);
         }
         ,function badElseIf() {
           stats = {};
