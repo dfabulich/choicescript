@@ -63,11 +63,11 @@ either express or implied.
     <property name="game" value="mygame" />
     <property name="output" value="randomtest-output.txt" />
     <echo>Executing randomtest, writing to ${output}</echo>
-    <rhino fork="true" output="${output}">
+    <java fork="true" failonerror="true" classpath="${doh}/js.jar" classname="${rhinoClass}" output="${output}">
       <arg value="randomtest.js" />
       <arg value="${num}" />
       <arg value="${game}" />
-    </rhino>
+    </java>
   </target>
   
   <target name="autotest" depends="rhino">
