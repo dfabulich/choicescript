@@ -123,21 +123,22 @@ Scene.prototype.tokenizeExpr = function cached_tokenizeExpr(str) {
   }
 }
 
-Scene.prototype.oldParseOptions = Scene.prototype.parseOptions;
-parsedOptions = {};
-Scene.prototype.parseOptions = function cached_parseOptions(indent, groups, expectedSuboptions) {
-  if (expectedSuboptions) return this.oldParseOptions(indent, groups, expectedSuboptions);
-  var key = this.name + this.lineNum;
-  var parsed = parsedOptions[key];
-  if (parsed) {
-    this.lineNum = parsed.lineNum;
-    this.indent = parsed.indent;
-    return parsed.result;
-  }
-  var result = this.oldParseOptions(indent, groups, expectedSuboptions);
-  parsedOptions[key] = {lineNum:this.lineNum, indent:this.indent, result:result};
-  return result;
-}
+// TODO bring back this performance optimization; make parseOptions return all options
+// Scene.prototype.oldParseOptions = Scene.prototype.parseOptions;
+// parsedOptions = {};
+// Scene.prototype.parseOptions = function cached_parseOptions(indent, groups, expectedSuboptions) {
+//   if (expectedSuboptions) return this.oldParseOptions(indent, groups, expectedSuboptions);
+//   var key = this.name + this.lineNum;
+//   var parsed = parsedOptions[key];
+//   if (parsed) {
+//     this.lineNum = parsed.lineNum;
+//     this.indent = parsed.indent;
+//     return parsed.result;
+//   }
+//   var result = this.oldParseOptions(indent, groups, expectedSuboptions);
+//   parsedOptions[key] = {lineNum:this.lineNum, indent:this.indent, result:result};
+//   return result;
+// }
 
 Scene.prototype.ending = function () {
   this.reset();
