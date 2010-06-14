@@ -27,6 +27,16 @@ load("web/"+gameName+"/"+"mygame.js");
 
 Math.seedrandom(1);
 
+var hardCodedRandomness = null; //[1, 1, 2, 1, 3, 3, 1, 1, 2, 5, 3, 1, 1, 2, 5, 1, 3, 3, 2, 2, 1, 2, 3, 2, 3, 1, 4, 5, 2, 3, 3, 2, 1, 1, 2, 2, 1, 1, 2, 3, ];
+function randomIndex(len) {
+  if (hardCodedRandomness) {
+    var hardCodedResult = hardCodedRandomness.shift();
+    if ("number" !== typeof(hardCodedResult)) throw new Error("Out of randomness!");
+    return hardCodedResult - 1;
+  }
+  return Math.floor(Math.random()*(len));
+}
+
 function log(msg) {
   print(msg);
 }
@@ -158,7 +168,7 @@ Scene.prototype.choice = function choice(data, fakeChoice) {
     var flattenedOptions = [];
     flattenOptions(flattenedOptions, options);
 
-    var index = Math.floor(Math.random()*(flattenedOptions.length));
+    var index = randomIndex(flattenedOptions.length);
 
     var item = flattenedOptions[index];
     if (fakeChoice) this.temps.fakeChoiceEnd = this.lineNum;
