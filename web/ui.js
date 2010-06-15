@@ -256,7 +256,11 @@ window.onerror=function(msg, file, line) {
         body += "\nLoad time: " + window.loadTime;
         if (window.Persist) body += "\nPersist: " + window.Persist.type;
         body += "\n\n" + statMsg + "\n\nversion=" + window.version;
-        window.location.href=("mailto:support+external@choiceofgames.com?subject=Error Report&body=" + encodeURIComponent(body));
+        var supportEmail = "mailto:support+external@choiceofgames.com";
+        try {
+          supportEmail=document.getElementById("supportEmail").getAttribute("href");
+        } catch (e) {}
+        window.location.href=(supportEmail + "?subject=Error Report&body=" + encodeURIComponent(body));
     }
 }
 
