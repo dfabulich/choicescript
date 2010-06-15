@@ -268,7 +268,7 @@ var sceneNames = [];
 
 nav.setStartingStatsClone(stats);
 
-var iterations = 100;
+var iterations = 10000;
 if (arguments[0]) iterations = arguments[0];
 for (i = 0; i < iterations; i++) {
   log("*****" + i);
