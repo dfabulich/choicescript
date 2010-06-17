@@ -57,9 +57,26 @@ if (!list.length || (list.length == 1 && !list[0])) {
 var uncoveredScenes = [];
 var uncovered;
 
+function verifyFileName(name) {
+  var file = new java.io.File("web/"+gameName+"/scenes/"+name+".txt");
+  if (!file.exists()) throw new Error("File does not exist: " + name);
+  var canonicalName = file.getCanonicalFile().getName();
+  if (name+".txt" != canonicalName) throw new Error("Incorrect capitalization/canonicalization; the file is called " + canonicalName + " but you requested " + name + ".txt");
+}
+
+Scene.prototype.verifyFileName = function commandLineVerifyFileName(name) {
+  try {
+    verifyFileName(name);
+  } catch (e) {
+    throw new Error(this.lineMsg() + e.message);
+  }
+  this.finish();
+}
+
 for (var i = 0; i < list.length; i++) {
   print(list[i]);
-  // TODO check file name capitalization here
+  java.lang.Thread.sleep(100); // sleep to allow print statements to flush :-(
+  verifyFileName(list[i]);
   var sceneText = slurpFile("web/"+gameName+"/scenes/"+list[i]+".txt");
   window = {console: {log: function(msg) { print(msg); } }};
   uncovered = autotester(sceneText)[1];

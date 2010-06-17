@@ -151,7 +151,12 @@ function autotester(sceneText) {
       this.oldGoto(label);
   }
   
-  Scene.prototype.goto_scene = Scene.prototype.ending = Scene.prototype.finish;
+  Scene.prototype.ending = Scene.prototype.finish;
+  
+  Scene.prototype.goto_scene = function testGotoScene(name) {
+    if (this.verifyFileName) this.verifyFileName(name);
+    this.finish();
+  }
   
   if (!Scene.prototype.oldElse) Scene.prototype.oldElse = Scene.prototype["else"];
   Scene.prototype["else"] = function test_else(data, inChoice) {
