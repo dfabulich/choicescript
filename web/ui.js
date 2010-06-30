@@ -192,7 +192,7 @@ function printShareLinks() {
       shareLinkText += "<li>" + spans[i].innerHTML;
     }
   } else {
-    shareLinkText = "<li>TODO Share Link 1, e.g. StumbleUpon<li>TODO Share Link 2, e.g. Facebook<li>TODO Share Link 3, e.g. Twitter"
+    shareLinkText = "<li>TODO Share Link 1, e.g. \"Rate this App in the App Store\"<li>TODO Share Link 2, e.g. StumbleUpon<li>TODO Share Link 3, e.g. Facebook<li>TODO Share Link 4, e.g. Twitter"
   }
     
   msgDiv.innerHTML = "<ul id='sharelist'>\n"+
