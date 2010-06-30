@@ -20,5 +20,5 @@ This is the last scene!  The game is over!
 *page_break
 Please support our work by sharing this game with friends!  The more people play, the more
 resources we'll have to work on the next game.
-
+*share_this_game
 *ending

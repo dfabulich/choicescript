@@ -1055,12 +1055,16 @@ Scene.prototype.setref = function setref(line) {
     this.setVar(reference, value);
 }
 
+Scene.prototype.share_this_game = function share_links() {
+  this.paragraph();
+  printShareLinks();
+}
+
 Scene.prototype.ending = function ending() {
     var self = this;
     var startupScene = self.nav.getStartupScene();
     this.paragraph();
     this.finished = true;
-    printShareLinks();
     printButton("Play Again", main, false, 
       function() { 
         safeCall(self, function() {
@@ -1571,4 +1575,4 @@ Scene.operators = {
 Scene.validCommands = {"comment":1, "goto":1, "gotoref":1, "label":1, "looplimit":1, "finish":1, "abort":1,
     "choice":1, "create":1, "temp":1, "delete":1, "set":1, "setref":1, "print":1, "if":1, "rand":1,
     "page_break":1, "line_break":1, "script":1, "else":1, "elseif":1, "elsif":1, "reset":1,
-    "goto_scene":1, "fake_choice":1, "input_text":1, "ending":1, "stat_chart":1};
+    "goto_scene":1, "fake_choice":1, "input_text":1, "ending":1, "share_this_game":1, "stat_chart":1};
