@@ -126,8 +126,12 @@ h2 {
   margin-right:0.5em;
 }
 
+#sharelist {
+  margin: 0; /* Eliminate leading space before share links */
+}
+
 #sharelist li {
-  margin: 1em;
+  margin-bottom: 1em; /* Don't let the links bunch up; -bottom to eliminate leading space before share links */
 }
 
 #greybackground {
