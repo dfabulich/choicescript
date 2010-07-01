@@ -5,6 +5,7 @@ android/assets
 android/bin
 android/gen
 iphone/build
+iphone/www
 *.pbxuser
 *.mode1v3
 */.DS_Store
