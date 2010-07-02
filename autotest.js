@@ -79,7 +79,7 @@ for (var i = 0; i < list.length; i++) {
   verifyFileName(list[i]);
   var sceneText = slurpFile("web/"+gameName+"/scenes/"+list[i]+".txt");
   window = {console: {log: function(msg) { print(msg); } }};
-  uncovered = autotester(sceneText)[1];
+  uncovered = autotester(sceneText, nav)[1];
   if (uncovered) {
     uncoveredScenes.push({name:list[i], lines:uncovered});
   }

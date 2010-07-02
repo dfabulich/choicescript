@@ -1,4 +1,4 @@
-function autotester(sceneText) {
+function autotester(sceneText, nav) {
   function log(msg) {
     if (typeof(window) != "undefined" && window.console) window.console.log(msg)
   }
@@ -210,8 +210,9 @@ function autotester(sceneText) {
     StartingStats.prototype[i] = stats[i];
   }
   
-  var nav = {
+  if (!nav) nav = {
     repairStats: function() {}
+    ,resetStats: function() {}
   }
   
   var startingStats = new StartingStats();
