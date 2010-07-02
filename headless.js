@@ -30,3 +30,4 @@ clearScreen = function clearScreen(code) {code.call();}
 saveCookie = function() {}
 doneLoading = function() {}
 printFooter = function() {}
+printShareLinks = function() {}
