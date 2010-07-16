@@ -75,6 +75,10 @@ Scene.prototype.verifyFileName = function commandLineVerifyFileName(name) {
   this.finish();
 }
 
+// In autotest, impossible combinations occur, so ignore all conflicting options
+// We'll catch these with randomtest instead
+Scene.prototype.conflictingOptions = function() {};
+
 for (var i = 0; i < list.length; i++) {
   print(list[i]);
   java.lang.Thread.sleep(100); // sleep to allow print statements to flush :-(

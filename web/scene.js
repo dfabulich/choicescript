@@ -636,7 +636,7 @@ Scene.prototype.parseOptions = function parseOptions(startIndent, choicesRemaini
         var option = {name:line, group:currentChoice};
         option.line = this.lineNum + 1;
         if (namesEncountered[line]) {
-            throw new Error(this.lineMsg() + "Invalid option; conflicts with option '"+option.name+"' on line " + namesEncountered[line]);
+            this.conflictingOptions(this.lineMsg() + "Invalid option; conflicts with option '"+option.name+"' on line " + namesEncountered[line]);
         } else {
             namesEncountered[line] = option.line;
         }
@@ -656,6 +656,13 @@ Scene.prototype.parseOptions = function parseOptions(startIndent, choicesRemaini
         throw new Error(this.lineMsg() + "Expected choice body");
     }
     return options;
+}
+
+// Add this as a separate method so we can override it elsewhere
+// We want this error during randomtest but not during autotest
+// Because autotest makes impossible situations happen
+Scene.prototype.conflictingOptions = function conflictingOptions(str) {
+  throw new Error(str);
 }
 
 // verify that the current option set corresponds to the previous option set
