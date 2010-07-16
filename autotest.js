@@ -24,6 +24,8 @@ load("headless.js");
 load("web/"+gameName+"/"+"mygame.js");
 load("editor/embeddable-autotester.js");
 
+nav.setStartingStatsClone(stats);
+
 function slurpFile(name) {
     var lines = [];
     var reader = new java.io.BufferedReader(new java.io.FileReader(name));
