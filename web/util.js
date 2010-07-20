@@ -114,7 +114,7 @@ function loadAndRestoreGame() {
   if (!initStore()) return restoreGame();
   window.store.get("state", function(ok, value) {
     safeCall(null, function() {var state = null;
-      if (ok && value) {
+      if (ok && value && ""+value) {
         state = eval("state="+value);
       }
       restoreGame(state);
