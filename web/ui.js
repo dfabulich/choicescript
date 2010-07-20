@@ -264,8 +264,9 @@ window.onerror=function(msg, file, line) {
         var supportEmail = "mailto:support+external@choiceofgames.com";
         try {
           supportEmail=document.getElementById("supportEmail").getAttribute("href");
+          supportEmail=supportEmail.replace(/\+/g,"%2B");
         } catch (e) {}
-        window.location.href=(encodeURIComponent(supportEmail) + "?subject=Error Report&body=" + encodeURIComponent(body));
+        window.location.href=(supportEmail + "?subject=Error Report&body=" + encodeURIComponent(body));
     }
 }
 
