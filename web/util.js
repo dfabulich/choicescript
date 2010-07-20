@@ -94,6 +94,7 @@ function saveCookie(stats, temps, lineNum, indent, debug) {
 }
 
 function writeCookie(value) {
+  window.cachedValue = value;
   if (!initStore()) return;
   window.store.set("state", value);
 }
@@ -111,16 +112,19 @@ function initStore() {
   return window.store;
 }
 function loadAndRestoreGame() {
+  if (window.cachedValue) return valueLoaded(true, window.cachedValue);
   if (!initStore()) return restoreGame();
-  window.store.get("state", function(ok, value) {
-    safeCall(null, function() {var state = null;
-      if (ok && value && ""+value) {
-        state = eval("state="+value);
-      }
-      restoreGame(state);
-    });
-  });
+  window.store.get("state", valueLoaded);
 }
+function valueLoaded(ok, value) {
+  safeCall(null, function() {
+    var state = null;
+    if (ok && value && ""+value) {
+      state = eval("state="+value);
+    }
+    restoreGame(state);
+  });
+};
 
 function isStateValid(state) {
   if (!state) return false;

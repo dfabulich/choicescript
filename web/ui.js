@@ -37,16 +37,9 @@ function println(msg, parent) {
 function showStats() {
     if (window.showingStatsAlready) return;
     window.showingStatsAlready = true;
+    document.getElementById("statsButton").style.display = "none";
+    main.innerHTML = "<div id='text'></div>";
     
-    var greyStuff = document.createElement("div");
-    greyStuff.setAttribute("id", "greybackground");
-    
-    document.body.appendChild(greyStuff);
-    
-    var statScreen = document.createElement("div");
-    
-    
-    statScreen.setAttribute("id", "stats");
     var currentScene = window.stats.scene;
     
     var scene = new Scene("choicescript_stats", window.stats, this.nav);
@@ -62,8 +55,6 @@ function showStats() {
           if (window.confirm("Restart your game?  Did you click that intentionally?")) {
               window.showingStatsAlready = false;
               clearCookie();
-              document.body.removeChild(greyStuff);
-              document.body.removeChild(statScreen);
               window.nav.resetStats(window.stats);
               clearScreen(restoreGame);
           }
@@ -71,30 +62,18 @@ function showStats() {
       }
       restartLink.innerHTML = "Start Over from the Beginning";  
       div.appendChild(restartLink);
-      this.target.appendChild(div);
+      document.getElementById('text').appendChild(div);
       
       var button = document.createElement("button");
       button.innerHTML="OK";
       button.onclick = function() {
-          document.body.removeChild(greyStuff);
-          document.body.removeChild(statScreen);
           window.stats.scene = currentScene;
-	  window.showingStatsAlready = false;
+          window.showingStatsAlready = false;
+          document.getElementById("statsButton").style.display = "inline";
+          clearScreen(loadAndRestoreGame);
       }
       div.appendChild(button);    
     }
-    
-    
-    
-    
-    document.body.appendChild(statScreen);
-    var ssWidth = statScreen.clientWidth;
-    var bodyWidth = document.body.clientWidth;
-    var bodyMarginLeft = 8; // getComputedStyle(document.body, null).marginLeft;
-    var left = Math.floor((bodyWidth - ssWidth) / 2) + bodyMarginLeft;
-    statScreen.style.left = left + "px";
-    
-    scene.target = statScreen;
     scene.execute();
 }
 
