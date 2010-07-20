@@ -265,7 +265,7 @@ window.onerror=function(msg, file, line) {
         try {
           supportEmail=document.getElementById("supportEmail").getAttribute("href");
         } catch (e) {}
-        window.location.href=(supportEmail + "?subject=Error Report&body=" + encodeURIComponent(body));
+        window.location.href=(encodeURIComponent(supportEmail) + "?subject=Error Report&body=" + encodeURIComponent(body));
     }
 }
 
