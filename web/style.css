@@ -3,29 +3,6 @@ body {
   font-family: Helvetica,Arial,sans-serif;
   background-color: white;
 }
-#stats {
-    position: absolute;
-    top: 5%;
-    left: 2%;
-    background-color: black;
-    color: white;
-    padding: 0.5em;
-    border-radius: 1em;
-    -moz-border-radius: 1em;
-    -webkit-border-radius: 1em;
-    border-style: solid;
-    border-width: 3px;
-    border-color: white;
-    width: 20em;
-}
-
-#stats button {
-    float: right;
-}
-
-#stats a {
-    float: left; text-decoration: underline; cursor: pointer; text-align: left;
-}
 
 table {
     margin-bottom: 1em;
@@ -160,11 +137,6 @@ h2 {
   
   #share span:first-child {
     display: block;
-  }
-  
-  #stats {
-    font-size: smaller;
-    width: 90%;
   }
   
   .gameTitle {

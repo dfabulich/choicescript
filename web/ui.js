@@ -45,15 +45,16 @@ function showStats() {
     var scene = new Scene("choicescript_stats", window.stats, this.nav);
     scene.save = function() {}; // Don't save state in stats screen, issue #70
     // TODO ban *choice/*page_break/etc. in stats screen
-    scene.finish = function() {
+    scene.finish = function(buttonName) {
       this.finished = true;
       this.paragraph();
-      var div = document.createElement("div");
+      var p = document.createElement("p");
       var restartLink = document.createElement("a");
-      restartLink.setAttribute("style", "float: left; text-decoration: underline; cursor: pointer; text-align: left");
+      restartLink.setAttribute("style", "text-decoration: underline; cursor: pointer; text-align: left");
       restartLink.onclick = function() {
           if (window.confirm("Restart your game?  Did you click that intentionally?")) {
               window.showingStatsAlready = false;
+              document.getElementById("statsButton").style.display = "inline";
               clearCookie();
               window.nav.resetStats(window.stats);
               clearScreen(restoreGame);
@@ -61,18 +62,16 @@ function showStats() {
           return false;
       }
       restartLink.innerHTML = "Start Over from the Beginning";  
-      div.appendChild(restartLink);
-      document.getElementById('text').appendChild(div);
+      p.appendChild(restartLink);
+      var text = document.getElementById('text');
+      text.appendChild(p);
       
-      var button = document.createElement("button");
-      button.innerHTML="OK";
-      button.onclick = function() {
+      printButton(buttonName || "Next", text, false, function() {
           window.stats.scene = currentScene;
           window.showingStatsAlready = false;
           document.getElementById("statsButton").style.display = "inline";
           clearScreen(loadAndRestoreGame);
-      }
-      div.appendChild(button);    
+      });
     }
     scene.execute();
 }
