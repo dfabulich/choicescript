@@ -202,6 +202,7 @@ function printButton(name, parent, isSubmit, code) {
   }
   if (!isMobile) try { button.focus(); } catch (e) {}
   parent.appendChild(button);
+  return button;
 }
   
 
