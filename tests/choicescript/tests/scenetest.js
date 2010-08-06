@@ -415,6 +415,12 @@ doh.registerGroup("choicescript.tests.If", [
             scene.execute();
             doh.is("Truthy <br><br>", printed.join(""), "Wrong printed value");
         }
+        ,function errorNonNestedElse() {
+            printed = [];
+            var scene = new Scene();
+            scene.loadLines("*if true\n  OK\n  *if false\n    Fail\n*else\n  Fail");
+            doh.assertError(Error, scene, "execute", null, "fall into else");
+        }
         ,function nestedExtraLineBreak() {
             printed = [];
             var scene = new Scene();

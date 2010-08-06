@@ -1319,8 +1319,9 @@ Scene.prototype.skipTrueBranch = function skipTrueBranch() {
       }
       if (indent <= startIndent) {
           // true block is over
+          var parsed;
           // check to see if this is an *else or *elseif
-          var parsed = /^\s*\*(\w+)(.*)/.exec(line);
+          if (indent == startIndent) parsed = /^\s*\*(\w+)(.*)/.exec(line);
           if (!parsed) {
               this.lineNum--;
               this.rollbackLineCoverage();
