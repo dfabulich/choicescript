@@ -1302,11 +1302,12 @@ Scene.prototype["if"] = function scene_if(line) {
         this.indent = this.getIndent(this.nextNonBlankLine());
     } else {
         // "false" branch; skip over the true branch
-        this.skipTrueBranch();
+        this.skipTrueBranch(false);
     }
 }
 
-Scene.prototype.skipTrueBranch = function skipTrueBranch() {
+// TODO Rename this function to just skipBranch
+Scene.prototype.skipTrueBranch = function skipTrueBranch(inElse) {
   var startIndent = this.indent;
   var nextIndent = null;
   while (isDefined(line = this.lines[++this.lineNum])) {
@@ -1322,7 +1323,7 @@ Scene.prototype.skipTrueBranch = function skipTrueBranch() {
           var parsed;
           // check to see if this is an *else or *elseif
           if (indent == startIndent) parsed = /^\s*\*(\w+)(.*)/.exec(line);
-          if (!parsed) {
+          if (!parsed || inElse) {
               this.lineNum--;
               this.rollbackLineCoverage();
               this.indent = indent;
@@ -1353,7 +1354,11 @@ Scene.prototype.skipTrueBranch = function skipTrueBranch() {
   }
 }
 
-Scene.prototype["else"] = Scene.prototype.elsif = Scene.prototype.elseif = function scene_else() {
+Scene.prototype["else"] = Scene.prototype.elsif = Scene.prototype.elseif = function scene_else(data, inChoice) {
+    if (inChoice) {
+      this.skipTrueBranch(true);
+      return;
+    }
     throw new Error(this.lineMsg() + "It is illegal to fall in to an *else statement; you must *goto or *finish before the end of the indented block.");
 }
 

@@ -106,6 +106,35 @@ doh.registerGroup("choicescript.tests.OptionParsing", [
             var options = scene.parseOptions(0, []);
             doh.is([{"name":"foo","line":2,"group":"choice"},{"name":"bar","line":4,"group":"choice"}], options, "options");
         }
+        ,function simpleConditionalTrue() {
+            var text = "*choice\n  *if true\n    #foo\n      Foo!\n  #bar\n    Bar!\nbaz";
+            var scene = new Scene();
+            scene.loadLines(text);
+            var options = scene.parseOptions(0, []);
+            doh.is([{"name":"foo","line":3,"group":"choice"},{"name":"bar","line":5,"group":"choice"}], options, "options");
+        }
+        ,function simpleConditionalFalse() {
+            var text = "*choice\n  *if false\n    #foo\n      Foo!\n  #bar\n    Bar!\nbaz";
+            var scene = new Scene();
+            scene.loadLines(text);
+            var options = scene.parseOptions(0, []);
+            doh.is([{"name":"bar","line":5,"group":"choice"}], options, "options");
+        }
+        ,function simpleConditionalElseTrue() {
+            var text = "*choice\n  *if true\n    #foo\n      Foo!\n  *else\n    #fail\n      Fail!\n  #bar\n    Bar!\nbaz";
+            var scene = new Scene();
+            scene.loadLines(text);
+            debughelp();
+            var options = scene.parseOptions(0, []);
+            doh.is([{"name":"foo","line":3,"group":"choice"},{"name":"bar","line":8,"group":"choice"}], options, "options");
+        }
+        ,function simpleConditionalElseFalse() {
+            var text = "*choice\n  *if false\n    #fail\n      Fail!\n  *else\n    #foo\n      Foo!\n  #bar\n    Bar!\nbaz";
+            var scene = new Scene();
+            scene.loadLines(text);
+            var options = scene.parseOptions(0, []);
+            doh.is([{"name":"foo","line":6,"group":"choice"},{"name":"bar","line":8,"group":"choice"}], options, "options");
+        }
         ,function multi() {
             var text = 
                 "*choice color toy\n"+
