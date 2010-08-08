@@ -586,10 +586,8 @@ Scene.prototype.parseOptions = function parseOptions(startIndent, choicesRemaini
             return options;
         }
         if (indent < this.indent) {
-            if (indent == nextIndent) {
-                // we must be falling out of a sub-block
-                this.indent = indent;
-            } else {
+            // TODO drift detection
+            if (false) /*(indent != nextIndent)*/ {
                 // error: indentation has decreased, but not all the way back
                 // Example:
                 // *choice
@@ -597,6 +595,10 @@ Scene.prototype.parseOptions = function parseOptions(startIndent, choicesRemaini
                 //   blue
                 throw new Error(this.lineMsg() + "invalid indent, expected "+this.indent+", was " + indent);
             }
+            
+            // we must be falling out of a sub-block
+            this.indent = indent;
+            
         }
         if (indent > this.indent) {
             // body of the choice
