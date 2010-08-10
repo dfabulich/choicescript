@@ -612,6 +612,7 @@ Scene.prototype.parseOptions = function parseOptions(startIndent, choicesRemaini
         // Execute *if commands (etc.) during option loop
         // sub-commands may modify this.indent
         var parsed = /^\s*\*(\w+)(.*)/.exec(line);
+        var unselectable = false;
         if (parsed) {
             var command = parsed[1].toLowerCase();
             var data = trim(parsed[2]);
@@ -619,7 +620,7 @@ Scene.prototype.parseOptions = function parseOptions(startIndent, choicesRemaini
             if ("print" == command) {
                 line = this.evaluateExpr(this.tokenizeExpr(data));
             } else if ("if" == command) {
-              var ifResult = this.parseOptionIf(data, true /*inChoice*/);
+              var ifResult = this.parseOptionIf(data);
               if (ifResult) {
                 if (ifResult.result) {
                   line = ifResult.line;
@@ -630,7 +631,11 @@ Scene.prototype.parseOptions = function parseOptions(startIndent, choicesRemaini
                 this["if"](data, true /*inChoice*/);
                 continue;
               }
-//            } else if ("enabled_if" == command) {
+            } else if ("selectable_if" == command) {
+              var ifResult = this.parseOptionIf(data);
+              if (!ifResult) throw new Error(this.lineMsg() + "Couldn't parse the line after *selectable_if: " + data);
+              line = ifResult.line;
+              unselectable = !ifResult.result;
             } else if ("finish" == command) {
                 break;
             } else {
@@ -650,6 +655,7 @@ Scene.prototype.parseOptions = function parseOptions(startIndent, choicesRemaini
         line = trim(trim(line).substring(1));
         var option = {name:line, group:currentChoice};
         option.line = this.lineNum + 1;
+        if (unselectable) option.unselectable = true;
         if (namesEncountered[line]) {
             this.conflictingOptions(this.lineMsg() + "Invalid option; conflicts with option '"+option.name+"' on line " + namesEncountered[line]);
         } else {
