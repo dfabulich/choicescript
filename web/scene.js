@@ -620,9 +620,14 @@ Scene.prototype.parseOptions = function parseOptions(startIndent, choicesRemaini
                 line = this.evaluateExpr(this.tokenizeExpr(data));
             } else if ("if" == command) {
               var ifResult = this.parseOptionIf(data, true /*inChoice*/);
-              if (ifResult && ifResult.result) {
-                line = ifResult.line;
+              if (ifResult) {
+                if (ifResult.result) {
+                  line = ifResult.line;
+                } else {
+                  continue;
+                }
               } else {
+                this["if"](data, true /*inChoice*/);
                 continue;
               }
 //            } else if ("enabled_if" == command) {
@@ -672,7 +677,6 @@ Scene.prototype.parseOptions = function parseOptions(startIndent, choicesRemaini
 Scene.prototype.parseOptionIf = function parseOptionIf(data) {
   var parsed = /\((.*)\)\s+(#.*)/.exec(data);
   if (!parsed) {
-    this["if"](data, true /*inChoice*/);
     return;
   }
   var stack = this.tokenizeExpr(parsed[1]);
