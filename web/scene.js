@@ -681,6 +681,8 @@ Scene.prototype.parseOptionIf = function parseOptionIf(data) {
   if ("boolean" != typeof result) {
       throw new Error(this.lineMsg() + "Invalid boolean expression; this isn't a boolean: " + result);
   }
+  // In the autotester, all conditionals are enabled
+  result = result || this.testPath;
   return {result:result, line:parsed[2]};
 }
 

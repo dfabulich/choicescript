@@ -82,7 +82,6 @@ doh.registerGroup("choicescript.tests.Autotest", [
           autotestScene(scene,  [1,1,1,1,1,1,1,1,1,1,1,1,0]);
         }
         ,function conditionalChoices() {
-          debughelp();
           var scene = ""
             +"\nFoo"
             +"\n*choice"
@@ -98,6 +97,21 @@ doh.registerGroup("choicescript.tests.Autotest", [
             +"\n      *finish"
           ;
           autotestScene(scene,  [1,1,1,1,1,1,1,1,1,1,1,1,1,1,0]);
+        }
+        ,function oneLineConditionalChoices() {
+          var scene = ""
+            +"\nFoo"
+            +"\n*choice"
+            +"\n  *if (true) #foo"
+            +"\n      *finish"
+            +"\n  *if (false) #bar"
+            +"\n      *finish"
+            +"\n  #baz"
+            +"\n      *finish"
+            +"\n  #quz"
+            +"\n      *finish"
+          ;
+          autotestScene(scene,  [1,1,1,1,1,1,1,1,1,1,1,1,0]);
         }
         ,function badElseIf() {
           stats = {};
