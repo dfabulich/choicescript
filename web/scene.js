@@ -617,7 +617,15 @@ Scene.prototype.parseOptions = function parseOptions(startIndent, choicesRemaini
             var data = trim(parsed[2]);
             // TODO whitelist commands
             if ("print" == command) {
-                line = this.evaluateExpr(this.tokenizeExpr(data))
+                line = this.evaluateExpr(this.tokenizeExpr(data));
+            } else if ("if" == command) {
+              var ifResult = this.parseOptionIf(data, true /*inChoice*/);
+              if (ifResult && ifResult.result) {
+                line = ifResult.line;
+              } else {
+                continue;
+              }
+//            } else if ("enabled_if" == command) {
             } else if ("finish" == command) {
                 break;
             } else {
@@ -658,6 +666,22 @@ Scene.prototype.parseOptions = function parseOptions(startIndent, choicesRemaini
         throw new Error(this.lineMsg() + "Expected choice body");
     }
     return options;
+}
+
+// compute *if statement during options
+Scene.prototype.parseOptionIf = function parseOptionIf(data) {
+  var parsed = /\((.*)\)\s+(#.*)/.exec(data);
+  if (!parsed) {
+    this["if"](data, true /*inChoice*/);
+    return;
+  }
+  var stack = this.tokenizeExpr(parsed[1]);
+  var result = this.evaluateExpr(stack);
+  if (this.debugMode) println(line + " :: " + result);
+  if ("boolean" != typeof result) {
+      throw new Error(this.lineMsg() + "Invalid boolean expression; this isn't a boolean: " + result);
+  }
+  return {result:result, line:parsed[2]};
 }
 
 // Add this as a separate method so we can override it elsewhere

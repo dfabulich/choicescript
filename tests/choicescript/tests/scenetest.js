@@ -113,12 +113,27 @@ doh.registerGroup("choicescript.tests.OptionParsing", [
             var options = scene.parseOptions(0, []);
             doh.is([{"name":"foo","line":3,"group":"choice"},{"name":"bar","line":5,"group":"choice"}], options, "options");
         }
+        ,function oneLineConditionalTrue() {
+            var text = "*choice\n  *if (true) #foo\n      Foo!\n  #bar\n    Bar!\nbaz";
+            var scene = new Scene();
+            scene.loadLines(text);
+            var options = scene.parseOptions(0, []);
+            doh.is([{"name":"foo","line":2,"group":"choice"},{"name":"bar","line":4,"group":"choice"}], options, "options");
+        }
         ,function simpleConditionalFalse() {
             var text = "*choice\n  *if false\n    #foo\n      Foo!\n  #bar\n    Bar!\nbaz";
             var scene = new Scene();
             scene.loadLines(text);
             var options = scene.parseOptions(0, []);
             doh.is([{"name":"bar","line":5,"group":"choice"}], options, "options");
+        }
+        ,function oneLineConditionalFalse() {
+            var text = "*choice\n  *if (false)    #foo\n      Foo!\n  #bar\n    Bar!\nbaz";
+            var scene = new Scene();
+            scene.loadLines(text);
+            debughelp();
+            var options = scene.parseOptions(0, []);
+            doh.is([{"name":"bar","line":4,"group":"choice"}], options, "options");
         }
         ,function simpleConditionalElseTrue() {
             var text = "*choice\n  *if true\n    #foo\n      Foo!\n  *else\n    #fail\n      Fail!\n  #bar\n    Bar!\nbaz";
