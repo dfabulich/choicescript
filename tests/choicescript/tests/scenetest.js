@@ -132,7 +132,6 @@ doh.registerGroup("choicescript.tests.OptionParsing", [
             var scene = new Scene();
             scene.loadLines(text);
             var options = scene.parseOptions(0, []);
-            debughelp();
             doh.is([{"name":"foo","line":2,"group":"choice"},{"name":"bar","line":4,"group":"choice"}], options, "options");
         }
         ,function simpleConditionalFalse() {
@@ -146,7 +145,6 @@ doh.registerGroup("choicescript.tests.OptionParsing", [
             var text = "*choice\n  *if (false)    #foo\n      Foo!\n  #bar\n    Bar!\nbaz";
             var scene = new Scene();
             scene.loadLines(text);
-            debughelp();
             var options = scene.parseOptions(0, []);
             doh.is([{"name":"bar","line":4,"group":"choice"}], options, "options");
         }
@@ -154,7 +152,6 @@ doh.registerGroup("choicescript.tests.OptionParsing", [
             var text = "*choice\n  *if true\n    #foo\n      Foo!\n  *else\n    #fail\n      Fail!\n  #bar\n    Bar!\nbaz";
             var scene = new Scene();
             scene.loadLines(text);
-            debughelp();
             var options = scene.parseOptions(0, []);
             doh.is([{"name":"foo","line":3,"group":"choice"},{"name":"bar","line":8,"group":"choice"}], options, "options");
         }
@@ -299,7 +296,13 @@ doh.registerGroup("choicescript.tests.OptionParsing", [
             var scene = new Scene();
             scene.loadLines(text);
             doh.assertError(Error, scene, "parseOptions", [0, []], "Duplicate options");
-        }    
+        }
+        ,function errorNoSelectable() {
+            var text = "*choice\n  *selectable_if (false) #foo\n      Foo!\n  *selectable_if (false) #bar\n    Bar!\nbaz";
+            var scene = new Scene();
+            scene.loadLines(text);
+            doh.assertError(Error, scene, "parseOptions", [0, []], "No selectable options");
+        }
     ]
 );
 

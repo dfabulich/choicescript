@@ -555,6 +555,7 @@ Scene.prototype.parseOptions = function parseOptions(startIndent, choicesRemaini
     var bodyExpected = false;
     var previousSubOptions;
     var namesEncountered = {};
+    var atLeastOneSelectableOption = false;
     while(isDefined(line = this.lines[++this.lineNum])) {
         if (!trim(line)) {
             this.rollbackLineCoverage();
@@ -578,6 +579,7 @@ Scene.prototype.parseOptions = function parseOptions(startIndent, choicesRemaini
             if (bodyExpected && !this.fakeChoice) {
                 throw new Error(this.lineMsg() + "Expected choice body");
             }
+            if (!atLeastOneSelectableOption) this.conflictingOptions("No selectable options");
             if (expectedSubOptions) {
                 this.verifyOptionsMatch(expectedSubOptions, options);
             }
@@ -655,7 +657,9 @@ Scene.prototype.parseOptions = function parseOptions(startIndent, choicesRemaini
         line = trim(trim(line).substring(1));
         var option = {name:line, group:currentChoice};
         option.line = this.lineNum + 1;
-        if (unselectable) option.unselectable = true;
+        if (unselectable) {
+          option.unselectable = true;
+        }
         if (namesEncountered[line]) {
             this.conflictingOptions(this.lineMsg() + "Invalid option; conflicts with option '"+option.name+"' on line " + namesEncountered[line]);
         } else {
@@ -672,10 +676,12 @@ Scene.prototype.parseOptions = function parseOptions(startIndent, choicesRemaini
         } else {
             bodyExpected = true;
         }
+        if (!unselectable) atLeastOneSelectableOption = true;
     }
     if (bodyExpected) {
         throw new Error(this.lineMsg() + "Expected choice body");
     }
+    if (!atLeastOneSelectableOption) this.conflictingOptions("No selectable options");
     return options;
 }
 
