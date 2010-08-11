@@ -771,10 +771,12 @@ Scene.prototype.renderOptions = function renderOptions(groups, options) {
             p.appendChild(document.createTextNode(textBuilder.join("")));
             div.appendChild(p);
         }
+        var checked = null;
         for (var optionNum = 0; optionNum < currentOptions.length; optionNum++) {
             var option = currentOptions[optionNum];
+            if (!checked && !option.unselectable) checked = option;
             var isLast = (optionNum == currentOptions.length - 1);
-            this.printRadioButton(div, group, option.name, optionNum, globalNum++, isLast);
+            this.printRadioButton(div, group, option, optionNum, globalNum++, isLast, checked == option);
         }
         // for rendering, the first options' suboptions should be as good as any other
         currentOptions = currentOptions[0].suboptions;
@@ -795,8 +797,10 @@ Scene.prototype.renderOptions = function renderOptions(groups, options) {
 }
 
 // print one radio button
-Scene.prototype.printRadioButton = function printRadioButton(div, name, line, localChoiceNumber, globalChoiceNumber, isLast) {
-    var checked = localChoiceNumber == 0;
+Scene.prototype.printRadioButton = function printRadioButton(div, name, option, localChoiceNumber, globalChoiceNumber, isLast, checked) {
+    var line = option.name;
+    var unselectable = option.unselectable;
+    var disabledString = unselectable ? " disabled" : "";
     var id = name + localChoiceNumber;
     if (!name) name = "choice";
     var radio;
@@ -807,7 +811,7 @@ Scene.prototype.printRadioButton = function printRadioButton(div, name, line, lo
         radio = document.createElement(
             "<input type='radio' name='"+name+
             "' value='"+localChoiceNumber+"' id='"+id+
-            "' "+(checked?"checked":"")+">"
+            "' "+(checked?"checked":"")+disabledString+">"
         );
     } catch (e) {
         radio = document.createElement("input");
@@ -816,21 +820,24 @@ Scene.prototype.printRadioButton = function printRadioButton(div, name, line, lo
         radio.setAttribute("value", localChoiceNumber);
         radio.setAttribute("id", id);
         if (checked) radio.setAttribute("checked", true);
+        if (unselectable) radio.setAttribute("disabled", true);
     }
     
     var label = document.createElement("label");
     label.setAttribute("for", id);
     if (localChoiceNumber == 0) {
       if (isLast) {
-        setClass(label, "onlyChild");
+        setClass(label, "onlyChild"+disabledString);
       } else {
-        setClass(label, "firstChild");
+        setClass(label, "firstChild"+disabledString);
       }
     } else if (isLast) {
-      setClass(label, "lastChild");
+      setClass(label, "lastChild"+disabledString);
+    } else if (unselectable) {
+      setClass(label, "disabled");
     }
     label.setAttribute("accesskey", globalChoiceNumber);
-    if (window.Touch) { // Make labels clickable on iPhone
+    if (window.Touch && !unselectable) { // Make labels clickable on iPhone
         label.onclick = function labelClick(evt) {
             var target = evt.target;
             if (!target) return;

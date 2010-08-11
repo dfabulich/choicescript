@@ -70,6 +70,11 @@ label{
     -webkit-border-radius:8px;
     -moz-border-radius:8px;
 }
+
+.disabled {
+  color: gray;
+}
+
 .next {
     display:block;
     width:100%;
