@@ -79,6 +79,8 @@ function toJson(obj) {
    return new String(obj);
   case 'function':
    return 'badfunction';
+  case 'undefined':
+    return 'undefined';
   default:
    throw new Error("invalid type: " + typeof obj);
  }
