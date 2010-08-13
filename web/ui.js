@@ -80,6 +80,9 @@ function showStats() {
 function clearScreen(code) {
     main.innerHTML = "<div id='text'></div>";
     var useAjax = true;
+    if (isWeb && window.noAjax) {
+      useAjax = false;
+    }
     
     if (useAjax) {
       doneLoading();
