@@ -189,6 +189,10 @@ function printShareLinks() {
   main.appendChild(msgDiv);
 }
 
+function subscribe() {
+  window.location.href = "mailto:subscribe-"+window.storeName+"@choiceofgames.com?subject=Sign me up&body=Please notify me when the next game is ready."
+}
+
 function printButton(name, parent, isSubmit, code) {
   var button;
   if (isSubmit) {
