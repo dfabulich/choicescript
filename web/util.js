@@ -84,23 +84,23 @@ function toJson(obj) {
  }
 }
 
-function saveCookie(stats, temps, lineNum, indent, debug) {
+function saveCookie(callback, stats, temps, lineNum, indent, debug) {
     var scene = stats.scene;
     delete stats.scene;
     stats.sceneName = scene.name;
     var value = toJson({version:window.version, stats:stats, temps:temps, lineNum: lineNum, indent: indent, debug: debug});
     stats.scene = scene;
-    return writeCookie(value);
+    return writeCookie(value, callback);
 }
 
-function writeCookie(value) {
+function writeCookie(value, callback) {
   window.cachedValue = value;
-  if (!initStore()) return;
-  window.store.set("state", value);
+  if (!initStore()) return callback();
+  window.store.set("state", value, callback);
 }
 
-function clearCookie() {
-    writeCookie('');
+function clearCookie(callback) {
+    writeCookie('', callback);
 }
 
 function initStore() {

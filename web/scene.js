@@ -388,15 +388,16 @@ Scene.prototype.nextNonBlankLine = function nextNonBlankLine(includingThisOne) {
 
 // reset the page and invoke code after clearing the screen
 Scene.prototype.resetPage = function resetPage() {
-    this.save();
-    this.prevLineEmpty = true;
-    this.screenEmpty = true;
     var self = this;
+    this.save(function() {
+      this.prevLineEmpty = true;
+    this.screenEmpty = true;
     clearScreen(function() {self.execute();});
+    });
 }
 
-Scene.prototype.save = function save() {
-    saveCookie(this.stats, this.temps, this.lineNum, this.indent, this.debugMode, this.nav);
+Scene.prototype.save = function save(callback) {
+    saveCookie(callback, this.stats, this.temps, this.lineNum, this.indent, this.debugMode, this.nav);
 }
 
 // *goto labelName

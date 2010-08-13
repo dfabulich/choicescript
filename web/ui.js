@@ -43,7 +43,7 @@ function showStats() {
     var currentScene = window.stats.scene;
     
     var scene = new Scene("choicescript_stats", window.stats, this.nav);
-    scene.save = function() {}; // Don't save state in stats screen, issue #70
+    scene.save = function(callback) {callback.call(scene);}; // Don't save state in stats screen, issue #70
     // TODO ban *choice/*page_break/etc. in stats screen
     scene.finish = function(buttonName) {
       this.finished = true;
@@ -55,9 +55,10 @@ function showStats() {
           if (window.confirm("Restart your game?  Did you click that intentionally?")) {
               window.showingStatsAlready = false;
               document.getElementById("statsButton").style.display = "inline";
-              clearCookie();
-              window.nav.resetStats(window.stats);
-              clearScreen(restoreGame);
+              clearCookie(function() {
+                window.nav.resetStats(window.stats);
+                clearScreen(restoreGame);
+              });
           }
           return false;
       }
