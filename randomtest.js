@@ -70,6 +70,7 @@ function debughelp() {
 function noop() {}
 Scene.prototype.page_break = noop;
 Scene.prototype.printLine = noop;
+Scene.prototype.subscribe = noop;
 Scene.prototype.save = function(callback) { callback.call(); };
 Scene.prototype.stat_chart = function() {
   this.parseStatChart();
