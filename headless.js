@@ -27,7 +27,7 @@ function println(msg, parent) {
 }
 
 clearScreen = function clearScreen(code) {code.call();}
-saveCookie = function() {}
+saveCookie = function(callback) { callback.call(); }
 doneLoading = function() {}
 printFooter = function() {}
 printShareLinks = function() {}
