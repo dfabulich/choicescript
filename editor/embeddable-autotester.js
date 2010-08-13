@@ -13,6 +13,7 @@ function autotester(sceneText, nav) {
   
   
   Scene.prototype.page_break = function() {};
+  Scene.prototype.subscribe = function() {};
   
   Scene.prototype.input_text = function(variable) {
       this.setVar(variable, "blah blah");
