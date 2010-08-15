@@ -5,10 +5,24 @@ load("web/util.js");
 
 function slurpFile(name) {
     var lines = [];
-    var reader = new java.io.BufferedReader(new java.io.FileReader(name));
+    var reader = new java.io.BufferedReader(new java.io.InputStreamReader(new java.io.FileInputStream(name), "UTF-8"));
     var line;
+    var lineBuilder;
     while (line = reader.readLine()) {
-         lines.push(line);
+      lineBuilder = [];
+      for (var i = 0; i < line.length(); i++) {
+        var ch = line.charAt(i);
+        if (ch > 127) {
+          var hex = ""+java.lang.Integer.toHexString(ch)
+          while (hex.length < 4) {
+            hex = "0" + hex;
+          }
+          lineBuilder.push("\\u" + hex);
+        } else {
+          lineBuilder.push(String.fromCharCode(ch));
+        }
+      }
+      lines.push(lineBuilder.join(''));
     }
     return lines.join('\n');
 }
