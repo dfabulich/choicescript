@@ -397,7 +397,7 @@ Scene.prototype.resetPage = function resetPage() {
 }
 
 Scene.prototype.save = function save(callback) {
-    saveCookie(callback, this.stats, this.temps, this.lineNum, this.indent, this.debugMode, this.nav);
+    saveCookie(callback, ""/*slot*/, this.stats, this.temps, this.lineNum, this.indent, this.debugMode, this.nav);
 }
 
 // *goto labelName

@@ -58,7 +58,7 @@ function showStats() {
               clearCookie(function() {
                 window.nav.resetStats(window.stats);
                 clearScreen(restoreGame);
-              });
+              }, "");
           }
           return false;
       }

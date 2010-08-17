@@ -86,23 +86,26 @@ function toJson(obj) {
  }
 }
 
-function saveCookie(callback, stats, temps, lineNum, indent, debug) {
+function saveCookie(callback, slot, stats, temps, lineNum, indent, debug) {
     var scene = stats.scene;
     delete stats.scene;
     stats.sceneName = scene.name;
     var value = toJson({version:window.version, stats:stats, temps:temps, lineNum: lineNum, indent: indent, debug: debug});
     stats.scene = scene;
-    return writeCookie(value, callback);
+    return writeCookie(value, slot, callback);
 }
 
-function writeCookie(value, callback) {
-  window.cachedValue = value;
+function writeCookie(value, slot, callback) {
+  if (!slot) {
+    window.cachedValue = value;
+    slot = "";
+  }
   if (!initStore()) return callback();
-  window.store.set("state", value, callback);
+  window.store.set("state"+slot, value, callback);
 }
 
-function clearCookie(callback) {
-    writeCookie('', callback);
+function clearCookie(callback, slot) {
+    writeCookie('', slot, callback);
 }
 
 function initStore() {
