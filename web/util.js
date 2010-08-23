@@ -65,7 +65,11 @@ function toJson(obj) {
     } else {
      for (var prop in obj) {
       if (prop == "scene") continue;
-      list.push('"' + prop + '":' + toJson(obj[prop]));
+      if (/^\w+$/.test(prop)) {
+        list.push(prop + ':' + toJson(obj[prop]));
+      } else {
+        list.push('"' + prop + '":' + toJson(obj[prop]));
+      }
      }
      return '{' + list.join(',') + '}';
     }
