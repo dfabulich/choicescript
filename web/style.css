@@ -127,6 +127,11 @@ h2 {
     left:0;
 }
 
+.savePassword {
+  font-family: monospace;
+  display: block;
+}
+
 .webOnly { /* We'll override this in JavaScript */
   display: none;
 }

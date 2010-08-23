@@ -1158,6 +1158,11 @@ Scene.prototype.subscribe = function scene_subscribe() {
   this.prevLineEmpty = false;
 }
 
+Scene.prototype.show_password = function show_password() {
+  showPassword(this.target);
+  this.prevLineEmpty = false;
+}
+
 Scene.prototype.stat_chart = function stat_chart() {
   var rows = this.parseStatChart();
   var textBuilder = ["<table class='statChart'>"];
@@ -1664,5 +1669,5 @@ Scene.validCommands = {"comment":1, "goto":1, "gotoref":1, "label":1, "looplimit
     "choice":1, "create":1, "temp":1, "delete":1, "set":1, "setref":1, "print":1, "if":1, "rand":1,
     "page_break":1, "line_break":1, "script":1, "else":1, "elseif":1, "elsif":1, "reset":1,
     "goto_scene":1, "fake_choice":1, "input_text":1, "ending":1, "share_this_game":1, "stat_chart":1
-    ,"subscribe":1
+    ,"subscribe":1, "show_password":1
     };

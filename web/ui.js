@@ -212,7 +212,35 @@ function printButton(name, parent, isSubmit, code) {
   parent.appendChild(button);
   return button;
 }
+
+function showPassword(target, password) {
+  if (!target) target = document.getElementById('text');
+  var button = printButton("Email me this password", target, false, 
+    function() { 
+      safeCall(self, function() {
+          alert("not implemented");
+      });
+    }
+  );
   
+  setClass(button, "");
+  var textArea = document.createElement("textarea");
+  var colWidth = 40;
+  textArea.cols = colWidth + 1;
+  textArea.rows = 30;
+  setClass(textArea, "savePassword");
+  var textBuffer = [];
+  for (var i = 1; i <= 1500; i++) {
+    textBuffer.push('W');
+    if (i % colWidth == 0) {
+      textBuffer.push(' ');
+    }
+  }
+  var fakeData = textBuffer.join('');
+  textArea.value = fakeData;
+  textArea.readonly = true;
+  target.appendChild(textArea);
+} 
 
 window.isMobile = /Mobile/.test(navigator.userAgent);
 window.isFile = /^file:/.test(window.location.href);
