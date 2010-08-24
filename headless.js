@@ -31,3 +31,4 @@ saveCookie = function(callback) { callback.call(); }
 doneLoading = function() {}
 printFooter = function() {}
 printShareLinks = function() {}
+showPassword = function() {}
