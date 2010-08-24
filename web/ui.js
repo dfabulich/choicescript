@@ -230,14 +230,13 @@ function showPassword(target, password) {
   textArea.rows = 30;
   setClass(textArea, "savePassword");
   var textBuffer = [];
-  for (var i = 1; i <= 1500; i++) {
-    textBuffer.push('W');
-    if (i % colWidth == 0) {
+  for (var i = 0; i < password.length; i++) {
+    textBuffer.push(password.charAt(i));
+    if ((i + 1) % colWidth == 0) {
       textBuffer.push(' ');
     }
   }
-  var fakeData = textBuffer.join('');
-  textArea.value = fakeData;
+  textArea.value = textBuffer.join('');
   textArea.readonly = true;
   target.appendChild(textArea);
 } 

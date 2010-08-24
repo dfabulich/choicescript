@@ -90,13 +90,20 @@ function toJson(obj) {
  }
 }
 
-function saveCookie(callback, slot, stats, temps, lineNum, indent, debug) {
-    var scene = stats.scene;
-    delete stats.scene;
-    stats.sceneName = scene.name;
-    var value = toJson({version:window.version, stats:stats, temps:temps, lineNum: lineNum, indent: indent, debug: debug});
-    stats.scene = scene;
+function saveCookie(callback, slot, stats, temps, lineNum, indent) {
+    var value = computeCookie(stats, temps, lineNum, indent);
     return writeCookie(value, slot, callback);
+}
+
+function computeCookie(stats, temps, lineNum, indent) {
+  var scene = stats.scene;
+  delete stats.scene;
+  stats.sceneName = scene.name;
+  var version = "UNKNOWN";
+  if (typeof(window) != "undefined" && window && window.version) version = window.version;
+  var value = toJson({version:version, stats:stats, temps:temps, lineNum: lineNum, indent: indent});
+  stats.scene = scene;
+  return value;
 }
 
 function writeCookie(value, slot, callback) {

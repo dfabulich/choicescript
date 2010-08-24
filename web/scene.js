@@ -1159,7 +1159,9 @@ Scene.prototype.subscribe = function scene_subscribe() {
 }
 
 Scene.prototype.show_password = function show_password() {
-  showPassword(this.target);
+  var password = computeCookie(this.stats, this.temps, this.lineNum, this.indent);
+  password = password.replace(/ /g, "`");
+  showPassword(this.target, password);
   this.prevLineEmpty = false;
 }
 
