@@ -236,7 +236,7 @@ function showPassword(target, password) {
       textBuffer.push(' ');
     }
   }
-  textArea.value = textBuffer.join('');
+  textArea.value = "----- BEGIN PASSWORD -----\n" + textBuffer.join('') + "\n----- END PASSWORD -----";
   textArea.readonly = true;
   target.appendChild(textArea);
 } 

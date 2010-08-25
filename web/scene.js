@@ -1168,7 +1168,7 @@ Scene.prototype.show_password = function show_password() {
       return y;
     }
   );
-  showPassword(this.target, "----- BEGIN PASSWORD -----\n" + password + "\n----- END PASSWORD -----");
+  showPassword(this.target, password);
   this.prevLineEmpty = false;
 }
 
