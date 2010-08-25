@@ -77,7 +77,29 @@ function toJson(obj) {
     return 'null';
    }
   case 'string':
-   return '"' + obj.replace(/(["'])/g, '\\$1') + '"';
+   var encoded = obj.replace(/(.)/g, function(x) {
+     if (x == "'" || x == '"') {
+       return "\\" + x;
+     }
+     var code = x.charCodeAt(0);
+     if (code > 127 || code < 32) {
+       var outCode = code.toString(16);
+       switch (outCode.length) {
+         case 4:
+           return "\\u" + outCode;
+         case 3:
+           return "\\u0" + outCode;
+         case 2:
+           return "\\u00" + outCode;
+         case 1:
+           return "\\u000" + outCode;
+         default:
+           return x;
+       }
+     }
+     return x;
+   });
+   return '"' + encoded + '"';
   case 'number':
   case 'boolean':
    return new String(obj);
