@@ -1365,6 +1365,19 @@ Scene.prototype.deobfuscator = {
   "h": "~"
 }
 
+Scene.prototype.deobfuscatePassword = function deobfuscatePassword(password) {
+  var self = this;
+  password = password.replace(/./g,
+    function(x) {
+      var y = self.deobfuscator[x];
+      return y;
+    }
+  );
+  // TODO security risk
+  var output = eval("output = " + password);
+  return output;
+}
+
 Scene.prototype.stat_chart = function stat_chart() {
   var rows = this.parseStatChart();
   var textBuilder = ["<table class='statChart'>"];
