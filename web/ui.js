@@ -233,7 +233,7 @@ function showPassword(target, password) {
   for (var i = 0; i < password.length; i++) {
     textBuffer.push(password.charAt(i));
     if ((i + 1) % colWidth == 0) {
-      textBuffer.push(' ');
+      textBuffer.push('\n');
     }
   }
   textArea.value = "----- BEGIN PASSWORD -----\n" + textBuffer.join('') + "\n----- END PASSWORD -----";
