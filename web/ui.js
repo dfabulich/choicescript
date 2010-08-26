@@ -215,15 +215,6 @@ function printButton(name, parent, isSubmit, code) {
 
 function showPassword(target, password) {
   if (!target) target = document.getElementById('text');
-  var button = printButton("Email me this password", target, false, 
-    function() { 
-      safeCall(self, function() {
-          alert("not implemented");
-      });
-    }
-  );
-  
-  setClass(button, "");
   var textArea = document.createElement("textarea");
   var colWidth = 40;
   textArea.cols = colWidth + 1;
@@ -236,8 +227,23 @@ function showPassword(target, password) {
       textBuffer.push('\n');
     }
   }
-  textArea.value = "----- BEGIN PASSWORD -----\n" + textBuffer.join('') + "\n----- END PASSWORD -----";
-  textArea.readonly = true;
+  password = "----- BEGIN PASSWORD -----\n" + textBuffer.join('') + "\n----- END PASSWORD -----";
+  
+  var shouldButton = true;
+  if (shouldButton) {
+    var button = printButton("Email me this password", target, false, 
+      function() { 
+        safeCall(self, function() {
+            if (isWeb) {
+              // TODO more reliable system
+            }
+            window.location.href = "mailto:?subject=Save%20this%20password&body=" + escape(password);
+        });
+      }
+    );
+    setClass(button, "");
+  }
+  textArea.value = password;
   target.appendChild(textArea);
 } 
 
