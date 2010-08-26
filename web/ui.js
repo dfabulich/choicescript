@@ -243,6 +243,11 @@ function showPassword(target, password) {
     );
     setClass(button, "");
   }
+  
+  textArea.setAttribute("readonly", true);
+  // There's probably a cleverer way to do this with .onclick,
+  // but textArea.onclick = function() {select()} didn't work for me
+  textArea.setAttribute("onclick", "select()");
   textArea.value = password;
   target.appendChild(textArea);
 } 
