@@ -1386,9 +1386,7 @@ Scene.prototype.deobfuscatePassword = function deobfuscatePassword(password) {
       return y;
     }
   );
-  // TODO security risk
-  var output = eval("output = " + password);
-  return output;
+  return password;
 }
 
 Scene.prototype.stat_chart = function stat_chart() {

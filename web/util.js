@@ -78,7 +78,7 @@ function toJson(obj) {
    }
   case 'string':
    var encoded = obj.replace(/(.)/g, function(x) {
-     if (x == "'" || x == '"') {
+     if (x == "'" || x == '"' || x == '\\') {
        return "\\" + x;
      }
      var code = x.charCodeAt(0);

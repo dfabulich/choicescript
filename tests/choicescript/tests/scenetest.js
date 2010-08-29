@@ -1152,6 +1152,22 @@ doh.registerGroup("choicescript.tests.ParseStatChart", [
     ]
 );
 
+doh.registerGroup("choicescript.tests.Obfuscator", [
+        function obfuscate() {
+            debughelp();
+            var value=" !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~\u00f1";
+            var input = {foo:value};
+            var json = toJson(input);
+            var scene = new Scene("test");
+            var obfuscated = scene.obfuscate(json);
+            var deobfuscated = scene.deobfuscatePassword(obfuscated);
+            var output = eval("output = " + deobfuscated);
+            doh.is(value, output.foo, "roundtrip failure");
+        }
+    ]
+);
+
+
 /*
 doh.register("choicescript.tests.ExpressionParsing", [
         { name: "My Function Test [_myfunc()]", 
