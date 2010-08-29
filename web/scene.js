@@ -390,9 +390,9 @@ Scene.prototype.nextNonBlankLine = function nextNonBlankLine(includingThisOne) {
 Scene.prototype.resetPage = function resetPage() {
     var self = this;
     this.save(function() {
-      this.prevLineEmpty = true;
-    this.screenEmpty = true;
-    clearScreen(function() {self.execute();});
+      self.prevLineEmpty = true;
+      self.screenEmpty = true;
+      clearScreen(function() {self.execute();});
     });
 }
 
