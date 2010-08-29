@@ -1160,18 +1160,27 @@ Scene.prototype.subscribe = function scene_subscribe() {
 
 Scene.prototype.show_password = function show_password() {
   var password = computeCookie(this.stats, this.temps, this.lineNum, this.indent);
-  if (/\`/.test(password)) throw new Error(this.lineMsg() + "password contains backtick");
+  password = this.obfuscate(password);
+  showPassword(this.target, password);
+  this.prevLineEmpty = false;
+}
+
+Scene.prototype.obfuscate = function obfuscate(password) {
   var self = this;
-  password = password.replace(/./g,
+  return password.replace(/./g,
     function(x) {
       var y = self.obfuscator[x];
       return y;
     }
   );
-  showPassword(this.target, password);
-  this.prevLineEmpty = false;
 }
 
+// The obfuscator must take US-ASCII and obfuscate it 
+// for use in a password.  This password will be sent via
+// HTML email and its whitespace handling will be unpredictable,
+// So we can't output any of these characters: [ <>&]
+// Since we're losing four characters of output, we JSON-escape
+// four characters of input [^`|~].
 Scene.prototype.obfuscator = {
   " ": "k",
   "!": "E",
@@ -1182,14 +1191,14 @@ Scene.prototype.obfuscator = {
   "&": "o",
   "'": "0",
   "(": "Z",
-  ")": ">",
+  ")": "M",
   "*": "G",
   "+": "t",
   ",": "Y",
   "-": "f",
   ".": "2",
   "/": "!",
-  "0": "&",
+  "0": "i",
   "1": "*",
   "2": "1",
   "3": "3",
@@ -1235,13 +1244,14 @@ Scene.prototype.obfuscator = {
   "[": "O",
   "\\": "s",
   "]": "8",
-  "^": "i",
+  "^": "sVii6h",
   "_": "]",
+  "`": "sViivi",
   "a": "4",
   "b": "g",
   "c": "%",
   "d": "w",
-  "e": "<",
+  "e": "h",
   "f": "n",
   "g": "b",
   "h": "7",
@@ -1264,9 +1274,9 @@ Scene.prototype.obfuscator = {
   "y": "|",
   "z": "@",
   "{": "e",
-  "|": "M",
+  "|": "sVii\"%",
   "}": ";",
-  "~": "h"
+  "~": "sVii\"h"
 }
 Scene.prototype.deobfuscator = {
   "k": " ",
@@ -1278,14 +1288,14 @@ Scene.prototype.deobfuscator = {
   "o": "&",
   "0": "'",
   "Z": "(",
-  ">": ")",
+  "M": ")",
   "G": "*",
   "t": "+",
   "Y": ",",
   "f": "-",
   "2": ".",
   "!": "/",
-  "&": "0",
+  "i": "0",
   "*": "1",
   "1": "2",
   "3": "3",
@@ -1331,13 +1341,12 @@ Scene.prototype.deobfuscator = {
   "O": "[",
   "s": "\\",
   "8": "]",
-  "i": "^",
   "]": "_",
   "4": "a",
   "g": "b",
   "%": "c",
   "w": "d",
-  "<": "e",
+  "h": "e",
   "n": "f",
   "b": "g",
   "7": "h",
@@ -1360,9 +1369,7 @@ Scene.prototype.deobfuscator = {
   "|": "y",
   "@": "z",
   "e": "{",
-  "M": "|",
-  ";": "}",
-  "h": "~"
+  ";": "}"
 }
 
 Scene.prototype.deobfuscatePassword = function deobfuscatePassword(password) {
