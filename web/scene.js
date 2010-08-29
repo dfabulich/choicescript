@@ -1159,6 +1159,12 @@ Scene.prototype.subscribe = function scene_subscribe() {
 }
 
 Scene.prototype.show_password = function show_password() {
+  this.paragraph();
+  if (typeof(window) != "undefined" && !window.isMobile) {
+    this.printLine('Please copy and paste the password in a safe place, then press "Next" below to continue.');
+    println("", this.target);
+    println("", this.target);
+  }
   var password = computeCookie(this.stats, this.temps, this.lineNum, this.indent);
   password = this.obfuscate(password);
   showPassword(this.target, password);

@@ -215,12 +215,9 @@ function printButton(name, parent, isSubmit, code) {
 
 function showPassword(target, password) {
   if (!target) target = document.getElementById('text');
-  var textArea = document.createElement("textarea");
-  var colWidth = 40;
-  textArea.cols = colWidth + 1;
-  textArea.rows = 30;
-  setClass(textArea, "savePassword");
+  
   var textBuffer = [];
+  var colWidth = 40;
   for (var i = 0; i < password.length; i++) {
     textBuffer.push(password.charAt(i));
     if ((i + 1) % colWidth == 0) {
@@ -229,27 +226,33 @@ function showPassword(target, password) {
   }
   password = "----- BEGIN PASSWORD -----\n" + textBuffer.join('') + "\n----- END PASSWORD -----";
   
-  var shouldButton = true;
+  var shouldButton = isMobile;
   if (shouldButton) {
-    var button = printButton("Email me this password", target, false, 
+    var button = printButton("Email My Password to Me", target, false, 
       function() { 
         safeCall(self, function() {
             if (isWeb) {
               // TODO more reliable system
             }
-            window.location.href = "mailto:?subject=Save%20this%20password&body=" + escape(password);
+            window.location.href = "mailto:?subject=Save%20this%20password&body=" + encodeURIComponent(password);
         });
       }
     );
     setClass(button, "");
   }
   
-  textArea.setAttribute("readonly", true);
-  // There's probably a cleverer way to do this with .onclick,
-  // but textArea.onclick = function() {select()} didn't work for me
-  textArea.setAttribute("onclick", "select()");
-  textArea.value = password;
-  target.appendChild(textArea);
+  var shouldTextArea = !isMobile;
+  if (shouldTextArea) {
+    var textArea = document.createElement("textarea");
+    textArea.cols = colWidth + 1;
+    textArea.rows = 30;
+    setClass(textArea, "savePassword");
+
+    textArea.setAttribute("readonly", true);
+    textArea.onclick = function() {textArea.select();}
+    textArea.value = (password);
+    target.appendChild(textArea);
+  }
 } 
 
 window.isMobile = /Mobile/.test(navigator.userAgent);
