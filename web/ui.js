@@ -283,6 +283,7 @@ window.onerror=function(msg, file, line) {
             statMsg = toJson(window.stats, '\n');
         } catch (ex) {}
         var body = "What were you doing when the error occured?\n\nError: " + msg;
+        if (window.stats && window.stats.scene && window.stats.scene.name) body += "\nScene: " + window.stats.scene.name;
         if (file) body += "\nFile: " + file;
         if (line) body += "\nLine: " + line;
         body += "\nUser Agent: " + navigator.userAgent;
