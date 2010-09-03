@@ -65,7 +65,7 @@ function toJson(obj) {
     } else {
      for (var prop in obj) {
       if (prop == "scene") continue;
-      if (/^[a-zA-Z]\w+$/.test(prop)) {
+      if (/^[a-zA-Z][a-zA-Z_0-9]\w+$/.test(prop) && !/\b(break|continue|do|for|import|new|this|void|case|default|else|function|in|return|typeof|while|comment|delete|export|if|label|switch|var|with)\b/.test(prop)) {
         list.push(prop + ':' + toJson(obj[prop]));
       } else {
         list.push('"' + prop + '":' + toJson(obj[prop]));
