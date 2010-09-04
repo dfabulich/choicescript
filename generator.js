@@ -9,20 +9,7 @@ function slurpFile(name) {
     var line;
     var lineBuilder;
     while (line = reader.readLine()) {
-      lineBuilder = [];
-      for (var i = 0; i < line.length(); i++) {
-        var ch = line.charAt(i);
-        if (ch > 127) {
-          var hex = ""+java.lang.Integer.toHexString(ch)
-          while (hex.length < 4) {
-            hex = "0" + hex;
-          }
-          lineBuilder.push("\\u" + hex);
-        } else {
-          lineBuilder.push(String.fromCharCode(ch));
-        }
-      }
-      lines.push(lineBuilder.join(''));
+      lines.push(line);
     }
     return lines.join('\n');
 }
