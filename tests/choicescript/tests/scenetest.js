@@ -1091,10 +1091,10 @@ doh.registerGroup("choicescript.tests.ParseStatChart", [
             scene.loadLines(text);
             var rows = scene.parseStatChart();
             var expected = '['
-              +'{type:"percent",label:"foo",variable:"foo"},'
-              +'{type:"percent",label:"bar",variable:"bar"},'
-              +'{type:"text",label:"baz",variable:"baz"},'
-              +'{type:"text",label:"quz",variable:"quz"}'
+              +'{type:"percent","label":"foo",variable:"foo"},'
+              +'{type:"percent","label":"bar",variable:"bar"},'
+              +'{type:"text","label":"baz",variable:"baz"},'
+              +'{type:"text","label":"quz",variable:"quz"}'
               +']';
             doh.is(expected, toJson(rows), "parsed");
         }
@@ -1108,10 +1108,10 @@ doh.registerGroup("choicescript.tests.ParseStatChart", [
             scene.loadLines(text);
             var rows = scene.parseStatChart();
             var expected = '['
-              +'{type:"percent",label:"One",variable:"foo"},'
-              +'{type:"percent",label:"Two Three",variable:"bar"},'
-              +'{type:"text",label:"Four  Five",variable:"baz"},'
-              +'{type:"text",label:"Six Seven!",variable:"quz"}'
+              +'{type:"percent","label":"One",variable:"foo"},'
+              +'{type:"percent","label":"Two Three",variable:"bar"},'
+              +'{type:"text","label":"Four  Five",variable:"baz"},'
+              +'{type:"text","label":"Six Seven!",variable:"quz"}'
               +']';
             doh.is(expected, toJson(rows), "parsed");
         }
@@ -1126,8 +1126,8 @@ doh.registerGroup("choicescript.tests.ParseStatChart", [
             scene.loadLines(text);
             var rows = scene.parseStatChart();
             var expected = '['
-              +'{opposed_label:"Honesty",type:"opposed_pair",variable:"Leadership",label:"Leadership"},'
-              +'{opposed_label:"Weakness",type:"opposed_pair",variable:"strength",label:"Strength"}'
+              +'{opposed_label:"Honesty",type:"opposed_pair",variable:"Leadership","label":"Leadership"},'
+              +'{opposed_label:"Weakness",type:"opposed_pair",variable:"strength","label":"Strength"}'
               +']';
             doh.is(expected, toJson(rows), "parsed");
         }
@@ -1144,8 +1144,8 @@ doh.registerGroup("choicescript.tests.ParseStatChart", [
             scene.loadLines(text);
             var rows = scene.parseStatChart();
             var expected = '['
-              +'{opposed_label:"Honesty",type:"opposed_pair",definition:"Managing",variable:"Leadership",label:"Leadership",opposed_definition:"Clueless"},'
-              +'{type:"percent",definition:"Vigor",variable:"strength",label:"strength"}'
+              +'{opposed_label:"Honesty",type:"opposed_pair",definition:"Managing",variable:"Leadership","label":"Leadership",opposed_definition:"Clueless"},'
+              +'{type:"percent",definition:"Vigor",variable:"strength","label":"strength"}'
               +']';
             doh.is(expected, toJson(rows), "parsed");
         }
