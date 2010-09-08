@@ -167,6 +167,16 @@ function autotester(sceneText, nav) {
       this.oldElse();
     }
   }
+  
+  Scene.prototype.elseif = Scene.prototype.elsif = function test_elseif(data, inChoice) {
+    // Does the expression evaluate to a boolean?
+    var stack = this.tokenizeExpr(data);
+    var result = this.evaluateExpr(stack);
+    if ("boolean" != typeof result) {
+        throw new Error(this.lineMsg() + "Invalid boolean expression; this isn't a boolean: " + result);
+    }
+    this["else"](data, inChoice);
+  }
 
   if (!Scene.prototype.oldIf) Scene.prototype.oldIf = Scene.prototype["if"];
   Scene.prototype["if"] = function test_if(line, inChoice) {

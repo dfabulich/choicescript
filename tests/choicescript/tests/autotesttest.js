@@ -132,6 +132,23 @@ doh.registerGroup("choicescript.tests.Autotest", [
           ;
           autotestScene(scene,  [1,1,1,1,1,1,1,1,1,1,1,1,1,1,0]);
         }
+        ,function conditionalChoicesElseIf() {
+          var scene = ""
+            +"\nFoo"
+            +"\n*choice"
+            +"\n  *if true"
+            +"\n    #foo"
+            +"\n      *finish"
+            +"\n  *elseif false"
+            +"\n    #bar"
+            +"\n      *finish"
+            +"\n  #baz"
+            +"\n      *finish"
+            +"\n  #quz"
+            +"\n      *finish"
+          ;
+          autotestScene(scene,  [1,1,1,1,1,1,1,1,1,1,1,1,1,1,0]);
+        }
         ,function oneLineConditionalChoices() {
           var scene = ""
             +"\nFoo"
