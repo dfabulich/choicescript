@@ -1848,7 +1848,7 @@ Scene.operators = {
         if (value > 99) value = 99;
         return value;
     }
-    ,"%-": function fairSubtract(v1, v2) {
+    ,"%-": function fairSubtract(v1, v2, line) {
         v1 = num(v1);
         v2 = num(v2);
         var validValue = (v1 > 0 && v1 < 100);
