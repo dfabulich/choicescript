@@ -1,4 +1,4 @@
-function autotester(sceneText, nav) {
+function autotester(sceneText, nav, sceneName) {
   function log(msg) {
     if (typeof(window) != "undefined" && window.console) window.console.log(msg)
   }
@@ -214,7 +214,7 @@ function autotester(sceneText, nav) {
   
   //Scene.prototype.choice = function() { this.finished = true;}
   
-  var sceneName = "test";
+  if (!sceneName) sceneName = "test";
   
   function StartingStats() {};
   for (var i in stats) {
@@ -228,9 +228,10 @@ function autotester(sceneText, nav) {
   
   var startingStats = new StartingStats();
   
-  var scene = new Scene(sceneName, startingStats, nav);
+  // *finish will barf if we use the real sceneName
+  var scene = new Scene("test"/*sceneName*/, startingStats, nav);
   var originalScene = scene;
-  scene.testPath = [];
+  scene.testPath = [sceneName];
   scene.loadLines(sceneText);
   
   log("executing");
