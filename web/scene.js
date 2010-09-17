@@ -1829,14 +1829,14 @@ Scene.tokens = [
     ,{name:"EQUALITY", test:function(str){ return Scene.regexpMatch(str,/^=/); } }
 ];
 Scene.operators = {
-    "+": function add(v1,v2) { return num(v1) + num(v2); }
-    ,"-": function subtract(v1,v2) { return num(v1) - num(v2); }
-    ,"*": function multiply(v1,v2) { return num(v1) * num(v2); }
-    ,"/": function divide(v1,v2) { return num(v1) / num(v2); }
+    "+": function add(v1,v2,line) { return num(v1,line) + num(v2,line); }
+    ,"-": function subtract(v1,v2,line) { return num(v1,line) - num(v2,line); }
+    ,"*": function multiply(v1,v2,line) { return num(v1,line) * num(v2,line); }
+    ,"/": function divide(v1,v2,line) { return num(v1,line) / num(v2,line); }
     ,"&": function concatenate(v1,v2) { return [v1,v2].join(""); }
     ,"%+": function fairAdd(v1, v2, line) {
-        v1 = num(v1);
-        v2 = num(v2);
+        v1 = num(v1,line);
+        v2 = num(v2,line);
         var validValue = (v1 > 0 && v1 < 100);
         if (!validValue) {
             throw new Error("line "+line+": Can't fairAdd to non-percentile value: " + v1);
@@ -1849,8 +1849,8 @@ Scene.operators = {
         return value;
     }
     ,"%-": function fairSubtract(v1, v2, line) {
-        v1 = num(v1);
-        v2 = num(v2);
+        v1 = num(v1,line);
+        v2 = num(v2,line);
         var validValue = (v1 > 0 && v1 < 100);
         if (!validValue) {
             throw new Error("line "+line+": Can't fairAdd to non-percentile value: " + v1);
@@ -1863,11 +1863,11 @@ Scene.operators = {
         return value;
     }
     ,"=": function equals(v1,v2) { return v1 == v2; }
-    ,"<": function lessThan(v1,v2) { 
-        return num(v1) < num(v2); }
-    ,">": function greaterThan(v1,v2) { return num(v1) > num(v2); }
-    ,"<=": function lessThanOrEquals(v1,v2) { return num(v1) <= num(v2); }
-    ,">=": function greaterThanOrEquals(v1,v2) { return num(v1) >= num(v2); }
+    ,"<": function lessThan(v1,v2,line) { 
+        return num(v1,line) < num(v2,line); }
+    ,">": function greaterThan(v1,v2,line) { return num(v1,line) > num(v2,line); }
+    ,"<=": function lessThanOrEquals(v1,v2,line) { return num(v1,line) <= num(v2,line); }
+    ,">=": function greaterThanOrEquals(v1,v2,line) { return num(v1,line) >= num(v2,line); }
     ,"!=": function notEquals(v1,v2) { return v1 != v2; }
     ,"and": function and(v1, v2, line) {
         // do we need to convert strings to booleans here?

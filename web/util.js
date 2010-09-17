@@ -234,9 +234,10 @@ function findOptimalDomain(docDomain) {
     return null;
 }
 
-function num(x) {
+function num(x, line) {
+    if (!line) line = "UNKNOWN";
     var x_num = x * 1; 
-    if (isNaN(x_num)) throw new Error("Not a number: " + x);
+    if (isNaN(x_num)) throw new Error("line "+line+": Not a number: " + x);
     return x_num;
 }
 
