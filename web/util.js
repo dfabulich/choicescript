@@ -65,7 +65,7 @@ function toJson(obj) {
     } else {
      for (var prop in obj) {
       if (prop == "scene") continue;
-      if (/^[a-zA-Z][a-zA-Z_0-9]\w+$/.test(prop) && !/\b(break|continue|do|for|import|new|this|void|case|default|else|function|in|return|typeof|while|comment|delete|export|if|label|switch|var|with)\b/.test(prop)) {
+      if (/^[a-zA-Z][a-zA-Z_0-9]\w+$/.test(prop) && !/\b(abstract|boolean|break|byte|case|catch|char|class|comment|const|continue|debugger|default|delete|do|double|else|enum|export|extends|false|final|finally|float|for|function|goto|if|implements|import|in|instanceof|int|interface|label|long|native|new|null|package|private|protected|public|return|short|static|super|switch|synchronized|this|throws|transient|true|try|typeof|var|void|volatile|while|with)\b/.test(prop)) {
         list.push(prop + ':' + toJson(obj[prop]));
       } else {
         list.push('"' + prop + '":' + toJson(obj[prop]));
