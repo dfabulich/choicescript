@@ -96,7 +96,7 @@ cachedNonBlankLines = {};
 Scene.prototype.oldNextNonBlankLine = Scene.prototype.nextNonBlankLine;
 
 Scene.prototype.nextNonBlankLine = function cached_nextNonBlankLine(includingThisOne) {
-  var key = this.name+this.lineNum +""+ !!includingThisOne;
+  var key = this.name+" "+this.lineNum +""+ !!includingThisOne;
   var cached = cachedNonBlankLines[key];
   if (cached) {
     return cached;
