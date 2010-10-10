@@ -585,7 +585,7 @@ Scene.prototype.parseOptions = function parseOptions(startIndent, choicesRemaini
             if (bodyExpected && !this.fakeChoice) {
                 throw new Error(this.lineMsg() + "Expected choice body");
             }
-            if (!atLeastOneSelectableOption) this.conflictingOptions("No selectable options");
+            if (!atLeastOneSelectableOption) this.conflictingOptions(this.lineMsg() + "No selectable options");
             if (expectedSubOptions) {
                 this.verifyOptionsMatch(expectedSubOptions, options);
             }
@@ -687,7 +687,7 @@ Scene.prototype.parseOptions = function parseOptions(startIndent, choicesRemaini
     if (bodyExpected) {
         throw new Error(this.lineMsg() + "Expected choice body");
     }
-    if (!atLeastOneSelectableOption) this.conflictingOptions("No selectable options");
+    if (!atLeastOneSelectableOption) this.conflictingOptions(this.lineMsg() + "No selectable options");
     return options;
 }
 
