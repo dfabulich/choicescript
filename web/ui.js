@@ -255,7 +255,8 @@ function showPassword(target, password) {
   }
 } 
 
-window.isMobile = /Mobile/.test(navigator.userAgent);
+window.isWebOS = /webOS/.test(navigator.userAgent);
+window.isMobile = isWebOS || /Mobile/.test(navigator.userAgent);
 window.isFile = /^file:/.test(window.location.href);
 window.isWeb = /^https?:/.test(window.location.href);
 window.isSafari = /Safari/.test(navigator.userAgent);
