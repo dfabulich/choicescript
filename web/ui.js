@@ -146,6 +146,15 @@ function printShareLinks() {
           mobileMesg = "  <li><a href='"+androidUrl+"'>Rate this app</a> in the Android Market</li>\n";
         }
       }
+    } else if (/webOS/.test(navigator.userAgent)) {
+      var palmLink = document.getElementById('palmLink');
+      var palmUrl;
+      if (palmLink) {
+        palmUrl = palmLink.href;
+        if (palmUrl) {
+          mobileMesg = "  <li><a href='"+palmUrl+"'>Rate this app</a> in the Palm App Catalog</li>\n";
+        }
+      }
     } else if (/iPad/.test(navigator.userAgent)) {
       var ipadLink = document.getElementById('ipadLink');
       var ipadUrl;
