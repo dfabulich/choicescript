@@ -28,6 +28,7 @@ function autotester(sceneText, nav, sceneName) {
   try {
     Scene.prototype.__defineGetter__("lineNum", function() { return this._lineNum; });
     Scene.prototype.__defineSetter__("lineNum", function(val) {
+        if (val == 10) debughelp();
         if (coverage[val]) {
             coverage[val]++;
         } else {
@@ -213,7 +214,9 @@ function autotester(sceneText, nav, sceneName) {
     scene.indent = this.indent;
     scene.skipTrueBranch();
     scene.lineNum++;
+    scene.rollbackLineCoverage(); // we haven't actually covered the line yet
     scene.resume = function() {
+      this.lineNum = this.lineNum; // NOW we've covered it
       scene.printLoop(); }
     sceneList.push(scene);
     this.oldIf("true");
