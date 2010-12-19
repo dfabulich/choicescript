@@ -131,6 +131,17 @@ function autotester(sceneText, nav, sceneName) {
   	return r; // Object
   }
   
+  if (!Scene.prototype.oldRunCommand) Scene.prototype.oldRunCommand = Scene.prototype.runCommand;
+  Scene.prototype.runCommand = function test_runCommand(line) {
+    if (coverage[this._lineNum] > 2) {
+      //log("overcovered " + (this._lineNum+1) + " " + coverage[this._lineNum]);
+      this.finish();
+    } else {
+      this.oldRunCommand(line);
+    }
+    
+  }
+  
   if (!Scene.prototype.oldGoto) Scene.prototype.oldGoto = Scene.prototype["goto"];
   
   var seen = {};

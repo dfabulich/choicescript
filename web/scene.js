@@ -589,6 +589,7 @@ Scene.prototype.parseOptions = function parseOptions(startIndent, choicesRemaini
             if (expectedSubOptions) {
                 this.verifyOptionsMatch(expectedSubOptions, options);
             }
+            this.rollbackLineCoverage();
             this.lineNum--;
             this.rollbackLineCoverage();
             return options;

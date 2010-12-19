@@ -96,7 +96,7 @@ doh.registerGroup("choicescript.tests.Autotest", [
             +"\n*label end"
             +"\nthe end"
           ;
-          autotestScene(scene,  [1,1,1,1,1,1,1,1,1,1,1,2,1,0]);
+          autotestScene(scene,  [1,1,1,1,1,1,1,1,1,1,1,1,1,0]);
         }
         ,function conditionalChoices() {
           var scene = ""
@@ -163,6 +163,29 @@ doh.registerGroup("choicescript.tests.Autotest", [
             +"\n      *finish"
           ;
           autotestScene(scene,  [1,1,1,1,1,1,1,1,1,1,1,1,0]);
+        }
+        ,function choiceInIfList() {
+          var scene = ""
+            +"\n*temp foo"
+            +"\n*set foo 1"
+            +"\n"
+            +"\n*if foo = 1"
+            +"\n  1"
+            +"\n  1"
+            +"\n*if foo = 2"
+            +"\n  *choice"
+            +"\n    #This"
+            +"\n      *finish"
+            +"\n    #That"
+            +"\n      *finish"
+            +"\n*if foo = 3"
+            +"\n  3"
+            +"\n  3"
+            +"\n*if foo = 4"
+            +"\n  4"
+            +"\n  4"
+          ;
+          autotestScene(scene,  [1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,4,1,1,1,0]);
         }
         ,function badElseIf() {
           stats = {};
