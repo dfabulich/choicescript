@@ -134,7 +134,7 @@ function autotester(sceneText, nav, sceneName) {
   
   if (!Scene.prototype.oldRunCommand) Scene.prototype.oldRunCommand = Scene.prototype.runCommand;
   Scene.prototype.runCommand = function test_runCommand(line) {
-    if (coverage[this._lineNum] > 2) {
+    if (coverage[this._lineNum] > 1) {
       //log("overcovered " + (this._lineNum+1) + " " + coverage[this._lineNum]);
       this.finish();
     } else {

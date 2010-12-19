@@ -185,7 +185,7 @@ doh.registerGroup("choicescript.tests.Autotest", [
             +"\n  4"
             +"\n  4"
           ;
-          autotestScene(scene,  [1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,4,2,2,2,0]);
+          autotestScene(scene,  [1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,2,1,1,1,0]);
         }
         ,function nestedChoice() {
           var scene = ""
@@ -202,7 +202,7 @@ doh.registerGroup("choicescript.tests.Autotest", [
             +"\n*page_break"
             +"\ndone"
           ;
-          autotestScene(scene,  [1,1,1,1,1,1,1,1,2,2,2,5,2,0]);
+          autotestScene(scene,  [1,1,1,1,1,1,1,1,2,1,1,3,1,0]);
         }
         ,function badElseIf() {
           stats = {};
