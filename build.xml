@@ -16,7 +16,7 @@ software distributed under the License is distributed on an
 "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
 either express or implied.
 -->
-<project default="autotest">
+<project default="quicktest">
   <target name="burn-revision-numbers" unless="skipVersion">
     <condition property="git" value="gitx.cmd">
         <os family="windows" />
@@ -70,7 +70,9 @@ either express or implied.
     </java>
   </target>
   
-  <target name="autotest" depends="rhino">
+  <target name="autotest" depends="quicktest" />
+  
+  <target name="quicktest" depends="rhino">
     <property name="vig" value="" />
     <rhino fork="true">
       <arg value="autotest.js"/>
