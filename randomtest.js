@@ -291,3 +291,4 @@ for (i = 0; i < sceneNames.length; i++) {
     log(sceneName + " "+ (sceneCoverage[j] || 0) + ": " + sceneLines[j]);
   }
 }
+log("RANDOMTEST PASSED");
