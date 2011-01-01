@@ -91,10 +91,13 @@ for (var i = 0; i < list.length; i++) {
   }
 }
 
+var allLinesTested = true;
 for (var i = 0; i < uncoveredScenes.length; i++) {
+  allLinesTested = false;
   var uncoveredScene = uncoveredScenes[i];
   uncoveredScene.lines.push("");
-  print(uncoveredScene.lines.join(" UNCOVERED " + uncoveredScene.name + "\n"));
+  print(uncoveredScene.lines.join(" UNTESTED " + uncoveredScene.name + "\n"));
 }
 
-
+if (!allLinesTested) print("SOME LINES UNTESTED");
+print("QUICKTEST PASSED");
