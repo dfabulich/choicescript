@@ -378,6 +378,9 @@ XmlScene.prototype.choice = function xmlChoice(data) {
   this.indent = endIndent;
 }
 
+// Don't throw errors on conflicting options; just translate them
+XmlScene.prototype.conflictingOptions = function() {};
+
 XmlScene.prototype.rand = function xmlRand(data) {
   closePara();
   var args = data.split(/ /);
