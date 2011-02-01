@@ -420,9 +420,20 @@ XmlScene.prototype.stat_chart = function xmlStatChart() {
   writer.write("</stat-chart>\n");
 }
 
-var list = new java.io.File(dir).listFiles();
-if (arguments[1]) {
-  list = [new java.io.File(dir, arguments[1] + ".txt")];
+if (true) {
+  var list = new java.io.File(dir).listFiles();
+  if (arguments[1]) {
+    list = [new java.io.File(dir, arguments[1] + ".txt")];
+  }
+} else {
+  load("web/navigator.js");
+  load("web/mygame/mygame.js");
+  list = [];
+  if (typeof(nav) != "undefined") {
+    for (nextScene = nav.getStartupScene(); nextScene; nextScene = nav.nextSceneName(nextScene)) {
+      list.push(new java.io.File(dir, nextScene + ".txt"));
+    }
+  }
 }
 
 if (typeof xmlTranslatorTestOverride != "undefined") {
