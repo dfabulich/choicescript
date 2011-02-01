@@ -103,6 +103,10 @@ XmlScene.prototype.share_this_game = function xmlShareThisGame(data) {
   printElement("share-this-game");
 }
 
+XmlScene.prototype.subscribe = function xmlSubscribe(data) {
+  printElement("subscribe");
+}
+
 XmlScene.prototype.line_break = function xmlLineBreak(data) {
   printElement("line-break");
 }
