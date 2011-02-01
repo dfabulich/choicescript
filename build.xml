@@ -87,6 +87,15 @@ either express or implied.
     </rhino>
   </target>
   
+  <target name="xmltranslator" depends="rhino">
+    <property name="vig" value="" />
+    <rhino fork="true">
+      <arg file="xmltranslator.js"/>
+      <arg value="${gen.dir}" />
+      <arg value="${vig}" />
+    </rhino>
+  </target>
+  
   <target name="cleangen">
     <property name="gen.dir" location="${basedir}" />
     <delete>

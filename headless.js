@@ -18,6 +18,9 @@
  */
 printed = [];
 headless = true;
+debughelp = function debughelp() {
+  debugger;
+}
 printx = function printx(msg, parent) {
     printed.push(msg);
 }

@@ -81,7 +81,11 @@ Scene.prototype.printLoop = function printLoop() {
         }
         var indent = this.getIndent(line);
         if (indent > this.indent) {
+            // ignore indentation level of *comments
+            if (/\s*\*comment\b/.test(line)) continue;
             throw new Error(this.lineMsg() + "increasing indent not allowed, expected " + this.indent + " was " + indent);
+        } else if (indent < this.indent) {
+            this.dedent(indent);
         }
         this.indent = indent;
         if (!this.runCommand(line)) {
@@ -102,10 +106,12 @@ Scene.prototype.printLoop = function printLoop() {
     }
     this.rollbackLineCoverage();
     if (!this.finished) {
-        this.finish();
+        this.autofinish();
     }
     printFooter();
 }
+
+Scene.prototype.dedent = function dedent(newDent) {};
 
 Scene.prototype.printLine = function printLine(line, parent) {
     if (!line) return null;
@@ -434,7 +440,7 @@ Scene.prototype["gotoref"] = function scene_gotoref(expression) {
    
 // *finish
 // halt the scene
-Scene.prototype.finish = function finish(buttonName) {
+Scene.prototype.finish = Scene.prototype.autofinish = function finish(buttonName) {
     this.paragraph();
     this.finished = true;
     var nextSceneName = this.nav && nav.nextSceneName(this.name);
@@ -590,6 +596,8 @@ Scene.prototype.parseOptions = function parseOptions(startIndent, choicesRemaini
                 this.verifyOptionsMatch(expectedSubOptions, options);
             }
             this.rollbackLineCoverage();
+            var prevOption = options[options.length-1];
+            if (!prevOption.endLine) prevOption.endLine = this.lineNum;
             this.lineNum--;
             this.rollbackLineCoverage();
             return options;
@@ -606,8 +614,8 @@ Scene.prototype.parseOptions = function parseOptions(startIndent, choicesRemaini
             }
             
             // we must be falling out of a sub-block
+            this.dedent(indent);
             this.indent = indent;
-            
         }
         if (indent > this.indent) {
             // body of the choice
@@ -618,10 +626,19 @@ Scene.prototype.parseOptions = function parseOptions(startIndent, choicesRemaini
             bodyExpected = false;
             continue;
         }
+        
+        // here's the end of the previous option
+        if (options.length) {
+          var prevOption = options[options.length-1];
+          if (!prevOption.endLine) prevOption.endLine = this.lineNum;
+        }
+        
         // Execute *if commands (etc.) during option loop
         // sub-commands may modify this.indent
         var parsed = /^\s*\*(\w+)(.*)/.exec(line);
         var unselectable = false;
+        var inlineIf = null;
+        var selectableIf = null;
         if (parsed) {
             var command = parsed[1].toLowerCase();
             var data = trim(parsed[2]);
@@ -629,8 +646,9 @@ Scene.prototype.parseOptions = function parseOptions(startIndent, choicesRemaini
             if ("print" == command) {
                 line = this.evaluateExpr(this.tokenizeExpr(data));
             } else if ("if" == command) {
-              var ifResult = this.parseOptionIf(data);
+              var ifResult = this.parseOptionIf(data, command);
               if (ifResult) {
+                inlineIf = ifResult.condition;
                 if (ifResult.result) {
                   line = ifResult.line;
                 } else {
@@ -641,9 +659,10 @@ Scene.prototype.parseOptions = function parseOptions(startIndent, choicesRemaini
                 continue;
               }
             } else if ("selectable_if" == command) {
-              var ifResult = this.parseOptionIf(data);
+              var ifResult = this.parseOptionIf(data, command);
               if (!ifResult) throw new Error(this.lineMsg() + "Couldn't parse the line after *selectable_if: " + data);
               line = ifResult.line;
+              selectableIf = ifResult.condition;
               unselectable = !ifResult.result;
             } else if ("finish" == command) {
                 break;
@@ -663,6 +682,16 @@ Scene.prototype.parseOptions = function parseOptions(startIndent, choicesRemaini
         }
         line = trim(trim(line).substring(1));
         var option = {name:line, group:currentChoice};
+        if (this.displayOptionCondition && inlineIf) {
+          option.displayIf = "("+inlineIf+") and ("+ this.displayOptionCondition +")";
+        } else if (this.displayOptionCondition) {
+          option.displayIf = this.displayOptionCondition;
+        } else if (inlineIf) {
+          option.displayIf = inlineIf;
+        }
+        if (selectableIf) {
+          option.selectableIf = selectableIf;
+        }
         option.line = this.lineNum + 1;
         if (unselectable) {
           option.unselectable = true;
@@ -688,6 +717,8 @@ Scene.prototype.parseOptions = function parseOptions(startIndent, choicesRemaini
     if (bodyExpected) {
         throw new Error(this.lineMsg() + "Expected choice body");
     }
+    var prevOption = options[options.length-1];
+    if (!prevOption.endLine) prevOption.endLine = this.lineNum;
     if (!atLeastOneSelectableOption) this.conflictingOptions(this.lineMsg() + "No selectable options");
     return options;
 }
@@ -698,7 +729,8 @@ Scene.prototype.parseOptionIf = function parseOptionIf(data) {
   if (!parsed) {
     return;
   }
-  var stack = this.tokenizeExpr(parsed[1]);
+  var condition = parsed[1];
+  var stack = this.tokenizeExpr(condition);
   var result = this.evaluateExpr(stack);
   if (this.debugMode) println(line + " :: " + result);
   if ("boolean" != typeof result) {
@@ -706,7 +738,7 @@ Scene.prototype.parseOptionIf = function parseOptionIf(data) {
   }
   // In the autotester, all conditionals are enabled
   result = result || this.testPath;
-  return {result:result, line:parsed[2]};
+  return {result:result, line:parsed[2], condition:null};
 }
 
 // Add this as a separate method so we can override it elsewhere
