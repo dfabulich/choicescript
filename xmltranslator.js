@@ -424,11 +424,10 @@ XmlScene.prototype.stat_chart = function xmlStatChart() {
   writer.write("</stat-chart>\n");
 }
 
-if (true) {
+if (arguments[1]) {
+  list = [new java.io.File(dir, arguments[1] + ".txt")];
+} else if (true) {
   var list = new java.io.File(dir).listFiles();
-  if (arguments[1]) {
-    list = [new java.io.File(dir, arguments[1] + ".txt")];
-  }
 } else {
   load("web/navigator.js");
   load("web/mygame/mygame.js");
