@@ -434,7 +434,7 @@ if (true) {
   load("web/mygame/mygame.js");
   list = [];
   if (typeof(nav) != "undefined") {
-    var statsFile = new java.io.File(dir, nextScene + ".txt");
+    var statsFile = new java.io.File(dir, "choicescript_stats.txt");
     if (statsFile.exists()) list.push(statsFile);
     for (nextScene = nav.getStartupScene(); nextScene; nextScene = nav.nextSceneName(nextScene)) {
       list.push(new java.io.File(dir, nextScene + ".txt"));
