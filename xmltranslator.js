@@ -114,7 +114,7 @@ XmlScene.prototype.input_text = function xmlLineBreak(data) {
 XmlScene.prototype.gotoref = function xmlGotoRef(data) {
   closePara();
   writer.write("<goto-ref>");
-  writer.write(this.evaluateExpr(this.tokenizeExr(data)));
+  writer.write(this.evaluateExpr(this.tokenizeExpr(data)));
   writer.write("</goto-ref>\n");
 }
 
