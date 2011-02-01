@@ -434,8 +434,8 @@ while (i--) {
   var str = slurpFile(list[i]);
   var scene = new XmlScene();
   scene.loadLines(str);
-  
-  var writer = new java.io.BufferedWriter(new java.io.FileWriter("/Users/dfabulich/git/choicescript/java/choicescript/src/main/resources/" + list[i].getName() + ".xml"));
+  var dir = "./xml/";
+  var writer = new java.io.BufferedWriter(new java.io.FileWriter(dir + list[i].getName() + ".xml"));
   //writer = {write: function(x){java.lang.System.out.print(x)}, close: function(){java.lang.System.out.println()}};
   writer.write("<!DOCTYPE vignette [ \n" + 
 			"<!ATTLIST label id ID #REQUIRED>\n" + 
