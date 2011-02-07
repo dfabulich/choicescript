@@ -714,7 +714,7 @@ Scene.prototype.parseOptions = function parseOptions(startIndent, choicesRemaini
         }
         if (!unselectable) atLeastOneSelectableOption = true;
     }
-    if (bodyExpected) {
+    if (bodyExpected && !this.fakeChoice) {
         throw new Error(this.lineMsg() + "Expected choice body");
     }
     var prevOption = options[options.length-1];
