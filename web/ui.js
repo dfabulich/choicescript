@@ -45,7 +45,7 @@ function showStats() {
     var scene = new Scene("choicescript_stats", window.stats, this.nav);
     scene.save = function(callback) {callback.call(scene);}; // Don't save state in stats screen, issue #70
     // TODO ban *choice/*page_break/etc. in stats screen
-    scene.finish = function(buttonName) {
+    scene.finish = scene.autofinish = function(buttonName) {
       this.finished = true;
       this.paragraph();
       var p = document.createElement("p");
