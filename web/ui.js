@@ -77,6 +77,12 @@ function showStats() {
     scene.execute();
 }
 
+function callIos(scheme, path) {
+  if (!window.isIosApp) return;
+  if (!path) path = "";
+  window.location = scheme + "://" + path;
+}
+
 function clearScreen(code) {
     main.innerHTML = "<div id='text'></div>";
     var useAjax = true;
@@ -86,7 +92,7 @@ function clearScreen(code) {
     
     if (useAjax) {
       doneLoading();
-      setTimeout(function() { window.scrollTo(0,0); }, 0);
+      setTimeout(function() { window.scrollTo(0,0); callIos("curl");}, 0);
       code.call();
     } else {
       if (!initStore()) alert("Your browser has disabled cookies; this game requires cookies to work properly.  Please re-enable cookies and refresh this page to continue.");
@@ -131,9 +137,22 @@ function setClass(element, classString) {
 function printFooter() {
   // var footer = document.getElementById('footer');
   // We could put anything we want in the footer here, but perhaps we should avoid it.
+  setTimeout(function() {callIos("curl");}, 0);
 }
 
 function printShareLinks() {
+  if (window.isIosApp) {
+    var button = printButton("Share This Game", document.getElementById('text'), false, 
+      function() { 
+        safeCall(self, function() {
+            callIos("share");
+        });
+      }
+    );
+
+    setClass(button, "");
+    return;
+  }
   var msgDiv = document.createElement("div");
   var mobileMesg = "";
   if (isMobile && isFile) {
@@ -215,6 +234,7 @@ function printButton(name, parent, isSubmit, code) {
   }
   setClass(button, "next");
   if (code) button.onclick = function() {
+    callIos("freeze");
     safeCall(null, code);
   }
   if (!isMobile) try { button.focus(); } catch (e) {}
