@@ -1,7 +1,16 @@
 body {
-  max-width: 720px;
+  max-width: 680px;
   font-family: Helvetica,Arial,sans-serif;
   background-color: white;
+}
+
+/* When max-width kicks in, center the body
+   When we margin: auto on iPhone, margin disappears entirely
+   So let's make sure there's some margin for centering */
+@media only screen and (min-device-width: 721px) {
+  body {
+    margin: 2em auto; 
+  }
 }
 
 table {
@@ -27,13 +36,13 @@ table {
     font-weight: bold;
 }
 .rightStatBar {
-    width: 12em;
+    width: 10em;
     background-color: #8888FF;
     height: 2em;
 }
 
 .rightStatBarOpposed {
-    width: 6em;
+    width: 5em;
     background-color: #8888FF;
     height: 2em;
 }
@@ -100,7 +109,6 @@ h2 {
 }
 
 .mobileBadges {
-  float: left;
   margin: 0;
 }
 
