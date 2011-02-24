@@ -7,7 +7,7 @@ body {
 /* When max-width kicks in, center the body
    When we margin: auto on iPhone, margin disappears entirely
    So let's make sure there's some margin for centering */
-@media only screen and (min-device-width: 721px) {
+@media only screen and (min-width: 721px) {
   body {
     margin: 2em auto; 
   }
