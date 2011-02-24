@@ -30,7 +30,7 @@ function println(msg, parent) {
 }
 
 clearScreen = function clearScreen(code) {code.call();}
-saveCookie = function(callback) { callback.call(); }
+saveCookie = function(callback) { if (callback) callback.call(); }
 doneLoading = function() {}
 printFooter = function() {}
 printShareLinks = function() {}
