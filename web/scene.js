@@ -108,8 +108,12 @@ Scene.prototype.printLoop = function printLoop() {
     if (!this.finished) {
         this.autofinish();
     }
-    printFooter();
 	this.save(null, "temp");
+    if (this.skipFooter) {
+        this.skipFooter = false;
+    } else {
+        printFooter();
+    }
 }
 
 Scene.prototype.dedent = function dedent(newDent) {};
@@ -474,6 +478,7 @@ Scene.prototype.reset = function reset() {
 // 
 Scene.prototype.goto_scene = function gotoScene(sceneName) {
     this.finished = true;
+    this.skipFooter = true;
     var scene = new Scene(sceneName, this.stats, this.nav, this.debugMode);
     scene.screenEmpty = this.screenEmpty;
     scene.prevLineEmpty = this.prevLineEmpty;
