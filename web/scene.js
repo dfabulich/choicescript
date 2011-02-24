@@ -109,6 +109,7 @@ Scene.prototype.printLoop = function printLoop() {
         this.autofinish();
     }
     printFooter();
+	this.save(null, "temp");
 }
 
 Scene.prototype.dedent = function dedent(newDent) {};
@@ -404,11 +405,11 @@ Scene.prototype.resetPage = function resetPage() {
       self.prevLineEmpty = true;
       self.screenEmpty = true;
       clearScreen(function() {self.execute();});
-    });
+    }, "");
 }
 
-Scene.prototype.save = function save(callback) {
-    saveCookie(callback, ""/*slot*/, this.stats, this.temps, this.lineNum, this.indent, this.debugMode, this.nav);
+Scene.prototype.save = function save(callback, slot) {
+    saveCookie(callback, slot, this.stats, this.temps, this.lineNum, this.indent, this.debugMode, this.nav);
 }
 
 // *goto labelName

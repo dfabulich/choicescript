@@ -43,7 +43,7 @@ function showStats() {
     var currentScene = window.stats.scene;
     
     var scene = new Scene("choicescript_stats", window.stats, this.nav);
-    scene.save = function(callback) {callback.call(scene);}; // Don't save state in stats screen, issue #70
+    scene.save = function(callback) {if (callback) callback.call(scene);}; // Don't save state in stats screen, issue #70
     // TODO ban *choice/*page_break/etc. in stats screen
     scene.finish = scene.autofinish = function(buttonName) {
       this.finished = true;
@@ -322,15 +322,13 @@ window.onload=function() {
     var map = parseQueryString(window.location.search);
         
     if (map) {
-      window.debug = map.debug;
-      if (window.debug) {
-        window.onbeforeunload = function() {
-          return "Debugging!";
-        }
+      var forcedScene = map.forcedScene
+      window.slot = map.slot;
+      if (map.restart) {
+        restoreGame(null, forcedScene);
+      } else {
+        safeCall(null, function() {loadAndRestoreGame(window.slot, forcedScene)});
       }
-      if (map.scene) stats.sceneName = map.scene;
-      restoreGame({version:window.version, stats:stats, temps:{}, lineNum: 0, indent: 0, debug: map.debug});
-      return;
     } else {
       safeCall(null, loadAndRestoreGame);
     }

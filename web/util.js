@@ -133,7 +133,7 @@ function writeCookie(value, slot, callback) {
     window.cachedValue = value;
     slot = "";
   }
-  if (!initStore()) return callback();
+  if (!initStore()) return callback ? callback() : null;
   window.store.set("state"+slot, value, callback);
 }
 
@@ -149,20 +149,21 @@ function initStore() {
   } catch (e) {}
   return window.store;
 }
-function loadAndRestoreGame() {
+function loadAndRestoreGame(slot, forcedScene) {
+  function valueLoaded(ok, value) {
+    safeCall(null, function() {
+      var state = null;
+      if (ok && value && ""+value) {
+        state = eval("state="+value);
+      }
+      restoreGame(state, forcedScene);
+    });
+  };
+  if (!slot) slot = "";
   if (window.cachedValue) return valueLoaded(true, window.cachedValue);
-  if (!initStore()) return restoreGame();
-  window.store.get("state", valueLoaded);
+  if (!initStore()) return restoreGame(null, forcedScene);
+  window.store.get("state"+slot, valueLoaded);
 }
-function valueLoaded(ok, value) {
-  safeCall(null, function() {
-    var state = null;
-    if (ok && value && ""+value) {
-      state = eval("state="+value);
-    }
-    restoreGame(state);
-  });
-};
 
 function isStateValid(state) {
   if (!state) return false;
@@ -171,17 +172,21 @@ function isStateValid(state) {
   return true;
 }
 
-function restoreGame(state) {
+function restoreGame(state, forcedScene) {
     if (!isStateValid(state)) {
-        var scene = new Scene(window.nav.getStartupScene(), window.stats, window.nav, false);
+        var startupScene = forcedScene ? forcedScene : window.nav.getStartupScene();
+        var scene = new Scene(startupScene, window.stats, window.nav, false);
         safeCall(scene, scene.execute);
     } else {
+      if (forcedScene) state.stats.sceneName = forcedScene;
       window.stats = state.stats;
       // Someday, inflate the navigator using the state object
       var scene = new Scene(state.stats.sceneName, state.stats, window.nav, state.debug);
-      scene.temps = state.temps;
-      scene.lineNum = state.lineNum;
-      scene.indent = state.indent;
+      if (!forcedScene) {
+        scene.temps = state.temps;
+        scene.lineNum = state.lineNum;
+        scene.indent = state.indent;
+      }
       safeCall(scene, scene.execute);
     }
 }
