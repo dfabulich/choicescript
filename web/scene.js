@@ -1167,6 +1167,7 @@ Scene.prototype.setref = function setref(line) {
 Scene.prototype.share_this_game = function share_links() {
   this.paragraph();
   printShareLinks();
+  this.prevLineEmpty = false;
 }
 
 Scene.prototype.ending = function ending() {
