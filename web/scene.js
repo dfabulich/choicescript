@@ -1437,8 +1437,8 @@ Scene.prototype.deobfuscatePassword = function deobfuscatePassword(password) {
 Scene.prototype.stat_chart = function stat_chart() {
   var rows = this.parseStatChart();
   var textBuilder = ["<table class='statChart'>"];
-  var barWidth = 12; /*em*/
-  var barWidthOpposed = 6; /*em*/
+  var barWidth = 10; /*em*/
+  var barWidthOpposed = 5; /*em*/
   // BEWARE: Can't use DOM to build this table due to IE bugs
   for (var i = 0; i < rows.length; i++) {
     var row = rows[i];
