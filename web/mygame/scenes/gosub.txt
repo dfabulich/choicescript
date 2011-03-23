@@ -1,0 +1,30 @@
+Under the hood, this chapter uses the gosub command to execute subroutines.
+
+The school bully is being mean to you.
+
+*choice
+  #Stand up to him.
+    He's a lot tougher than you are; you hit him, but he barely even notices.
+    
+    *gosub feelings
+    
+    He beats you up and takes your lunch money.
+    *finish
+  #Give him my lunch money.
+    He takes your money and laughs at you.
+    
+    *gosub feelings
+    
+    He leaves you alone for the rest of the week.
+    *finish
+
+*label feelings
+
+How do you feel about this?
+*choice
+  #Angry.
+    Maybe you can get even some day.
+    *return
+  #Sad.
+    You do your best, but you think he can probably see your shame.
+    *return

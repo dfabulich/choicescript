@@ -24,6 +24,7 @@ nav = new SceneNavigator([
     "startup"
     ,"animal"
     ,"variables"
+    ,"gosub"
     ,"ending"
     ,"death"
     

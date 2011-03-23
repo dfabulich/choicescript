@@ -428,6 +428,24 @@ Scene.prototype["goto"] = function scene_goto(label) {
     }
 }
 
+Scene.prototype.gosub = function scene_gosub(label) {
+    if (!this.temps.choice_substack) {
+      this.temps.choice_substack = [];
+    }
+    this.temps.choice_substack.push({lineNum: this.lineNum, indent: this.indent});
+    this["goto"](label);
+}
+
+Scene.prototype["return"] = function scene_return() {
+    if (!this.temps.choice_substack) {
+      throw new Error(this.lineMsg() + "invalid return; gosub has not yet been called");
+    }
+    var stackFrame = this.temps.choice_substack.pop();
+    if (!stackFrame) throw new Error(this.lineMsg() + "invalid return; we've already returned from the last gosub");
+    this.lineNum = stackFrame.lineNum;
+    this.indent = stackFrame.indent;
+}
+
 // *gotoref expression
 // Go to the label identified by the expression
 //
@@ -1940,5 +1958,5 @@ Scene.validCommands = {"comment":1, "goto":1, "gotoref":1, "label":1, "looplimit
     "choice":1, "create":1, "temp":1, "delete":1, "set":1, "setref":1, "print":1, "if":1, "rand":1,
     "page_break":1, "line_break":1, "script":1, "else":1, "elseif":1, "elsif":1, "reset":1,
     "goto_scene":1, "fake_choice":1, "input_text":1, "ending":1, "share_this_game":1, "stat_chart":1
-    ,"subscribe":1, "show_password":1
+    ,"subscribe":1, "show_password":1, "gosub":1, "return":1
     };

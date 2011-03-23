@@ -635,6 +635,58 @@ doh.registerGroup("choicescript.tests.ResolveChoice", [
             scene.resolveChoice(options,groups);
             doh.is("Foo! <br><br>", printed.join(""), "printed");
         }
+        ,function saveAndRestore() {
+            printed = [];
+            var text = "*choice\n  #foo\n    Foo!\n    *finish\n  #bar\n    Bar!\n    *finish\nbaz";
+            var scene = new Scene();
+            scene.loadLines(text);
+            var options, groups;
+            scene.renderOptions = function(_groups, _options) {
+                options = _options;
+                groups = _groups;
+            };
+            var formValues = {choice:0};
+            scene.getFormValue = function(name) {return formValues[name];}
+            scene.reset = function() {};
+            scene.resetPage = function() {};
+            scene.execute();
+            doh.is([{"name":"foo","line":2,"group":"choice","endLine":4},{"name":"bar","line":5,"group":"choice","endLine":7}], options, "options");
+            scene.resolveChoice(options,groups);
+            var scene2 = new Scene();
+            scene2.loadLines(text);
+            scene2.temps = scene.temps;
+            scene2.stats = scene.stats;
+            scene2.lineNum = scene.lineNum;
+            scene2.indent = scene.indent;
+            scene2.execute();
+            doh.is("Foo! <br><br>", printed.join(""), "printed");
+        }
+        ,function saveAndRestoreGoSub() {
+            printed = [];
+            var text = "start\n*gosub subroutine\nend\n*finish\n*label subroutine\n*choice\n  #foo\n    Foo!\n    *return\n  #bar\n    Bar!\n    *return\nbaz";
+            var scene = new Scene();
+            scene.loadLines(text);
+            var options, groups;
+            scene.renderOptions = function(_groups, _options) {
+                options = _options;
+                groups = _groups;
+            };
+            var formValues = {choice:0};
+            scene.getFormValue = function(name) {return formValues[name];}
+            scene.reset = function() {};
+            scene.resetPage = function() {};
+            scene.execute();
+            doh.is([{group:"choice",endLine:9,name:"foo",line:7},{group:"choice",endLine:12,name:"bar",line:10}], options, "options");
+            scene.resolveChoice(options,groups);
+            var scene2 = new Scene();
+            scene2.loadLines(text);
+            scene2.temps = scene.temps;
+            scene2.stats = scene.stats;
+            scene2.lineNum = scene.lineNum;
+            scene2.indent = scene.indent;
+            scene2.execute();
+            doh.is("start Foo! end <br><br>", printed.join(""), "printed");
+        }
         ,function extraLineBreak() {
             printed = [];
             var text = "*choice\n  #foo\n\n    Foo!\n    *finish\n  #bar\n    Bar!\n    *finish\nbaz";
