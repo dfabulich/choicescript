@@ -119,6 +119,34 @@ doh.registerGroup("choicescript.tests.Xmltranslator", [
           "</choice>\n";
           translateScene(scene, expected);
         }
+        ,function ifInChoice() {
+          var scene = ""
+            +"\n*choice"
+            +"\n  *if foo"
+            +"\n    #Foo"
+            +"\n      *finish"
+            +"\n  *if bar"
+            +"\n    #Bar"
+            +"\n      *finish";
+          var expected = "<paragraph-break />\n"+
+            "<choice>\n"+
+            "<if><test>\n"+
+            "<variable name='foo' /></test>\n"+
+            "<option>\n"+
+            "<text>Foo</text>\n"+
+            "<finish />\n"+
+            "</option>\n"+
+            "</if>\n"+
+            "<if><test>\n"+
+            "<variable name='bar' /></test>\n"+
+            "<option>\n"+
+            "<text>Bar</text>\n"+
+            "<finish />\n"+
+            "</option>\n"+
+            "</if>\n"+
+            "</choice>\n"
+          translateScene(scene, expected);
+        }
     ]
 );
 
