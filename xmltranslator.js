@@ -82,6 +82,11 @@ XmlScene.prototype["goto"] = function xmlGoto(data) {
   this.indent = this.getIndent(this.nextNonBlankLine());
 }
 
+XmlScene.prototype["gosub"] = function xmlGoto(data) {
+  printElement("gosub", "label", (""+data).toLowerCase());
+  this.indent = this.getIndent(this.nextNonBlankLine());
+}
+
 XmlScene.prototype.label = function xmlLabel(data) {
   printElement("label", "id", (""+data).toLowerCase());
 }
