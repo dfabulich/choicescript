@@ -87,7 +87,7 @@ XmlScene.prototype.gosub = function xmlGosub(data) {
   this.indent = this.getIndent(this.nextNonBlankLine());
 }
 
-XmlScene.prototype.["return"] = function xmlReturn(data) {
+XmlScene.prototype["return"] = function xmlReturn(data) {
   printElement("return", "id", (""+data).toLowerCase());
 }
 
