@@ -20,6 +20,8 @@ dojo.provide("choicescript.tests.xmltranslatortest");
 
 var fixture = choicescript.tests.xmltranslatortest;
 
+function xmlTranslatorTestOverride() {}
+
 load(path + "../xmltranslator.js");
 
 //if (doh.registerUrl) {
@@ -31,23 +33,26 @@ function debughelp() {
     debugger;
 }
 
-function autotestScene(text, expectedCoverage, expectedUncovered) {
-  stats = {};
-  nav = fixture.nav;
-  var result = autotester(text);
-  doh.is(toJson(expectedCoverage), toJson(result[0]), "coverage");
-  var uncovered = result[1];
-  doh.is(expectedUncovered, uncovered);
+function translateScene(text, expectedTranslation) {
+  var scene = new XmlScene();
+  var outputBuffer = [];
+  writer = {close: function(){},
+    write: function(output) {
+      outputBuffer.push(output);
+    }
+  };
+  scene.loadLines(text);
+  scene.execute();
+  closePara();
+  var output = outputBuffer.join("");
+  //output = output.replace(/\n/g, "\\n\"+\n\"");
+  doh.is(expectedTranslation, output, "wrong translation");
 }
 
-doh.registerGroup("choicescript.tests.Autotest", [
+doh.registerGroup("choicescript.tests.Xmltranslator", [
         function textOnly() {
           var scene = "foo\nbar\nbaz";
-          autotestScene(scene, [1,1,1,0]);
-        }
-        ,function unreachable() {
-          var scene = "foo\n*goto baz\nbar\n*label baz\nbaz";
-          autotestScene(scene, [1,1,0,1,1,0], [3]);
+          translateScene(scene, "<p>foo bar baz </p>\n");
         }
         ,function basicIf() {
           var scene = ""
@@ -60,7 +65,24 @@ doh.registerGroup("choicescript.tests.Autotest", [
             +"\n*elseif blah = 4"
             +"\n  *finish"
           ;
-          autotestScene(scene,  [1,1,1,1,1,1,1,1,1,1,0]);
+          var expected = "<paragraph-break />\n"+
+          "<temp variable='blah'/>\n"+
+          "<set variable='blah'><literal value='2'/></set>\n"+
+          "<switch>\n"+
+          "<if>\n"+
+          "<test><equals><variable name='blah' /><literal value='2'/></equals></test>\n"+
+          "<result><finish />\n"+
+          "</result></if>\n"+
+          "<if>\n"+
+          "<test><equals><variable name='blah' /><literal value='3'/></equals></test>\n"+
+          "<result><finish />\n"+
+          "</result></if>\n"+
+          "<if>\n"+
+          "<test><equals><variable name='blah' /><literal value='4'/></equals></test>\n"+
+          "<result><finish />\n"+
+          "</result></if>\n"+
+          "</switch>";
+          translateScene(scene,  expected);
         }
         ,function basicChoice() {
           var scene = ""
@@ -75,19 +97,27 @@ doh.registerGroup("choicescript.tests.Autotest", [
             +"\n  #quz"
             +"\n    *finish"
           ;
-          autotestScene(scene,  [1,1,1,1,1,1,1,1,1,1,1,1,0]);
-        }
-        ,function badElseIf() {
-          stats = {};
-          nav = fixture.nav;
-          var scene = ""
-            +"\n*temp blah"
-            +"\n*set blah 2"
-            +"\n*if blah = 2"
-            +"\n  two"
-            +"\n*elseif blah = 3"
-            "+\n  three";
-          doh.assertError(Error, null, "autotester", scene, "Fall out of if statement");
+          var expected = "<paragraph-break />\n"+
+          "<p>Foo </p>\n"+
+          "<choice>\n"+
+          "<option>\n"+
+          "<text>foo</text>\n"+
+          "<finish />\n"+
+          "</option>\n"+
+          "<option>\n"+
+          "<text>bar</text>\n"+
+          "<finish />\n"+
+          "</option>\n"+
+          "<option>\n"+
+          "<text>baz</text>\n"+
+          "<finish />\n"+
+          "</option>\n"+
+          "<option>\n"+
+          "<text>quz</text>\n"+
+          "<finish />\n"+
+          "</option>\n"+
+          "</choice>\n";
+          translateScene(scene, expected);
         }
     ]
 );

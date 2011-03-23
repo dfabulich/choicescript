@@ -56,7 +56,13 @@ either express or implied.
     </rhino>
   </target>
   
-  <target name="unittest" depends="unittest-core, unittest-autotest" />
+  <target name="unittest-xmltranslator" depends="rhino">
+    <rhino fork="true" dir="${doh}" >
+      <arg line="runner.js testUrl=../../../loader.js testModule=choicescript.tests.xmltranslatortest" />
+    </rhino>
+  </target>
+  
+  <target name="unittest" depends="unittest-core, unittest-autotest, unittest-xmltranslator" />
 
   <target name="randomtest" depends="rhino">
     <property name="num" value="10000" />

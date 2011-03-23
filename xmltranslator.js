@@ -1,7 +1,9 @@
-var dir = arguments[0] || "web/mygame/scenes";
-load("web/scene.js");
-load("web/util.js");
-load("headless.js");
+if (typeof xmlTranslatorTestOverride == "undefined") {
+  var dir = arguments[0] || "web/mygame/scenes";
+  load("web/scene.js");
+  load("web/util.js");
+  load("headless.js");
+}
 
 function slurpFile(name) {
     var lines = [];
@@ -452,28 +454,28 @@ if (arguments[1]) {
 
 if (typeof xmlTranslatorTestOverride != "undefined") {
   xmlTranslatorTestOverride();
-}
-
-var i = list.length;
-while (i--) {
-  if (/(menu|hello)/.test(list[i].getName())) continue;
-  if (!/\.txt$/.test(list[i].getName())) continue;
-  print(list[i]);
-  var str = slurpFile(list[i]);
-  var scene = new XmlScene();
-  scene.loadLines(str);
-  var dir = "./xml/";
-  var writer = new java.io.BufferedWriter(new java.io.FileWriter(dir + list[i].getName() + ".xml"));
-  //writer = {write: function(x){java.lang.System.out.print(x)}, close: function(){java.lang.System.out.println()}};
-  writer.write("<!DOCTYPE vignette [ \n" + 
-			"<!ATTLIST label id ID #REQUIRED>\n" + 
-			"]>");
-  writer.write("<vignette>\n");
-  scene.execute();
-  closePara();
-  writer.write("</vignette>\n");
-  writer.close();
-  //throw new Error("halt");
+} else {
+  var i = list.length;
+  while (i--) {
+    if (/(menu|hello)/.test(list[i].getName())) continue;
+    if (!/\.txt$/.test(list[i].getName())) continue;
+    print(list[i]);
+    var str = slurpFile(list[i]);
+    var scene = new XmlScene();
+    scene.loadLines(str);
+    var dir = "./xml/";
+    var writer = new java.io.BufferedWriter(new java.io.FileWriter(dir + list[i].getName() + ".xml"));
+    //writer = {write: function(x){java.lang.System.out.print(x)}, close: function(){java.lang.System.out.println()}};
+    writer.write("<!DOCTYPE vignette [ \n" + 
+  			"<!ATTLIST label id ID #REQUIRED>\n" + 
+  			"]>");
+    writer.write("<vignette>\n");
+    scene.execute();
+    closePara();
+    writer.write("</vignette>\n");
+    writer.close();
+    //throw new Error("halt");
+  }
 }
 
 /*
