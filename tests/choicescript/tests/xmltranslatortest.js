@@ -62,7 +62,7 @@ doh.registerGroup("choicescript.tests.Xmltranslator", [
             +"\n  *finish"
             +"\n*elseif blah = 3"
             +"\n  *finish"
-            +"\n*elseif blah = 4"
+            +"\n*else"
             +"\n  *finish"
           ;
           var expected = "<paragraph-break />\n"+
@@ -77,11 +77,8 @@ doh.registerGroup("choicescript.tests.Xmltranslator", [
           "<test><equals><variable name='blah' /><literal value='3'/></equals></test>\n"+
           "<result><finish />\n"+
           "</result></if>\n"+
-          "<if>\n"+
-          "<test><equals><variable name='blah' /><literal value='4'/></equals></test>\n"+
-          "<result><finish />\n"+
-          "</result></if>\n"+
-          "</switch>";
+          "<else><finish />\n"+
+          "</else></switch>";
           translateScene(scene,  expected);
         }
         ,function basicChoice() {
