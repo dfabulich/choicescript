@@ -33,7 +33,7 @@ function debughelp() {
     debugger;
 }
 
-function translateScene(text, expectedTranslation) {
+function translateScene(text, expectedTranslation, format) {
   var scene = new XmlScene();
   var outputBuffer = [];
   writer = {close: function(){},
@@ -45,7 +45,7 @@ function translateScene(text, expectedTranslation) {
   scene.execute();
   closePara();
   var output = outputBuffer.join("");
-  //output = output.replace(/\n/g, "\\n\"+\n\"");
+  if (format) output = '"' + output.replace(/\n/g, "\\n\"+\n\"");
   doh.is(expectedTranslation, output, "wrong translation");
 }
 
