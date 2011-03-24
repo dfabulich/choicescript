@@ -185,6 +185,31 @@ doh.registerGroup("choicescript.tests.Xmltranslator", [
              "</choice>\n";
           translateScene(scene, expected);
         }
+        ,function simpleConditionalElseTrue() {
+          var scene = "*choice\n  *if true\n    #foo\n      Foo!\n  *else\n    #fail\n      Fail!\n  #bar\n    Bar!\nbaz";
+          var expected = "<choice>\n"+
+           "<if><test>\n"+
+           "<variable name='true' /></test>\n"+
+           "<option>\n"+
+           "<text>foo</text>\n"+
+           "<p>Foo! </p>\n"+
+           "</option>\n"+
+           "</if>\n"+
+           "<if><test>\n"+
+           "<equals><variable name='true' /><variable name='false' /></equals></test>\n"+
+           "<option>\n"+
+           "<text>fail</text>\n"+
+           "<p>Fail! </p>\n"+
+           "</option>\n"+
+           "</if>\n"+
+           "<option>\n"+
+           "<text>bar</text>\n"+
+           "<p>Bar! </p>\n"+
+           "</option>\n"+
+           "</choice>\n"+
+           "<p>baz </p>\n";
+          translateScene(scene, expected);
+        }
     ]
 );
 

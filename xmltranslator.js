@@ -254,7 +254,7 @@ XmlScene.prototype.ifInChoice = function xmlIfInChoice(data) {
   var oldDent = this.indent;
   this.dedentChain.push(function(newDent) {
     if (newDent <= oldDent) {
-      this.displayOptionConditions.pop();
+      this.oldDisplayOptionCondition = this.displayOptionConditions.pop();
       if (this.displayOptionConditions.length == 0) this.displayOptionConditions = null;
       return true;
     } else {
@@ -263,6 +263,15 @@ XmlScene.prototype.ifInChoice = function xmlIfInChoice(data) {
   });
   this.indent = this.getIndent(this.nextNonBlankLine());
 }
+
+XmlScene.prototype["else"] = XmlScene.prototype.elsif = XmlScene.prototype.elseif = function xml_else(data, inChoice) {
+    if (inChoice) {
+      this.ifInChoice("("+this.oldDisplayOptionCondition+") = false");
+      return;
+    }
+    throw new Error(this.lineMsg() + "It is illegal to fall in to an *else statement; you must *goto or *finish before the end of the indented block.");
+}
+
 
 XmlScene.prototype.parseOptionIf = function xmlParseOptionIf(data) {
   var parsed = /\((.*)\)\s+(#.*)/.exec(data);
