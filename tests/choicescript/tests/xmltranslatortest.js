@@ -147,6 +147,47 @@ doh.registerGroup("choicescript.tests.Xmltranslator", [
             "</choice>\n"
           translateScene(scene, expected);
         }
+        ,function nestedIfInChoice() {
+          var scene = ""
+            +"\n*choice"
+            +"\n  *if foo"
+            +"\n    *if bar"
+            +"\n      #FooBar"
+            +"\n        *finish"
+            +"\n  *if bar"
+            +"\n    #Bar"
+            +"\n      *finish"
+            +"\n  *if foo"
+            +"\n    *if bar"
+            +"\n      *if baz"
+            +"\n        #FooBarBaz"
+            +"\n          *finish";
+          var expected = "<paragraph-break />\n"+
+             "<choice>\n"+
+             "<if><test>\n"+
+             "<and><variable name='foo' /><variable name='bar' /></and></test>\n"+
+             "<option>\n"+
+             "<text>FooBar</text>\n"+
+             "<finish />\n"+
+             "</option>\n"+
+             "</if>\n"+
+             "<if><test>\n"+
+             "<variable name='bar' /></test>\n"+
+             "<option>\n"+
+             "<text>Bar</text>\n"+
+             "<finish />\n"+
+             "</option>\n"+
+             "</if>\n"+
+             "<if><test>\n"+
+             "<and><and><variable name='foo' /><variable name='bar' /></and><variable name='baz' /></and></test>\n"+
+             "<option>\n"+
+             "<text>FooBarBaz</text>\n"+
+             "<finish />\n"+
+             "</option>\n"+
+             "</if>\n"+
+             "</choice>\n";
+          translateScene(scene, expected);
+        }
     ]
 );
 

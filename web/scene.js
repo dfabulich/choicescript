@@ -706,12 +706,14 @@ Scene.prototype.parseOptions = function parseOptions(startIndent, choicesRemaini
         }
         line = trim(trim(line).substring(1));
         var option = {name:line, group:currentChoice};
-        if (this.displayOptionCondition && inlineIf) {
-          option.displayIf = "("+inlineIf+") and ("+ this.displayOptionCondition +")";
-        } else if (this.displayOptionCondition) {
-          option.displayIf = this.displayOptionCondition;
+        if (this.displayOptionConditions) {
+          if (inlineIf) this.displayOptionConditions.push(inlineIf);
+          option.displayIf = [];
+          for (var i = 0; i < this.displayOptionConditions.length; i++) {
+            option.displayIf[i] = this.displayOptionConditions[i];
+          }
         } else if (inlineIf) {
-          option.displayIf = inlineIf;
+          option.displayIf = [inlineIf];
         }
         if (selectableIf) {
           option.selectableIf = selectableIf;

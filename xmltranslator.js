@@ -246,12 +246,19 @@ XmlScene.prototype["if"] = XmlScene.prototype.elseif = XmlScene.prototype.elsif 
 }
 
 XmlScene.prototype.ifInChoice = function xmlIfInChoice(data) {
-  var oldDisplayOptionCondition = this.displayOptionCondition;
+  if (this.displayOptionConditions) {
+    this.displayOptionConditions.push(data);
+  } else {
+    this.displayOptionConditions = [data];
+  }
   var oldDent = this.indent;
-  this.displayOptionCondition = data;
   this.dedentChain.push(function(newDent) {
     if (newDent <= oldDent) {
-      this.displayOptionCondition = oldDisplayOptionCondition;
+      this.displayOptionConditions.pop();
+      if (this.displayOptionConditions.length == 0) this.displayOptionConditions = null;
+      return true;
+    } else {
+      return false;
     }
   });
   this.indent = this.getIndent(this.nextNonBlankLine());
@@ -323,7 +330,9 @@ Scene.operators = {
 XmlScene.prototype.dedent = function xmlDedent(newDent) {
   var i = this.dedentChain.length;
   while (i--) {
-    this.dedentChain[i].call(this, newDent);
+    if (!this.dedentChain[i]) continue;
+    var result = this.dedentChain[i].call(this, newDent);
+    if (result) delete this.dedentChain[i]
   }
 }
 XmlScene.prototype.choice = function xmlChoice(data) {
@@ -344,8 +353,12 @@ XmlScene.prototype.choice = function xmlChoice(data) {
   var oldDent = this.indent;
   this.writeOption = function writeOption(option) {
     if (option.displayIf) {
+      var displayIfExpression = option.displayIf[0];
+      for (var i = 1; i < option.displayIf.length; i++) {
+        displayIfExpression = "("+displayIfExpression+") and ("+option.displayIf[i]+")";
+      }
       writer.write("<if><test>\n");
-      writer.write(this.evaluateExpr(this.tokenizeExpr(option.displayIf)));
+      writer.write(this.evaluateExpr(this.tokenizeExpr(displayIfExpression)));
       writer.write("</test>\n");
     }
     writer.write("<option>\n");
@@ -374,6 +387,9 @@ XmlScene.prototype.choice = function xmlChoice(data) {
         closePara();
         writer.write("</option>\n");
         if (option.displayIf) writer.write("</if>\n");
+        return true;
+      } else {
+        return false;
       }
     });
     this.executeSubScene(option.line, option.endLine, this.indent);
