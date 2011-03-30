@@ -24,7 +24,7 @@ function Scene(name, stats, nav, debugMode) {
     
     // the permanent statistics and the temporary values
     this.stats = stats;
-    this.temps = {};
+    this.temps = {choice_reuse:"allow"};
     
     // the navigator determines which scene comes next
     this.nav = nav;
@@ -378,6 +378,7 @@ Scene.prototype.resolveChoice = function resolveChoice(options, groups) {
     
     this.lineNum = option.line;
     this.indent = this.getIndent(this.nextNonBlankLine(true/*includingThisOne*/));
+    if (this.temps.choice_used) this.temps.choice_used[option.line-1] = 1;
     //try {
 //            
 //        } catch (e) {
@@ -663,10 +664,66 @@ Scene.prototype.parseOptions = function parseOptions(startIndent, choicesRemaini
         var unselectable = false;
         var inlineIf = null;
         var selectableIf = null;
+        function used() {
+          if (!this.temps.choice_used) this.temps.choice_used = {};
+          return this.temps.choice_used[this.lineNum];
+        }
+        var overrideDefaultReuseSetting = false;
         if (parsed) {
             var command = parsed[1].toLowerCase();
             var data = trim(parsed[2]);
             // TODO whitelist commands
+            if ("hide_reuse" == command) {
+              if (!this.temps.choice_used) this.temps.choice_used = {};
+              if (this.temps.choice_used[this.lineNum]) continue;
+              line = trim(line.replace(/^\s*\*(\w+)(.*)/, "$2"));
+              parsed = /^\s*\*(\w+)(.*)/.exec(line);
+              if (parsed) {
+                var command = parsed[1].toLowerCase();
+                var data = trim(parsed[2]);
+              } else {
+                command = "";
+              }
+            }
+            if ("disable_reuse" == command) {
+              if (!this.temps.choice_used) this.temps.choice_used = {};
+              if (this.temps.choice_used[this.lineNum]) {
+                unselectable = true;
+                overrideDefaultReuseSetting = true;
+              }
+              line = trim(line.replace(/^\s*\*(\w+)(.*)/, "$2"));
+              parsed = /^\s*\*(\w+)(.*)/.exec(line);
+              if (parsed) {
+                var command = parsed[1].toLowerCase();
+                var data = trim(parsed[2]);
+              } else {
+                command = "";
+              }
+            }
+            if ("allow_reuse" == command) {
+              overrideDefaultReuseSetting = true;
+              line = trim(line.replace(/^\s*\*(\w+)(.*)/, "$2"));
+              parsed = /^\s*\*(\w+)(.*)/.exec(line);
+              if (parsed) {
+                var command = parsed[1].toLowerCase();
+                var data = trim(parsed[2]);
+              } else {
+                command = "";
+              }
+            }
+            
+            if (!overrideDefaultReuseSetting) {
+              if (this.temps.choice_reuse == "hide") {
+                if (!this.temps.choice_used) this.temps.choice_used = {};
+                if (this.temps.choice_used[this.lineNum]) continue;
+              } else if (this.temps.choice_reuse == "disable") {
+                if (!this.temps.choice_used) this.temps.choice_used = {};
+                if (this.temps.choice_used[this.lineNum]) {
+                  unselectable = true;
+                }
+              }
+            }
+            
             if ("print" == command) {
                 line = this.evaluateExpr(this.tokenizeExpr(data));
             } else if ("if" == command) {
@@ -687,9 +744,11 @@ Scene.prototype.parseOptions = function parseOptions(startIndent, choicesRemaini
               if (!ifResult) throw new Error(this.lineMsg() + "Couldn't parse the line after *selectable_if: " + data);
               line = ifResult.line;
               selectableIf = ifResult.condition;
-              unselectable = !ifResult.result;
+              unselectable = unselectable || !ifResult.result;
             } else if ("finish" == command) {
                 break;
+            } else if (!command) {
+              // command was rewritten by earlier modifier
             } else {
                 if (Scene.validCommands[command]) {
                     this[command](data, true /*inChoice*/);
