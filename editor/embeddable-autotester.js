@@ -28,7 +28,6 @@ function autotester(sceneText, nav, sceneName) {
   try {
     Scene.prototype.__defineGetter__("lineNum", function() { return this._lineNum; });
     Scene.prototype.__defineSetter__("lineNum", function(val) {
-        if (val == 10) debughelp();
         if (coverage[val]) {
             coverage[val]++;
         } else {

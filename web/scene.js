@@ -800,7 +800,7 @@ Scene.prototype.parseOptionIf = function parseOptionIf(data) {
   var condition = parsed[1];
   var stack = this.tokenizeExpr(condition);
   var result = this.evaluateExpr(stack);
-  if (this.debugMode) println(line + " :: " + result);
+  if (this.debugMode) println(condition + " :: " + result);
   if ("boolean" != typeof result) {
       throw new Error(this.lineMsg() + "Invalid boolean expression; this isn't a boolean: " + result);
   }
