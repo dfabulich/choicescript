@@ -378,7 +378,7 @@ Scene.prototype.resolveChoice = function resolveChoice(options, groups) {
     
     this.lineNum = option.line;
     this.indent = this.getIndent(this.nextNonBlankLine(true/*includingThisOne*/));
-    if (this.temps.choice_used) this.temps.choice_used[option.line-1] = 1;
+    if (option.reuse && option.reuse != "allow") this.temps.choice_used[option.line-1] = 1;
     //try {
 //            
 //        } catch (e) {
