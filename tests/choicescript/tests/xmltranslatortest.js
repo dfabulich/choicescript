@@ -97,19 +97,19 @@ doh.registerGroup("choicescript.tests.Xmltranslator", [
           var expected = "<paragraph-break />\n"+
           "<p>Foo </p>\n"+
           "<choice>\n"+
-          "<option>\n"+
+          "<option reuse='allow'>\n"+
           "<text>foo</text>\n"+
           "<finish />\n"+
           "</option>\n"+
-          "<option>\n"+
+          "<option reuse='allow'>\n"+
           "<text>bar</text>\n"+
           "<finish />\n"+
           "</option>\n"+
-          "<option>\n"+
+          "<option reuse='allow'>\n"+
           "<text>baz</text>\n"+
           "<finish />\n"+
           "</option>\n"+
-          "<option>\n"+
+          "<option reuse='allow'>\n"+
           "<text>quz</text>\n"+
           "<finish />\n"+
           "</option>\n"+
@@ -129,14 +129,14 @@ doh.registerGroup("choicescript.tests.Xmltranslator", [
             "<choice>\n"+
             "<if><test>\n"+
             "<variable name='foo' /></test>\n"+
-            "<option>\n"+
+            "<option reuse='allow'>\n"+
             "<text>Foo</text>\n"+
             "<finish />\n"+
             "</option>\n"+
             "</if>\n"+
             "<if><test>\n"+
             "<variable name='bar' /></test>\n"+
-            "<option>\n"+
+            "<option reuse='allow'>\n"+
             "<text>Bar</text>\n"+
             "<finish />\n"+
             "</option>\n"+
@@ -163,21 +163,21 @@ doh.registerGroup("choicescript.tests.Xmltranslator", [
              "<choice>\n"+
              "<if><test>\n"+
              "<and><variable name='foo' /><variable name='bar' /></and></test>\n"+
-             "<option>\n"+
+             "<option reuse='allow'>\n"+
              "<text>FooBar</text>\n"+
              "<finish />\n"+
              "</option>\n"+
              "</if>\n"+
              "<if><test>\n"+
              "<variable name='bar' /></test>\n"+
-             "<option>\n"+
+             "<option reuse='allow'>\n"+
              "<text>Bar</text>\n"+
              "<finish />\n"+
              "</option>\n"+
              "</if>\n"+
              "<if><test>\n"+
              "<and><and><variable name='foo' /><variable name='bar' /></and><variable name='baz' /></and></test>\n"+
-             "<option>\n"+
+             "<option reuse='allow'>\n"+
              "<text>FooBarBaz</text>\n"+
              "<finish />\n"+
              "</option>\n"+
@@ -190,24 +190,76 @@ doh.registerGroup("choicescript.tests.Xmltranslator", [
           var expected = "<choice>\n"+
            "<if><test>\n"+
            "<variable name='true' /></test>\n"+
-           "<option>\n"+
+           "<option reuse='allow'>\n"+
            "<text>foo</text>\n"+
            "<p>Foo! </p>\n"+
            "</option>\n"+
            "</if>\n"+
            "<if><test>\n"+
            "<equals><variable name='true' /><variable name='false' /></equals></test>\n"+
-           "<option>\n"+
+           "<option reuse='allow'>\n"+
            "<text>fail</text>\n"+
            "<p>Fail! </p>\n"+
            "</option>\n"+
            "</if>\n"+
-           "<option>\n"+
+           "<option reuse='allow'>\n"+
            "<text>bar</text>\n"+
            "<p>Bar! </p>\n"+
            "</option>\n"+
            "</choice>\n"+
            "<p>baz </p>\n";
+          translateScene(scene, expected);
+        }
+        ,function reuse() {
+          var scene = ""
+            +"*label start\n"
+            +"What do you want to do?\n"
+            +"*choice\n"
+            +"  *hide_reuse #A little of this.\n"
+            +"    You do some of this.\n"
+            +"    *goto start\n"
+            +"  *disable_reuse #A little of that.\n"
+            +"    You do some of that.\n"
+            +"    *goto start\n"
+            +"  *allow_reuse #Let me think about it a little longer.\n"
+            +"    Very well.\n"
+            +"    *goto start\n"
+            +"  #What was the question?\n"
+            +"    Quit stalling!\n"
+            +"    *goto start  \n"
+            +"  #Nothing; I'm done.\n"
+            +"    OK!\n"
+            +"    *finish\n";
+          var expected =   "<label id='start'/>\n"+
+            "<p>What do you want to do? </p>\n"+
+            "<choice>\n"+
+            "<option reuse='hide'>\n"+
+            "<text>A little of this.</text>\n"+
+            "<p>You do some of this. </p>\n"+
+            "<include label='start'/>\n"+
+            "</option>\n"+
+            "<option reuse='disable'>\n"+
+            "<text>A little of that.</text>\n"+
+            "<p>You do some of that. </p>\n"+
+            "<include label='start'/>\n"+
+            "</option>\n"+
+            "<option reuse='allow'>\n"+
+            "<text>Let me think about it a little longer.</text>\n"+
+            "<p>Very well. </p>\n"+
+            "<include label='start'/>\n"+
+            "</option>\n"+
+            "<option reuse='allow'>\n"+
+            "<text>What was the question?</text>\n"+
+            "<p>Quit stalling! </p>\n"+
+            "<include label='start'/>\n"+
+            "</option>\n"+
+            "<option reuse='allow'>\n"+
+            "<text>Nothing; I'm done.</text>\n"+
+            "<p>OK! </p>\n"+
+            "<finish />\n"+
+            "<paragraph-break />\n"+
+            "</option>\n"+
+            "</choice>\n";
           translateScene(scene, expected);
         }
     ]

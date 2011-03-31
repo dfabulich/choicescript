@@ -370,7 +370,9 @@ XmlScene.prototype.choice = function xmlChoice(data) {
       writer.write(this.evaluateExpr(this.tokenizeExpr(displayIfExpression)));
       writer.write("</test>\n");
     }
-    writer.write("<option>\n");
+    writer.write("<option reuse='");
+    writer.write(option.reuse || "allow");
+    writer.write("'>\n");
     if (option.selectableIf) {
       writer.write("<selectable-if><test>\n");
       writer.write(this.evaluateExpr(this.tokenizeExpr(option.selectableIf)));
