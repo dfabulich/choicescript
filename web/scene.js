@@ -664,9 +664,20 @@ Scene.prototype.parseOptions = function parseOptions(startIndent, choicesRemaini
         var unselectable = false;
         var inlineIf = null;
         var selectableIf = null;
+        var self = this;
         function used() {
-          if (!this.temps.choice_used) this.temps.choice_used = {};
-          return this.temps.choice_used[this.lineNum];
+          if (!self.temps.choice_used) self.temps.choice_used = {};
+          return self.temps.choice_used[self.lineNum];
+        }
+        function removeModifierCommand() {
+          line = trim(line.replace(/^\s*\*(\w+)(.*)/, "$2"));
+          parsed = /^\s*\*(\w+)(.*)/.exec(line);
+          if (parsed) {
+            command = parsed[1].toLowerCase();
+            data = trim(parsed[2]);
+          } else {
+            command = "";
+          }
         }
         var overrideDefaultReuseSetting = false;
         if (parsed) {
@@ -674,53 +685,27 @@ Scene.prototype.parseOptions = function parseOptions(startIndent, choicesRemaini
             var data = trim(parsed[2]);
             // TODO whitelist commands
             if ("hide_reuse" == command) {
-              if (!this.temps.choice_used) this.temps.choice_used = {};
-              if (this.temps.choice_used[this.lineNum]) continue;
-              line = trim(line.replace(/^\s*\*(\w+)(.*)/, "$2"));
-              parsed = /^\s*\*(\w+)(.*)/.exec(line);
-              if (parsed) {
-                var command = parsed[1].toLowerCase();
-                var data = trim(parsed[2]);
-              } else {
-                command = "";
-              }
+              if (used()) continue;
+              removeModifierCommand();
             }
             if ("disable_reuse" == command) {
-              if (!this.temps.choice_used) this.temps.choice_used = {};
-              if (this.temps.choice_used[this.lineNum]) {
+              if (used()) {
                 unselectable = true;
                 overrideDefaultReuseSetting = true;
               }
-              line = trim(line.replace(/^\s*\*(\w+)(.*)/, "$2"));
-              parsed = /^\s*\*(\w+)(.*)/.exec(line);
-              if (parsed) {
-                var command = parsed[1].toLowerCase();
-                var data = trim(parsed[2]);
-              } else {
-                command = "";
-              }
+              removeModifierCommand();
             }
             if ("allow_reuse" == command) {
               overrideDefaultReuseSetting = true;
-              line = trim(line.replace(/^\s*\*(\w+)(.*)/, "$2"));
-              parsed = /^\s*\*(\w+)(.*)/.exec(line);
-              if (parsed) {
-                var command = parsed[1].toLowerCase();
-                var data = trim(parsed[2]);
-              } else {
-                command = "";
-              }
+              used();
+              removeModifierCommand();
             }
             
             if (!overrideDefaultReuseSetting) {
               if (this.temps.choice_reuse == "hide") {
-                if (!this.temps.choice_used) this.temps.choice_used = {};
-                if (this.temps.choice_used[this.lineNum]) continue;
+                if (used()) continue;
               } else if (this.temps.choice_reuse == "disable") {
-                if (!this.temps.choice_used) this.temps.choice_used = {};
-                if (this.temps.choice_used[this.lineNum]) {
-                  unselectable = true;
-                }
+                if (used()) unselectable = true;
               }
             }
             
