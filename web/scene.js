@@ -701,14 +701,6 @@ Scene.prototype.parseOptions = function parseOptions(startIndent, choicesRemaini
               removeModifierCommand();
             }
             
-            if (!overrideDefaultReuseSetting) {
-              if (this.temps.choice_reuse == "hide") {
-                if (used()) continue;
-              } else if (this.temps.choice_reuse == "disable") {
-                if (used()) unselectable = true;
-              }
-            }
-            
             if ("print" == command) {
                 line = this.evaluateExpr(this.tokenizeExpr(data));
             } else if ("if" == command) {
@@ -742,6 +734,14 @@ Scene.prototype.parseOptions = function parseOptions(startIndent, choicesRemaini
                 }
                 continue;
             }
+        }
+        
+        if (!overrideDefaultReuseSetting) {
+          if (this.temps.choice_reuse == "hide") {
+            if (used()) continue;
+          } else if (this.temps.choice_reuse == "disable") {
+            if (used()) unselectable = true;
+          }
         }
         
         // this line should be a valid option
@@ -1037,6 +1037,18 @@ Scene.prototype.comment = function comment(line) {
 // *looplimit 5
 // The number of times a given line is allowed to be accessed
 Scene.prototype.looplimit = function looplimit() {} // TODO looplimit
+
+Scene.prototype.hide_reuse = function hide_reuse() {
+  this.temps.choice_reuse = "hide";
+}
+
+Scene.prototype.disable_reuse = function disable_reuse() {
+  this.temps.choice_reuse = "disable";
+}
+
+Scene.prototype.allow_reuse = function allow_reuse() {
+  this.temps.choice_reuse = "allow";
+}
 
 // *label labelName
 // Labels a line for use later in *goto
@@ -2004,5 +2016,5 @@ Scene.validCommands = {"comment":1, "goto":1, "gotoref":1, "label":1, "looplimit
     "choice":1, "create":1, "temp":1, "delete":1, "set":1, "setref":1, "print":1, "if":1, "rand":1,
     "page_break":1, "line_break":1, "script":1, "else":1, "elseif":1, "elsif":1, "reset":1,
     "goto_scene":1, "fake_choice":1, "input_text":1, "ending":1, "share_this_game":1, "stat_chart":1
-    ,"subscribe":1, "show_password":1, "gosub":1, "return":1
+    ,"subscribe":1, "show_password":1, "gosub":1, "return":1, "hide_reuse":1, "disable_reuse":1, "allow_reuse":1
     };
