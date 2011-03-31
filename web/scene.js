@@ -665,10 +665,7 @@ Scene.prototype.parseOptions = function parseOptions(startIndent, choicesRemaini
         var inlineIf = null;
         var selectableIf = null;
         var self = this;
-        function used() {
-          if (!self.temps.choice_used) self.temps.choice_used = {};
-          return self.temps.choice_used[self.lineNum];
-        }
+        
         function removeModifierCommand() {
           line = trim(line.replace(/^\s*\*(\w+)(.*)/, "$2"));
           parsed = /^\s*\*(\w+)(.*)/.exec(line);
@@ -680,24 +677,24 @@ Scene.prototype.parseOptions = function parseOptions(startIndent, choicesRemaini
           }
         }
         var overrideDefaultReuseSetting = false;
+        var reuse = this.temps.choice_reuse;
         if (parsed) {
             var command = parsed[1].toLowerCase();
             var data = trim(parsed[2]);
             // TODO whitelist commands
             if ("hide_reuse" == command) {
-              if (used()) continue;
+              reuse = "hide";
+              overrideDefaultReuseSetting = true;
               removeModifierCommand();
             }
             if ("disable_reuse" == command) {
-              if (used()) {
-                unselectable = true;
-                overrideDefaultReuseSetting = true;
-              }
+              reuse = "disable";
+              overrideDefaultReuseSetting = true;
               removeModifierCommand();
             }
             if ("allow_reuse" == command) {
+              reuse = "allow";
               overrideDefaultReuseSetting = true;
-              used();
               removeModifierCommand();
             }
             
@@ -736,11 +733,11 @@ Scene.prototype.parseOptions = function parseOptions(startIndent, choicesRemaini
             }
         }
         
-        if (!overrideDefaultReuseSetting) {
-          if (this.temps.choice_reuse == "hide") {
-            if (used()) continue;
-          } else if (this.temps.choice_reuse == "disable") {
-            if (used()) unselectable = true;
+        if ("allow" != reuse) {
+          if (!this.temps.choice_used) this.temps.choice_used = {};
+          if (this.temps.choice_used[this.lineNum]) {
+            if ("hide" == reuse) continue;
+            unselectable = true;
           }
         }
         
