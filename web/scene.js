@@ -747,6 +747,7 @@ Scene.prototype.parseOptions = function parseOptions(startIndent, choicesRemaini
         }
         line = trim(trim(line).substring(1));
         var option = {name:line, group:currentChoice};
+        if (reuse != "allow") option.reuse = reuse;
         if (this.displayOptionConditions) {
           if (inlineIf) this.displayOptionConditions.push(inlineIf);
           option.displayIf = [];
