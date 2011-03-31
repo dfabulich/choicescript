@@ -794,6 +794,210 @@ doh.registerGroup("choicescript.tests.ResolveChoice", [
     ]
 );
 
+doh.registerGroup("choicescript.tests.ReuseOptions", [
+    function modifiers() {
+        printed = [];
+        var text = ""
+          +"*label start\n"
+          +"What do you want to do?\n"
+          +"*choice\n"
+          +"  *hide_reuse #A little of this.\n"
+          +"    You do some of this.\n"
+          +"    *goto start\n"
+          +"  *disable_reuse #A little of that.\n"
+          +"    You do some of that.\n"
+          +"    *goto start\n"
+          +"  *allow_reuse #Let me think about it a little longer.\n"
+          +"    Very well.\n"
+          +"    *goto start\n"
+          +"  #What was the question?\n"
+          +"    Quit stalling!\n"
+          +"    *goto start  \n"
+          +"  #Nothing; I'm done.\n"
+          +"    OK!\n"
+          +"    *finish\n";
+        var scene = new Scene();
+        scene.loadLines(text);
+        var options, groups;
+        scene.renderOptions = function(_groups, _options) {
+            options = _options;
+            groups = _groups;
+        };
+        var formValues = {choice:0};
+        scene.getFormValue = function(name) {return formValues[name];}
+        scene.reset = function() {};
+        scene.execute();
+        doh.is([
+          {group:"choice",endLine:6,name:"A little of this.",line:4},
+          {group:"choice",endLine:9,name:"A little of that.",line:7},
+          {group:"choice",endLine:12,name:"Let me think about it a little longer.",line:10},
+          {group:"choice",endLine:15,name:"What was the question?",line:13},
+          {group:"choice",endLine:19,name:"Nothing; I'm done.",line:16}], options, "options");
+        scene.resolveChoice(options,groups);
+        doh.is([
+          {group:"choice",endLine:9,name:"A little of that.",line:7},
+          {group:"choice",endLine:12,name:"Let me think about it a little longer.",line:10},
+          {group:"choice",endLine:15,name:"What was the question?",line:13},
+          {group:"choice",endLine:19,name:"Nothing; I'm done.",line:16}], options, "options2");
+        scene.resolveChoice(options,groups);
+        var expected = [
+          {group:"choice",endLine:9,unselectable:true,name:"A little of that.",line:7},
+          {group:"choice",endLine:12,name:"Let me think about it a little longer.",line:10},
+          {group:"choice",endLine:15,name:"What was the question?",line:13},
+          {group:"choice",endLine:19,name:"Nothing; I\'m done.",line:16}
+        ];
+        doh.is(expected, options, "options3");
+        formValues.choice = 1;
+        scene.resolveChoice(options,groups);
+        doh.is(expected, options, "options4");
+        formValues.choice = 2;
+        scene.resolveChoice(options,groups);
+        doh.is(expected, options, "options5");
+        doh.is("What do you want to do? You do some of this. "
+          +"What do you want to do? You do some of that. "
+          +"What do you want to do? Very well. "
+          +"What do you want to do? Quit stalling! "
+          +"What do you want to do?", trim(printed.join("")), "printed");
+    }
+    ,function hideByDefault() {
+        printed = [];
+        var text = "*hide_reuse\n"
+          +"*label start\n"
+          +"What do you want to do?\n"
+          +"*choice\n"
+          +"  *hide_reuse #A little of this.\n"
+          +"    You do some of this.\n"
+          +"    *goto start\n"
+          +"  *disable_reuse #A little of that.\n"
+          +"    You do some of that.\n"
+          +"    *goto start\n"
+          +"  *allow_reuse #Let me think about it a little longer.\n"
+          +"    Very well.\n"
+          +"    *goto start\n"
+          +"  #What was the question?\n"
+          +"    Quit stalling!\n"
+          +"    *goto start  \n"
+          +"  #Nothing; I'm done.\n"
+          +"    OK!\n"
+          +"    *finish\n";
+        var scene = new Scene();
+        scene.loadLines(text);
+        var options, groups;
+        scene.renderOptions = function(_groups, _options) {
+            options = _options;
+            groups = _groups;
+        };
+        var formValues = {choice:0};
+        scene.getFormValue = function(name) {return formValues[name];}
+        scene.reset = function() {};
+        scene.execute();
+        doh.is([
+          {group:"choice",endLine:7,name:"A little of this.",line:5},
+          {group:"choice",endLine:10,name:"A little of that.",line:8},
+          {group:"choice",endLine:13,name:"Let me think about it a little longer.",line:11},
+          {group:"choice",endLine:16,name:"What was the question?",line:14},
+          {group:"choice",endLine:20,name:"Nothing; I'm done.",line:17}], options, "options");
+        scene.resolveChoice(options,groups);
+        doh.is([
+          {group:"choice",endLine:10,name:"A little of that.",line:8},
+          {group:"choice",endLine:13,name:"Let me think about it a little longer.",line:11},
+          {group:"choice",endLine:16,name:"What was the question?",line:14},
+          {group:"choice",endLine:20,name:"Nothing; I'm done.",line:17}], options, "options2");
+        scene.resolveChoice(options,groups);
+        var beforeHiding = [
+          {group:"choice",endLine:10,unselectable:true,name:"A little of that.",line:8},
+          {group:"choice",endLine:13,name:"Let me think about it a little longer.",line:11},
+          {group:"choice",endLine:16,name:"What was the question?",line:14},
+          {group:"choice",endLine:20,name:"Nothing; I\'m done.",line:17}
+        ];
+        doh.is(beforeHiding, options, "options3");
+        formValues.choice = 1; // Let me think
+        scene.resolveChoice(options,groups);
+        doh.is(beforeHiding, options, "options4");
+        formValues.choice = 2; // What was the question?
+        scene.resolveChoice(options,groups);
+        doh.is([
+          {group:"choice",endLine:10,unselectable:true,name:"A little of that.",line:8},
+          {group:"choice",endLine:13,name:"Let me think about it a little longer.",line:11},
+          {group:"choice",endLine:20,name:"Nothing; I\'m done.",line:17}], options, "options5");
+        doh.is("What do you want to do? You do some of this. "
+          +"What do you want to do? You do some of that. "
+          +"What do you want to do? Very well. "
+          +"What do you want to do? Quit stalling! "
+          +"What do you want to do?", trim(printed.join("")), "printed");
+    }
+    ,function disableByDefault() {
+        printed = [];
+        var text = "*disable_reuse\n"
+          +"*label start\n"
+          +"What do you want to do?\n"
+          +"*choice\n"
+          +"  *hide_reuse #A little of this.\n"
+          +"    You do some of this.\n"
+          +"    *goto start\n"
+          +"  *disable_reuse #A little of that.\n"
+          +"    You do some of that.\n"
+          +"    *goto start\n"
+          +"  *allow_reuse #Let me think about it a little longer.\n"
+          +"    Very well.\n"
+          +"    *goto start\n"
+          +"  #What was the question?\n"
+          +"    Quit stalling!\n"
+          +"    *goto start  \n"
+          +"  #Nothing; I'm done.\n"
+          +"    OK!\n"
+          +"    *finish\n";
+        var scene = new Scene();
+        scene.loadLines(text);
+        var options, groups;
+        scene.renderOptions = function(_groups, _options) {
+            options = _options;
+            groups = _groups;
+        };
+        var formValues = {choice:0};
+        scene.getFormValue = function(name) {return formValues[name];}
+        scene.reset = function() {};
+        scene.execute();
+        doh.is([
+          {group:"choice",endLine:7,name:"A little of this.",line:5},
+          {group:"choice",endLine:10,name:"A little of that.",line:8},
+          {group:"choice",endLine:13,name:"Let me think about it a little longer.",line:11},
+          {group:"choice",endLine:16,name:"What was the question?",line:14},
+          {group:"choice",endLine:20,name:"Nothing; I'm done.",line:17}], options, "options");
+        scene.resolveChoice(options,groups);
+        doh.is([
+          {group:"choice",endLine:10,name:"A little of that.",line:8},
+          {group:"choice",endLine:13,name:"Let me think about it a little longer.",line:11},
+          {group:"choice",endLine:16,name:"What was the question?",line:14},
+          {group:"choice",endLine:20,name:"Nothing; I'm done.",line:17}], options, "options2");
+        scene.resolveChoice(options,groups);
+        var beforeHiding = [
+          {group:"choice",endLine:10,unselectable:true,name:"A little of that.",line:8},
+          {group:"choice",endLine:13,name:"Let me think about it a little longer.",line:11},
+          {group:"choice",endLine:16,name:"What was the question?",line:14},
+          {group:"choice",endLine:20,name:"Nothing; I\'m done.",line:17}
+        ];
+        doh.is(beforeHiding, options, "options3");
+        formValues.choice = 1; // Let me think
+        scene.resolveChoice(options,groups);
+        doh.is(beforeHiding, options, "options4");
+        formValues.choice = 2; // What was the question?
+        scene.resolveChoice(options,groups);
+        doh.is([
+          {group:"choice",endLine:10,unselectable:true,name:"A little of that.",line:8},
+          {group:"choice",endLine:13,name:"Let me think about it a little longer.",line:11},
+          {group:"choice",endLine:16,unselectable:true,name:"What was the question?",line:14},
+          {group:"choice",endLine:20,name:"Nothing; I\'m done.",line:17}], options, "options5");
+        doh.is("What do you want to do? You do some of this. "
+          +"What do you want to do? You do some of that. "
+          +"What do you want to do? Very well. "
+          +"What do you want to do? Quit stalling! "
+          +"What do you want to do?", trim(printed.join("")), "printed");
+    }
+  ]
+);
+
+
 function TokenizerTest(str, expected) {
     this.name = str;
     this.runTest = function() {
