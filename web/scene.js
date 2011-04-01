@@ -370,6 +370,16 @@ Scene.prototype.resolveChoice = function resolveChoice(options, groups) {
         group = groups[i];
         if (!group) group = "choice";
         var value = this.getFormValue(group);
+        if (value === null) {
+          if (groups.length == 1) {
+            alert("Please choose one of the available options first.");
+          } else {
+            var article = "a";
+            if (/^[aeiou].*/i.test(group)) article = "an";
+            alert("Please choose " + article + " " + group + " first.");
+          }
+          return;
+        }
         option = options[value];
         var variable = "choice_" + (i+1);
         this.temps[variable] = null;
