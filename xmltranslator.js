@@ -262,6 +262,7 @@ XmlScene.prototype.ifInChoice = function xmlIfInChoice(data) {
     }
   });
   this.indent = this.getIndent(this.nextNonBlankLine());
+  this.previousElseIf = null;
 }
 
 XmlScene.prototype["else"] = function xml_else(data, inChoice) {
@@ -283,8 +284,8 @@ XmlScene.prototype.elsif = XmlScene.prototype.elseif = function xml_elseif(data,
     } else {
       this.elseIfOptionChain = "(" + this.oldDisplayOptionCondition + ")";
     }
-    this.previousElseIf = data;
     this.ifInChoice("("+data+") and ("+this.elseIfOptionChain+" = false)");
+    this.previousElseIf = data;
 }
 
 
