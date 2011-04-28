@@ -189,7 +189,7 @@ XmlScene.prototype.executeSubScene = function executeSubScene(startLine, endLine
   subScene.execute();
 }
 
-XmlScene.prototype["if"] = XmlScene.prototype.elseif = XmlScene.prototype.elsif = function xmlIf(data, inChoice) {
+XmlScene.prototype["if"] = function xmlIf(data, inChoice) {
   if (inChoice) return this.ifInChoice(data);
   closePara();
   writer.write("<switch>\n");
@@ -264,12 +264,27 @@ XmlScene.prototype.ifInChoice = function xmlIfInChoice(data) {
   this.indent = this.getIndent(this.nextNonBlankLine());
 }
 
-XmlScene.prototype["else"] = XmlScene.prototype.elsif = XmlScene.prototype.elseif = function xml_else(data, inChoice) {
+XmlScene.prototype["else"] = function xml_else(data, inChoice) {
     if (inChoice) {
-      this.ifInChoice("("+this.oldDisplayOptionCondition+") = false");
+      if (this.previousElseIf) {
+        this.ifInChoice("(" + this.elseIfOptionChain + " or (" + this.previousElseIf + ")) = false");
+      } else {
+        this.ifInChoice("("+this.oldDisplayOptionCondition+") = false");
+      }
       return;
     }
     throw new Error(this.lineMsg() + "It is illegal to fall in to an *else statement; you must *goto or *finish before the end of the indented block.");
+}
+
+XmlScene.prototype.elsif = XmlScene.prototype.elseif = function xml_elseif(data, inChoice) {
+    if (!inChoice) throw new Error(this.lineMsg() + "It is illegal to fall in to an *elseif statement; you must *goto or *finish before the end of the indented block.");
+    if (this.previousElseIf) {
+      this.elseIfOptionChain = "(" + this.elseIfOptionChain + " or (" + this.previousElseIf + "))";
+    } else {
+      this.elseIfOptionChain = "(" + this.oldDisplayOptionCondition + ")";
+    }
+    this.previousElseIf = data;
+    this.ifInChoice("("+data+") and ("+this.elseIfOptionChain+" = false)");
 }
 
 

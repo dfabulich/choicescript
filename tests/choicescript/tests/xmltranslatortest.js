@@ -210,6 +210,50 @@ doh.registerGroup("choicescript.tests.Xmltranslator", [
            "<p>baz </p>\n";
           translateScene(scene, expected);
         }
+        ,function simpleConditionalElseIf() {
+          var scene = "*choice\n"
+          +"  *if foo\n"
+          +"    #foo\n"
+          +"      Foo!\n"
+          +"  *elseif bar\n"
+          +"    #bar\n"
+          +"      Bar!\n"
+          +"  *else\n"
+          +"    #baz\n"
+          +"      Baz!\n"
+          +"  #Quz\n"
+          +"    Quz!\n"
+          +"baz";
+          var expected = "<choice>\n"+
+            "<if><test>\n"+
+            "<variable name='foo' /></test>\n"+
+            "<option reuse='allow'>\n"+
+            "<text>foo</text>\n"+
+            "<p>Foo! </p>\n"+
+            "</option>\n"+
+            "</if>\n"+
+            "<if><test>\n"+
+            "<and><variable name='bar' /><equals><variable name='foo' /><variable name='false' /></equals></and></test>\n"+
+            "<option reuse='allow'>\n"+
+            "<text>bar</text>\n"+
+            "<p>Bar! </p>\n"+
+            "</option>\n"+
+            "</if>\n"+
+            "<if><test>\n"+
+            "<equals><or><variable name='foo' /><variable name='bar' /></or><variable name='false' /></equals></test>\n"+
+            "<option reuse='allow'>\n"+
+            "<text>baz</text>\n"+
+            "<p>Baz! </p>\n"+
+            "</option>\n"+
+            "</if>\n"+
+            "<option reuse='allow'>\n"+
+            "<text>Quz</text>\n"+
+            "<p>Quz! </p>\n"+
+            "</option>\n"+
+            "</choice>\n"+
+            "<p>baz </p>\n";
+          translateScene(scene, expected);
+        }
         ,function reuse() {
           var scene = ""
             +"*label start\n"
