@@ -346,21 +346,49 @@ doh.registerGroup("choicescript.tests.Xmltranslator", [
             "</option>\n"+
             "</if>\n"+
             "<if><test>\n"+
-            "<and><variable name='bar' /><equals><variable name='foo' /><variable name='false' /></equals></and></test>\n"+
+            "<and><variable name='foo' /><variable name='bar' /></and></test>\n"+
             "<option reuse='allow'>\n"+
             "<text>bar</text>\n"+
             "<p>Bar! </p>\n"+
             "</option>\n"+
             "</if>\n"+
             "<if><test>\n"+
-            "<and><variable name='more' /><equals><or><variable name='foo' /><variable name='bar' /></or><variable name='false' /></equals></and></test>\n"+
+            "<and><variable name='foo' /><and><variable name='more' /><equals><variable name='bar' /><variable name='false' /></equals></and></and></test>\n"+
             "<option reuse='allow'>\n"+
             "<text>more</text>\n"+
             "<p>More! </p>\n"+
             "</option>\n"+
             "</if>\n"+
             "<if><test>\n"+
-            "<equals><or><or><variable name='foo' /><variable name='bar' /></or><variable name='more' /></or><variable name='false' /></equals></test>\n"+
+            "<and><variable name='foo' /><equals><or><variable name='bar' /><variable name='more' /></or><variable name='false' /></equals></and></test>\n"+
+            "<option reuse='allow'>\n"+
+            "<text>baz</text>\n"+
+            "<p>Baz! </p>\n"+
+            "</option>\n"+
+            "</if>\n"+
+            "<if><test>\n"+
+            "<equals><variable name='foo' /><variable name='false' /></equals></test>\n"+
+            "<option reuse='allow'>\n"+
+            "<text>No foo</text>\n"+
+            "<p>no foo </p>\n"+
+            "</option>\n"+
+            "</if>\n"+
+            "<if><test>\n"+
+            "<and><equals><variable name='foo' /><variable name='false' /></equals><variable name='bar' /></and></test>\n"+
+            "<option reuse='allow'>\n"+
+            "<text>bar</text>\n"+
+            "<p>Bar! </p>\n"+
+            "</option>\n"+
+            "</if>\n"+
+            "<if><test>\n"+
+            "<and><equals><variable name='foo' /><variable name='false' /></equals><and><variable name='more' /><equals><variable name='bar' /><variable name='false' /></equals></and></and></test>\n"+
+            "<option reuse='allow'>\n"+
+            "<text>more</text>\n"+
+            "<p>More! </p>\n"+
+            "</option>\n"+
+            "</if>\n"+
+            "<if><test>\n"+
+            "<and><equals><variable name='foo' /><variable name='false' /></equals><equals><or><variable name='bar' /><variable name='more' /></or><variable name='false' /></equals></and></test>\n"+
             "<option reuse='allow'>\n"+
             "<text>baz</text>\n"+
             "<p>Baz! </p>\n"+
