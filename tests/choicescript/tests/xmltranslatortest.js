@@ -116,6 +116,35 @@ doh.registerGroup("choicescript.tests.Xmltranslator", [
           "</choice>\n";
           translateScene(scene, expected);
         }
+        ,function testXmlEscape() {
+          var scene = ""
+            +"\n*temp pal"
+            +"\n*set pal \"pal '\\\"<>\""
+            +"\nThis & That's <\"Life\"> ${pal}"
+            +"\n*choice"
+            +"\n  #This & That's <\"Life\"> ${pal}"
+            +"\n    This & That's <\"Life\"> ${pal}"
+            +"\n    *finish"
+            +"\n  #bar"
+            +"\n    *finish"
+          ;
+          var expected = "<paragraph-break />\n"+
+            "<temp variable='pal'/>\n"+
+            "<set variable='pal'><literal value='pal &apos;&quot;<>'/></set>\n"+
+            "<p>This &amp; That's &lt;\"Life\"&gt; <print capitalize='false'><variable name='pal'/></print> </p>\n"+
+            "<choice>\n"+
+            "<option reuse='allow'>\n"+
+            "<text>This &amp; That's &lt;\"Life\"&gt; <print capitalize='false'><variable name='pal'/></print></text>\n"+
+            "<p>This &amp; That's &lt;\"Life\"&gt; <print capitalize='false'><variable name='pal'/></print> </p>\n"+
+            "<finish />\n"+
+            "</option>\n"+
+            "<option reuse='allow'>\n"+
+            "<text>bar</text>\n"+
+            "<finish />\n"+
+            "</option>\n"+
+            "</choice>\n";
+          translateScene(scene, expected);
+        }
         ,function ifInChoice() {
           var scene = ""
             +"\n*choice"

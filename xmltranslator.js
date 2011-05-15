@@ -22,14 +22,19 @@ function XmlScene(name, stats, nav) {
   this.dedentChain = [];
 };
 
-function xmlEscape(str) {
+function xmlEscape(str, attribute) {
+  var element = !attribute;
+  if (typeof(attribute) === "undefined") attribute = true;
   if (str == null) return null;
   var result = str
   result = result.replace(/&/g, "&amp;");
-  result = result.replace(/'/g, "&apos;");
-  result = result.replace(/"/g, "&quot;");
-  result = result.replace(/</g, "&lt;");
-  result = result.replace(/>/g, "&gt;");
+  if (attribute) {
+    result = result.replace(/'/g, "&apos;");
+    result = result.replace(/"/g, "&quot;");    
+  } else {
+    result = result.replace(/</g, "&lt;");
+    result = result.replace(/>/g, "&gt;");
+  }
   return result;
 }
 
@@ -62,7 +67,7 @@ function printElement(tagName, attributeName, data) {
   if (data) {
     writer.write(attributeName);
     writer.write("='");
-    writer.write(xmlEscape(data));
+    writer.write(xmlEscape(data, true));
     writer.write("'");
   }
   writer.write("/>\n");
@@ -138,7 +143,7 @@ XmlScene.prototype.printLine = function xmlPrintLine(data) {
 }
 
 XmlScene.prototype.replaceLine = function xmlReplaceLine(data) {
-  return data.replace(/\$(\!?)\{([a-zA-Z][_\w]+)\}/g, function (matched, capitalize, variable) {
+  return xmlEscape(data, false).replace(/\$(\!?)\{([a-zA-Z][_\w]+)\}/g, function (matched, capitalize, variable) {
     return "<print capitalize='" + !!capitalize + "'><variable name='" + variable + "'/></print>";
   });
 }
@@ -311,10 +316,10 @@ XmlScene.prototype.evaluateValueToken = function xmlEvaluateValueToken(token, st
       var value = this.evaluateExpr(stack, "CLOSE_CURLY");
       return "<reference>" + value + "</reference>";
   } else if ("NUMBER" == name) {
-      return "<literal value='" + xmlEscape(token.value) + "'/>";
+      return "<literal value='" + xmlEscape(token.value, true) + "'/>";
   } else if ("STRING" == name) {
       // strip off the quotes and unescape backslashes
-      return "<literal value='" + xmlEscape(token.value.slice(1,-1).replace(/\\(.)/g, "$1")) + "'/>";
+      return "<literal value='" + xmlEscape(token.value.slice(1,-1).replace(/\\(.)/g, "$1"), true) + "'/>";
   } else if ("VAR" == name) {
       return "<variable name='" + token.value.toLowerCase() + "' />";
   } else {
@@ -462,15 +467,15 @@ XmlScene.prototype.stat_chart = function xmlStatChart() {
   for (var i = 0; i < rows.length; i++) {
     var row = rows[i];
     if ("text" == row.type || "percent" == row.type) {
-      writer.write("<"+row.type+" label='"+xmlEscape(row.label)+"' variable='"+row.variable.toLowerCase()+"' ")
+      writer.write("<"+row.type+" label='"+xmlEscape(row.label, true)+"' variable='"+row.variable.toLowerCase()+"' ")
       if (row.definition) writer.write(" definition='" + row.definition + "' ");
       writer.write("/>\n");
     } else if ("opposed_pair" == row.type) {
       writer.write("<opposed-pair variable='"+row.variable.toLowerCase()+"'>\n");
-      writer.write("<label text='"+xmlEscape(row.label)+"' ")
+      writer.write("<label text='"+xmlEscape(row.label, true)+"' ")
       if (row.definition) writer.write(" definition='" + row.definition + "' ");
       writer.write("/>\n");
-      writer.write("<label text='"+xmlEscape(row.opposed_label)+"' ")
+      writer.write("<label text='"+xmlEscape(row.opposed_label, true)+"' ")
       if (row.opposed_definition) writer.write(" definition='" + row.opposed_definition + "' ");
       writer.write("/>\n</opposed-pair>\n");
     }
