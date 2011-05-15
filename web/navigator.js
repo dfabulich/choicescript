@@ -16,12 +16,11 @@
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied.
  */
-function SceneNavigator() {
+function SceneNavigator(sceneList) {
     this._sceneMap = {};
-    for (var i = 0; i < arguments.length; i++) {
-        this.addArray(arguments[i]);
-    }
-    this._startupScene = arguments[0][0];
+    this._sceneList = sceneList;
+    this.addArray(sceneList);
+    this._startupScene = sceneList[0];
 }
 
 SceneNavigator.prototype.addArray = function addArray(arr) {
