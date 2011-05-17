@@ -1448,9 +1448,10 @@ Scene.prototype.parseRestoreGame = function parseRestoreGame(alreadyFinished) {
     return unrestorableScenes;
 }
 
-Scene.prototype.save_game = function save_game(varName) {
+Scene.prototype.save_game = function save_game(line) {
   if (this.temps.choice_user_restored) return;
-  var name = this.getVar(varName);
+  var stack = this.tokenizeExpr(line);
+  var name = this.evaluateExpr(stack);
   var slot = "save" + new Date().getTime();
   var self = this;
   self.finished = true;
