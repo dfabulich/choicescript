@@ -120,7 +120,7 @@ function saveCookie(callback, slot, stats, temps, lineNum, indent) {
 function computeCookie(stats, temps, lineNum, indent) {
   var scene = stats.scene;
   delete stats.scene;
-  stats.sceneName = scene.name;
+  if (scene) stats.sceneName = scene.name;
   var version = "UNKNOWN";
   if (typeof(window) != "undefined" && window && window.version) version = window.version;
   var value = toJson({version:version, stats:stats, temps:temps, lineNum: lineNum, indent: indent});
@@ -139,6 +139,53 @@ function writeCookie(value, slot, callback) {
 
 function clearCookie(callback, slot) {
     writeCookie('', slot, callback);
+}
+
+function areSaveSlotsSupported() {
+  return !!(initStore() && window.Persist.type != "cookie");
+}
+
+function recordSave(slot, callback) {
+  if (!areSaveSlotsSupported()) {
+    return callback();
+  }
+  restoreObject("save_list", [], function (saveList) {
+    saveList.push(slot);
+    window.store.set("save_list", toJson(saveList), callback);
+  });
+}
+
+function restoreObject(key, defaultValue, callback) {
+  if (!initStore()) return callback(defaultValue);
+  window.store.get(key, function(ok, value) {
+    var result = defaultValue;
+    if (ok) {
+      try{
+        result = eval("result="+value);
+      } catch (e) {}
+    }
+    callback(result);
+  });
+}
+
+function getSaves(callback) {
+  restoreObject("save_list", [], function (slotList) {
+    var i = 0;
+    var saveList = [];
+    if (!slotList.length) return callback([]);
+    function fetchSaves() {
+      restoreObject("state"+slotList[i], null, function(saveState) {
+        saveState.saveDate = slotList[i].substring(4/*"save".length*/);
+        saveList.push(saveState);
+        if (++i < slotList.length) {
+          fetchSaves();
+        } else {
+          callback(saveList);
+        }
+      })
+    }
+    fetchSaves();
+  });
 }
 
 function initStore() {
@@ -172,7 +219,7 @@ function isStateValid(state) {
   return true;
 }
 
-function restoreGame(state, forcedScene) {
+function restoreGame(state, forcedScene, userRestored) {
     if (!isStateValid(state)) {
         var startupScene = forcedScene ? forcedScene : window.nav.getStartupScene();
         var scene = new Scene(startupScene, window.stats, window.nav, false);
@@ -186,6 +233,9 @@ function restoreGame(state, forcedScene) {
         scene.temps = state.temps;
         scene.lineNum = state.lineNum;
         scene.indent = state.indent;
+      }
+      if (userRestored) {
+        scene.temps.choice_user_restored = true;
       }
       safeCall(scene, scene.execute);
     }
@@ -274,3 +324,11 @@ function findXhr() {
         } 
         return crc ^ (-1); 
     };
+
+function simpleDateTimeFormat(date) {
+  var day = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][date.getDay()];
+  var month = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][date.getMonth()];
+  var minutes = date.getMinutes();
+  if (minutes < 10) minutes = "0" + (""+minutes);
+  return day + " " + month + " " + date.getDate() + " " + date.getHours() + ":" + minutes;
+}

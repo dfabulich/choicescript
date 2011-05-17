@@ -242,6 +242,23 @@ function printButton(name, parent, isSubmit, code) {
   return button;
 }
 
+function getPassword(target, code) {
+  if (!target) target = document.getElementById('text');
+  var textArea = document.createElement("textarea");
+  textArea.cols = 41;
+  textArea.rows = 30;
+  setClass(textArea, "savePassword");
+  target.appendChild(textArea);
+  println("", target);
+  printButton("Next", target, false, function() {
+    code(false, textArea.value);
+  });
+  
+  printButton("Cancel", target, false, function() {
+    code(true);
+  });
+}
+
 function showPassword(target, password) {
   if (!target) target = document.getElementById('text');
   

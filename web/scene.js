@@ -24,7 +24,7 @@ function Scene(name, stats, nav, debugMode) {
     
     // the permanent statistics and the temporary values
     this.stats = stats;
-    this.temps = {choice_reuse:"allow"};
+    this.temps = {choice_reuse:"allow", choice_user_restored:false};
     
     // the navigator determines which scene comes next
     this.nav = nav;
@@ -228,7 +228,8 @@ Scene.prototype.checkSum = function checkSum(crc) {
   if (this.temps.choice_crc) {
     if (this.temps.choice_crc != crc) {
       // The scene has changed; restart the scene
-      this.temps = {choice_crc: crc};
+      var userRestored = this.temps.choice_user_restored || false;
+      this.temps = {choice_reuse:"allow", choice_user_restored:userRestored, choice_crc: crc};
       this.lineNum = 0;
       this.indent = 0;
     }
@@ -361,7 +362,7 @@ Scene.prototype.fake_choice = function fake_choice(data) {
 }
 
 // the user submitted the *choice form; goto the appropriate line
-Scene.prototype.resolveChoice = function resolveChoice(options, groups) {
+Scene.prototype.resolveChoice = function resolveChoice(options, groups, callback) {
     var option, group;
     for (var i = 0; i < groups.length; i++) {
         if (i > 0) {
@@ -386,15 +387,20 @@ Scene.prototype.resolveChoice = function resolveChoice(options, groups) {
         this.setVar(variable, option.name);
     }
     
-    this.lineNum = option.line;
-    this.indent = this.getIndent(this.nextNonBlankLine(true/*includingThisOne*/));
-    if (option.reuse && option.reuse != "allow") this.temps.choice_used[option.line-1] = 1;
-    
-    this.finished = false;
-    var self = this;
-    this.resetPage();
+    if (!callback) callback = this.standardResolution;
+    callback.call(this, option);
     
 }
+
+Scene.prototype.standardResolution = function(option) {
+  var self = this;
+  self.lineNum = option.line;
+  self.indent = self.getIndent(self.nextNonBlankLine(true/*includingThisOne*/));
+  if (option.reuse && option.reuse != "allow") self.temps.choice_used[option.line-1] = 1;
+
+  self.finished = false;
+  self.resetPage();
+};
 
 Scene.prototype.nextNonBlankLine = function nextNonBlankLine(includingThisOne) {
     var line;
@@ -417,7 +423,11 @@ Scene.prototype.resetPage = function resetPage() {
 }
 
 Scene.prototype.save = function save(callback, slot) {
-    saveCookie(callback, slot, this.stats, this.temps, this.lineNum, this.indent, this.debugMode, this.nav);
+    if (/^choicescript_/.test(this.name)) {
+      if (callback) callback.call(this);
+    } else {
+      saveCookie(callback, slot, this.stats, this.temps, this.lineNum, this.indent, this.debugMode, this.nav);
+    }
 }
 
 // *goto labelName
@@ -533,6 +543,8 @@ Scene.prototype.getVar = function getVar(variable) {
     variable = variable.toLowerCase();
     if (variable == "true") return true;
     if (variable == "false") return false;
+    if (variable == "choice_subscribe_allowed") return true;
+    if (variable == "choice_save_allowed") return areSaveSlotsSupported();
     if ("undefined" === typeof this.temps[variable]) {
         if ("undefined" === typeof this.stats[variable]) {
             throw new Error(this.lineMsg() + "Non-existent variable '"+variable+"'");
@@ -851,14 +863,14 @@ Scene.prototype.verifyOptionsMatch = function verifyOptionsMatch(prev, current) 
 }
 
 // render the prompt and the radio buttons
-Scene.prototype.renderOptions = function renderOptions(groups, options) {
+Scene.prototype.renderOptions = function renderOptions(groups, options, callback) {
     this.paragraph();
     var form = document.createElement("form");
     main.appendChild(form);
     var self = this;
     form.action="#";
     form.onsubmit = function() { 
-        safeCall(self, function() {self.resolveChoice(options, groups);});
+        safeCall(self, function() { self.resolveChoice(options, groups, callback);});
         return false;
     };
     
@@ -904,6 +916,8 @@ Scene.prototype.renderOptions = function renderOptions(groups, options) {
     }
 
     if (this.debugMode) println(toJson(this.stats));
+    
+    if (this.finished) printFooter();
 }
 
 // print one radio button
@@ -1280,7 +1294,179 @@ Scene.prototype.subscribe = function scene_subscribe() {
   this.prevLineEmpty = false;
 }
 
+Scene.prototype.restore_game = function restore_game() {
+  this.finished = true;
+  this.skipFooter = true;
+  var self = this;
+  getSaves(function(saveList) {
+    var options = [];
+    for (var i = 0; i < saveList.length; i++) {
+      var save = saveList[i];
+      var date = new Date(save.saveDate*1);
+      if (!save) continue;
+      options.push({name:save.temps.choice_restore_name + " ("+simpleDateTimeFormat(date)+")", group:"choice", state:save});
+    }
+    options.push({name:"Restore using a password.", group:"choice", password:true});
+    options.push({name:"Cancel.", group:"choice", cancel:true});
+    var groups = [""];
+    self.renderOptions(groups, options, function(option) {
+      self.lineNum--;
+      self.rollbackLineCoverage();
+      if (option.password) {
+        clearScreen(function() {
+          self.restore_password();
+        });
+      } else {
+        var unrestorableScenes = self.parseRestoreGame(true);
+        if (option.cancel) {
+          self.finished = false;
+          self.resetPage();
+        } else {
+          var state = option.state;
+          var unrestorable = unrestorableScenes[state.stats.sceneName];
+
+          if (unrestorable) {
+            alert(unrestorable);
+            self.finished = false;
+            self.resetPage();
+            return;
+          }
+          
+          saveCookie(function() {
+            clearScreen(function() {
+              var sceneName = null;
+              if (state.stats && state.stats.sceneName) sceneName = state.stats.sceneName;
+              restoreGame(state, null, /*userRestored*/true);
+            })
+          }, "", state.stats, state.temps, state.lineNum, state.indent, this.debugMode, this.nav);
+        }
+      }
+    });
+  });
+}
+
+Scene.prototype.restore_password = function restore_password() {
+  var alreadyFinished = this.finished;
+  this.finished = true;
+  this.paragraph();
+  this.printLine('Please paste your password here, then press "Next" below to continue.');
+  this.prevLineEmpty = false;
+  this.paragraph();
+  var self = this;
+  var unrestorableScenes = this.parseRestoreGame(alreadyFinished);
+  getPassword(this.target, function (cancel, password) {
+    if (cancel) {
+      self.finished = false;
+      self.resetPage();
+      return;
+    }
+    password = password.replace(/\s/g, "");
+    password = password.replace(/^.*BEGINPASSWORD-----/, "");
+    var token = self.deobfuscatePassword(password);
+    token = token.replace(/^[^\{]*/, "");
+    token = token.replace(/[^\}]*$/, "");
+    try {
+      var state = eval("state="+token);
+    } catch (e) {
+      var supportEmail = "support-unknown@choiceofgames.com";
+      try {
+        supportEmail=document.getElementById("supportEmail").getAttribute("href");
+        supportEmail=supportEmail.replace(/\+/g,"%2B");
+        supportEmail=supportEmail.replace(/mailto:/, "");
+      } catch (e) {
+        supportEmail = "support-unknown@choiceofgames.com";
+      }
+      alert("Sorry, that password was invalid. Please contact " + supportEmail + " for assistance. Be sure to include your password in the email.");
+      return;
+    }
+    
+    var unrestorable = unrestorableScenes[state.stats.sceneName];
+    
+    if (unrestorable) {
+      alert(unrestorable);
+      self.finished = false;
+      self.resetPage();
+      return;
+    }
+    
+    saveCookie(function() {
+      clearScreen(function() {
+        var sceneName = null;
+        if (state.stats && state.stats.sceneName) sceneName = state.stats.sceneName;
+        restoreGame(state, null, /*userRestored*/true);
+      })
+    }, "", state.stats, state.temps, state.lineNum, state.indent, this.debugMode, this.nav);
+  });
+  if (alreadyFinished) printFooter();
+}
+
+Scene.prototype.parseRestoreGame = function parseRestoreGame(alreadyFinished) {
+    // nextIndent: the level of indentation after the current line
+    var nextIndent = null;
+    var unrestorableScenes = {};
+    var line;  
+    var startIndent = this.indent;
+    while(isDefined(line = this.lines[++this.lineNum])) {
+        if (!trim(line)) {
+            this.rollbackLineCoverage();
+            continue;
+        }
+        var indent = this.getIndent(line);
+        if (nextIndent == null) {
+            // initialize nextIndent with whatever indentation the line turns out to be
+            // ...unless it's not indented at all
+            if (indent > startIndent) {
+                this.indent = nextIndent = indent;
+            }
+        }
+        if (indent <= startIndent) {
+            // it's over!
+            if (!alreadyFinished) {
+              this.lineNum--;
+              this.rollbackLineCoverage();
+            }
+            return unrestorableScenes;
+        }
+        if (indent != this.indent) {
+            // all chart rows are supposed to be at the same indentation level
+            // anything at the wrong indentation level might be a mis-indented title/definition
+            // or just a typo
+            throw new Error(this.lineMsg() + "invalid indent, expected "+this.indent+", was " + indent);
+        }
+        
+        // 
+        // *restore_game
+        //   ending You can't restore to the ending.
+
+        line = trim(line);
+        var result = /^(\w+)\s+(.*)/.exec(line);
+        if (!result) throw new Error(this.lineMsg() + "invalid line; this line should have a scene name followed by an error message: " + line);
+        var sceneName = result[1].toLowerCase();
+        var error = trim(result[2]);
+        unrestorableScenes[sceneName] = error;
+    }
+    return unrestorableScenes;
+}
+
+Scene.prototype.save_game = function save_game(varName) {
+  if (this.temps.choice_user_restored) return;
+  var name = this.getVar(varName);
+  var slot = "save" + new Date().getTime();
+  var self = this;
+  self.finished = true;
+  self.skipFooter = true;
+  this.temps.choice_restore_name = name;
+  this.save(function() {
+    recordSave(slot, function() {
+      self.finished = false;
+      self.execute();
+    })
+  }, slot);
+  delete this.temps.choice_restore_name;
+}
+
 Scene.prototype.show_password = function show_password() {
+  if (this.temps.choice_user_restored) return;
   this.paragraph();
   if (typeof(window) != "undefined" && !window.isMobile) {
     this.printLine('Please copy and paste the password in a safe place, then press "Next" below to continue.');
@@ -2018,4 +2204,5 @@ Scene.validCommands = {"comment":1, "goto":1, "gotoref":1, "label":1, "looplimit
     "page_break":1, "line_break":1, "script":1, "else":1, "elseif":1, "elsif":1, "reset":1,
     "goto_scene":1, "fake_choice":1, "input_text":1, "ending":1, "share_this_game":1, "stat_chart":1
     ,"subscribe":1, "show_password":1, "gosub":1, "return":1, "hide_reuse":1, "disable_reuse":1, "allow_reuse":1
+    ,"restore_game":1,"save_game":1
     };
