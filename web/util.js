@@ -147,7 +147,8 @@ function areSaveSlotsSupported() {
 
 function recordSave(slot, callback) {
   if (!areSaveSlotsSupported()) {
-    return callback();
+    setTimeout(callback, 0);
+    return;
   }
   restoreObject("save_list", [], function (saveList) {
     saveList.push(slot);
@@ -156,7 +157,10 @@ function recordSave(slot, callback) {
 }
 
 function restoreObject(key, defaultValue, callback) {
-  if (!initStore()) return callback(defaultValue);
+  if (!initStore()) {
+    setTimeout(function() {callback(defaultValue)}, 0);
+    return;
+  }
   window.store.get(key, function(ok, value) {
     var result = defaultValue;
     if (ok) {
