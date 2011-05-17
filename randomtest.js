@@ -76,6 +76,13 @@ Scene.prototype.stat_chart = function() {
   this.parseStatChart();
 }
 
+Scene.prototype.save_game = function(data) {
+  var stack = this.tokenizeExpr(data);
+  var result = this.evaluateExpr(stack);
+}
+
+Scene.prototype.restore_game = function() {};
+
 crc32 = noop;
 
 parsedLines = {};

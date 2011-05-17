@@ -19,6 +19,13 @@ function autotester(sceneText, nav, sceneName) {
       this.setVar(variable, "blah blah");
   }
   
+  Scene.prototype.save_game = function(data) {
+    var stack = this.tokenizeExpr(data);
+    var result = this.evaluateExpr(stack);
+  }
+  
+  Scene.prototype.restore_game = function() {};
+  
   Scene.prototype.rollbackLineCoverage = function(lineNum) {
     if (!lineNum) lineNum = this.lineNum;
     coverage[lineNum]--;
