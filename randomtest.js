@@ -278,6 +278,7 @@ for (i = 0; i < iterations; i++) {
     timeout = null;
     fn();
   }
+  nav.resetStats(stats);
 }
 
 for (i = 0; i < sceneNames.length; i++) {
