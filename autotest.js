@@ -26,16 +26,6 @@ load("editor/embeddable-autotester.js");
 
 nav.setStartingStatsClone(stats);
 
-function slurpFile(name) {
-    var lines = [];
-    var reader = new java.io.BufferedReader(new java.io.FileReader(name));
-    var line;
-    while (line = reader.readLine()) {
-         lines.push(line);
-    }
-    return lines.join('\n');
-}
-
 var sceneList = [];
 
 function debughelp() {

@@ -47,19 +47,9 @@ printx = println = function printx(msg, parent) {
 }
 
 
-function slurpFileLines(name) {
-    var lines = [];
-    var reader = new java.io.BufferedReader(new java.io.FileReader(name));
-    var line;
-    while (line = reader.readLine()) {
-         lines.push(line);
-    }
-    return lines;
-}
-
 slurps = {}
-function slurpFile(name) {
-  if (!slurps[name]) slurps[name] = slurpFileLines(name).join('\n');
+function slurpFileCached(name) {
+  if (!slurps[name]) slurps[name] = slurpFile(name);
   return slurps[name];
 }
 
@@ -236,7 +226,7 @@ Scene.prototype.choice = function choice(data, fakeChoice) {
 }
 
   Scene.prototype.loadScene = function loadScene() {
-    var file = slurpFile('web/'+gameName+'/scenes/'+this.name+'.txt');
+    var file = slurpFileCached('web/'+gameName+'/scenes/'+this.name+'.txt');
     this.loadLines(file);
     this.loaded = true;
     if (this.executing) {

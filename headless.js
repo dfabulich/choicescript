@@ -35,3 +35,20 @@ doneLoading = function() {}
 printFooter = function() {}
 printShareLinks = function() {}
 showPassword = function() {}
+
+function slurpFile(name) {
+    return slurpFileLines(name).join('\n');
+}
+
+function slurpFileLines(name) {
+    var lines = [];
+    var reader = new java.io.BufferedReader(new java.io.InputStreamReader(new java.io.FileInputStream(name), "UTF-8"));
+    var line = reader.readLine();
+    // strip byte order mark
+    if (line.charCodeAt(0) == 65279) line = line.substring(1);
+    lines.push(line);
+    while (line = reader.readLine()) {
+      lines.push(line);
+    }
+    return lines;
+}

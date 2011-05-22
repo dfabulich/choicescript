@@ -5,16 +5,6 @@ if (typeof xmlTranslatorTestOverride == "undefined") {
   load("headless.js");
 }
 
-function slurpFile(name) {
-    var lines = [];
-    var reader = new java.io.BufferedReader(new java.io.FileReader(name));
-    var line;
-    while (line = reader.readLine()) {
-         lines.push(line);
-    }
-    return lines.join('\n');
-}
-
 var writer;
 
 function XmlScene(name, stats, nav) {

@@ -1,18 +1,7 @@
 var dir = arguments[0] || "web/mygame/scenes";
 load("web/scene.js");
 load("web/util.js");
-
-
-function slurpFile(name) {
-    var lines = [];
-    var reader = new java.io.BufferedReader(new java.io.InputStreamReader(new java.io.FileInputStream(name), "UTF-8"));
-    var line;
-    var lineBuilder;
-    while (line = reader.readLine()) {
-      lines.push(line);
-    }
-    return lines.join('\n');
-}
+load("headless.js");
 
 var list = new java.io.File(dir).listFiles();
 
