@@ -52,3 +52,5 @@ function slurpFileLines(name) {
     }
     return lines;
 }
+
+function initStore() { return false; }
