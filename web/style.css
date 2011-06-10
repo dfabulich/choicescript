@@ -1,7 +1,8 @@
 body {
   max-width: 680px;
-  font-family: Helvetica,Arial,sans-serif;
-  background-color: white;
+  font-family: Georgia,"Times New Roman",serif;
+  background-color: #F7F4F1;
+  color: rgba(0, 0, 0, 0.85);
 }
 
 /* When max-width kicks in, center the body
@@ -13,12 +14,15 @@ body {
   }
 }
 
+#text {
+	line-height: 1.5;
+}
+
 table {
     margin-bottom: 1em;
 }
 
 .leftStatName {
-    font-weight: bold;
     text-align: right;
 }
 .definition {
@@ -33,7 +37,6 @@ table {
 }
 .rightStatName {
     text-align: left;
-    font-weight: bold;
 }
 .rightStatBar {
     width: 10em;
@@ -48,16 +51,17 @@ table {
 }
 
 label{
-    background-color: white;
-    color: black;
-    font-size:17px;
-    font-weight:bolder;
+    color: rgba(0, 0, 0, 0.85);
     line-height:20px;
     padding: 11px 8px 12px;
     display:block;
     border-color:#a9acaf;
     border-style:solid;
     border-width: 1px 1px 0px 1px
+}
+
+label:hover {
+  background-color: rgba(153,136,119,0.2);;
 }
 .firstChild{
     border-top-width:1px;
@@ -94,10 +98,12 @@ label{
 
 h1 {
   font-size: x-large;
+  font-weight: normal;
 }
 
 h2 {
   font-size: large;
+  font-weight: normal;
 }
 
 #footer {
