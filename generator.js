@@ -8,6 +8,12 @@ var list = new java.io.File(dir).listFiles();
 var i = list.length;
 while (i--) {
   if (!/\.txt$/.test(list[i].getName())) continue;
+  var inputMod = list[i].lastModified();
+  var outputMod = new java.io.File(list[i].getAbsolutePath()+".js").lastModified();
+  if (inputMod <= outputMod) {
+    print(list[i] + " up to date");
+    continue;
+  }
   print(list[i]);
   var str = slurpFile(list[i]);
   var scene = new Scene();
