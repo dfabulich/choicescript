@@ -19,7 +19,7 @@ while (i--) {
   var scene = new Scene();
   scene.loadLines(str);
   
-  var writer = new java.io.BufferedWriter(new java.io.FileWriter(list[i].getAbsolutePath()+".js"));
+  var writer = new java.io.BufferedWriter(new java.io.OutputStreamWriter(new java.io.FileOutputStream(list[i].getAbsolutePath()+".js"), "UTF-8"));
   writer.write("window.stats.scene.loadLinesFast(" + scene.temps.choice_crc + ", " + toJson(scene.lines)+ ", " + toJson(scene.labels) + ");");
   
   writer.close();

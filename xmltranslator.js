@@ -502,7 +502,7 @@ if (typeof xmlTranslatorTestOverride != "undefined") {
     var scene = new XmlScene();
     scene.loadLines(str);
     var dir = "./xml/";
-    var writer = new java.io.BufferedWriter(new java.io.FileWriter(dir + list[i].getName() + ".xml"));
+    var writer = new java.io.BufferedWriter(new java.io.OutputStreamWriter(new java.io.FileOutputStream(dir + list[i].getName() + ".xml"), "UTF-8"));
     //writer = {write: function(x){java.lang.System.out.print(x)}, close: function(){java.lang.System.out.println()}};
     writer.write("<!DOCTYPE vignette [ \n" + 
   			"<!ATTLIST label id ID #REQUIRED>\n" + 
