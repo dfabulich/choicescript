@@ -214,7 +214,7 @@ doh.registerGroup("choicescript.tests.Autotest", [
             +"\n  two"
             +"\n*elseif blah = 3"
             "+\n  three";
-          doh.assertError(Error, null, "autotester", scene, "Fall out of if statement");
+          doh.assertError(Error, dojo.global, "autotester", [scene], "Fall out of if statement");
         }
     ]
 );

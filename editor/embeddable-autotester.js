@@ -140,11 +140,18 @@ function autotester(sceneText, nav, sceneName) {
   
   if (!Scene.prototype.oldRunCommand) Scene.prototype.oldRunCommand = Scene.prototype.runCommand;
   Scene.prototype.runCommand = function test_runCommand(line) {
+    // skip commands that have already been covered
     if (coverage[this._lineNum] > 1) {
-      //log("overcovered " + (this._lineNum+1) + " " + coverage[this._lineNum]);
-      this.finish();
+        if (/^\s*\*else/i.test(line)) {
+          // else statements will have been covered by the "false" clones
+          // but the fact that we're here means we must have fallen into an *else
+          return this.oldRunCommand(line);
+        } else {
+          //log("overcovered " + (this._lineNum+1) + " " + coverage[this._lineNum]);
+          return this.finish();
+        }
     } else {
-      this.oldRunCommand(line);
+      return this.oldRunCommand(line);
     }
     
   }
