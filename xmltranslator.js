@@ -494,15 +494,24 @@ if (typeof xmlTranslatorTestOverride != "undefined") {
   xmlTranslatorTestOverride();
 } else {
   var i = list.length;
+  var translatorLastModified = new java.io.File("xmltranslator.js").lastModified();
   while (i--) {
     if (/(menu|hello)/.test(list[i].getName())) continue;
     if (!/\.txt$/.test(list[i].getName())) continue;
+    var inputMod = list[i].lastModified();
+    if (inputMod < translatorLastModified) inputMod = translatorLastModified;
+    var dir = "./xml/";
+    var outputFilePath = dir + list[i].getName() + ".xml";
+    var outputMod = new java.io.File(outputFilePath).lastModified();
+    if (inputMod <= outputMod) {
+      print(list[i] + " up to date");
+      continue;
+    }
     print(list[i]);
     var str = slurpFile(list[i]);
     var scene = new XmlScene();
     scene.loadLines(str);
-    var dir = "./xml/";
-    var writer = new java.io.BufferedWriter(new java.io.OutputStreamWriter(new java.io.FileOutputStream(dir + list[i].getName() + ".xml"), "UTF-8"));
+    var writer = new java.io.BufferedWriter(new java.io.OutputStreamWriter(new java.io.FileOutputStream(outputFilePath), "UTF-8"));
     //writer = {write: function(x){java.lang.System.out.print(x)}, close: function(){java.lang.System.out.println()}};
     writer.write("<!DOCTYPE vignette [ \n" + 
   			"<!ATTLIST label id ID #REQUIRED>\n" + 
