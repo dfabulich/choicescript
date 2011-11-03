@@ -501,6 +501,7 @@ if (typeof xmlTranslatorTestOverride != "undefined") {
     var inputMod = list[i].lastModified();
     if (inputMod < translatorLastModified) inputMod = translatorLastModified;
     var dir = "./xml/";
+    new java.io.File(dir).mkdirs();
     var outputFilePath = dir + list[i].getName() + ".xml";
     var outputMod = new java.io.File(outputFilePath).lastModified();
     if (inputMod <= outputMod) {
