@@ -176,6 +176,12 @@ function autotester(sceneText, nav, sceneName) {
       //log("unseen: " + key);
       this.oldGoto(label);
   }
+
+  if (!Scene.prototype.oldGosub) Scene.prototype.oldGosub = Scene.prototype.gosub;
+
+  Scene.prototype.gosub = function scene_gosub(label, inChoice) {
+    if (!seen[label]) this.oldGosub(label);
+  }
   
   Scene.prototype.ending = Scene.prototype.finish;
   

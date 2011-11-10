@@ -216,6 +216,19 @@ doh.registerGroup("choicescript.tests.Autotest", [
             "+\n  three";
           doh.assertError(Error, dojo.global, "autotester", [scene], "Fall out of if statement");
         }
+        ,function repeatedGosub() {
+          var scene = ""
+            +"\nHi"
+            +"\n*gosub foo"
+            +"\n*gosub foo"
+            +"\nBye"
+            +"\n*finish"
+            +"\n*label foo"
+            +"\nFoo"
+            +"\n*return"
+          ;
+          autotestScene(scene,  [1,1,2,1,1,1,1,1,1,0]);
+        }
     ]
 );
 
