@@ -122,21 +122,52 @@ Scene.prototype.printLine = function printLine(line, parent) {
     if (!line) return null;
     var self = this;
     if (!line.replace) line = new String(line);
-    // replace ${variables} with values
-    line = line.replace(/\$(\!?)\{([a-zA-Z][_\w]*)\}/g, function (matched, capitalize, variable) {
-      var value = self.getVar(variable);
-      if (capitalize) {
-        value = value.charAt(0).toUpperCase() + value.slice(1);
-      }
-      return value;
-    });
-    // double-check for unreplaced/invalid ${} expressions
-    var unreplaced = line.search(/\$(\!?)\{/) + 1;
-    if (unreplaced) {
-      throw new Error(this.lineMsg() + "invalid ${} variable substitution at letter " + unreplaced);
-    }
     if (!parent) parent = this.target;
-    return printx(line, parent);
+
+
+
+    // replace ${variables} with values
+    
+    // ORIGINAL REGEX: /\$(\!?)\{([a-zA-Z][_\w]*)\}/g
+    //if no ${var} variables are present, we'll have only one token
+    //for each ${var} we'll have two extra tokens
+    //  - one containing $ plus the optional modifiers (! for capitalization, b|B for bold, I|i for italic)
+    //  - one containing the name of the variable
+    var tokens = line.split(/(\$[\!BbiI]*?)\{([a-zA-Z][_\w]*)\}/g);
+    var i;
+    for (i=0; i<(tokens.length); i++){
+    
+      if (tokens[i].charAt(0) != "$"){
+          //printing regular text
+          printx(tokens[i], parent);
+        } else {
+          //printing variable
+          //token at position i   is $ and optional format modifiers
+          //token at position i+1 is variable name
+          
+          var value = self.getVar(tokens[i+1]);
+          
+          //first letter capitalization
+          if (tokens[i].indexOf("!") != -1)
+            value = value.charAt(0).toUpperCase() + value.slice(1);
+
+          //modifiers to lower case
+          tokens[i] = tokens[i].toLowerCase();
+          
+          //printing with format modifiers
+          printx(value, parent, tokens[i]);
+          
+          //token at position i+1 has already been processed
+          i++;
+      }
+    }
+
+    return;
+    
+    //the original return exposed the value returned by printx
+    //OLD CODE: return printx(line, parent);
+    //there is no apparent reason, since printx returns no value
+    //but I keep this comment here as a reminder
 }
 
 Scene.prototype.paragraph = function paragraph() {
@@ -1003,6 +1034,7 @@ Scene.prototype.page_break = function page_break(buttonName) {
 Scene.prototype.line_break = function line_break() {
     println("", this.target);
 }
+
 
 // how many spaces is this line indented?
 Scene.prototype.getIndent = function getIndent(line) {
@@ -2205,5 +2237,5 @@ Scene.validCommands = {"comment":1, "goto":1, "gotoref":1, "label":1, "looplimit
     "page_break":1, "line_break":1, "script":1, "else":1, "elseif":1, "elsif":1, "reset":1,
     "goto_scene":1, "fake_choice":1, "input_text":1, "ending":1, "share_this_game":1, "stat_chart":1
     ,"subscribe":1, "show_password":1, "gosub":1, "return":1, "hide_reuse":1, "disable_reuse":1, "allow_reuse":1
-    ,"restore_game":1,"save_game":1
+    ,"restore_game":1,"save_game":1    
     };

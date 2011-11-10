@@ -17,13 +17,28 @@
  * either express or implied.
  */
 
-
-function printx(msg, parent) {
+//if modifiers contains "b", the printed text is englosed in <strong> tag
+//if modifiers contains "i", the printed text is enclosed in <em> tag
+function printx(msg, parent, modifiers) {
     if (msg == null) return;
     if (msg === "") return;
     if (!parent) parent = document.getElementById('text');
-    var text = window.document.createTextNode(msg);
-    parent.appendChild(text);
+    var child = window.document.createTextNode(msg);
+	
+	if (modifiers != null){
+		if (modifiers.indexOf("b") != -1){
+			var tmp = window.document.createElement("strong");
+			tmp.appendChild(child);
+			child = tmp;
+		}
+		if (modifiers.indexOf("i") != -1){
+			var tmp = window.document.createElement("em");
+			tmp.appendChild(child);
+			child = tmp;
+		}
+	}
+	
+	parent.appendChild(child);
 }
     
 function println(msg, parent) {
