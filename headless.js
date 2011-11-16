@@ -34,6 +34,7 @@ saveCookie = function(callback) { if (callback) callback.call(); }
 doneLoading = function() {}
 printFooter = function() {}
 printShareLinks = function() {}
+printImage = function() {}
 showPassword = function() {}
 
 function slurpFile(name) {

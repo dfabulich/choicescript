@@ -89,6 +89,7 @@ label:hover {
 }
 
 .next {
+    clear: both;
     display:block;
     width:100%;
     font-size:25px;
@@ -148,6 +149,30 @@ h2 {
 
 .webOnly { /* We'll override this in JavaScript */
   display: none;
+}
+
+.alignleft {
+  display: inline;
+  float: left;
+  margin-right: 1.625em;
+  margin-bottom: 1em;
+}
+.alignright {
+  display: inline;
+  float: right;
+  margin-left: 1.625em;
+  margin-bottom: 1em;
+}
+.aligncenter {
+  clear: both;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 1em;
+}
+
+#main form {
+  clear: both;
 }
 
 @media only screen and (max-device-width: 480px) {

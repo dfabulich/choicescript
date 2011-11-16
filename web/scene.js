@@ -1006,6 +1006,19 @@ Scene.prototype.line_break = function line_break() {
     println("", this.target);
 }
 
+// *image
+// display named image
+Scene.prototype.image = function image(data) {
+    data = data || "";
+    var args = data.split(" ");
+    if (args > 2) throw new Error(this.lineMsg()+"Too many words; expected filename and alignment: " + data);
+    var source = args[0];
+    var alignment = args[1];
+    alignment = alignment || "center";
+    if (!/(right|left|center|none)/.test(alignment)) throw new Error(this.lineMsg()+"Invalid alignment, expected right, left, center, or none: " + data);
+    printImage(source, alignment);
+}
+
 // how many spaces is this line indented?
 Scene.prototype.getIndent = function getIndent(line) {
     if (line == null) return 0;
@@ -2207,5 +2220,5 @@ Scene.validCommands = {"comment":1, "goto":1, "gotoref":1, "label":1, "looplimit
     "page_break":1, "line_break":1, "script":1, "else":1, "elseif":1, "elsif":1, "reset":1,
     "goto_scene":1, "fake_choice":1, "input_text":1, "ending":1, "share_this_game":1, "stat_chart":1
     ,"subscribe":1, "show_password":1, "gosub":1, "return":1, "hide_reuse":1, "disable_reuse":1, "allow_reuse":1
-    ,"restore_game":1,"save_game":1
+    ,"restore_game":1,"save_game":1,"image":1
     };

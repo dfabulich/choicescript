@@ -140,6 +140,13 @@ function printFooter() {
   setTimeout(function() {callIos("curl");}, 0);
 }
 
+function printImage(source, alignment) {
+  var img = document.createElement("img");
+  img.src = source;
+  setClass(img, "align"+alignment);
+  document.getElementById("text").appendChild(img);
+}
+
 function printShareLinks() {
   if (window.isIosApp) {
     var button = printButton("Share This Game", document.getElementById('text'), false, 
