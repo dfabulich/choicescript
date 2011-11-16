@@ -215,7 +215,9 @@ Scene.prototype.loadScene = function loadScene(url) {
       } catch (e) {
         if (window.location.protocol == "file:" && !window.isMobile && !window.storeName) {
           if (/Chrome/.test(navigator.userAgent)) {
-            window.onerror("We're sorry, Google Chrome has blocked ChoiceScript from functioning.  (\"file:\" URLs cannot load files in Chrome.)  ChoiceScript works just fine in Chrome, but only on a published website like choiceofgames.com.  For the time being, please try another browser like Mozilla Firefox.")
+            window.onerror("We're sorry, Google Chrome has blocked ChoiceScript from functioning.  (\"file:\" URLs cannot "+
+            "load files in Chrome.)  ChoiceScript works just fine in Chrome, but only on a published website like "+
+            "choiceofgames.com.  For the time being, please try another browser like Mozilla Firefox.")
             return;
           }
         }
