@@ -118,7 +118,7 @@ function startLoading() {
     if (!loading) {
       loading = document.createElement('div');
       loading.setAttribute("id", "loading");
-      loading.innerHTML = "<p>Loading...</p><p><img src=\"../loader.gif\"></p>";
+      loading.innerHTML = "<p>Loading...</p><p><img src=\""+rootDir+"loader.gif\"></p>";
       main.appendChild(loading);
     }
 }
@@ -351,7 +351,7 @@ window.onload=function() {
     var head = document.getElementsByTagName("head")[0];
     if (window.isFile) {
       var s = document.createElement('script');
-      s.setAttribute("src", "../file.js");
+      s.setAttribute("src", rootDir + "file.js");
       head.appendChild(s);
     }
     window.nav.setStartingStatsClone(window.stats);
