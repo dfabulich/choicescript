@@ -18,6 +18,10 @@ body {
 	line-height: 1.5;
 }
 
+#text img {
+  max-width: 100%;
+}
+
 table {
     margin-bottom: 1em;
 }
