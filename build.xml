@@ -30,39 +30,69 @@ either express or implied.
   </target>
   
   <target name="rhino">
-    <property name="doh" location="tests\dojo-release-1.3.2-src\util\doh"/>
     <condition property="rhinoClass" value="org.mozilla.javascript.tools.debugger.Main">
       <isset property="debug" />
     </condition>
     <property name="rhinoClass" value="org.mozilla.javascript.tools.shell.Main"/>
     <presetdef name="rhino">
-      <java failonerror="true" classpath="${doh}/js.jar" classname="${rhinoClass}">
+      <java failonerror="true" classpath="js.jar" classname="${rhinoClass}">
         <arg line="-w -opt -1 -debug"/>
       </java>
     </presetdef>
     <property name="gen.dir" location="${basedir}/web/mygame/scenes" />
+    <property name="test.dir" location="${basedir}/tests" />
   </target>
   
   <target name="unittest-core" depends="rhino">
-    <rhino fork="true" dir="${doh}" >
-      <arg line="runner.js testUrl=../../../loader.js testModule=choicescript.tests.scenetest,choicescript.tests.utiltest" />
+    <rhino fork="true">
+      <arg file="${test.dir}/suite.js" />
+      <arg file="${test.dir}/qunit.js" />
+      <arg file="${basedir}/web/scene.js" />
+      <arg file="${basedir}/web/util.js" />
+      <arg file="${basedir}/headless.js" />
+      <arg file="${test.dir}/scenetest.js" />
     </rhino>
 
   </target>
   
+  <target name="unittest-util" depends="rhino">
+    <rhino fork="true">
+      <arg file="${test.dir}/suite.js" />
+      <arg file="${test.dir}/qunit.js" />
+      <arg file="${basedir}/web/scene.js" />
+      <arg file="${basedir}/web/util.js" />
+      <arg file="${basedir}/headless.js" />
+      <arg file="${test.dir}/utiltest.js" />
+    </rhino>
+
+  </target>
+
   <target name="unittest-autotest" depends="rhino">
-    <rhino fork="true" dir="${doh}" >
-      <arg line="runner.js testUrl=../../../loader.js testModule=choicescript.tests.autotesttest" />
+    <rhino fork="true">
+      <arg file="${test.dir}/suite.js" />
+      <arg file="${test.dir}/qunit.js" />
+      <arg file="${basedir}/web/scene.js" />
+      <arg file="${basedir}/web/util.js" />
+      <arg file="${basedir}/headless.js" />
+      <arg file="${basedir}/editor/embeddable-autotester.js" />
+      <arg file="${test.dir}/autotesttest.js" />
     </rhino>
   </target>
   
   <target name="unittest-xmltranslator" depends="rhino">
-    <rhino fork="true" dir="${doh}" >
-      <arg line="runner.js testUrl=../../../loader.js testModule=choicescript.tests.xmltranslatortest" />
+    <rhino fork="true">
+      <arg file="${test.dir}/suite.js" />
+      <arg file="${test.dir}/qunit.js" />
+      <arg file="${basedir}/web/scene.js" />
+      <arg file="${basedir}/web/util.js" />
+      <arg file="${basedir}/headless.js" />
+      <arg file="${test.dir}/xmltranslatortestoverride.js" />
+      <arg file="${basedir}/xmltranslator.js" />
+      <arg file="${test.dir}/xmltranslatortest.js" />
     </rhino>
   </target>
   
-  <target name="unittest" depends="unittest-core, unittest-autotest, unittest-xmltranslator" />
+  <target name="unittest" depends="unittest-core, unittest-util, unittest-autotest, unittest-xmltranslator" />
 
   <target name="randomtest" depends="rhino">
     <property name="num" value="10000" />
