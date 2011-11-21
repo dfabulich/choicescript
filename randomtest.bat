@@ -16,4 +16,4 @@
 ::"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
 ::either express or implied.
 echo Executing randomtest, writing to randomtest-output.txt
-java -jar tests\dojo-release-1.3.2-src\util\doh\js.jar randomtest.js %* > randomtest-output.txt
+java -jar js.jar randomtest.js %* > randomtest-output.txt

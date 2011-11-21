@@ -15,4 +15,4 @@
 ::software distributed under the License is distributed on an
 ::"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
 ::either express or implied.
-java -jar tests\dojo-release-1.3.2-src\util\doh\js.jar -w -opt -1 -debug autotest.js %*
+java -jar js.jar -w -opt -1 -debug autotest.js %*
