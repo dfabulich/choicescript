@@ -75,7 +75,13 @@ for (var i = 0; i < list.length; i++) {
   verifyFileName(list[i]);
   var sceneText = slurpFile("web/"+gameName+"/scenes/"+list[i]+".txt");
   window = {console: {log: function(msg) { print(msg); } }};
-  uncovered = autotester(sceneText, nav, list[i])[1];
+  try {
+    uncovered = autotester(sceneText, nav, list[i])[1];
+  } catch (e) {
+    print("QUICKTEST FAILED\n");
+    print(e);
+    java.lang.System.exit(1);
+  }
   if (uncovered) {
     uncoveredScenes.push({name:list[i], lines:uncovered});
   }
