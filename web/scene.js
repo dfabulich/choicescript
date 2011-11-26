@@ -1790,6 +1790,7 @@ Scene.prototype.parseStatChart = function parseStatChart() {
         }
         if (indent <= startIndent) {
             // it's over!
+            this.rollbackLineCoverage();
             this.lineNum--;
             this.rollbackLineCoverage();
             return rows;

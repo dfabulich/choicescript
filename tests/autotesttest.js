@@ -193,3 +193,22 @@ test("repeatedGosub", function() {
   ;
   autotestScene(scene,  [1,1,2,1,1,1,1,1,1,0]);
 })
+test("repeatedStatChart", function() {
+  var scene = ""
+    +"\n*temp x"
+    +"\n*set x \"foo\""
+    +"\nHi"
+    +"\n*stat_chart"
+    +"\n  text x"
+    +"\n"
+    +"\nHello again"
+    +"\n"
+    +"\n*stat_chart"
+    +"\n  text x"
+    +"\n"
+    +"\nGood bye for now!"
+    +"\n"
+    +"\nAll done"
+  ;
+  autotestScene(scene,  [1,1,1,1,1,1,0,1,1,1,1,0,1,1,1,0]);
+})
