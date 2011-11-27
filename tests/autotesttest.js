@@ -184,7 +184,7 @@ test("repeatedGosub", function() {
   var scene = ""
     +"\nHi"
     +"\n*gosub foo"
-    +"\n*gosub foo"
+    +"\n*gosub Foo"
     +"\nBye"
     +"\n*finish"
     +"\n*label foo"

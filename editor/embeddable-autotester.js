@@ -165,7 +165,7 @@ function autotester(sceneText, nav, sceneName) {
         return;
       }
       //more specific keys are better tests!
-      var key = label;
+      var key = label.toLowerCase();
       //var key = toJson(this.stats) + toJson(this.temps) + label;
       if (seen[key]) {
           //throw new Error("yay! seen!");
@@ -180,7 +180,7 @@ function autotester(sceneText, nav, sceneName) {
   if (!Scene.prototype.oldGosub) Scene.prototype.oldGosub = Scene.prototype.gosub;
 
   Scene.prototype.gosub = function scene_gosub(label, inChoice) {
-    if (!seen[label]) this.oldGosub(label);
+    if (!seen[label.toLowerCase()]) this.oldGosub(label);
   }
   
   Scene.prototype.ending = Scene.prototype.finish;
