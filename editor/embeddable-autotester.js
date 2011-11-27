@@ -29,7 +29,7 @@ function autotester(sceneText, nav, sceneName) {
   Scene.prototype.rollbackLineCoverage = function(lineNum) {
     if (!lineNum) lineNum = this.lineNum;
     coverage[lineNum]--;
-    //print("un-covered: " + lineNum);
+    // print("un-covered: " + (lineNum+1) + " (" + coverage[lineNum] + ")");
   }
   
   try {
@@ -40,7 +40,7 @@ function autotester(sceneText, nav, sceneName) {
         } else {
             coverage[val] = 1;
         }
-        //print("covered: " + val);
+        // print("covered: " + (val+1) + " (" + coverage[val] + ")");
         this._lineNum = val;
     });
   } catch (e) {
