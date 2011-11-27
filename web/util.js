@@ -226,7 +226,7 @@ function isStateValid(state) {
 function restoreGame(state, forcedScene, userRestored) {
     if (!isStateValid(state)) {
         var startupScene = forcedScene ? forcedScene : window.nav.getStartupScene();
-        var scene = new Scene(startupScene, window.stats, window.nav, false);
+        var scene = new Scene(startupScene, window.stats, window.nav, window.debug);
         safeCall(scene, scene.execute);
     } else {
       if (forcedScene) state.stats.sceneName = forcedScene;

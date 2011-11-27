@@ -368,6 +368,7 @@ window.onload=function() {
     if (map) {
       var forcedScene = map.forcedScene
       window.slot = map.slot;
+      window.debug = map.debug;
       if (map.restart) {
         restoreGame(null, forcedScene);
       } else {
