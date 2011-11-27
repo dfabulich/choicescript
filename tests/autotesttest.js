@@ -212,3 +212,13 @@ test("repeatedStatChart", function() {
   ;
   autotestScene(scene,  [1,1,1,1,1,1,0,1,1,1,1,0,1,1,1,0]);
 })
+test("afterFakeChoice", function() {
+  var scene = ""
+    +"\n*fake_choice"
+    +"\n  #Foo"
+    +"\n  #Bar"
+    +"\n    Baz"
+    +"\nQuz"
+  ;
+  autotestScene(scene,  [1,1,1,1,1,1,0]);
+})

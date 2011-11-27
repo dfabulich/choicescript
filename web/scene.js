@@ -91,7 +91,9 @@ Scene.prototype.printLoop = function printLoop() {
         if (!this.runCommand(line)) {
             if (/^\s*#/.test(line)) {
                 if (this.temps.fakeChoiceEnd) {
+                    this.rollbackLineCoverage();
                     this.lineNum = this.temps.fakeChoiceEnd;
+                    this.rollbackLineCoverage();
                     delete this.temps.fakeChoiceEnd;
                     continue;
                 } else {
