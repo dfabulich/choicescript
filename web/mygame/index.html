@@ -1,5 +1,5 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-"http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+            "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <!--
 Copyright 2010 by Dan Fabulich.
@@ -62,6 +62,17 @@ if (!isWeb && window.isIosApp) {
   // Use UIWebView width, not screen width, on iPad
   +"<meta name = 'viewport' content = 'width = "+window.innerWidth+"'>"
   ); 
+  window.addEventListener("resize", function() {
+      document.querySelector("meta[name=viewport]").setAttribute("content", "width="+window.innerWidth);
+      // this dummy element seems to be required to get the viewport to stick
+      var dummy = document.createElement("p");
+      dummy.innerHTML = "&nbsp;";
+      document.body.appendChild(dummy);
+      window.setTimeout(function() {document.body.removeChild(dummy)}, 10);
+    }, false);
+}
+if (isWeb) {
+  document.write("<style>label:hover {background-color: rgba(153,136,119,0.2);}</style>");
 }
 var rootDir = "../";
 </script>
@@ -81,7 +92,7 @@ if (isWeb) {
 <div id="header"><h1 class="gameTitle">My First ChoiceScript Game</h1>
   <p>
       <!-- INSERT uncomment about links here
-      <a href="http://www.choiceofgames.com/about.html" class="spacedLink">About</a>
+      <a href="http://www.choiceofgames.com/about-us/" class="spacedLink">About</a>
       <a href="../credits.html" class="spacedLink">Credits</a>
       <a href="http://www.choiceofgames.com/" class="spacedLink">More Games</a>
       <a href="http://www.choiceofgames.com/blog" class="spacedLink">Blog</a> -->
@@ -93,7 +104,7 @@ if (isWeb) {
         <a href="http://www.facebook.com/sharer.php?u=http://www.choiceofgames.com/broadsides/&amp;t=Multiple+Choice+Navy+Game+|+Choice+of+Broadsides"
         onclick="if (window.isFile) return true; window.open(&quot;http://www.facebook.com/sharer.php?u=http://www.choiceofgames.com/broadsides/&amp;t=Multiple+Choice+Navy+Game+|+Choice+of+Broadsides&quot;,&quot;sharer&quot;,&quot;toolbar=0,status=0,width=626,height=436&quot;);return false;" class="spacedLink">Facebook</a></span>
         <span><img height="16" width="16" src="../icons/twitter.ico">
-        <a href="http://twitter.com/home?status=Check+out+&quot;Choice+of+Broadsides&quot;+http://bit.ly/choiceofbroadsides+from+@choiceofgames" class="spacedLink">Twitter</a></span>
+        <a href="https://twitter.com/intent/tweet?related=choiceofgames&text=Awesome+game%3A+Choice+of+Broadsides&url=http%3A%2F%2Fwww.choiceofgames.com/broadsides/&via=choiceofgames" class="spacedLink">Twitter</a></span>
       </span> -->
     </p>
   <p><button id="statsButton" onclick="showStats()">Show Stats</button></p>
@@ -106,7 +117,7 @@ if (isWeb) {
 <div id="mobileLinks" class="webOnly">
   <!-- INSERT fixed links
   <p class="mobileBadges">
-    <a class='spacedLink' id='iphoneLink' href='http://itunes.com/apps/choiceofgames/choiceofbroadsides'><img src='../icons/appstore.png' style='height: 3em;'></a>
+    <a class='spacedLink' id='iphoneLink' href='http://itunes.apple.com/us/app/choice-of-broadsides/id365660770'><img src='../icons/appstore.png' style='height: 3em;'></a>
     <a class='spacedLink' id='androidLink' href='https://market.android.com/details?id=com.choiceofgames.broadsides'><img src='../icons/droid.png' style='height: 3em;'></a>
     <a class='spacedLink' id='palmLink' href='http://developer.palm.com/appredirect/?packageid=com.choiceofgames.broadsides'><img src='../icons/palm-appbutton-bypetermathis.png' style='height: 3em;'></a>
   </p>

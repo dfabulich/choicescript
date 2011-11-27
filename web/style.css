@@ -28,6 +28,7 @@ table {
 
 .leftStatName {
     text-align: right;
+    font-weight: bold;
 }
 .definition {
     font-weight: normal;
@@ -41,6 +42,7 @@ table {
 }
 .rightStatName {
     text-align: left;
+    font-weight: bold;
 }
 .rightStatBar {
     width: 10em;
@@ -64,9 +66,6 @@ label{
     border-width: 1px 1px 0px 1px
 }
 
-label:hover {
-  background-color: rgba(153,136,119,0.2);;
-}
 .firstChild{
     border-top-width:1px;
     -webkit-border-top-right-radius:8px;
@@ -99,6 +98,17 @@ label:hover {
     font-size:25px;
     font-weight:bolder;
     margin-bottom: 16px; /* reset button margin */
+    -webkit-appearance: none; /* Safari, don't override my CSS styles */
+    color: rgba(247, 244, 241, 1); /* Match background color */ 
+    background-color: rgba(0, 0, 0, 0.6);
+    border: none;
+    -webkit-border-radius: 0.5em;
+    -moz-border-radius: 0.5em;
+    padding: 6px;
+}
+
+.next:hover {
+  color: rgba(228,222,216, 1);
 }
 
 h1 {
@@ -132,7 +142,7 @@ h2 {
 }
 
 #sharelist li {
-  margin-bottom: 1em; /* Don't let the links bunch up; -bottom to eliminate leading space before share links */
+  line-height: 1cm; /* Don't let the links bunch up */
 }
 
 #greybackground {
@@ -179,7 +189,7 @@ h2 {
   clear: both;
 }
 
-@media only screen and (max-device-width: 480px) {
+@media only screen and (max-width: 480px) {
   .definition{
     display: none;
   }
