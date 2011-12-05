@@ -1,4 +1,19 @@
-load(arguments[0]);
+with(this) {
+var isRhino;
+if (typeof java == "undefined") {
+	isRhino = false;
+	var fs = require('fs');
+	var args = process.argv;
+	args.shift();
+	args.shift();
+	var contents = fs.readFileSync(args[0], "utf-8");
+	eval(contents);
+	print = console.log;
+} else {
+	isRhino = true;
+	args = arguments;
+	load(args[0]);
+}
 
 QUnit.init();
 QUnit.config.blocking = false;
@@ -32,13 +47,21 @@ QUnit.done = function(results) {
 	finalResults = results;
 }
 
-for (var i = 1; i < arguments.length; i++) {
-	load(arguments[i]);
+for (var i = 1; i < args.length; i++) {
+	if (isRhino) {
+		load(args[i]);
+	} else {
+		var contents = fs.readFileSync(args[i], 'utf-8');
+		eval(contents);
+	}
+	
 }
 
 if (finalResults.failed) {
 	print(finalResults.failed, "FAILED out of", finalResults.total, "total");
-	java.lang.System.exit(1);
+	isRhino ? java.lang.System.exit(1) : process.exit(1);
 } else {
 	print(finalResults.total, "PASSED");
+}
+
 }

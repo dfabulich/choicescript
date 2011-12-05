@@ -29,13 +29,30 @@ either express or implied.
     <echo file="web/version.js">window.version="${revision}"</echo>
   </target>
   
-  <target name="rhino">
+  <target name="check-node" unless="skipNode">
+    <exec taskName="node" executable="node" resultproperty="exitCode" failIfExecutionFails="false">
+      <arg value="--version" />
+    </exec>
+    <condition property="hasNode">
+      <equals arg1="${exitCode}" arg2="0" />
+    </condition>
+  </target>
+
+  <target name="node" depends="check-node" if="hasNode">
+    <presetdef name="rhino">
+      <exec taskName="node" failonerror="true" executable="node" />
+    </presetdef>
+    <property name="gen.dir" location="${basedir}/web/mygame/scenes" />
+    <property name="test.dir" location="${basedir}/tests" />
+  </target>
+
+  <target name="rhino" depends="node" unless="hasNode">
     <condition property="rhinoClass" value="org.mozilla.javascript.tools.debugger.Main">
       <isset property="debug" />
     </condition>
     <property name="rhinoClass" value="org.mozilla.javascript.tools.shell.Main"/>
     <presetdef name="rhino">
-      <java failonerror="true" classpath="js.jar" classname="${rhinoClass}">
+      <java failonerror="true" classpath="js.jar" classname="${rhinoClass}" fork="true">
         <arg line="-w -opt -1 -debug"/>
       </java>
     </presetdef>
@@ -44,7 +61,7 @@ either express or implied.
   </target>
   
   <target name="unittest-core" depends="rhino">
-    <rhino fork="true">
+    <rhino>
       <arg file="${test.dir}/suite.js" />
       <arg file="${test.dir}/qunit.js" />
       <arg file="${basedir}/web/scene.js" />
@@ -56,7 +73,7 @@ either express or implied.
   </target>
   
   <target name="unittest-util" depends="rhino">
-    <rhino fork="true">
+    <rhino>
       <arg file="${test.dir}/suite.js" />
       <arg file="${test.dir}/qunit.js" />
       <arg file="${basedir}/web/scene.js" />
@@ -68,7 +85,7 @@ either express or implied.
   </target>
 
   <target name="unittest-autotest" depends="rhino">
-    <rhino fork="true">
+    <rhino>
       <arg file="${test.dir}/suite.js" />
       <arg file="${test.dir}/qunit.js" />
       <arg file="${basedir}/web/scene.js" />
@@ -80,7 +97,7 @@ either express or implied.
   </target>
   
   <target name="unittest-xmltranslator" depends="rhino">
-    <rhino fork="true">
+    <rhino>
       <arg file="${test.dir}/suite.js" />
       <arg file="${test.dir}/qunit.js" />
       <arg file="${basedir}/web/scene.js" />
@@ -99,33 +116,37 @@ either express or implied.
     <property name="game" value="mygame" />
     <property name="output" value="randomtest-output.txt" />
     <echo>Executing randomtest, writing to ${output}</echo>
-    <java fork="true" failonerror="true" classpath="js.jar" classname="${rhinoClass}" output="${output}">
+    <rhino output="${output}">
       <arg value="randomtest.js" />
       <arg value="${num}" />
       <arg value="${game}" />
-    </java>
+    </rhino>
   </target>
   
   <target name="autotest" depends="quicktest" />
   
   <target name="quicktest" depends="rhino">
     <property name="vig" value="" />
-    <rhino fork="true">
+    <rhino>
       <arg value="autotest.js"/>
       <arg value="${vig}" />
     </rhino>
   </target>
   
   <target name="generator" depends="rhino">
-    <rhino fork="true">
-      <arg file="generator.js"/>
+    <condition property="scriptSuffix" value="Node">
+      <isset property="hasNode" />
+    </condition>
+    <property name="scriptSuffix" value="" />
+    <rhino>
+      <arg file="generator${scriptSuffix}.js"/>
       <arg value="${gen.dir}" />
     </rhino>
   </target>
   
   <target name="xmltranslator" depends="rhino">
     <property name="vig" value="" />
-    <rhino fork="true">
+    <rhino>
       <arg file="xmltranslator.js"/>
       <arg value="${gen.dir}" />
       <arg value="${vig}" />

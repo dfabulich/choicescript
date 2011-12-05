@@ -17,13 +17,32 @@
  * either express or implied.
  */
 var gameName = "mygame";
-if (arguments[1]) gameName = arguments[1];
-load("web/scene.js");
-load("web/navigator.js");
-load("web/util.js");
-load("headless.js");
-load("seedrandom.js");
-load("web/"+gameName+"/"+"mygame.js");
+var args;
+if (typeof java == "undefined") {
+  args = process.argv;
+  args.shift();
+  args.shift();
+  var fs = require('fs');
+  var path = require('path');
+  eval(fs.readFileSync("web/scene.js", "utf-8"));
+  eval(fs.readFileSync("web/navigator.js", "utf-8"));
+  eval(fs.readFileSync("web/util.js", "utf-8"));
+  eval(fs.readFileSync("headless.js", "utf-8"));
+  eval(fs.readFileSync("seedrandom.js", "utf-8"));
+  eval(fs.readFileSync("web/"+gameName+"/"+"mygame.js", "utf-8"));
+  function print(str) {
+    console.log(str);
+  }
+} else {
+  args = arguments;  
+  load("web/scene.js");
+  load("web/navigator.js");
+  load("web/util.js");
+  load("headless.js");
+  load("seedrandom.js");
+  load("web/"+gameName+"/"+"mygame.js");
+}
+if (args[1]) gameName = args[1];
 
 Math.seedrandom(1);
 
@@ -267,7 +286,7 @@ var sceneNames = [];
 nav.setStartingStatsClone(stats);
 
 var iterations = 10000;
-if (arguments[0]) iterations = arguments[0];
+if (args[0]) iterations = args[0];
 for (i = 0; i < iterations; i++) {
   log("*****" + i);
   timeout = null;

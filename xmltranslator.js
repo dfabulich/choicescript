@@ -1,8 +1,27 @@
+var isRhino;
+if (typeof java == "undefined") {
+  isRhino = false;
+  var fs = require('fs');
+  var path = require('path');
+  var args = process.argv;
+  args.shift();
+  args.shift();
+  print = console.log;
+} else {
+  isRhino = true;
+  var args = arguments;
+}
 if (typeof xmlTranslatorTestOverride == "undefined") {
-  var dir = arguments[0] || "web/mygame/scenes";
-  load("web/scene.js");
-  load("web/util.js");
-  load("headless.js");
+  var dir = args[0] || "web/mygame/scenes";
+  if (isRhino) {
+    load("web/scene.js");
+    load("web/util.js");
+    load("headless.js");
+  } else {
+    eval(fs.readFileSync("web/scene.js", "utf-8"));
+    eval(fs.readFileSync("web/util.js", "utf-8"));
+    eval(fs.readFileSync("headless.js", "utf-8"));
+  }
 }
 
 var writer;
@@ -473,10 +492,18 @@ XmlScene.prototype.stat_chart = function xmlStatChart() {
   writer.write("</stat-chart>\n");
 }
 
-if (arguments[1]) {
-  list = [new java.io.File(dir, arguments[1] + ".txt")];
+if (args[1]) {
+  if (isRhino) {
+    list = [new java.io.File(dir, args[1] + ".txt")];
+  } else {
+    list = [dir + '/' + args[1] + ".txt"];
+  }
 } else if (true) {
-  var list = new java.io.File(dir).listFiles();
+  if (isRhino) {
+    var list = new java.io.File(dir).listFiles();
+  } else {
+    var list = fs.readdirSync(dir);
+  }
 } else {
   load("web/navigator.js");
   load("web/mygame/mygame.js");
@@ -494,25 +521,40 @@ if (typeof xmlTranslatorTestOverride != "undefined") {
   xmlTranslatorTestOverride();
 } else {
   var i = list.length;
-  var translatorLastModified = new java.io.File("xmltranslator.js").lastModified();
+  var translatorLastModified = fileLastMod("xmltranslator.js");
   while (i--) {
-    if (/(menu|hello)/.test(list[i].getName())) continue;
-    if (!/\.txt$/.test(list[i].getName())) continue;
-    var inputMod = list[i].lastModified();
+    var fileName;
+    var filePath;
+    if (isRhino) {
+      fileName = list[i].getName();
+      filePath = list[i].getAbsolutePath();
+    } else {
+      fileName = list[i];
+      filePath = dir + "/" + list[i];
+    }
+    if (/(menu|hello)/.test(fileName)) continue;
+    if (!/\.txt$/.test(fileName)) continue;
+    var inputMod = fileLastMod(filePath);
     if (inputMod < translatorLastModified) inputMod = translatorLastModified;
-    var dir = "./xml/";
-    new java.io.File(dir).mkdirs();
-    var outputFilePath = dir + list[i].getName() + ".xml";
-    var outputMod = new java.io.File(outputFilePath).lastModified();
+    var outputDir = "./xml/";
+    mkdirs(dir);
+    var outputFilePath = outputDir + fileName + ".xml";
+    var outputMod = fileLastMod(outputFilePath);
     if (inputMod <= outputMod) {
       print(list[i] + " up to date");
       continue;
     }
     print(list[i]);
-    var str = slurpFile(list[i]);
+    var str = slurpFile(filePath);
     var scene = new XmlScene();
     scene.loadLines(str);
-    var writer = new java.io.BufferedWriter(new java.io.OutputStreamWriter(new java.io.FileOutputStream(outputFilePath), "UTF-8"));
+    var writer;
+    if (isRhino) {
+      writer = new java.io.BufferedWriter(new java.io.OutputStreamWriter(new java.io.FileOutputStream(outputFilePath), "UTF-8"));
+    } else {
+      writer = fs.createWriteStream(outputFilePath, {flags: 'w', encoding: 'utf-8', mode: 0666});
+    }
+    
     //writer = {write: function(x){java.lang.System.out.print(x)}, close: function(){java.lang.System.out.println()}};
     writer.write("<!DOCTYPE vignette [ \n" + 
   			"<!ATTLIST label id ID #REQUIRED>\n" + 
@@ -521,7 +563,12 @@ if (typeof xmlTranslatorTestOverride != "undefined") {
     scene.execute();
     closePara();
     writer.write("</vignette>\n");
-    writer.close();
+    if (isRhino) {
+      writer.close();
+    } else {
+      writer.end();
+    }
+    
     //throw new Error("halt");
   }
 }
