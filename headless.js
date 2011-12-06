@@ -71,20 +71,22 @@ function mkdirs(filePath) {
     }
 }
 
-function slurpFile(name) {
-    return slurpFileLines(name).join('\n');
+function slurpFile(name, throwOnError) {
+    return slurpFileLines(name, throwOnError).join('\n');
 }
 
-function slurpFileLines(name) {
+function slurpFileLines(name, throwOnError) {
     if (isRhino) {
         var lines = [];
         var reader = new java.io.BufferedReader(new java.io.InputStreamReader(new java.io.FileInputStream(name), "UTF-8"));
-        var line = reader.readLine();
-        // strip byte order mark
-        if (line.charCodeAt(0) == 65279) line = line.substring(1);
-        lines.push(line);
-        while (line = reader.readLine()) {
-          lines.push(line);
+        var line;
+        for (var i = 0; line = reader.readLine(); i++) {
+            if (i == 0 && line.charCodeAt(0) == 65279) line = line.substring(1);
+            if (throwOnError) {
+                var invalidCharacter = line.match(/^(.*)\ufffd/);
+                if (invalidCharacter) throw new Error("line " + (i+1) + ": invalid character. Is this text Unicode?\n" + invalidCharacter[0]);
+            }
+            lines.push(line);
         }
         return lines;
     } else {
@@ -93,6 +95,13 @@ function slurpFileLines(name) {
         var firstLine = lines[0]
         // strip byte order mark
         if (firstLine.charCodeAt(0) == 65279) line[0] = firstLine.substring(1);
+        if (throwOnError) {
+            for (var i = 0; i < lines.length; i++) {
+                var line = lines[i];
+                var invalidCharacter = line.match(/^(.*)\ufffd/);
+                if (invalidCharacter) throw new Error("line " + (i+1) + ": invalid character. Is this text Unicode?\n" + invalidCharacter[0]);
+            }
+        }
         return lines;
     }
 }

@@ -98,7 +98,7 @@ for (var i = 0; i < list.length; i++) {
   print(list[i]);
   if (isRhino) java.lang.Thread.sleep(100); // sleep to allow print statements to flush :-(
   verifyFileName(list[i]);
-  var sceneText = slurpFile("web/"+gameName+"/scenes/"+list[i]+".txt");
+  var sceneText = slurpFile("web/"+gameName+"/scenes/"+list[i]+".txt", true /*throwOnError*/);
   window = {console: {log: function(msg) { print(msg); } }};
   try {
     uncovered = autotester(sceneText, nav, list[i])[1];
