@@ -44,7 +44,9 @@ if (typeof java == "undefined") {
 }
 if (args[1]) gameName = args[1];
 
-Math.seedrandom(1);
+var randomSeed = args[2] || 1;
+
+Math.seedrandom(randomSeed);
 
 var hardCodedRandomness = null; //[1, 1, 2, 1, 3, 3, 1, 1, 2, 5, 3, 1, 1, 2, 5, 1, 3, 3, 2, 2, 1, 2, 3, 2, 3, 1, 4, 5, 2, 3, 3, 2, 1, 1, 2, 2, 1, 1, 2, 3, ];
 function randomIndex(len) {
