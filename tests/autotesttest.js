@@ -222,3 +222,25 @@ test("afterFakeChoice", function() {
   ;
   autotestScene(scene,  [1,1,1,1,1,1,0]);
 })
+test("ifInChoiceMistakenForRealIf", function() {
+  var scene = ""
+    +"\n*choice"
+    +"\n  #One"
+    +"\n    One"
+    +"\n    *choice"
+    +"\n      #A"
+    +"\n        A"
+    +"\n        *if false"
+    +"\n          impossibleA"
+    +"\n          *finish"
+    +"\n      *if false"
+    +"\n        #B"
+    +"\n          impossibleB"
+    +"\n          *finish"
+    +"\n  #Two"
+    +"\n    Two"
+    +"\n    *finish"
+  ;
+  debugger;
+  raises(function() {autotester(scene)}, null, "Fall out of *choice statement");
+})

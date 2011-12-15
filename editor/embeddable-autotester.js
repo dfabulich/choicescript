@@ -146,6 +146,11 @@ function autotester(sceneText, nav, sceneName) {
           // else statements will have been covered by the "false" clones
           // but the fact that we're here means we must have fallen into an *else
           return this.oldRunCommand(line);
+        } else if (seenInChoice[this.lineNum]) {
+          // this is probably a case where we're falling out of an #option block
+          // but the subsequent #option is *if conditional. Running the old
+          // command will correctly raise an error.
+          return this.oldRunCommand(line);
         } else {
           //log("overcovered " + (this._lineNum+1) + " " + coverage[this._lineNum]);
           return this.finish();
@@ -210,6 +215,7 @@ function autotester(sceneText, nav, sceneName) {
   }
 
   if (!Scene.prototype.oldIf) Scene.prototype.oldIf = Scene.prototype["if"];
+  var seenInChoice = {};
   Scene.prototype["if"] = function test_if(line, inChoice) {
     // Does the expression evaluate to a boolean?
     var stack = this.tokenizeExpr(line);
@@ -219,6 +225,7 @@ function autotester(sceneText, nav, sceneName) {
     }
     
     if (inChoice) {
+      seenInChoice[this.lineNum] = 1;
       this.oldIf("true");
       return;
     }
