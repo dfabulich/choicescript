@@ -144,6 +144,15 @@ XmlScene.prototype.share_this_game = function xmlShareThisGame(data) {
   printElement("share-this-game");
 }
 
+XmlScene.prototype.link = function xmlLink(data) {
+  var result = /^(\S+)\s*(.*)/.exec(data);
+  if (!result) throw new Error(this.lineMsg() + "invalid line; this line should have an URL: " + data);
+  var href = result[1];
+  var anchorText = trim(result[2]) || href;
+  closePara();
+  writer.write("<link href='"+href+"'>"+anchorText+"</link>\n");
+}
+
 XmlScene.prototype.restore_game = function xmlRestoreGame() {
   unrestorables = this.parseRestoreGame();
   closePara();
