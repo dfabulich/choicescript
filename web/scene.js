@@ -1021,6 +1021,18 @@ Scene.prototype.image = function image(data) {
     printImage(source, alignment);
 }
 
+// *link
+// Display URL with anchor text
+Scene.prototype.link = function link(data) {
+    var result = /^(\S+)\s*(.*)/.exec(data);
+    if (!result) throw new Error(this.lineMsg() + "invalid line; this line should have an URL: " + data);
+    var href = result[1];
+    var anchorText = trim(result[2]) || href;
+    printLink(this.target, href, anchorText);
+    this.prevLineEmpty = false;
+    this.screenEmpty = false;
+}
+
 // how many spaces is this line indented?
 Scene.prototype.getIndent = function getIndent(line) {
     if (line == null) return 0;
@@ -2223,5 +2235,5 @@ Scene.validCommands = {"comment":1, "goto":1, "gotoref":1, "label":1, "looplimit
     "page_break":1, "line_break":1, "script":1, "else":1, "elseif":1, "elsif":1, "reset":1,
     "goto_scene":1, "fake_choice":1, "input_text":1, "ending":1, "share_this_game":1, "stat_chart":1
     ,"subscribe":1, "show_password":1, "gosub":1, "return":1, "hide_reuse":1, "disable_reuse":1, "allow_reuse":1
-    ,"restore_game":1,"save_game":1,"image":1
+    ,"restore_game":1,"save_game":1,"image":1,"link":1
     };

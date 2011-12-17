@@ -249,6 +249,14 @@ function printButton(name, parent, isSubmit, code) {
   return button;
 }
 
+function printLink(target, href, anchorText) {
+  if (!target) target = document.getElementById('text');
+  var link = document.createElement("a");
+  link.setAttribute("href", href);
+  link.appendChild(document.createTextNode(anchorText));
+  target.appendChild(link);
+}
+
 function getPassword(target, code) {
   if (!target) target = document.getElementById('text');
   var textArea = document.createElement("textarea");
