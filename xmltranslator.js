@@ -82,6 +82,22 @@ function printElement(tagName, attributeName, data) {
   writer.write("/>\n");
 }
 
+XmlScene.prototype.image = function xmlImage(data) {
+  var parts = data.split(" ");
+  if (parts.length > 2) throw new Error(this.lineMsg() + "Couldn't parse image name/alignment: " + data);
+  var alignment = parts[1]; // TODO do something with alignment
+  var parts = parts[0].split(".");
+  if (parts.length != 2) throw new Error(this.lineMsg() + "Couldn't parse image name: " + data);
+  var imageName = parts[0];
+  var imageType = parts[1];
+  closePara();
+  writer.write("<image name='");
+  writer.write(imageName);
+  writer.write("' type='");
+  writer.write(imageType);
+  writer.write("'/>\n");
+}
+
 XmlScene.prototype.page_break = function xmlPageBreak(data) {
   printElement("page-break", "text", data);
 }
@@ -126,6 +142,32 @@ XmlScene.prototype.ending = function xmlEnding(data) {
 
 XmlScene.prototype.share_this_game = function xmlShareThisGame(data) {
   printElement("share-this-game");
+}
+
+XmlScene.prototype.restore_game = function xmlRestoreGame() {
+  unrestorables = this.parseRestoreGame();
+  closePara();
+  writer.write("<restore-game>");
+  for (var episode in unrestorables) {
+    writer.write("<scene name='"+episode+"'>")
+    writer.write(xmlEscape(unrestorables[episode], false));
+    writer.write("</scene>");
+  }
+  writer.write("</restore-game>\n");
+}
+
+XmlScene.prototype.save_game = function xmlSaveGame() {
+  printElement("save-game");
+}
+
+XmlScene.prototype.show_password = function xmlShowPassword(data) {
+  closePara();
+  printElement("paragraph-break");
+  printx("Please name your saved game below:");
+  printElement("temp", "variable", "saved_game_name");
+  printElement("input-text", "variable", "saved_game_name");
+  closePara();
+  this.save_game("saved_game_name");
 }
 
 XmlScene.prototype.subscribe = function xmlSubscribe(data) {
