@@ -66,8 +66,8 @@ function showStats() {
       p.appendChild(restartLink);
       var text = document.getElementById('text');
       text.appendChild(p);
-      
-      printButton(buttonName || "Next", text, false, function() {
+
+      printButton(buttonName || "Next", main, false, function() {
           window.stats.scene = currentScene;
           window.showingStatsAlready = false;
           document.getElementById("statsButton").style.display = "inline";
@@ -81,6 +81,19 @@ function callIos(scheme, path) {
   if (!window.isIosApp) return;
   if (!path) path = "";
   window.location = scheme + "://" + path;
+}
+
+function asyncAlert(message, callback) {
+  if (false/*window.isIosApp*/) {
+    // TODO asyncAlert
+    window.alertCallback = callback;
+    callIos("alert", message)
+  } else {
+    setTimeout(function() {
+      alert(message);
+      if (callback) callback();
+    }, 0);
+  }
 }
 
 function clearScreen(code) {
@@ -147,20 +160,22 @@ function printImage(source, alignment) {
   document.getElementById("text").appendChild(img);
 }
 
-function printShareLinks() {
+function printShareLinks(target) {
+  if (!target) target = document.getElementById('text');
+  var msgDiv = document.createElement("div");
   if (window.isIosApp) {
-    var button = printButton("Share This Game", document.getElementById('text'), false, 
-      function() { 
-        safeCall(self, function() {
-            callIos("share");
-        });
-      }
-    );
-
-    setClass(button, "");
+    var button = document.createElement("button");
+    button.appendChild(document.createTextNode("Share This Game"));
+    button.onclick = function() {
+      callIos("share");
+    };
+    msgDiv.appendChild(button);
+    msgDiv.appendChild(document.createElement("br")); // insert our own paragraph break, to match <ul>
+    msgDiv.appendChild(document.createElement("br"));
+    target.appendChild(msgDiv);
     return;
   }
-  var msgDiv = document.createElement("div");
+  
   var mobileMesg = "";
   if (isMobile && isFile) {
     if (/Android/.test(navigator.userAgent)) {
@@ -220,12 +235,166 @@ function printShareLinks() {
   msgDiv.innerHTML = "<ul id='sharelist'>\n"+
     mobileMesg+
     shareLinkText+
-    "</ul>\n";
-  main.appendChild(msgDiv);
+    "</ul><br>\n"; // just one line break; <ul> provides its own
+  target.appendChild(msgDiv);
 }
 
 function subscribe() {
-  window.location.href = "mailto:subscribe-"+window.storeName+"@choiceofgames.com?subject=Sign me up&body=Please notify me when the next game is ready."
+    window.location.href = "mailto:subscribe-"+window.storeName+"@choiceofgames.com?subject=Sign me up&body=Please notify me when the next game is ready."
+
+}
+// Callback expects a map from product ids to booleans
+function checkPurchase(products, callback) {
+  if (window.isIosApp) {
+    window.checkPurchaseCallback = callback;
+    callIos("checkpurchase", products);
+  } else if (window.isAndroidApp) {
+    window.checkPurchaseCallback = callback;
+    androidBilling.checkPurchase(products);
+  } else {
+    var productList = products.split(/,/);
+    var purchases = {};
+    for (var i = 0; i < productList.length; i++) {
+      purchases[productList[i]] = true;
+    }
+    purchases.billingSupported = false;
+    setTimeout(function() {callback(purchases)}, 0);
+  }
+}
+
+function isRestorePurchasesSupported() {
+  return !!window.isIosApp;
+}
+
+function restorePurchases(callback) {
+  if (window.isIosApp) {
+    window.restoreCallback = callback;
+    callIos("restorepurchases");
+  } else {
+    setTimeout(callback, 0);
+  }
+}
+// Callback expects a localized string, or "", or "free", or "guess"
+function getPrice(product, callback) {
+  if (window.isIosApp) {
+    window.priceCallback = callback;
+    callIos("price", product);
+  } else if (window.isAndroidApp) {
+      // TODO: support android price localization?
+    setTimeout(function () {
+      callback.call(this, "guess");
+    }, 0);
+  } else {
+    setTimeout(function () {
+      callback.call(this, "$1");
+    }, 0);
+  }
+}
+// Callback expects no args, but should only be called on success
+function purchase(product, callback) {
+  var purchaseCallback = function() {
+    window.purchaseCallback = null;
+    callback();
+  }
+  if (window.isIosApp) {
+    window.purchaseCallback = purchaseCallback;
+    callIos("purchase", product);
+  } else if (window.isAndroidApp) {
+    window.purchaseCallback = purchaseCallback;
+    androidBilling.purchase(product);
+  } else {
+    setTimeout(callback, 0);
+  }
+}
+
+function isFullScreenAdvertisingSupported() {
+  return window.isIosApp || window.isAndroidApp;
+}
+
+function showFullScreenAdvertisement(callback) {
+  if (window.isIosApp) {
+    callIos("advertisement");
+    setTimeout(callback, 0);
+  } else if (window.isAndroidApp && window.mobclixBridge) {
+    mobclixBridge.displayFullScreenAdvertisement();
+    setTimeout(callback, 0);
+  } else {
+    setTimeout(callback, 0);
+  }
+}
+
+function showTicker(target, endTimeInSeconds, finishedCallback, skipCallback) {
+  if (!target) target = document.getElementById('text');
+  var div = document.createElement("div");
+  target.appendChild(div);
+  var timerDisplay = document.createElement("div");
+  div.appendChild(timerDisplay);
+  var timer;
+
+  var defaultStatsButtonDisplay = document.getElementById("statsButton").style.display;
+  document.getElementById("statsButton").style.display = "none";
+
+
+  if (endTimeInSeconds > Math.floor(new Date().getTime() / 1000)) {
+    if (window.isAndroidApp) {
+      notificationBridge.scheduleNotification(endTimeInSeconds);
+    } else if (window.isIosApp) {
+      callIos("schedulenotification", endTimeInSeconds);
+    }
+  }
+  
+  function cleanUpTicker() {
+    window.tickerRunning = false;
+    if (window.isAndroidApp) {
+      notificationBridge.cancelNotification();
+    } else if (window.isIosApp) {
+      callIos("cancelnotifications");
+    }
+    clearInterval(timer);
+    document.getElementById("statsButton").style.display = defaultStatsButtonDisplay;
+  }
+
+  function formatSecondsRemaining(secondsRemaining, forceMinutes) {
+    if (!forceMinutes && secondsRemaining < 60) {
+      return ""+secondsRemaining+"s";
+    } else {
+      var minutesRemaining = Math.floor(secondsRemaining / 60);
+      if (minutesRemaining < 60) {
+        var remainderSeconds = secondsRemaining - minutesRemaining * 60;
+        return ""+minutesRemaining+"m " + formatSecondsRemaining(remainderSeconds);
+      } else {
+        var hoursRemaining = Math.floor(secondsRemaining / 3600);
+        var remainderSeconds = secondsRemaining - hoursRemaining * 3600;
+        return ""+hoursRemaining+"h " + formatSecondsRemaining(remainderSeconds, true);
+      }
+    }
+  }
+
+  function tick() {
+    window.tickerRunning = true;
+    var tickerStillVisible = div.parentNode && div.parentNode.parentNode;
+    if (!tickerStillVisible) {
+      cleanUpTicker();
+      return;
+    }
+    var nowInSeconds = Math.floor(new Date().getTime() / 1000);
+    var secondsRemaining = endTimeInSeconds - nowInSeconds;
+    if (secondsRemaining >= 0) {
+      timerDisplay.innerHTML = "" + formatSecondsRemaining(secondsRemaining) + " seconds remaining";
+    } else {
+      cleanUpTicker();
+      div.innerHTML = "0s remaining";
+      if (finishedCallback) finishedCallback();
+    }
+  }
+
+  timer = setInterval(tick, 1000);
+  tick();
+
+  if (skipCallback) skipCallback(div, function() {
+    endTimeInSeconds = 0;
+    tick();
+  });
 }
 
 function printButton(name, parent, isSubmit, code) {
@@ -241,8 +410,15 @@ function printButton(name, parent, isSubmit, code) {
   }
   setClass(button, "next");
   if (code) button.onclick = function() {
-    callIos("freeze");
-    safeCall(null, code);
+    if (window.isIosApp) {
+      window.freezeCallback = function() {
+        window.freezeCallback = null;
+        code();
+      }
+      callIos("freeze");
+    } else {
+      safeCall(null, code);
+    }
   }
   if (!isMobile) try { button.focus(); } catch (e) {}
   parent.appendChild(button);
@@ -255,6 +431,61 @@ function printLink(target, href, anchorText) {
   link.setAttribute("href", href);
   link.appendChild(document.createTextNode(anchorText));
   target.appendChild(link);
+}
+
+function promptEmailAddress(target, defaultEmail, callback) {
+  if (!target) target = document.getElementById('text');
+  var form = document.createElement("form");
+  var self = this;
+  form.action="#";
+  
+  var message = document.createElement("div");
+  message.style.color = "red";
+  message.style.fontWeight = "bold";
+  form.appendChild(message);
+  
+  var input = document.createElement("input");
+  // This can fail on IE
+  try { input.type="email"; } catch (e) {}
+  input.name="email";
+  input.value=defaultEmail;
+  input.setAttribute("style", "font-size: 25px; width: 90%;");
+  form.appendChild(input);
+  target.appendChild(form);
+  println("", form);
+  println("", form);
+  printButton("Next", form, true);
+  
+  printButton("Cancel", target, false, function() {
+    callback(true);
+  });
+  
+  form.onsubmit = function(e) {
+    preventDefault(e);
+    safeCall(this, function() {
+      var email = trim(input.value);
+      if (!/^\S+@\S+\.\S+$/.test(email)) {
+        var messageText = document.createTextNode("Sorry, \""+email+"\" is not an email address.  Please type your email address again.");
+        message.innerHTML = "";
+        message.appendChild(messageText);
+      } else {
+        recordEmail(email, function() {
+          callback(false, email);
+        });
+      }
+    });
+  };
+  
+  setTimeout(function() {callIos("curl");}, 0);
+}
+
+function preventDefault(event) {
+  if (!event) event = window.event;
+  if (event.preventDefault) {
+    event.preventDefault();
+  } else {
+    event.returnValue = false;
+  }
 }
 
 function getPassword(target, code) {
@@ -352,7 +583,7 @@ window.onerror=function(msg, file, line) {
         body += "\nLoad time: " + window.loadTime;
         if (window.Persist) body += "\nPersist: " + window.Persist.type;
         body += "\n\n" + statMsg + "\n\nversion=" + window.version;
-        var supportEmail = "mailto:support+external@choiceofgames.com";
+        var supportEmail = "mailto:support-external@choiceofgames.com";
         try {
           supportEmail=document.getElementById("supportEmail").getAttribute("href");
           supportEmail=supportEmail.replace(/\+/g,"%2B");

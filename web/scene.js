@@ -215,7 +215,7 @@ Scene.prototype.loadScene = function loadScene(url) {
       try {
         xhr.send(null);
       } catch (e) {
-        if (window.location.protocol == "file:" && !window.isMobile && !window.storeName) {
+        if (window.location.protocol == "file:" && !window.isMobile) {
           if (/Chrome/.test(navigator.userAgent)) {
             window.onerror("We're sorry, Google Chrome has blocked ChoiceScript from functioning.  (\"file:\" URLs cannot "+
             "load files in Chrome.)  ChoiceScript works just fine in Chrome, but only on a published website like "+
@@ -521,6 +521,84 @@ Scene.prototype.goto_scene = function gotoScene(sceneName) {
     scene.execute();
 }
 
+Scene.prototype.restore_purchases = function scene_restorePurchases(data) {
+  var self = this;
+  var target = this.target;
+  if (!target) target = document.getElementById('text');
+  var button = printButton("Restore Purchases", target, false, 
+    function() { 
+      safeCall(self, function() {
+          restorePurchases(function() {
+            self["goto"](data);
+            self.finished = false;
+            self.resetPage();
+          });
+      });
+    }
+  );
+  
+  setClass(button, "");
+  this.prevLineEmpty = false;
+}
+
+Scene.prototype.check_purchase = function scene_checkPurchase(data) {
+  this.finished = true;
+  this.skipFooter = true;
+  var self = this;
+  checkPurchase(data, function(result) {
+    self.finished = false;
+    self.skipFooter = false;
+    result = result || {};
+    var products = data.split(/ /);
+    var everything = true;
+    for (var i = 0; i < products.length; i++) {
+      var purchasedProduct = result[products[i]] || false;
+      self.temps["choice_purchased_"+products[i]] = purchasedProduct;
+      if (!purchasedProduct) everything = false;
+    }
+    self.temps.choice_purchased_everything = everything;
+    self.temps.choice_purchase_supported = !!result.billingSupported;
+    self.execute();
+  });
+}
+
+Scene.prototype.purchase = function purchase_button(data) {
+  var result = /^(\w+)\s+(\S+)\s+(.*)/.exec(data);
+  if (!result) throw new Error(this.lineMsg() + "invalid line; can't parse purchaseable product: " + data);
+  var product = result[1];
+  var priceGuess = trim(result[2]);
+  var label = trim(result[3]);
+  this.finished = true;
+  this.skipFooter = true;
+  var self = this;
+  getPrice(product, function (price) {
+    if (!price || "free" == price) {
+      self["goto"](label);
+    } else {
+      if (price == "guess") price = priceGuess;
+      var target = self.target;
+      if (!target) target = document.getElementById('text');
+      var button = printButton("Buy It Now for " + price, target, false, 
+        function() { 
+          safeCall(self, function() {
+              purchase(product, function() {
+                safeCall(self, function() {
+                  self["goto"](label);
+                  self.finished = false;
+                  self.resetPage();
+                });
+              });
+          });
+        }
+      );
+      self.prevLineEmpty = false;
+      self.skipFooter = false;
+      self.finished = false;
+      self.execute();
+    }
+  });
+}
+
 // *abort
 // halt the scene in error(?)
 Scene.prototype.abort = Scene.prototype.finish;
@@ -548,6 +626,7 @@ Scene.prototype.getVar = function getVar(variable) {
     if (variable == "true") return true;
     if (variable == "false") return false;
     if (variable == "choice_subscribe_allowed") return true;
+    if (variable == "choice_restore_purchases_allowed") return isRestorePurchasesSupported();
     if (variable == "choice_save_allowed") return areSaveSlotsSupported();
     if ("undefined" === typeof this.temps[variable]) {
         if ("undefined" === typeof this.stats[variable]) {
@@ -1078,6 +1157,21 @@ Scene.prototype.comment = function comment(line) {
     if (this.debugMode) println("*comment " + line);
 }
 
+Scene.prototype.advertisement = function advertisement() {
+  if (isFullScreenAdvertisingSupported()) {
+    this.finished = true;
+    this.skipFooter = true;
+    
+    var self = this;
+    showFullScreenAdvertisement(function() {
+      self.finished = false;
+      self.skipFooter = false;
+      self.resetPage();
+    })
+  }
+  
+}
+
 // *looplimit 5
 // The number of times a given line is allowed to be accessed
 Scene.prototype.looplimit = function looplimit() {} // TODO looplimit
@@ -1287,7 +1381,7 @@ Scene.prototype.setref = function setref(line) {
 Scene.prototype.share_this_game = function share_links() {
   this.paragraph();
   printShareLinks();
-  this.prevLineEmpty = false;
+  this.prevLineEmpty = true; // printShareLinks provides its own paragraph break
 }
 
 Scene.prototype.ending = function ending() {
@@ -1327,32 +1421,101 @@ Scene.prototype.restore_game = function restore_game() {
   this.finished = true;
   this.skipFooter = true;
   var self = this;
-  getSaves(function(saveList) {
+  var unrestorableScenes = this.parseRestoreGame(false/*alreadyFinished*/);
+  function renderRestoreMenu(saveList, dirtySaveList) {
+    self.paragraph();
     var options = [];
     for (var i = 0; i < saveList.length; i++) {
       var save = saveList[i];
-      var date = new Date(save.saveDate*1);
+      var date = new Date(save.timestamp*1);
       if (!save) continue;
-      options.push({name:save.temps.choice_restore_name + " ("+simpleDateTimeFormat(date)+")", group:"choice", state:save});
+      var name = "";
+      if (save.temps && save.temps.choice_restore_name) name = save.temps.choice_restore_name;
+      options.push({name:name + " ("+simpleDateTimeFormat(date)+")", group:"choice", state:save});
     }
     options.push({name:"Restore using a password.", group:"choice", password:true});
+    options.push({name:"Retrieve saved games online from choiceofgames.com.", group:"choice", fetch:true});
+    if (dirtySaveList.length) options.push({name:"Upload saved games to choiceofgames.com.", group:"choice", upload:true});
     options.push({name:"Cancel.", group:"choice", cancel:true});
     var groups = [""];
     self.renderOptions(groups, options, function(option) {
-      self.lineNum--;
-      self.rollbackLineCoverage();
-      if (option.password) {
+      if (option.upload) {
+        clearScreen(function() {
+          fetchEmail(function(defaultEmail){
+            self.printLine("Please type your email address to identify yourself.");
+            promptEmailAddress(this.target, defaultEmail, function(cancel, email) {
+              if (cancel) {
+                self.finished = false;
+                self.resetPage();
+                return;
+              }
+              clearScreen(function() {
+                startLoading();
+                submitDirtySaves(dirtySaveList, email, function(ok) {
+                  doneLoading();
+                  self.prevLineEmpty = false; // Put some space between the message and the option list
+                  if (!ok) {
+                    self.printLine("Error uploading saves. Please try again later.");
+                    renderRestoreMenu(saveList, dirtySaveList);
+                  } else {
+                    var count = dirtySaveList.length + (dirtySaveList.length == 1 ? " save" : " saves")
+                    self.printLine("Uploaded " + count + ".");
+                    renderRestoreMenu(saveList, []);
+                  }
+                });
+              });
+            });
+          });
+        })
+      } else if (option.fetch) {
+        clearScreen(function() {
+          fetchEmail(function(defaultEmail){
+            self.printLine("Please type your email address to identify yourself.");
+            promptEmailAddress(this.target, defaultEmail, function(cancel, email) {
+              if (cancel) {
+                self.finished = false;
+                self.resetPage();
+                return;
+              }
+              clearScreen(function() {
+                startLoading();
+                getRemoteSaves(email, function (remoteSaveList) {
+                  doneLoading();
+                  self.prevLineEmpty = false;
+                  if (!remoteSaveList) {
+                    self.printLine("Error downloading saves. Please try again later.");
+                    renderRestoreMenu(saveList, dirtySaveList);
+                  } else {
+                    mergeRemoteSaves(remoteSaveList, function(saveList, newRemoteSaves, dirtySaveList) {
+                      if (!remoteSaveList.length) {
+                        self.printLine("No saves downloaded for email address \""+email+"\". (Is that the correct email address?) If you're having trouble, please contact support at support@choiceofgames.com.");
+                        renderRestoreMenu(saveList, dirtySaveList);
+                      } else {
+                        var downloadCount = remoteSaveList.length + " saved " + (remoteSaveList.length == 1 ? "game" : "games");
+                        var newCount = newRemoteSaves + " new saved " + (newRemoteSaves == 1 ? "game" : "games");
+                        self.printLine("Synchronized " + downloadCount + ". Downloaded " + newCount + ".");
+                        renderRestoreMenu(saveList, dirtySaveList);
+                      }
+                    });
+                  }
+                });
+              });
+            });
+          });
+        });
+      } else if (option.password) {
         clearScreen(function() {
           self.restore_password();
         });
       } else {
-        var unrestorableScenes = self.parseRestoreGame(true);
         if (option.cancel) {
           self.finished = false;
           self.resetPage();
         } else {
           var state = option.state;
-          var unrestorable = unrestorableScenes[state.stats.sceneName];
+          var sceneName = null;
+          if (state.stats && state.stats.sceneName) sceneName = (""+state.stats.sceneName).toLowerCase();
+          var unrestorable = unrestorableScenes[sceneName];
 
           if (unrestorable) {
             alert(unrestorable);
@@ -1363,14 +1526,17 @@ Scene.prototype.restore_game = function restore_game() {
           
           saveCookie(function() {
             clearScreen(function() {
-              var sceneName = null;
-              if (state.stats && state.stats.sceneName) sceneName = state.stats.sceneName;
               restoreGame(state, null, /*userRestored*/true);
             })
           }, "", state.stats, state.temps, state.lineNum, state.indent, this.debugMode, this.nav);
         }
       }
     });
+  };
+  getDirtySaveList(function(dirtySaveList) {
+    getSaves(function(saveList) {
+      renderRestoreMenu(saveList, dirtySaveList);
+    })
   });
 }
 
@@ -1409,8 +1575,10 @@ Scene.prototype.restore_password = function restore_password() {
       return;
     }
     
-    var unrestorable = unrestorableScenes[state.stats.sceneName];
+    var sceneName = null;
+    if (state.stats && state.stats.sceneName) sceneName = (""+state.stats.sceneName).toLowerCase();
     
+    var unrestorable = unrestorableScenes[sceneName];
     if (unrestorable) {
       alert(unrestorable);
       self.finished = false;
@@ -1420,9 +1588,8 @@ Scene.prototype.restore_password = function restore_password() {
     
     saveCookie(function() {
       clearScreen(function() {
-        var sceneName = null;
-        if (state.stats && state.stats.sceneName) sceneName = state.stats.sceneName;
-        restoreGame(state, null, /*userRestored*/true);
+        // we're going to pretend not to be user restored, so we get reprompted to save
+        restoreGame(state, null, /*userRestored*/false);
       })
     }, "", state.stats, state.temps, state.lineNum, state.indent, this.debugMode, this.nav);
   });
@@ -1430,6 +1597,11 @@ Scene.prototype.restore_password = function restore_password() {
 }
 
 Scene.prototype.parseRestoreGame = function parseRestoreGame(alreadyFinished) {
+    if (alreadyFinished) {
+      // if we're already finished, the printLoop bumped us an extra line ahead
+      this.lineNum--;
+      this.rollbackLineCoverage();
+    }
     // nextIndent: the level of indentation after the current line
     var nextIndent = null;
     var unrestorableScenes = {};
@@ -1474,25 +1646,110 @@ Scene.prototype.parseRestoreGame = function parseRestoreGame(alreadyFinished) {
         var error = trim(result[2]);
         unrestorableScenes[sceneName] = error;
     }
+    if (!alreadyFinished) {
+      this.lineNum--;
+      this.rollbackLineCoverage();
+    }
     return unrestorableScenes;
 }
 
-Scene.prototype.save_game = function save_game(line) {
+Scene.prototype.save_game = function save_game() {
   if (this.temps.choice_user_restored) return;
-  var stack = this.tokenizeExpr(line);
-  var name = this.evaluateExpr(stack);
-  var slot = "save" + new Date().getTime();
   var self = this;
-  self.finished = true;
-  self.skipFooter = true;
-  this.temps.choice_restore_name = name;
-  this.save(function() {
-    recordSave(slot, function() {
-      self.finished = false;
-      self.execute();
-    })
-  }, slot);
-  delete this.temps.choice_restore_name;
+  this.finished = true;
+  this.skipFooter = true;
+  fetchEmail(function(defaultEmail){
+    self.paragraph();
+    var form = document.createElement("form");
+    
+    form.action="#";
+
+    var message = document.createElement("div");
+    message.style.color = "red";
+    message.style.fontWeight = "bold";
+    form.appendChild(message);
+
+    var saveName = document.createElement("input");
+    saveName.type="text";
+    saveName.name="saveName";
+    saveName.setAttribute("style", "font-size: 25px; width: 90%;");
+    form.appendChild(saveName);
+
+    println("", form);
+    println("", form);
+    println("Please login to the choiceofgames.com save system with your email address below. We promise never to spam you.", form);
+
+    var emailInput = document.createElement("input");
+    // This can fail on IE
+    try { emailInput.type="email"; } catch (e) {}
+    emailInput.name="email";
+    emailInput.value=defaultEmail;
+    emailInput.setAttribute("style", "font-size: 25px; width: 90%;");
+    form.appendChild(emailInput);
+
+
+
+    var target = this.target;
+    if (!target) target = document.getElementById('text');
+    target.appendChild(form);
+    println("", form);
+    println("", form);
+    printButton("Next", form, true);
+
+    printButton("Cancel", target, false, function() {
+      clearScreen(function() {
+        self.finished = false;
+        self.prevLineEmpty = true;
+        self.screenEmpty = true;
+        self.execute();
+      });
+    });
+
+    form.onsubmit = function(e) {
+      preventDefault(e);
+      safeCall(this, function() {
+        var email = trim(emailInput.value);
+        if (!/^\S+@\S+\.\S+$/.test(email)) {
+          var messageText = document.createTextNode("Sorry, \""+email+"\" is not an email address.  Please type your email address again.");
+          message.innerHTML = "";
+          message.appendChild(messageText);
+        } else if (!trim(saveName.value)) {
+          var messageText = document.createTextNode("Please type a name for your saved game.");
+          message.innerHTML = "";
+          message.appendChild(messageText);
+        } else {
+          recordEmail(email, function() {
+            var slot = "save" + new Date().getTime();
+            self.temps.choice_restore_name = saveName.value;
+            clearScreen(function() {
+              self.save(function() {
+                recordSave(slot, function() {
+                  submitRemoteSave(slot, email, function(ok) {
+                    if (!ok) {
+                      asyncAlert("Couldn't upload your saved game to choiceofgames.com. You can try again later from the Restore menu.", function() {
+                        self.finished = false;
+                        self.prevLineEmpty = true;
+                        self.screenEmpty = true;
+                        self.execute();
+                      })
+                    } else {
+                      self.finished = false;
+                      self.prevLineEmpty = true;
+                      self.screenEmpty = true;
+                      self.execute();
+                    }
+                  });
+                })
+              }, slot);
+              delete self.temps.choice_restore_name;
+            });
+          });
+        }
+      });
+    };
+    
+    printFooter();
+  });
 }
 
 Scene.prototype.show_password = function show_password() {
@@ -1729,6 +1986,12 @@ Scene.prototype.deobfuscatePassword = function deobfuscatePassword(password) {
 
 Scene.prototype.stat_chart = function stat_chart() {
   var rows = this.parseStatChart();
+  var containsOpposedPair = false;
+  for (var i = 0; i < rows.length && !containsOpposedPair; i++) {
+    if (rows[i].type == "opposed_pair") {
+      containsOpposedPair = true;
+    }
+  }
   var textBuilder = ["<table class='statChart'>"];
   var barWidth = 10; /*em*/
   var barWidthOpposed = 5; /*em*/
@@ -1756,9 +2019,15 @@ Scene.prototype.stat_chart = function stat_chart() {
       // TODO security problem
       textBuilder.push(value);
     } else if (type == "percent") {
-      var statWidth = barWidth / 100 * value;
-      textBuilder.push("<td colspan='2'><div class='rightStatBar'><div style='width: "+
-        statWidth+"em;' class='leftStatBar'>&nbsp;"+value+"</div></div>");
+      if (containsOpposedPair) {
+        var statWidth = barWidthOpposed / 100 * value;
+        textBuilder.push("<td><div class='rightStatBarOpposed'><div style='width: "+
+          statWidth+"em;' class='leftStatBar'>&nbsp;"+value+"</div></div>");
+      } else {
+        var statWidth = barWidth / 100 * value;
+        textBuilder.push("<td><div class='rightStatBar'><div style='width: "+
+          statWidth+"em;' class='leftStatBar'>&nbsp;"+value+"</div></div>");
+      }
     } else if (type == "opposed_pair") {
       var statWidth = barWidthOpposed / 100 * value;
       textBuilder.push("<td><div class='rightStatBarOpposed'><div style='width: "+
@@ -1894,8 +2163,24 @@ Scene.prototype.parseStatChart = function parseStatChart() {
     return rows;
 }
 
-
-
+Scene.prototype.delay_break = function(durationInSeconds) {
+  this.finished = true;
+  this.skipFooter = true;
+  var target = this.target;
+  if (!target) target = document.getElementById('text');
+  var self = this;
+  delayBreakStart(function(delayStart) {
+    var endTimeInSeconds = durationInSeconds * 1 + delayStart * 1;
+    showTicker(target, endTimeInSeconds, function() {
+      printButton("Next", target, false, function() {
+        delayBreakEnd();
+        self.finished = false;
+        self.resetPage();
+      })
+    });
+    printFooter();
+  });
+}
 
 // *if booleanExpr
 // execute different code depending on whether the booleanExpr is true or false
@@ -2235,5 +2520,6 @@ Scene.validCommands = {"comment":1, "goto":1, "gotoref":1, "label":1, "looplimit
     "page_break":1, "line_break":1, "script":1, "else":1, "elseif":1, "elsif":1, "reset":1,
     "goto_scene":1, "fake_choice":1, "input_text":1, "ending":1, "share_this_game":1, "stat_chart":1
     ,"subscribe":1, "show_password":1, "gosub":1, "return":1, "hide_reuse":1, "disable_reuse":1, "allow_reuse":1
-    ,"restore_game":1,"save_game":1,"image":1,"link":1
+    ,"check_purchase":1,"restore_purchases":1,"purchase":1,"restore_game":1,"advertisement":1
+    ,"save_game":1,"delay_break":1,"image":1,"link":1
     };

@@ -17,7 +17,12 @@
  * either express or implied.
  */
 function clearScreen(code) {
-    main.innerHTML = "<div id='text'></div>";
+    // can't create div via innerHTML; div mysteriously doesn't show up on iOS
+    main.innerHTML = "";
+    var text = document.createElement("div");
+    text.setAttribute("id", "text");
+    main.appendChild(text);
+    
     var useAjax = true;
     
     if (useAjax) {

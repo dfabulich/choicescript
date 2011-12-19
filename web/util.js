@@ -52,23 +52,23 @@ function isDefined(x) {
     return "undefined" !== typeof x;
 }
 
-function toJson(obj) {
+function toJson(obj, standardized) {
  switch (typeof obj) {
   case 'object':
    if (obj) {
     var list = [];
     if (obj instanceof Array) {
      for (var i=0;i < obj.length;i++) {
-      list.push(toJson(obj[i]));
+      list.push(toJson(obj[i], standardized));
      }
      return '[' + list.join(',') + ']';
     } else {
      for (var prop in obj) {
       if (prop == "scene") continue;
-      if (/^[a-zA-Z][a-zA-Z_0-9]\w+$/.test(prop) && !/\b(abstract|boolean|break|byte|case|catch|char|class|comment|const|continue|debugger|default|delete|do|double|else|enum|export|extends|false|final|finally|float|for|function|goto|if|implements|import|in|instanceof|int|interface|label|long|native|new|null|package|private|protected|public|return|short|static|super|switch|synchronized|this|throws|transient|true|try|typeof|var|void|volatile|while|with)\b/.test(prop)) {
-        list.push(prop + ':' + toJson(obj[prop]));
+      if (!standardized && /^[a-zA-Z][a-zA-Z_0-9]\w+$/.test(prop) && !/\b(abstract|boolean|break|byte|case|catch|char|class|comment|const|continue|debugger|default|delete|do|double|else|enum|export|extends|false|final|finally|float|for|function|goto|if|implements|import|in|instanceof|int|interface|label|long|native|new|null|package|private|protected|public|return|short|static|super|switch|synchronized|this|throws|transient|true|try|typeof|var|void|volatile|while|with)\b/.test(prop)) {
+        list.push(prop + ':' + toJson(obj[prop], standardized));
       } else {
-        list.push('"' + prop + '":' + toJson(obj[prop]));
+        list.push('"' + prop + '":' + toJson(obj[prop], standardized));
       }
      }
      return '{' + list.join(',') + '}';
@@ -133,7 +133,10 @@ function writeCookie(value, slot, callback) {
     window.cachedValue = value;
     slot = "";
   }
-  if (!initStore()) return callback ? callback() : null;
+  if (!initStore()) {
+    if (callback) setTimeout(callback, 0);
+    return;
+  }
   window.store.set("state"+slot, value, callback);
 }
 
@@ -156,6 +159,46 @@ function recordSave(slot, callback) {
   });
 }
 
+function recordDirtySlots(slots, callback) {
+  if (!areSaveSlotsSupported()) {
+    setTimeout(callback, 0);
+    return;
+  }
+  restoreObject("dirty_save_list", [], function (saveList) {
+    saveSet = {};
+    for (var i = 0; i < saveList.length; i++) {
+      saveSet[saveList[i]] = 1;
+    }
+    for (var i = 0; i < slots.length; i++) {
+      if (!saveSet[slots[i]]) saveList.push(slots[i]);
+    }
+    window.store.set("dirty_save_list", toJson(saveList), callback);
+  });
+}
+
+function recordEmail(email, callback) {
+  if (initStore()) {
+    window.store.set("email", email, callback);
+  } else {
+    setTimeout(callback, 0);
+  }
+  
+}
+
+function fetchEmail(callback) {
+  if (!initStore()) {
+    setTimeout(function(){callback("")}, 0);
+    return;
+  }
+  window.store.get("email", function(ok, value) {
+    if (ok && value) {
+      callback(value);
+    } else {
+      callback("");
+    }
+  });
+}
+
 function restoreObject(key, defaultValue, callback) {
   if (!initStore()) {
     setTimeout(function() {callback(defaultValue)}, 0);
@@ -163,7 +206,7 @@ function restoreObject(key, defaultValue, callback) {
   }
   window.store.get(key, function(ok, value) {
     var result = defaultValue;
-    if (ok) {
+    if (ok && value) {
       try{
         result = eval("result="+value);
       } catch (e) {}
@@ -172,24 +215,188 @@ function restoreObject(key, defaultValue, callback) {
   });
 }
 
+function getDirtySaveList(callback) {
+  restoreObject("dirty_save_list", [], function (slotList) {
+    callback(slotList);
+  });
+}
+
 function getSaves(callback) {
   restoreObject("save_list", [], function (slotList) {
-    var i = 0;
-    var saveList = [];
-    if (!slotList.length) return callback([]);
-    function fetchSaves() {
-      restoreObject("state"+slotList[i], null, function(saveState) {
-        saveState.saveDate = slotList[i].substring(4/*"save".length*/);
-        saveList.push(saveState);
-        if (++i < slotList.length) {
-          fetchSaves();
-        } else {
-          callback(saveList);
-        }
-      })
-    }
-    fetchSaves();
+    fetchSavesFromSlotList(slotList, 0, [], callback);
   });
+}
+
+function fetchSavesFromSlotList(slotList, i, saveList, callback) {
+  if (i >= slotList.length) {
+    return callback(saveList);
+  }
+  restoreObject("state"+slotList[i], null, function(saveState) {
+    saveState.timestamp = slotList[i].substring(4/*"save".length*/);
+    saveList.push(saveState);
+    fetchSavesFromSlotList(slotList, i+1, saveList, callback);
+  })
+}
+
+function isWebSavePossible() {
+  if (!initStore()) return false;
+  if (/^http/.test(window.location.protocol)) {
+    return document.domain == window.webSaveDomain;
+  }
+  // if it's a file URL with a valid store, either you're a 3rd party developer
+  // who knows what you're doing, or you're a mobile app
+  return true;
+  
+}
+
+
+webSaveDomain = "www.choiceofgames.com";
+webSaveUrl = "http://" + webSaveDomain + "/ajax_proxy.php/websave";
+
+function submitRemoteSave(slot, email, callback) {
+  if (!isWebSavePossible()) return setTimeout(function() { callback(false); });
+  window.store.get("state"+slot, function(ok, value) {
+    if (ok) {
+      var timestamp = slot.substring(4/*"save".length*/);
+      var xhr = findXhr();
+      var params = "email="+email+"&game="+window.storeName+"&json="+encodeURIComponent(value)+"&timestamp="+ timestamp;
+      xhr.open("POST", webSaveUrl,true);
+      xhr.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+
+
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState != 4) return;
+        var ok = xhr.status == 200;
+        if (ok) {
+          callback(true);
+        } else {
+          recordDirtySlots([slot], function() {
+            callback(false);
+          });
+        }
+      }
+      xhr.send(params);
+    } else {
+      recordDirtySlots([slot], function() {
+        alert("There was a problem uploading the saved game. This is probably a bug; please contact support@choiceofgames.com with code 17891.");
+        callback(false);
+      });
+    }
+  });
+}
+
+function submitDirtySaves(dirtySaveList, email, callback) {
+  function submitDirtySave(i) {
+    if (dirtySaveList[i]) {
+      submitRemoteSave(dirtySaveList[i], email, function(ok) {
+        if (ok) {
+          submitDirtySave(i+1);
+        } else {
+          callback(false);
+        }
+      });
+    } else {
+      window.store.remove("dirty_save_list", function() {
+        callback(true);
+      });
+    }
+  }
+  submitDirtySave(0);
+}
+
+function getRemoteSaves(email, callback) {
+  if (!isWebSavePossible()) {
+    setTimeout(function() {callback([])}, 0);
+    return;
+  }
+  var xhr = findXhr();
+  xhr.open("GET", webSaveUrl + "?email="+email+"&game="+window.storeName, true);
+  xhr.onreadystatechange = function() {
+    if (xhr.readyState != 4) return;
+    if (xhr.status != 200) {
+      if (window.console) console.log("Couldn't load remote saves. " + xhr.status + ": " + xhr.responseText);
+      callback(null);
+    } else {
+      var result = xhr.responseText;
+      result = eval("result="+result);
+      var remoteSaveList = [];
+      for (var i = 0; i < result.length; i++) {
+        var save = result[i].json;
+        save.timestamp = result[i].timestamp;
+        remoteSaveList.push(save);
+      }
+      callback(remoteSaveList);
+    }
+  }
+  xhr.send();
+}
+
+function mergeRemoteSaves(remoteSaveList, callback) {
+  if (!isWebSavePossible()) {
+    setTimeout(function() { callback([], 0, []); }, 0);
+    return;
+  }
+  restoreObject("save_list", [], function (localSlotList) {
+    fetchSavesFromSlotList(localSlotList, 0, [], function(localSaveList) {
+      var localSlotMap = {};
+      for (var i = 0; i < localSlotList.length; i++) {
+        localSlotMap[localSlotList[i]] = 1;
+      }
+      var remoteSlotMap = {};
+      for (var i = 0; i < remoteSaveList.length; i++) {
+        remoteSlotMap["save"+remoteSaveList[i].timestamp] = 1;
+      }
+      var newRemoteSaves = 0;
+      for (var i = 0; i < remoteSaveList.length; i++) {
+        var remoteSave = remoteSaveList[i];
+        var slot = "save"+remoteSave.timestamp;
+        if (!localSlotMap[slot]) {
+          saveCookie(null, slot, remoteSave.stats, remoteSave.temps, remoteSave.lineNum, remoteSave.indent);
+          localSlotList.push(slot);
+          localSaveList.push(remoteSave);
+          newRemoteSaves++;
+        }
+      }
+      
+      var dirtySaveList = [];
+      for (var i = 0; i < localSlotList.length; i++) {
+        if (!remoteSlotMap[localSlotList[i]]) {
+          dirtySaveList.push(localSlotList[i]);
+        }
+      }
+      
+      window.store.set("dirty_save_list", toJson(dirtySaveList), function() {
+        if (newRemoteSaves) {
+          window.store.set("save_list", toJson(localSlotList), function() {
+            callback(localSaveList, newRemoteSaves, dirtySaveList);
+          });
+        } else {
+          callback(localSaveList, newRemoteSaves, dirtySaveList);
+        }
+      });
+    });
+  });
+}
+
+function delayBreakStart(callback) {
+  var nowInSeconds = Math.floor(new Date().getTime() / 1000);
+  if (!initStore()) {
+    setTimeout(function() {callback(nowInSeconds);}, 0);
+    return;
+  }
+  window.store.get("delayBreakStart", function(ok, value) {
+    var valueNum = value*1;
+    if (ok && value && !isNaN(valueNum)) {
+      callback(valueNum);
+    } else {
+      window.store.set("delayBreakStart", nowInSeconds)
+      callback(nowInSeconds);
+    }
+  });
+}
+
+function delayBreakEnd() {
+  if (initStore()) window.store.remove("delayBreakStart");
 }
 
 function initStore() {
@@ -206,6 +413,8 @@ function loadAndRestoreGame(slot, forcedScene) {
       var state = null;
       if (ok && value && ""+value) {
         state = eval("state="+value);
+      } else if (window.Persist.type == "androidStorage" && document.cookie) {
+        return upgradeAndroidCookies(slot,forcedScene);
       }
       restoreGame(state, forcedScene);
     });
@@ -216,11 +425,45 @@ function loadAndRestoreGame(slot, forcedScene) {
   window.store.get("state"+slot, valueLoaded);
 }
 
+// we used to use cookies on some Android devices; now we use androidStorage
+function upgradeAndroidCookies(slot, forcedScene) {
+  var ck = document.cookie;
+  var components = ck.split("; ");
+  function upgradeComponent(i) {
+    if (!components[i]) {
+      loadAndRestoreGame(slot, forcedScene);
+      return;
+    }
+    var parts = components[i].split("=");
+    var key = parts[0];
+    var deletion = key + "=x; path=/; domain=localhost; expires=Thu, 01-Jan-1970 00:00:01 GMT";
+    document.cookie = deletion;
+    // key is in the format "storeName:actualKey"
+    key = unescape(key).substring(window.storeName.length + 1);
+    var value = unescape(parts[1]);
+    window.store.set(key, value, function() {
+      upgradeComponent(i+1);
+    });
+  }
+  safeCall(this, function() {upgradeComponent(0);});
+}
+
 function isStateValid(state) {
   if (!state) return false;
   if (!state.stats) return false;
   if (!state.stats.sceneName) return false;
   return true;
+}
+
+function restartGame() {
+  if (window.tickerRunning) {
+    alert("Please wait until the timer has run out.");
+    return;
+  }
+  clearCookie(function() {
+    window.nav.resetStats(window.stats);
+    clearScreen(restoreGame);
+  }, "");
 }
 
 function restoreGame(state, forcedScene, userRestored) {
