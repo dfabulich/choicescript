@@ -3,7 +3,7 @@ var isRhino;
 if (typeof java == "undefined") {
 	isRhino = false;
 	var fs = require('fs');
-	var args = process.argv;
+	var args = process.argv.slice(0);
 	args.shift();
 	args.shift();
 	var contents = fs.readFileSync(args[0], "utf-8");
