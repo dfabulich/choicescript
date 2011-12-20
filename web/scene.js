@@ -2448,7 +2448,7 @@ Scene.tokens = [
     ,{name:"BOOLEAN_OPERATOR", test:function(str){ return Scene.regexpMatch(str,/^(and|or)\b/); } }
     ,{name:"VAR", test:function(str){ return Scene.regexpMatch(str,/^[a-zA-Z]\w*/); } }
     ,{name:"FAIRMATH", test:function(str){ return Scene.regexpMatch(str,/^%[\+\-]/); } }
-    ,{name:"OPERATOR", test:function(str){ return Scene.regexpMatch(str,/^[\+\-\*\/\&]/); } }
+    ,{name:"OPERATOR", test:function(str){ return Scene.regexpMatch(str,/^[\+\-\*\/\&\%]/); } }
     ,{name:"INEQUALITY", test:function(str){ return Scene.regexpMatch(str,/^[\!\<\>]\=?/); } }
     ,{name:"EQUALITY", test:function(str){ return Scene.regexpMatch(str,/^=/); } }
 ];
@@ -2457,6 +2457,7 @@ Scene.operators = {
     ,"-": function subtract(v1,v2,line) { return num(v1,line) - num(v2,line); }
     ,"*": function multiply(v1,v2,line) { return num(v1,line) * num(v2,line); }
     ,"/": function divide(v1,v2,line) { return num(v1,line) / num(v2,line); }
+    ,"%": function modulo(v1,v2,line) { return num(v1,line) % num(v2,line); }
     ,"&": function concatenate(v1,v2) { return [v1,v2].join(""); }
     ,"%+": function fairAdd(v1, v2, line) {
         v1 = num(v1,line);

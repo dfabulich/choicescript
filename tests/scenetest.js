@@ -991,6 +991,7 @@ var tokenizerTests = {
     ,'&"blah blah"': [{"value":"&","name":"OPERATOR","pos":1},{"value":"\"blah blah\"","name":"STRING","pos":12}]
     ,'{"fo"&"o"}': [{"value":"{","name":"OPEN_CURLY","pos":1},{"value":"\"fo\"","name":"STRING","pos":5},{"value":"&","name":"OPERATOR","pos":6},{"value":"\"o\"","name":"STRING","pos":9},{"value":"}","name":"CLOSE_CURLY","pos":10}]
     ,'2*3': [{"value":"2","name":"NUMBER","pos":1},{"value":"*","name":"OPERATOR","pos":2},{"value":"3","name":"NUMBER","pos":3}]
+    ,'3%2': [{name:"NUMBER",value:"3",pos:1},{name:"OPERATOR",value:"%",pos:2},{name:"NUMBER",value:"2",pos:3}]
 }
 
 var tokenizerErrorTests = ["_", '"foo'];
@@ -1167,6 +1168,10 @@ test("multiply", function() {
 test("divide", function() {
     var value = Scene.operators["/"]("6", "2");
     doh.is(3, value, 3);
+})
+test("modulo", function() {
+    var value = Scene.operators["%"]("3", "2");
+    doh.is(1, value, 1);
 })
 test("concatenate", function() {
     var value = Scene.operators["&"]("6", "2");
