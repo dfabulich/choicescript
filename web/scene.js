@@ -1220,6 +1220,62 @@ Scene.prototype.input_text = function input_text(variable) {
     if (this.debugMode) println(toJson(this.stats));
 }
 
+// *input_number var min max
+// record number typed by the user and store it in the specified variable
+Scene.prototype.input_number = function input_number(data) {
+    var args = data.split(/ /);
+    if (args.length != 3) {
+        throw new Error(this.lineMsg() + "Invalid input_number statement, expected three args: varname min max");
+    }
+    var variable, minimum, maximum;
+    variable = args[0];
+    this.validateVariable(variable);
+    minimum = this.evaluateValueExpr(args[1]);
+    if (isNaN(minimum*1)) throw new Error(this.lineMsg() + "Invalid minimum, not numeric: " + minimum);
+    maximum = this.evaluateValueExpr(args[2]);
+    if (isNaN(maximum*1)) throw new Error(this.lineMsg() + "Invalid maximum, not numeric: " + maximum);
+
+    if (minimum > maximum) throw new Error(this.lineMsg() + "Minimum " + minimum+ " should not be greater than maximum " + maximum);
+
+    function isInt(x) {
+       var y=parseInt(x);
+       if (isNaN(y)) return false;
+       return x==y && x.toString()==y.toString();
+    }
+    var intRequired;
+    if (isInt(minimum) && isInt(maximum)) {
+      intRequired = 1;
+    }
+    this.finished = true;
+    this.paragraph();
+    var self = this;
+    printInput(this.target, "number", function(value) {
+      safeCall(self, function() {
+        var numValue = parseFloat(""+value);
+        if (isNaN(numValue)) {
+          alert("Please type in a number.");
+          return;
+        }
+        if (intRequired && !isInt(numValue)) {
+          alert("Please type in an integer number.");
+          return;
+        }
+        if (numValue < minimum * 1) {
+          alert("Please use a number greater than or equal to " + minimum);
+          return;
+        }
+        if (numValue > maximum * 1) {
+          alert("Please use a number less than or equal to " + maximum);
+          return;
+        }
+        self.setVar(variable, value);
+        self.finished = false;
+        self.resetPage();
+      })
+    }, minimum, maximum, intRequired);
+    if (this.debugMode) println(toJson(this.stats));
+}
+
 // *script code
 // evaluate the specified ECMAScript
 Scene.prototype.script = function script(code) {
@@ -2498,5 +2554,5 @@ Scene.validCommands = {"comment":1, "goto":1, "gotoref":1, "label":1, "looplimit
     "goto_scene":1, "fake_choice":1, "input_text":1, "ending":1, "share_this_game":1, "stat_chart":1
     ,"subscribe":1, "show_password":1, "gosub":1, "return":1, "hide_reuse":1, "disable_reuse":1, "allow_reuse":1
     ,"check_purchase":1,"restore_purchases":1,"purchase":1,"restore_game":1,"advertisement":1
-    ,"save_game":1,"delay_break":1,"image":1,"link":1
+    ,"save_game":1,"delay_break":1,"image":1,"link":1,"input_number":1
     };

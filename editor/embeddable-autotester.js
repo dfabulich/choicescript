@@ -15,8 +15,31 @@ function autotester(sceneText, nav, sceneName) {
   Scene.prototype.page_break = function() {};
   Scene.prototype.subscribe = function() {};
   
-  Scene.prototype.input_text = function(variable) {
-      this.setVar(variable, "blah blah");
+  var inputCallback;
+
+  printInput = function printInput(target, inputType, callback, minimum) {
+    inputCallback = function() {
+      if (inputType == "text") {
+        callback("blah blah");
+      } else {
+        callback(minimum);
+      }
+    }
+  }
+
+  if (!Scene.prototype.oldInputText) Scene.prototype.oldInputText = Scene.prototype.input_text;
+  if (!Scene.prototype.oldInputNumber) Scene.prototype.oldInputNumber = Scene.prototype.input_number;
+
+  Scene.prototype.input_text = function test_input_text(data) {
+    this.oldInputText(data);
+    this.lineNum++;
+    inputCallback();
+  }
+  
+  Scene.prototype.input_number = function test_input_number(data) {
+    this.oldInputNumber(data);
+    this.lineNum++;
+    inputCallback();
   }
   
   Scene.prototype.save_game = function(data) {

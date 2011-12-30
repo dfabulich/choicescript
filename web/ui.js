@@ -433,7 +433,7 @@ function printLink(target, href, anchorText) {
   target.appendChild(link);
 }
 
-function printInput(target, inputType, callback) {
+function printInput(target, inputType, callback, minimum, maximum, step) {
     if (!target) target = document.getElementById('text');
     var form = document.createElement("form");
     target.appendChild(form);
@@ -443,6 +443,13 @@ function printInput(target, inputType, callback) {
     
     var input = document.createElement("input");
     input.type=inputType;
+    if (inputType == "number") {
+      input.setAttribute("min", minimum);
+      input.setAttribute("max", maximum);
+      step = step || "any"
+      input.setAttribute("step", step);
+    }
+
     input.name="text";
     input.setAttribute("style", "font-size: 25px; width: 90%;");
     form.appendChild(input);
