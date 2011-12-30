@@ -168,6 +168,10 @@ Scene.prototype.input_text = function(variable) {
    this.setVar(variable, "blah blah");
 }
 
+Scene.prototype.input_number = function(data) {
+   this.rand(data);
+}
+
 Scene.prototype.finish = function random_finish() {
     var nextSceneName = this.nav && nav.nextSceneName(this.name);
     this.finished = true;

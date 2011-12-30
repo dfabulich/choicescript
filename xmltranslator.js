@@ -516,6 +516,18 @@ XmlScene.prototype.rand = function xmlRand(data) {
   writer.write("</maximum></random>\n");
 }
 
+XmlScene.prototype.input_number = function xmlInputNumber(data) {
+  closePara();
+  var args = data.split(/ /);
+  var variable, minimum, maximum;
+  variable = args[0];
+  writer.write("<input-number variable='" + variable.toLowerCase() + "'><minimum>");
+  writer.write(this.evaluateValueExpr(args[1]));
+  writer.write("</minimum><maximum>");
+  writer.write(this.evaluateValueExpr(args[2]));
+  writer.write("</maximum></input-number>\n");
+}
+
 XmlScene.prototype.getVar = function xmlGetVar() {
   // Just don't throw when the variables aren't defined
 }
