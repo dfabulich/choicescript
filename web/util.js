@@ -40,7 +40,11 @@ function safeCall(obj, fn) {
             // On Safari we call this because it won't get called otherwise
             // On Firefox we call this because it gives us the full stack
             window.onerror(toJson(e, '\n'));
-            if (window.console) window.console.error(e);
+            if (window.console) {
+              window.console.error(e);
+              if (e.message) window.console.error(e.message);
+              if (e.stack) window.console.error(e.stack);
+            }
             // Rethrow here so the debugger can handle it
             // On Firefox this causes a second prompt.  Meh!
             if (debug) throw e;
