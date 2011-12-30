@@ -1208,39 +1208,15 @@ Scene.prototype.print = function scene_print(expr) {
 Scene.prototype.input_text = function input_text(variable) {
     this.validateVariable(variable);
     this.finished = true;
-    this.lineNum--;
     this.paragraph();
-    var form = document.createElement("form");
-    main.appendChild(form);
     var self = this;
-    form.action="#";
-    
-    
-    var input = document.createElement("input");
-    input.type="text";
-    input.name="text";
-    input.setAttribute("style", "font-size: 25px; width: 90%;");
-    form.appendChild(input);
-    
-    form.onsubmit = function() { 
-        safeCall(self, function() {
-            if (!input.value) {
-                // TODO optional value?
-                // TODO configurable error message?
-                alert("Don't just leave it blank!  Type something!");
-                return;
-            }
-            self.setVar(variable, input.value);
-            self.finished = false;
-            self.lineNum++;
-            self.resetPage();
-        });
-        return false;
-    };
-
-    form.appendChild(document.createElement("br"));
-    form.appendChild(document.createElement("br"));
-    printButton("Next", main, false, function() {form.onsubmit();});
+    printInput(this.target, "text", function(value) {
+      safeCall(self, function() {
+        self.setVar(variable, value);
+        self.finished = false;
+        self.resetPage();
+      })
+    })
     if (this.debugMode) println(toJson(this.stats));
 }
 

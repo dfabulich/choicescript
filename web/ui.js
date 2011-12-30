@@ -433,6 +433,38 @@ function printLink(target, href, anchorText) {
   target.appendChild(link);
 }
 
+function printInput(target, inputType, callback) {
+    if (!target) target = document.getElementById('text');
+    var form = document.createElement("form");
+    target.appendChild(form);
+    var self = this;
+    form.action="#";
+    
+    
+    var input = document.createElement("input");
+    input.type=inputType;
+    input.name="text";
+    input.setAttribute("style", "font-size: 25px; width: 90%;");
+    form.appendChild(input);
+    
+    form.onsubmit = function() { 
+        preventDefault();
+        if (!input.value) {
+            // TODO optional value?
+            // TODO configurable error message?
+            alert("Don't just leave it blank!  Type something!");
+            return;
+        }
+        callback(input.value);
+        return false;
+    };
+
+    form.appendChild(document.createElement("br"));
+    form.appendChild(document.createElement("br"));
+    printButton("Next", form, true);
+
+}
+
 function promptEmailAddress(target, defaultEmail, callback) {
   if (!target) target = document.getElementById('text');
   var form = document.createElement("form");
