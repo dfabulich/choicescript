@@ -992,6 +992,8 @@ var tokenizerTests = {
     ,'{"fo"&"o"}': [{"value":"{","name":"OPEN_CURLY","pos":1},{"value":"\"fo\"","name":"STRING","pos":5},{"value":"&","name":"OPERATOR","pos":6},{"value":"\"o\"","name":"STRING","pos":9},{"value":"}","name":"CLOSE_CURLY","pos":10}]
     ,'2*3': [{"value":"2","name":"NUMBER","pos":1},{"value":"*","name":"OPERATOR","pos":2},{"value":"3","name":"NUMBER","pos":3}]
     ,'3%2': [{name:"NUMBER",value:"3",pos:1},{name:"OPERATOR",value:"%",pos:2},{name:"NUMBER",value:"2",pos:3}]
+    ,'not(false)': [{name:"FUNCTION",value:"not(",pos:4},{name:"VAR",value:"false",pos:9},{name:"CLOSE_PARENTHESIS",value:")",pos:10}]
+    ,'round(1.5)': [{name:"FUNCTION",value:"round(",pos:6},{name:"NUMBER",value:"1.5",pos:9},{name:"CLOSE_PARENTHESIS",value:")",pos:10}]
 }
 
 var tokenizerErrorTests = ["_", '"foo'];
@@ -1217,6 +1219,24 @@ test("or", function() {
     var value = Scene.operators["or"](false, true);
     doh.is(true, value, true);
 })
+
+module("Functions");
+
+test("not", function() {
+    var scene = new Scene();
+    var stack = scene.tokenizeExpr("not(true)");
+    var token = stack.shift();
+    var actual = scene.evaluateValueToken(token, stack);
+    doh.is(false, actual);
+});
+
+test("round", function() {
+    var scene = new Scene();
+    var stack = scene.tokenizeExpr("round(1.5)");
+    var token = stack.shift();
+    var actual = scene.evaluateValueToken(token, stack);
+    doh.is(2, actual);
+});
 
 module("Line Breaks");
 

@@ -2418,6 +2418,11 @@ Scene.prototype.evaluateValueToken = function evaluateValueToken(token, stack) {
     } else if ("OPEN_CURLY" == name) {
         var value = this.evaluateExpr(stack, "CLOSE_CURLY");
         return this.getVar(value);
+    } else if ("FUNCTION" == name) {
+        var functionName = /^\w+/.exec(token.value)[0];
+        if (!this.functions[functionName]) throw new Error(this.lineMsg + "Unknown function " + functionName);
+        var value = this.evaluateExpr(stack, "CLOSE_PARENTHESIS");
+        return this.functions[functionName].call(this, value);
     } else if ("NUMBER" == name) {
         return token.value;
     } else if ("STRING" == name) {
@@ -2428,6 +2433,19 @@ Scene.prototype.evaluateValueToken = function evaluateValueToken(token, stack) {
     } else {
         throw new Error(this.lineMsg() + "Invalid expression at char "+token.pos+", expected NUMBER, STRING, VAR or PARENTHETICAL, was: " + name + " [" + token.value + "]");
     }
+}
+
+Scene.prototype.functions = {
+  not: function(value) {
+    if ("boolean" != typeof value) {
+        throw new Error(this.lineMsg()+"not() value is neither true nor false: " + value);
+    }
+    return !value;
+  },
+  round: function(value) {
+    if (isNaN(value*1)) throw new Error(this.lineMsg()+"round() value is not a number: " + value);
+    return Math.round(value);
+  }
 }
 
 Scene.prototype.evaluateValueExpr = function evaluateValueExpr(expr) {
@@ -2461,6 +2479,7 @@ Scene.tokens = [
     ,{name:"CLOSE_PARENTHESIS", test:function(str){ return Scene.regexpMatch(str,/^\)/); } }
     ,{name:"OPEN_CURLY", test:function(str){ return Scene.regexpMatch(str,/^\{/); } }
     ,{name:"CLOSE_CURLY", test:function(str){ return Scene.regexpMatch(str,/^\}/); } }
+    ,{name:"FUNCTION", test:function(str){ return Scene.regexpMatch(str,/^(not|round)\s*\(/); } }
     ,{name:"NUMBER", test:function(str){ return Scene.regexpMatch(str,/^\d+(\.\d+)?/); } }
     ,{name:"STRING", test:function(str, line) {
             var i;
@@ -2483,6 +2502,7 @@ Scene.tokens = [
     ,{name:"OPERATOR", test:function(str){ return Scene.regexpMatch(str,/^[\+\-\*\/\&\%]/); } }
     ,{name:"INEQUALITY", test:function(str){ return Scene.regexpMatch(str,/^[\!\<\>]\=?/); } }
     ,{name:"EQUALITY", test:function(str){ return Scene.regexpMatch(str,/^=/); } }
+    //
 ];
 Scene.operators = {
     "+": function add(v1,v2,line) { return num(v1,line) + num(v2,line); }
