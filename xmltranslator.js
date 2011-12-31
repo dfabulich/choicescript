@@ -375,6 +375,10 @@ XmlScene.prototype.evaluateValueToken = function xmlEvaluateValueToken(token, st
   } else if ("OPEN_CURLY" == name) {
       var value = this.evaluateExpr(stack, "CLOSE_CURLY");
       return "<reference>" + value + "</reference>";
+  } else if ("FUNCTION" == name) {
+      var functionName = /^\w+/.exec(token.value)[0];
+      var value = this.evaluateExpr(stack, "CLOSE_PARENTHESIS");
+      return "<"+functionName+">" + value + "</"+functionName+">";
   } else if ("NUMBER" == name) {
       return "<literal value='" + xmlEscape(token.value, true) + "'/>";
   } else if ("STRING" == name) {
@@ -404,6 +408,7 @@ Scene.operators = {
     ,"-": function subtract(v1,v2) { return mathOperator("-", v1, v2); }
     ,"*": function multiply(v1,v2) { return mathOperator("*", v1, v2); }
     ,"/": function divide(v1,v2) { return mathOperator("/", v1, v2); }
+    ,"%": function modulus(v1,v2) { return mathOperator("%", v1, v2); }
     ,"&": function concatenate(v1,v2) { return binaryOperator("concatenate", v1, v2) }
     ,"%+": function fairAdd(v1, v2, line) { return mathOperator("%+", v1, v2); }
     ,"%-": function fairSubtract(v1, v2) { return mathOperator("%-", v1, v2); }
