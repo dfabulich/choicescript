@@ -122,23 +122,28 @@ Scene.prototype.dedent = function dedent(newDent) {};
 
 Scene.prototype.printLine = function printLine(line, parent) {
     if (!line) return null;
-    var self = this;
-    if (!line.replace) line = new String(line);
-    // replace ${variables} with values
-    line = line.replace(/\$(\!?)\{([a-zA-Z][_\w]*)\}/g, function (matched, capitalize, variable) {
-      var value = self.getVar(variable);
-      if (capitalize) {
-        value = value.charAt(0).toUpperCase() + value.slice(1);
-      }
-      return value;
-    });
-    // double-check for unreplaced/invalid ${} expressions
-    var unreplaced = line.search(/\$(\!?)\{/) + 1;
-    if (unreplaced) {
-      throw new Error(this.lineMsg() + "invalid ${} variable substitution at letter " + unreplaced);
-    }
+    line = this.replaceVariables(line);
     if (!parent) parent = this.target;
     return printx(line, parent);
+}
+
+Scene.prototype.replaceVariables = function (line) {
+  if (!line.replace) line = new String(line);
+  var self = this;
+  // replace ${variables} with values
+  line = line.replace(/\$(\!?)\{([a-zA-Z][_\w]*)\}/g, function (matched, capitalize, variable) {
+    var value = self.getVar(variable);
+    if (capitalize) {
+      value = value.charAt(0).toUpperCase() + value.slice(1);
+    }
+    return value;
+  });
+  // double-check for unreplaced/invalid ${} expressions
+  var unreplaced = line.search(/\$(\!?)\{/) + 1;
+  if (unreplaced) {
+    throw new Error(this.lineMsg() + "invalid ${} variable substitution at letter " + unreplaced);
+  }
+  return line;
 }
 
 Scene.prototype.paragraph = function paragraph() {
@@ -490,6 +495,7 @@ Scene.prototype.finish = Scene.prototype.autofinish = function finish(buttonName
         return;
     }
     if (!buttonName) buttonName = "Next Chapter";
+    buttonName = this.replaceVariables(buttonName);
 
     var self = this;
     printButton(buttonName, main, false, 
@@ -1068,6 +1074,7 @@ Scene.prototype.printRadioButton = function printRadioButton(div, name, option, 
 Scene.prototype.page_break = function page_break(buttonName) {
     if (this.screenEmpty) return;
     if (!buttonName) buttonName = "Next";
+    buttonName = this.replaceVariables(buttonName);
     this.paragraph();
     this.finished = true;
     
@@ -1419,6 +1426,7 @@ Scene.prototype.share_this_game = function share_links() {
 Scene.prototype.ending = function ending() {
     var self = this;
     var startupScene = self.nav.getStartupScene();
+    // TODO should *ending support custom button text?
     this.paragraph();
     this.finished = true;
     printButton("Play Again", main, false, 
