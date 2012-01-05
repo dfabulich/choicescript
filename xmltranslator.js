@@ -86,11 +86,15 @@ function printNestedElement(tagName, data) {
   closePara();
   writer.write("<");
   writer.write(tagName);
-  writer.write(">");
-  writer.write(data);
-  writer.write("</");
-  writer.write(tagName);
-  writer.write(">");
+  if (data) {
+    writer.write(">");
+    writer.write(data);
+    writer.write("</");
+    writer.write(tagName);
+    writer.write(">\n");
+  } else {
+    writer.write(" />\n");
+  }
 }
 
 XmlScene.prototype.image = function xmlImage(data) {
