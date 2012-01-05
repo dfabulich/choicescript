@@ -82,6 +82,17 @@ function printElement(tagName, attributeName, data) {
   writer.write("/>\n");
 }
 
+function printNestedElement(tagName, data) {
+  closePara();
+  writer.write("<");
+  writer.write(tagName);
+  writer.write(">");
+  writer.write(data);
+  writer.write("</");
+  writer.write(tagName);
+  writer.write(">");
+}
+
 XmlScene.prototype.image = function xmlImage(data) {
   var parts = data.split(" ");
   if (parts.length > 2) throw new Error(this.lineMsg() + "Couldn't parse image name/alignment: " + data);
@@ -99,11 +110,11 @@ XmlScene.prototype.image = function xmlImage(data) {
 }
 
 XmlScene.prototype.page_break = function xmlPageBreak(data) {
-  printElement("page-break", "text", data);
+  printNestedElement("page-break", this.replaceLine(data));
 }
 
 XmlScene.prototype.finish = function xmlFinish(data) {
-  printElement("finish", "text", data);
+  printNestedElement("finish", this.replaceLine(data));
   this.indent = this.getIndent(this.nextNonBlankLine());
 }
 
