@@ -454,8 +454,8 @@ function printInput(target, inputType, callback, minimum, maximum, step) {
     input.setAttribute("style", "font-size: 25px; width: 90%;");
     form.appendChild(input);
     
-    form.onsubmit = function() { 
-        preventDefault();
+    form.onsubmit = function(e) { 
+        preventDefault(e);
         if (!input.value) {
             // TODO optional value?
             // TODO configurable error message?
