@@ -1428,6 +1428,23 @@ test("basic parse", function() {
     deepEqual(actual, expected, "misparsed")
 })
 
+test("complex parse", function() {
+    var text = "*goto_random_scene\n"
+      + "  *allow_reuse hello\n"
+      + "  *if (false) goodbye\n"
+      + "  *allow_reuse *if (true) death\n"
+    ;
+    var scene = new Scene("test", {leadership:50, strength:50});
+    scene.loadLines(text);
+    var actual = scene.parseGotoRandomScene(false);
+    var expected = [
+        {allowReuse:true,name:"hello"}
+        ,{allowReuse:false,name:"goodbye",conditional:"false"}
+        ,{allowReuse:true,name:"death",conditional:"true"}
+    ];
+    deepEqual(actual, expected, "misparsed")
+})
+
 
 test("basic compute", function() {
     var scene = new Scene("test", {leadership:50, strength:50});
@@ -1440,4 +1457,44 @@ test("basic compute", function() {
     var expected = parsed[0];
     deepEqual(actual, expected, "miscomputed");
     deepEqual(scene.stats.choice_grs, ["hello"], "didn't update grs finished list");
+})
+
+test("block reuse", function() {
+    var scene = new Scene("test", {leadership:50, strength:50});
+    var parsed = [
+        {allowReuse:false,name:"hello"}
+        ,{allowReuse:false,name:"goodbye"}
+        ,{allowReuse:false,name:"death"}
+    ];
+    scene.stats.choice_grs = ["hello", "goodbye"];
+    var actual = scene.computeRandomSelection(0, parsed, false);
+    var expected = parsed[2];
+    deepEqual(actual, expected, "miscomputed");
+    deepEqual(scene.stats.choice_grs, ["hello", "goodbye", "death"], "didn't update grs finished list");
+})
+
+test("conditional", function() {
+    var scene = new Scene("test", {leadership:50, strength:50});
+    var parsed = [
+        {allowReuse:false,name:"hello",conditional:"false"}
+        ,{allowReuse:false,name:"goodbye"}
+        ,{allowReuse:false,name:"death"}
+    ];
+    var actual = scene.computeRandomSelection(0, parsed, false);
+    var expected = parsed[1];
+    deepEqual(actual, expected, "miscomputed");
+    deepEqual(scene.stats.choice_grs, ["goodbye"], "didn't update grs finished list");
+})
+
+test("nothing selectable", function() {
+    var scene = new Scene("test", {leadership:50, strength:50});
+    var parsed = [
+        {allowReuse:false,name:"hello",conditional:"false"}
+        ,{allowReuse:false,name:"goodbye"}
+        ,{allowReuse:false,name:"death"}
+    ];
+    scene.stats.choice_grs = ["goodbye", "death"];
+    var actual = scene.computeRandomSelection(0, parsed, false);
+    deepEqual(actual, null, "miscomputed");
+    deepEqual(scene.stats.choice_grs, ["goodbye", "death"], "updated grs finished list, but shouldn't have");
 })

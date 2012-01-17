@@ -2515,8 +2515,8 @@ Scene.prototype.parseGotoRandomScene = function parseGotoRandomScene(allowReuseG
         line = trim(line);
 
         var option = {allowReuse:allowReuseGlobally};
-        var command = /^\*(\S+)/.exec(line);
-        while (command) {
+        var command;
+        while(command = /^\*(\S+)/.exec(line)) {
           command = command[1];
           if ("allow_reuse" == command) {
             option.allowReuse = true;
@@ -2557,7 +2557,8 @@ Scene.prototype.computeRandomSelection = function computeRandomSelection(randomF
       if (finished[option.name]) continue;
     }
     if (option.conditional) {
-      var pass = this.evaluateValueToken(option.conditional);
+      var stack = this.tokenizeExpr(option.conditional);
+      var pass = this.evaluateExpr(stack);
       if (!pass) continue;
     }
     filtered.push(option);
@@ -2565,7 +2566,7 @@ Scene.prototype.computeRandomSelection = function computeRandomSelection(randomF
   if (!filtered.length) return null;
   // TODO weights
   var randomSelection = Math.floor(randomFloat*filtered.length);
-  var option = options[randomSelection];
+  var option = filtered[randomSelection];
   if (!option.allowReuse) {
     this.stats.choice_grs.push(option.name);
   }
