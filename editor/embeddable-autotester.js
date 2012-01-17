@@ -41,6 +41,21 @@ function autotester(sceneText, nav, sceneName) {
     this.lineNum++;
     inputCallback();
   }
+
+  Scene.prototype.goto_random_scene = function testGotoRandomScene(data) {
+    debugger;
+    var parsed = this.parseGotoRandomScene(data);
+    if (this.verifyFileName) {
+      for (var i = 0; i < parsed.length; i++) {
+        var name = parsed[i].name;
+        this.verifyFileName(name);
+      }
+    }
+
+    if (/\ballow_no_selection\b/.test(data)) {
+      this.finished = false;
+    }
+  }
   
   Scene.prototype.save_game = function(data) {
     var stack = this.tokenizeExpr(data);
