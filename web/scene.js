@@ -2469,6 +2469,109 @@ Scene.prototype.evaluateValueExpr = function evaluateValueExpr(expr) {
     return value;
 }
 
+Scene.prototype.goto_random_scene = function gotoRandomScene(data) {
+  var allowReuse = data == "allow_reuse";
+  var parsed = this.parseGotoRandomScene(allowReuse);
+  var option = this.computeRandomSelection(Math.random(), parsed, allowReuse);
+  
+  // if there are no selectable scenes, do nothing.
+  if (!option) return;
+  this.goto_scene(option.name);
+}
+
+Scene.prototype.parseGotoRandomScene = function parseGotoRandomScene(allowReuseGlobally) {
+    // nextIndent: the level of indentation after the current line
+    var nextIndent = null;
+    var options = [];
+    var line;  
+    var startIndent = this.indent;
+    while(isDefined(line = this.lines[++this.lineNum])) {
+        if (!trim(line)) {
+            this.rollbackLineCoverage();
+            continue;
+        }
+        var indent = this.getIndent(line);
+        if (nextIndent == null) {
+            // initialize nextIndent with whatever indentation the line turns out to be
+            // ...unless it's not indented at all
+            if (indent <= startIndent) {
+                throw new Error(this.lineMsg() + "invalid indent, expected at least one line in *goto_random_scene");
+            }
+            this.indent = nextIndent = indent;
+        }
+        if (indent <= startIndent) {
+            // it's over!
+            this.rollbackLineCoverage();
+            this.lineNum--;
+            this.rollbackLineCoverage();
+            return rows;
+        }
+        if (indent != this.indent) {
+            // all chart rows are supposed to be at the same indentation level
+            // anything at the wrong indentation level might be a mis-indented title/definition
+            // or just a typo
+            throw new Error(this.lineMsg() + "invalid indent, expected "+this.indent+", was " + indent);
+        }
+        line = trim(line);
+
+        var option = {allowReuse:allowReuseGlobally};
+        var command = /^\*(\S+)/.exec(line);
+        while (command) {
+          command = command[1];
+          if ("allow_reuse" == command) {
+            option.allowReuse = true;
+            line = trim(line.substring("*allow_reuse".length));
+            command = /^\*(\S+)/.exec(line);
+            continue;
+          } else if ("if" == command) {
+            var conditional = /^\*if\s+\(([^\)]+)\)\s+(.+)/.exec(line);
+            if (!conditional) throw new Error(this.lineMsg() + " invalid *if, expected () followed by scene name: " + line);
+            line = conditional[2];
+            var stack = this.tokenizeExpr(conditional[1]);
+            this.evaluateExpr(stack);
+            option.conditional = conditional[1];
+          } else {
+            throw new Error(this.lineMsg() + " invalid command: " + line);
+          }
+        }
+        // TODO weights
+        option.name = trim(line);
+        options.push(option);
+    }
+    return options;
+}
+
+Scene.prototype.computeRandomSelection = function computeRandomSelection(randomFloat, options, allowReuseGlobally) {
+  var filtered = [];
+  var finished = {};
+  if (!allowReuseGlobally) {
+    if (!this.stats.choice_grs) this.stats.choice_grs = [];
+  }
+  var grs = this.stats.choice_grs;
+  for (var i = 0; i < grs.length; i++) {
+    finished[grs[i]] = 1;
+  }
+  for (var i = 0; i < options.length; i++) {
+    var option = options[i];
+    if (!option.allowReuse) {
+      if (finished[option.name]) continue;
+    }
+    if (option.conditional) {
+      var pass = this.evaluateValueToken(option.conditional);
+      if (!pass) continue;
+    }
+    filtered.push(option);
+  }
+  if (!filtered.length) return null;
+  // TODO weights
+  var randomSelection = Math.floor(randomFloat*filtered.length);
+  var option = options[randomSelection];
+  if (!option.allowReuse) {
+    this.stats.choice_grs.push(option.name);
+  }
+  return option;
+}
+
 Scene.prototype.lineMsg = function lineMsg() {
     return "line " + (this.lineNum+1) + ": ";
 }
@@ -2582,5 +2685,5 @@ Scene.validCommands = {"comment":1, "goto":1, "gotoref":1, "label":1, "looplimit
     "goto_scene":1, "fake_choice":1, "input_text":1, "ending":1, "share_this_game":1, "stat_chart":1
     ,"subscribe":1, "show_password":1, "gosub":1, "return":1, "hide_reuse":1, "disable_reuse":1, "allow_reuse":1
     ,"check_purchase":1,"restore_purchases":1,"purchase":1,"restore_game":1,"advertisement":1
-    ,"save_game":1,"delay_break":1,"image":1,"link":1,"input_number":1
+    ,"save_game":1,"delay_break":1,"image":1,"link":1,"input_number":1,"goto_random_scene":1
     };

@@ -1408,3 +1408,36 @@ test("obfuscate", function() {
     var output = eval("output = " + deobfuscated);
     doh.is(value, output.foo, "roundtrip failure");
 })
+
+module("goto_random_scene");
+
+test("basic parse", function() {
+    var text = "*goto_random_scene\n"
+      + "  hello\n"
+      + "  goodbye\n"
+      + "  death\n"
+    ;
+    var scene = new Scene("test", {leadership:50, strength:50});
+    scene.loadLines(text);
+    var actual = scene.parseGotoRandomScene(false);
+    var expected = [
+        {allowReuse:false,name:"hello"}
+        ,{allowReuse:false,name:"goodbye"}
+        ,{allowReuse:false,name:"death"}
+    ];
+    deepEqual(actual, expected, "misparsed")
+})
+
+
+test("basic compute", function() {
+    var scene = new Scene("test", {leadership:50, strength:50});
+    var parsed = [
+        {allowReuse:false,name:"hello"}
+        ,{allowReuse:false,name:"goodbye"}
+        ,{allowReuse:false,name:"death"}
+    ];
+    var actual = scene.computeRandomSelection(0, parsed, false);
+    var expected = parsed[0];
+    deepEqual(actual, expected, "miscomputed");
+    deepEqual(scene.stats.choice_grs, ["hello"], "didn't update grs finished list");
+})
