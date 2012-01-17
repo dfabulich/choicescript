@@ -2470,16 +2470,40 @@ Scene.prototype.evaluateValueExpr = function evaluateValueExpr(expr) {
 }
 
 Scene.prototype.goto_random_scene = function gotoRandomScene(data) {
-  var allowReuse = data == "allow_reuse";
-  var parsed = this.parseGotoRandomScene(allowReuse);
-  var option = this.computeRandomSelection(Math.random(), parsed, allowReuse);
+  var parsed = this.parseGotoRandomScene(data);
+  var allowReuseGlobally = /\ballow_reuse\b/.test(data);
+  var allowNoSelection = /\ballow_no_selection\b/.test(data);
+  var option = this.computeRandomSelection(Math.random(), parsed, allowReuseGlobally);
   
-  // if there are no selectable scenes, do nothing.
-  if (!option) return;
-  this.goto_scene(option.name);
+  if (option) {
+    this.goto_scene(option.name);
+  } else {
+    if (allowNoSelection) {
+      return;
+    } else {
+      throw new Error(this.lineMsg() + "No selectable scenes");
+    }
+  }
+  
 }
 
-Scene.prototype.parseGotoRandomScene = function parseGotoRandomScene(allowReuseGlobally) {
+Scene.prototype.parseGotoRandomScene = function parseGotoRandomScene(data) {
+    data = data || "";
+    var directives = data.split(" ");
+    var allowReuseGlobally = false;
+    var allowNoSelection = false;
+    for (var i = 0; i < directives; i++) {
+      var directive = trim(directives[i]);
+      if (!directive) continue;
+      if (directive == "allow_reuse") {
+        allowReuseGlobally = true;
+      } else if (directive == "allow_no_selection") {
+        allowNoSelection = true;
+      } else {
+        throw new Error(this.lineMsg() + "invalid command: '" + directive + "'");
+      }
+    }
+
     // nextIndent: the level of indentation after the current line
     var nextIndent = null;
     var options = [];
@@ -2504,7 +2528,7 @@ Scene.prototype.parseGotoRandomScene = function parseGotoRandomScene(allowReuseG
             this.rollbackLineCoverage();
             this.lineNum--;
             this.rollbackLineCoverage();
-            return rows;
+            break;
         }
         if (indent != this.indent) {
             // all chart rows are supposed to be at the same indentation level

@@ -1419,7 +1419,7 @@ test("basic parse", function() {
     ;
     var scene = new Scene("test", {leadership:50, strength:50});
     scene.loadLines(text);
-    var actual = scene.parseGotoRandomScene(false);
+    var actual = scene.parseGotoRandomScene();
     var expected = [
         {allowReuse:false,name:"hello"}
         ,{allowReuse:false,name:"goodbye"}
@@ -1436,7 +1436,7 @@ test("complex parse", function() {
     ;
     var scene = new Scene("test", {leadership:50, strength:50});
     scene.loadLines(text);
-    var actual = scene.parseGotoRandomScene(false);
+    var actual = scene.parseGotoRandomScene();
     var expected = [
         {allowReuse:true,name:"hello"}
         ,{allowReuse:false,name:"goodbye",conditional:"false"}
