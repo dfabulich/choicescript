@@ -590,7 +590,7 @@ XmlScene.prototype.goto_random_scene = function xmlGotoRandomScene(data) {
     writer.write("'");
     if (option.conditional) {
       writer.write(">");
-      this.evaluateExpr(this.tokenizeExpr(option.conditional));
+      writer.write(this.evaluateExpr(this.tokenizeExpr(option.conditional)));
       writer.write("</scene>\n");
     } else {
       writer.write("/>\n");
