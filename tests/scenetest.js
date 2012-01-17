@@ -1429,14 +1429,15 @@ test("basic parse", function() {
 })
 
 test("complex parse", function() {
-    var text = "*goto_random_scene\n"
+    var text = "*goto_random_scene allow_no_selection\n"
       + "  *allow_reuse hello\n"
       + "  *if (false) goodbye\n"
       + "  *allow_reuse *if (true) death\n"
+      + "Nothing selected"
     ;
     var scene = new Scene("test", {leadership:50, strength:50});
     scene.loadLines(text);
-    var actual = scene.parseGotoRandomScene();
+    var actual = scene.parseGotoRandomScene("allow_no_selection");
     var expected = [
         {allowReuse:true,name:"hello"}
         ,{allowReuse:false,name:"goodbye",conditional:"false"}
