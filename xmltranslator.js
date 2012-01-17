@@ -575,6 +575,30 @@ XmlScene.prototype.stat_chart = function xmlStatChart() {
   writer.write("</stat-chart>\n");
 }
 
+XmlScene.prototype.goto_random_scene = function xmlGotoRandomScene(data) {
+  closePara();
+  var options = this.parseGotoRandomScene(data);
+  var allowReuseGlobally = /\ballow_reuse\b/.test(data);
+  var allowNoSelection = /\ballow_no_selection\b/.test(data);
+  writer.write("<goto-random-scene allowReuse='"+allowReuseGlobally+"'>\n");
+  for (var i = 0; i < options.length; i++) {
+    var option = options[i];
+    writer.write("  <scene name='");
+    writer.write(option.name);
+    writer.write("' allowReuse='");
+    writer.write(option.allowReuse);
+    writer.write("'");
+    if (option.conditional) {
+      writer.write(">");
+      this.evaluateExpr(this.tokenizeExpr(option.conditional));
+      writer.write("</scene>\n");
+    } else {
+      writer.write("/>\n");
+    }
+  }
+  writer.write("</goto-random-scene>\n");
+}
+
 if (args[1]) {
   if (isRhino) {
     list = [new java.io.File(dir, args[1] + ".txt")];
