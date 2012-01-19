@@ -2548,7 +2548,7 @@ Scene.prototype.parseGotoRandomScene = function parseGotoRandomScene(data) {
             command = /^\*(\S+)/.exec(line);
             continue;
           } else if ("if" == command) {
-            var conditional = /^\*if\s+\(([^\)]+)\)\s+(.+)/.exec(line);
+            var conditional = /^\*if\s+\((.+)\)\s+([^\)]+)/.exec(line);
             if (!conditional) throw new Error(this.lineMsg() + " invalid *if, expected () followed by scene name: " + line);
             line = conditional[2];
             var stack = this.tokenizeExpr(conditional[1]);

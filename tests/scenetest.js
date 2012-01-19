@@ -1432,7 +1432,7 @@ test("complex parse", function() {
     var text = "*goto_random_scene allow_no_selection\n"
       + "  *allow_reuse hello\n"
       + "  *if (false) goodbye\n"
-      + "  *allow_reuse *if (true) death\n"
+      + "  *allow_reuse *if ((true and true) or false) death\n"
       + "Nothing selected"
     ;
     var scene = new Scene("test", {leadership:50, strength:50});
@@ -1440,8 +1440,8 @@ test("complex parse", function() {
     var actual = scene.parseGotoRandomScene("allow_no_selection");
     var expected = [
         {allowReuse:true,name:"hello"}
-        ,{allowReuse:false,name:"goodbye",conditional:"false"}
-        ,{allowReuse:true,name:"death",conditional:"true"}
+        ,{allowReuse:false,conditional:"false",name:"goodbye"}
+        ,{allowReuse:true,conditional:"(true and true) or false",name:"death"}
     ];
     deepEqual(actual, expected, "misparsed")
 })
