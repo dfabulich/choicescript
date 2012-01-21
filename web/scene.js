@@ -396,6 +396,11 @@ Scene.prototype.resolveChoice = function resolveChoice(options, groups, callback
         this.setVar(variable, option.name);
     }
     
+    if (groups.length > 1 && option.unselectable) {
+      alert("Sorry, that combination of choices is not allowed. Please select a different " + groups[groups.length-1] + ".");
+      return;
+    }
+
     if (!callback) callback = this.standardResolution;
     callback.call(this, option);
     
@@ -1012,7 +1017,8 @@ Scene.prototype.renderOptions = function renderOptions(groups, options, callback
 // print one radio button
 Scene.prototype.printRadioButton = function printRadioButton(div, name, option, localChoiceNumber, globalChoiceNumber, isLast, checked) {
     var line = option.name;
-    var unselectable = option.unselectable;
+    var unselectable = false;
+    if (!name) unselectable = option.unselectable;
     var disabledString = unselectable ? " disabled" : "";
     var id = name + localChoiceNumber;
     if (!name) name = "choice";

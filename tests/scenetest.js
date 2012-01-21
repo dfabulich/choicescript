@@ -183,6 +183,40 @@ test("multi", function() {
     doh.is(expected, options, "options");
 })
 
+test("multi partially unselectable", function() {
+    var text = 
+        "*choice color toy\n"+
+        "  #red\n"+
+        "    #spaceship\n"+
+        "      Red spaceship\n"+
+        "    #yo-yo\n"+
+        "      Red yo-yo\n"+
+        "  #blue\n"+
+        "    #spaceship\n"+
+        "      Blue spaceship\n"+
+        "    *selectable_if (false) #yo-yo\n"+
+        "      Blue yo-yo\n"+
+        "baz";
+    var scene = new Scene();
+    scene.loadLines(text);
+    var options = scene.parseOptions(0, ["color", "toy"]);
+    var expected = [
+        {"name":"red","line":2,"group":"color","endLine":6,
+            "suboptions":[
+                {"name":"spaceship","line":3,"group":"toy","endLine":4},
+                {"name":"yo-yo","line":5,"group":"toy","endLine":6}
+            ]
+        },
+        {"name":"blue","line":7,"group":"color","endLine":11,
+            "suboptions":[
+                {"name":"spaceship","line":8,"group":"toy","endLine":9},
+                {"name":"yo-yo","line":10,unselectable:true,"group":"toy","endLine":11}
+            ]
+        }
+    ];
+    doh.is(expected, options, "options");
+})
+
 test("errorInvalidIndent", function() {
     var text = "*choice\n    #foo\n  #bar";
     var scene = new Scene();
