@@ -11,6 +11,12 @@ function autotester(sceneText, nav, sceneName) {
     
   var sceneList = [];
   
+  Scene.prototype.finish = function test_finish(buttonName) {
+    this.paragraph();
+    this.finished = true;
+    if (!buttonName) buttonName = "Next Chapter";
+    buttonName = this.replaceVariables(buttonName);
+  }
   
   Scene.prototype.page_break = function() {};
   Scene.prototype.subscribe = function() {};

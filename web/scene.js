@@ -491,7 +491,7 @@ Scene.prototype["gotoref"] = function scene_gotoref(expression) {
    
 // *finish
 // halt the scene
-Scene.prototype.finish = Scene.prototype.autofinish = function finish(buttonName) {
+Scene.prototype.finish = function finish(buttonName) {
     this.paragraph();
     this.finished = true;
     var nextSceneName = this.nav && nav.nextSceneName(this.name);
@@ -512,6 +512,10 @@ Scene.prototype.finish = Scene.prototype.autofinish = function finish(buttonName
       }
     );
     if (this.debugMode) println(toJson(this.stats));
+}
+
+Scene.prototype.autofinish = function autofinish(buttonName) {
+  this.finish(buttonName);
 }
 
 // *reset
