@@ -206,14 +206,14 @@ Scene.prototype.choice = function choice(data, fakeChoice) {
     function flattenOptions(list, options, flattenedOption) {
       if (!flattenedOption) flattenedOption = {};
       for (var i = 0; i < options.length; i++) {
-	var option = options[i];
-	flattenedOption[option.group] = i;
-	if (option.suboptions) {
-	  flattenOptions(list, option.suboptions, flattenedOption);
-	} else {
-	  flattenedOption.ultimateOption = option;
-	  list.push(dojoClone(flattenedOption));
-	}
+      	var option = options[i];
+      	flattenedOption[option.group] = i;
+      	if (option.suboptions) {
+      	  flattenOptions(list, option.suboptions, flattenedOption);
+      	} else {
+      	  flattenedOption.ultimateOption = option;
+          if (!option.unselectable) list.push(dojoClone(flattenedOption));
+      	}
       }
     }
 
