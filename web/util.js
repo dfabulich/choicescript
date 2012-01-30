@@ -37,13 +37,18 @@ function safeCall(obj, fn) {
                 fn.call();
             }
         } catch (e) {
-            // On Safari we call this because it won't get called otherwise
-            // On Firefox we call this because it gives us the full stack
-            window.onerror(toJson(e, '\n'));
+            if (e.message) {
+              window.onerror(e.message, e.fileName, e.lineNumber, e.stack);
+            } else if (e.stack) {
+              window.onerror(e.stack, e.fileName, e.lineNumber, e.stack);
+            } else {
+              window.onerror(toJson(e, '\n'));
+            }
+            
             if (window.console) {
               window.console.error(e);
-              if (e.message) window.console.error(e.message);
-              if (e.stack) window.console.error(e.stack);
+              if (e.message) window.console.error("Message: " + e.message);
+              if (e.stack) window.console.error("Stack: " + e.stack);
             }
             // Rethrow here so the debugger can handle it
             // On Firefox this causes a second prompt.  Meh!

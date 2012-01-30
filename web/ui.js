@@ -596,7 +596,7 @@ window.isIPad = /iPad/.test(navigator.userAgent);
 
 window.loadTime = new Date().getTime();
 
-window.onerror=function(msg, file, line) {
+window.onerror=function(msg, file, line, stack) {
     if (window.console) {
       window.console.error(msg);
       if (file) window.console.error("file: " + file);
@@ -618,6 +618,7 @@ window.onerror=function(msg, file, line) {
         if (window.stats && window.stats.scene && window.stats.scene.name) body += "\nScene: " + window.stats.scene.name;
         if (file) body += "\nFile: " + file;
         if (line) body += "\nLine: " + line;
+        if (stack) body += "\nStack: " + stack;
         body += "\nUser Agent: " + navigator.userAgent;
         body += "\nLoad time: " + window.loadTime;
         if (window.Persist) body += "\nPersist: " + window.Persist.type;
