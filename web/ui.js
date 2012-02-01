@@ -97,7 +97,12 @@ function asyncAlert(message, callback) {
 }
 
 function clearScreen(code) {
-    main.innerHTML = "<div id='text'></div>";
+    // can't create div via innerHTML; div mysteriously doesn't show up on iOS
+    main.innerHTML = "";
+    var text = document.createElement("div");
+    text.setAttribute("id", "text");
+    main.appendChild(text);
+    
     var useAjax = true;
     if (isWeb && window.noAjax) {
       useAjax = false;
@@ -106,7 +111,7 @@ function clearScreen(code) {
     if (useAjax) {
       doneLoading();
       setTimeout(function() { window.scrollTo(0,0); callIos("curl");}, 0);
-      code.call();
+      safeCall(null, code);
     } else {
       if (!initStore()) alert("Your browser has disabled cookies; this game requires cookies to work properly.  Please re-enable cookies and refresh this page to continue.");
       startLoading();
@@ -635,11 +640,6 @@ window.onerror=function(msg, file, line, stack) {
 window.onload=function() {
     window.main = document.getElementById("main");
     var head = document.getElementsByTagName("head")[0];
-    if (window.isFile) {
-      var s = document.createElement('script');
-      s.setAttribute("src", rootDir + "file.js");
-      head.appendChild(s);
-    }
     window.nav.setStartingStatsClone(window.stats);
     stats.sceneName = window.nav.getStartupScene();
     var map = parseQueryString(window.location.search);
