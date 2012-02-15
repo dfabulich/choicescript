@@ -380,7 +380,6 @@ XmlScene.prototype.parseOptionIf = function xmlParseOptionIf(data) {
 
 XmlScene.prototype.goto_scene = function xmlGotoScene(data) {
   printElement("goto-scene", "name", data);
-  this.finished = true;
 }
 
 XmlScene.prototype.evaluateValueToken = function xmlEvaluateValueToken(token, stack) {
