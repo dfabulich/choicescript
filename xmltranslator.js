@@ -560,10 +560,11 @@ XmlScene.prototype.stat_chart = function xmlStatChart() {
     if ("text" == row.type || "percent" == row.type) {
       writer.write("<");
       writer.write(row.type);
-      writer.write(">\n  <label>");
+      writer.write(">\n");
+      writer.write(this.evaluateValueExpr(row.variable));
+      writer.write("<label>");
       writer.write(this.replaceLine(row.label));
       writer.write("</label>");
-      writer.write(this.evaluateValueExpr(row.variable));
       if (row.definition) {
         writer.write("<definition>");
         writer.write(this.replaceLine(row.label));
