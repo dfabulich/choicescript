@@ -2051,8 +2051,8 @@ Scene.prototype.stat_chart = function stat_chart() {
     var type = row.type;
     var variable = row.variable;
     var value = this.getVar(variable);
-    var label = row.label;
-    var definition = row.definition;
+    var label = this.replaceVariables(row.label);
+    var definition = this.replaceVariables(row.definition || "");
     
     textBuilder.push("<tr><td class='leftStatName'>");
     textBuilder.push(label);
@@ -2161,6 +2161,7 @@ Scene.prototype.parseStatChart = function parseStatChart() {
         if ("opposed_pair" == type) {
           this.getVar(data);
           var line1 = this.lines[++this.lineNum];
+          this.replaceVariables(line1);
           var line1indent = this.getIndent(line1);
           if (line1indent <= this.indent) throw new Error(this.lineMsg() + "invalid indent; expected at least one indented line to indicate opposed pair name. indent: " + line1indent + ", expected greater than " + this.indent);
           var line2 = this.lines[this.lineNum + 1];
@@ -2170,6 +2171,7 @@ Scene.prototype.parseStatChart = function parseStatChart() {
             rows.push({type: type, variable: data, label: data, opposed_label: trim(line1)});
           } else {
             this.lineNum++;
+            this.replaceVariables(line2);
             if (line2indent == line1indent) {
               // two lines: first label, second label            
               rows.push({type: type, variable: data, label: trim(line1), opposed_label: trim(line2)});
@@ -2177,9 +2179,11 @@ Scene.prototype.parseStatChart = function parseStatChart() {
               // line 2 is a definition; therefore the opposed_label and its definition must be on lines 3 and 4
               var line1definition = line2;
               var line3 = this.lines[++this.lineNum];
+              this.replaceVariables(line3);
               var line3indent = this.getIndent(line3);
               if (line3indent != line1indent) throw new Error(this.lineMsg() + "invalid indent; this line should be the opposing label name. expected " + line1indent + " was " + line3indent);
               var line4 = this.lines[++this.lineNum];
+              this.replaceVariables(line4);
               var line4indent = this.getIndent(line4);
               if (line4indent != line2indent) throw new Error(this.lineMsg() + "invalid indent; this line should be the opposing label definition. expected " + line2indent + " was " + line4indent);
               rows.push({type: type, variable: data, label: trim(line1), definition:trim(line2), opposed_label: trim(line3), opposed_definition: trim(line4)});
@@ -2199,6 +2203,7 @@ Scene.prototype.parseStatChart = function parseStatChart() {
             label = result[2];
           }
           this.getVar(variable);
+          this.replaceVariables(label);
           var line2 = this.lines[this.lineNum + 1];
           var line2indent = this.getIndent(line2);
           if (line2indent <= this.indent) {
@@ -2206,6 +2211,7 @@ Scene.prototype.parseStatChart = function parseStatChart() {
             rows.push({type: type, variable: variable, label: label});
           } else {
             this.lineNum++;
+            this.replaceVariables(line2);
             rows.push({type: type, variable: variable, label: label, definition: trim(line2)});
           }
         }

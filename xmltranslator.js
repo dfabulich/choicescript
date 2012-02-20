@@ -558,17 +558,40 @@ XmlScene.prototype.stat_chart = function xmlStatChart() {
   for (var i = 0; i < rows.length; i++) {
     var row = rows[i];
     if ("text" == row.type || "percent" == row.type) {
-      writer.write("<"+row.type+" label='"+xmlEscape(row.label, true)+"' variable='"+row.variable.toLowerCase()+"' ")
-      if (row.definition) writer.write(" definition='" + row.definition + "' ");
-      writer.write("/>\n");
+      writer.write("<");
+      writer.write(row.type);
+      writer.write(">\n  <label>");
+      writer.write(this.replaceLine(row.label));
+      writer.write("</label>");
+      writer.write(this.evaluateValueExpr(row.variable));
+      if (row.definition) {
+        writer.write("<definition>");
+        writer.write(this.replaceLine(row.label));
+        writer.write("</definition>");
+      }
+      writer.write("\n</");
+      writer.write(row.type);
+      writer.write(">\n");
     } else if ("opposed_pair" == row.type) {
-      writer.write("<opposed-pair variable='"+row.variable.toLowerCase()+"'>\n");
-      writer.write("<label text='"+xmlEscape(row.label, true)+"' ")
-      if (row.definition) writer.write(" definition='" + row.definition + "' ");
-      writer.write("/>\n");
-      writer.write("<label text='"+xmlEscape(row.opposed_label, true)+"' ")
-      if (row.opposed_definition) writer.write(" definition='" + row.opposed_definition + "' ");
-      writer.write("/>\n</opposed-pair>\n");
+      writer.write("<opposed-pair>\n");
+      writer.write(this.evaluateValueExpr(row.variable));
+      writer.write("\n<label>");
+      writer.write(this.replaceLine(row.label));
+      writer.write("</label>");
+      if (row.definition) {
+        writer.write("<definition>");
+        writer.write(this.replaceLine(row.label));
+        writer.write("</definition>");
+      }
+      writer.write("\n<label>");
+      writer.write(this.replaceLine(row.opposed_label));
+      writer.write("</label>");
+      if (row.opposed_definition) {
+        writer.write("<definition>");
+        writer.write(this.replaceLine(row.label));
+        writer.write("</definition>");
+      }
+      writer.write("\n</opposed-pair>\n");
     }
   }
   writer.write("</stat-chart>\n");
