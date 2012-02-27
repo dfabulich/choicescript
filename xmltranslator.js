@@ -394,10 +394,10 @@ XmlScene.prototype.evaluateValueToken = function xmlEvaluateValueToken(token, st
       var value = this.evaluateExpr(stack, "CLOSE_PARENTHESIS");
       return "<"+functionName+">" + value + "</"+functionName+">";
   } else if ("NUMBER" == name) {
-      return "<literal value='" + xmlEscape(token.value, true) + "'/>";
+      return "<text>" + xmlEscape(token.value, true) + "</text>";
   } else if ("STRING" == name) {
       // strip off the quotes and unescape backslashes
-      return "<literal value='" + xmlEscape(token.value.slice(1,-1).replace(/\\(.)/g, "$1"), true) + "'/>";
+      return "<text>" + this.replaceLine(token.value.slice(1,-1).replace(/\\(.)/g, "$1"), true) + "</text>";
   } else if ("VAR" == name) {
       return "<variable name='" + token.value.toLowerCase() + "' />";
   } else {

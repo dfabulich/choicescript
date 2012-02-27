@@ -33,14 +33,14 @@ test("basicIf", function() {
   ;
   var expected = "<paragraph-break />\n"+
   "<temp variable='blah'/>\n"+
-  "<set variable='blah'><literal value='2'/></set>\n"+
+  "<set variable='blah'><text>2</text></set>\n"+
   "<switch>\n"+
   "<if>\n"+
-  "<test><equals><variable name='blah' /><literal value='2'/></equals></test>\n"+
+  "<test><equals><variable name='blah' /><text>2</text></equals></test>\n"+
   "<result><finish />\n"+
   "</result></if>\n"+
   "<if>\n"+
-  "<test><equals><variable name='blah' /><literal value='3'/></equals></test>\n"+
+  "<test><equals><variable name='blah' /><text>3</text></equals></test>\n"+
   "<result><finish />\n"+
   "</result></if>\n"+
   "<else><finish />\n"+
@@ -96,7 +96,7 @@ test("testXmlEscape", function() {
   ;
   var expected = "<paragraph-break />\n"+
     "<temp variable='pal'/>\n"+
-    "<set variable='pal'><literal value='pal &apos;&quot;<>'/></set>\n"+
+    "<set variable='pal'><text>pal '\"&lt;&gt;</text></set>\n"+
     "<p>This &amp; That's &lt;\"Life\"&gt; <print capitalize='false'><variable name='pal'/></print> </p>\n"+
     "<choice>\n"+
     "<option reuse='allow'>\n"+
@@ -447,5 +447,20 @@ test("reuse", function() {
     "<paragraph-break />\n"+
     "</option>\n"+
     "</choice>\n";
+  translateScene(scene, expected);
+})
+test("variablized string", function() {
+  var scene = ""
+    +"*temp foo\n"
+    +"*set foo 1\n"
+    +"*temp bar\n"
+    +"*set bar \"foo = ${foo}\"\n"
+    +"${bar}\n"
+  var expected =  "<temp variable='foo'/>\n"+
+    "<set variable='foo'><text>1</text></set>\n"+
+    "<temp variable='bar'/>\n"+
+    "<set variable='bar'><text>foo = <print capitalize='false'><variable name='foo'/></print></text></set>\n"+
+    "<p><print capitalize='false'><variable name='bar'/></print> </p>\n"+
+    "<paragraph-break />\n";
   translateScene(scene, expected);
 })

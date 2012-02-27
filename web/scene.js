@@ -2451,7 +2451,7 @@ Scene.prototype.evaluateValueToken = function evaluateValueToken(token, stack) {
         return token.value;
     } else if ("STRING" == name) {
         // strip off the quotes and unescape backslashes
-        return token.value.slice(1,-1).replace(/\\(.)/g, "$1");
+        return this.replaceVariables(token.value.slice(1,-1).replace(/\\(.)/g, "$1"));
     } else if ("VAR" == name) {
         return this.getVar(token.value);
     } else {
