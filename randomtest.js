@@ -16,6 +16,9 @@
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied.
  */
+
+// usage: randomtest 10000 mygame 0
+
 var gameName = "mygame";
 var args;
 if (typeof java == "undefined") {
