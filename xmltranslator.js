@@ -218,8 +218,14 @@ XmlScene.prototype.printLine = function xmlPrintLine(data) {
 }
 
 XmlScene.prototype.replaceLine = function xmlReplaceLine(data) {
-  return xmlEscape(data, false).replace(/\$(\!?)\{([a-zA-Z][_\w]+)\}/g, function (matched, capitalize, variable) {
-    return "<print capitalize='" + !!capitalize + "'><variable name='" + variable + "'/></print>";
+  return xmlEscape(data, false).replace(/\$(\!?\!?)\{([a-zA-Z][_\w]+)\}/g, function (matched, capitalize, variable) {
+    var capitalizeValue = "false";
+    if (capitalize == "!") {
+      capitalizeValue = "true";
+    } else if (capitalize == "!!") {
+      capitalizeValue = "all";
+    }
+    return "<print capitalize='" + capitalizeValue + "'><variable name='" + variable + "'/></print>";
   });
 }
 
