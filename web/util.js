@@ -484,7 +484,7 @@ function restoreGame(state, forcedScene, userRestored) {
       if (forcedScene) state.stats.sceneName = forcedScene;
       window.stats = state.stats;
       // Someday, inflate the navigator using the state object
-      var scene = new Scene(state.stats.sceneName, state.stats, window.nav, state.debug);
+      var scene = new Scene(state.stats.sceneName, state.stats, window.nav, state.debug || window.debug);
       if (!forcedScene) {
         scene.temps = state.temps;
         scene.lineNum = state.lineNum;
