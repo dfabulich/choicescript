@@ -189,7 +189,7 @@ function printShareLinks(target) {
       if (androidLink) {
         androidUrl = androidLink.href;
         if (androidUrl) {
-          mobileMesg = "  <li><a href='"+androidUrl+"'>Rate this app</a> in the Android Market</li>\n";
+          mobileMesg = "  <li><a href='"+androidUrl+"'>Rate this app</a> in the Google Play Store</li>\n";
         }
       }
     } else if (/webOS/.test(navigator.userAgent)) {
