@@ -49,7 +49,6 @@ if (window.isWebOS) document.write("<style>body {font-family: Prelude; font-size
 window.storeName = null;
 //Scene.generatedFast = true;
 </script>
-<!-- INSERT JS AD VARIABLES HERE -->
 <script type="text/javascript">
 if (!isWeb && window.isIosApp) {
   document.write("<style>"
@@ -79,15 +78,6 @@ var rootDir = "../";
 </head>
 <body>
 <div id="advertisement">
-<script type="text/javascript">
-if (isWeb) {
-  if (window.Touch && !isIPad && window.admob_vars) {
-    document.write(unescape("%3Cscript src='http://mmv.admob.com/static/iphone/iadmob.js' type='text/javascript'%3E%3C/script%3E"));
-  } else if ((!isMobile || isIPad) && window.google_ad_slot) {
-    document.write(unescape("%3Cscript src='http://pagead2.googlesyndication.com/pagead/show_ads.js' type='text/javascript'%3E%3C/script%3E"));
-  }
-}
-</script>
 </div>
 <div id="header"><h1 class="gameTitle">My First ChoiceScript Game</h1>
   <p>
@@ -125,24 +115,10 @@ if (isWeb) {
 </div>
 <p id="emailUs">Love it?  Hate it?  Write us at <a id="supportEmail" href='mailto:support-external@choiceofgames.com'>support@choiceofgames.com</a></p>
 <noscript>
-<!-- INSERT description -->
 <p>This is just an example game.</p>
 <p>This game requires JavaScript; please enable JavaScript and refresh this page.</p>
 <p>If you can't get the game to work, please write to us at
-<!-- INSERT fixed email href -->                    <!-- INSERT fixed email anchor text-->
 <a href="mailto:support-external@choiceofgames.com">support-external@choiceofgames.com</a> for assistance.</p>
 </noscript>
-<!-- INSERT GOOGLE ANALYTICS TRACKER HERE -->
-<script type="text/javascript">
-window.googleAnalyticsTracker = "";
-if (isWeb && googleAnalyticsTracker) document.write(unescape("%3Cscript src='http://www.google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
-</script>
-<script type="text/javascript">
-try {
-  if (googleAnalyticsTracker) {
-    var pageTracker = _gat._getTracker(googleAnalyticsTracker);
-    pageTracker._trackPageview();
-  }
-} catch(err) {}</script>
 </body>
 </html>

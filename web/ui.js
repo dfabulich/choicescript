@@ -638,6 +638,8 @@ window.onerror=function(msg, file, line, stack) {
 }
 
 window.onload=function() {
+    if (window.alreadyLoaded) return;
+    window.alreadyLoaded = true;
     window.main = document.getElementById("main");
     var head = document.getElementsByTagName("head")[0];
     window.nav.setStartingStatsClone(window.stats);
@@ -660,6 +662,10 @@ window.onload=function() {
       // INSERT ADMOB AD
     }
 };
+
+if ( document.addEventListener ) {
+  document.addEventListener( "DOMContentLoaded", window.onload, false );
+}
 
 if (window.isWeb) {
   document.write("<style>.webOnly { display: block !important; }</style>");
