@@ -95,7 +95,7 @@ function slurpFileLines(name, throwOnError) {
         var lines = blob.split(/\r?\n/);
         var firstLine = lines[0]
         // strip byte order mark
-        if (firstLine.charCodeAt(0) == 65279) line[0] = firstLine.substring(1);
+        if (firstLine.charCodeAt(0) == 65279) lines[0] = firstLine.substring(1);
         if (throwOnError) {
             for (var i = 0; i < lines.length; i++) {
                 var line = lines[i];
