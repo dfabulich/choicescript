@@ -300,11 +300,21 @@ for (i = 0; i < iterations; i++) {
   log("*****" + i);
   timeout = null;
   var scene = new Scene(nav.getStartupScene(), stats, nav, false);
-  scene.execute();
-  while (timeout) {
-    var fn = timeout;
-    timeout = null;
-    fn();
+  try {
+    scene.execute();
+    while (timeout) {
+      var fn = timeout;
+      timeout = null;
+      fn();
+    }
+  } catch (e) {
+    print("RANDOMTEST FAILED\n");
+    print(e);
+    if (isRhino) {
+      java.lang.System.exit(1);
+    } else {
+      process.exit(1);
+    }
   }
   nav.resetStats(stats);
 }
