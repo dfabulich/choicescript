@@ -1474,7 +1474,11 @@ Scene.prototype.restart = function restart() {
   scene.resetPage();
 }
 
-Scene.prototype.subscribe = function scene_subscribe() {
+Scene.prototype.subscribe = function scene_subscribe(now) {
+  if (trim(now) == "now") {
+    subscribe();
+    return;
+  }
   var self = this;
   var target = this.target;
   if (!target) target = document.getElementById('text');
