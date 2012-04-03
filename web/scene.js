@@ -1444,13 +1444,19 @@ Scene.prototype.ending = function ending() {
     printButton("Play Again", main, false, 
       function() { 
         safeCall(self, function() {
-            this.reset();
-            var scene = new Scene(startupScene, self.stats, self.nav, self.debugMode);
-            scene.resetPage();
+            self.restart();
         });
       }
     );
     if (self.debugMode) println(toJson(this.stats));
+}
+
+Scene.prototype.restart = function restart() {
+  this.finished = true;
+  this.reset();
+  var startupScene = this.nav.getStartupScene();
+  var scene = new Scene(startupScene, this.stats, this.nav, this.debugMode);
+  scene.resetPage();
 }
 
 Scene.prototype.subscribe = function scene_subscribe() {

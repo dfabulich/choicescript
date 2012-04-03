@@ -167,6 +167,8 @@ Scene.prototype.ending = function () {
   this.finished = true;
 }
 
+Scene.prototype.restart = Scene.prototype.ending;
+
 Scene.prototype.input_text = function(variable) {
    this.setVar(variable, "blah blah");
 }

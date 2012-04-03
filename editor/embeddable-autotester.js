@@ -233,6 +233,7 @@ function autotester(sceneText, nav, sceneName) {
   }
   
   Scene.prototype.ending = Scene.prototype.finish;
+  Scene.prototype.restart = Scene.prototype.finish;
   
   Scene.prototype.goto_scene = function testGotoScene(name) {
     if (this.verifyFileName) this.verifyFileName(name);
