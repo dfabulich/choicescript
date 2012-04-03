@@ -1,6 +1,6 @@
 function autotester(sceneText, nav, sceneName) {
   function log(msg) {
-    if (typeof(window) != "undefined" && window.console) window.console.log(msg)
+    if (typeof(console) != "undefined") console.log(msg)
   }
   var coverage = [];
 

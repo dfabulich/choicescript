@@ -97,7 +97,6 @@ Scene.prototype.conflictingOptions = function() {};
 for (var i = 0; i < list.length; i++) {
   print(list[i]);
   if (isRhino) java.lang.Thread.sleep(100); // sleep to allow print statements to flush :-(
-  window = {console: {log: function(msg) { print(msg); } }};
   try {
     verifyFileName(list[i]);
     var sceneText = slurpFile("web/"+gameName+"/scenes/"+list[i]+".txt", true /*throwOnError*/);
