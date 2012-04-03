@@ -1435,6 +1435,21 @@ Scene.prototype.share_this_game = function share_links() {
   this.prevLineEmpty = true; // printShareLinks provides its own paragraph break
 }
 
+Scene.prototype.goto_link = function goto_link(url) {
+  if (typeof window == "undefined") return;
+  if (url == "more_games") {
+    if (window.isIosApp) {
+      window.location.href = "itms-apps://itunes.com/apps/choiceofgames";
+    } else if (window.isAndroidApp) {
+      window.location.href = "https://play.google.com/store/search?q=pub:%22Choice+of+Games,+Inc%22";
+    } else {
+      window.location.href = "http://www.choiceofgames.com/";
+    }
+  } else {
+    window.location.href = url;
+  }
+}
+
 Scene.prototype.ending = function ending() {
     var self = this;
     var startupScene = self.nav.getStartupScene();
@@ -2735,4 +2750,5 @@ Scene.validCommands = {"comment":1, "goto":1, "gotoref":1, "label":1, "looplimit
     ,"subscribe":1, "show_password":1, "gosub":1, "return":1, "hide_reuse":1, "disable_reuse":1, "allow_reuse":1
     ,"check_purchase":1,"restore_purchases":1,"purchase":1,"restore_game":1,"advertisement":1
     ,"save_game":1,"delay_break":1,"image":1,"link":1,"input_number":1,"goto_random_scene":1
+    ,"restart":1,"goto_link":1
     };
