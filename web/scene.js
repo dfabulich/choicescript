@@ -1432,7 +1432,7 @@ Scene.prototype.setref = function setref(line) {
 Scene.prototype.share_this_game = function share_links(now) {
   now = !!trim(now);
   this.paragraph();
-  printShareLinks(now);
+  printShareLinks(this.target, now);
   this.prevLineEmpty = true; // printShareLinks provides its own paragraph break
 }
 
