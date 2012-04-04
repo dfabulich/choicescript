@@ -259,9 +259,27 @@ function printShareLinks(target, now) {
 }
 
 function subscribe() {
+  if (window.isIosApp) {
+    callIos("subscribe");
+    return;
+  }
+  var mailToSupported = isFile;
+  if (window.isAndroidApp) mailToSupported = urlSupport.isSupported("mailto:support@choiceofgames.com");
+  if (mailToSupported) {
     window.location.href = "mailto:subscribe-"+window.storeName+"@choiceofgames.com?subject=Sign me up&body=Please notify me when the next game is ready."
-
+    return;
+  }
+  var email = window.prompt("Type your email address; we'll notify you when our next game is ready!");
+  if (!email) return;
+  while (!/^\S+@\S+\.\S+$/.test(email)) {
+    email = window.prompt("Sorry, \""+email+"\" is not an email address.  Please type your email address again.");
+    if (!email) return;
+  }
+  email = (""+email)
+  email = email.replace(/\'/g, "\\'");
+  window.location.href = "http://www.choiceofgames.com/subscribe-redirect.html?email=" + encodeURIComponent(email) + "&gameName=" + window.storeName;
 }
+
 // Callback expects a map from product ids to booleans
 function checkPurchase(products, callback) {
   if (window.isIosApp) {
