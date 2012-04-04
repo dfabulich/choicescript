@@ -1456,19 +1456,33 @@ Scene.prototype.more_games = function more_games(now) {
 }
 
 Scene.prototype.ending = function ending() {
-    var self = this;
-    var startupScene = self.nav.getStartupScene();
-    // TODO should *ending support custom button text?
-    this.paragraph();
     this.finished = true;
-    printButton("Play Again", main, false, 
-      function() { 
-        safeCall(self, function() {
-            self.restart();
-        });
-      }
-    );
-    if (self.debugMode) println(toJson(this.stats));
+    var groups = [""];
+    var options = [
+      {name:"Play again.", group:"choice", restart:true}
+      ,{name:"Play more games like this.", group:"choice", moreGames:true}
+      ,{name:"Share this game with friends.", group:"choice", share:true}
+      ,{name:"Email me when new games are available.", group:"choice", subscribe:true}
+    ];
+    var self = this;
+    function endingMenu() {
+      self.renderOptions([""], options, function(option) {
+        if (option.restart) {
+          self.restart();
+          return;
+        } else if (option.moreGames) {
+          self.more_games("now");
+        } else if (option.share) {
+          clearScreen(function() {
+            self.share_this_game("now");
+            endingMenu();
+          }) 
+        } else if (option.subscribe) {
+          self.subscribe("now");
+        }
+      });
+    }
+    endingMenu();
 }
 
 Scene.prototype.restart = function restart() {
