@@ -165,10 +165,14 @@ function printImage(source, alignment) {
   document.getElementById("text").appendChild(img);
 }
 
-function printShareLinks(target) {
+function printShareLinks(target, now) {
   if (!target) target = document.getElementById('text');
   var msgDiv = document.createElement("div");
   if (window.isIosApp) {
+    if (now) {
+      callIos("share");
+      return;
+    }
     var button = document.createElement("button");
     button.appendChild(document.createTextNode("Share This Game"));
     button.onclick = function() {
