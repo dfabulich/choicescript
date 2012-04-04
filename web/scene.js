@@ -499,6 +499,7 @@ Scene.prototype.finish = function finish(buttonName) {
     var nextSceneName = this.nav && nav.nextSceneName(this.name);
     // if there are no more scenes, then just halt
     if (!nextSceneName) {
+        this.ending();
         return;
     }
     if (!buttonName) buttonName = "Next Chapter";
@@ -1457,6 +1458,7 @@ Scene.prototype.more_games = function more_games(now) {
 
 Scene.prototype.ending = function ending() {
     this.finished = true;
+    if (typeof window == "undefined") return;
     var groups = [""];
     var options = [
       {name:"Play again.", group:"choice", restart:true}
