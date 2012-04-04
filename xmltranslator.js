@@ -35,7 +35,7 @@ function xmlEscape(str, attribute) {
   var element = !attribute;
   if (typeof(attribute) === "undefined") attribute = true;
   if (str == null) return null;
-  var result = str
+  var result = "" + str;
   result = result.replace(/&/g, "&amp;");
   if (attribute) {
     result = result.replace(/'/g, "&apos;");
@@ -156,7 +156,7 @@ XmlScene.prototype.ending = function xmlEnding(data) {
 }
 
 XmlScene.prototype.share_this_game = function xmlShareThisGame(data) {
-  printElement("share-this-game");
+  printElement("share-this-game", "now", trim(data) == "now");
 }
 
 XmlScene.prototype.link = function xmlLink(data) {
@@ -195,7 +195,19 @@ XmlScene.prototype.show_password = function xmlShowPassword(data) {
 }
 
 XmlScene.prototype.subscribe = function xmlSubscribe(data) {
-  printElement("subscribe");
+  printElement("subscribe", "now", trim(data) == "now");
+}
+
+XmlScene.prototype.reset = function xmlReset(data) {
+  printElement("reset-stats");
+}
+
+XmlScene.prototype.restart = function xmlRestart(data) {
+  printElement("restart");
+}
+
+XmlScene.prototype.more_games = function xmlMoreGames(data) {
+  printElement("more-games", "now", trim(data) == "now");
 }
 
 XmlScene.prototype.line_break = function xmlLineBreak(data) {
