@@ -464,3 +464,43 @@ test("variablized string", function() {
     "<paragraph-break />\n";
   translateScene(scene, expected);
 })
+test("mixed conditional style", function() {
+  var scene = ""
+    +"*choice\n"
+    +"  *if foo\n"
+    +"    *if (bar) #Bar1\n"
+    +"      Bar!\n"
+    +"      *finish\n"
+    +"    *if (bar) #Bar2\n"
+    +"      Bar2\n"
+    +"      *finish\n"
+    +"  *if (baz) #Baz\n"
+    +"    Baz\n"
+  var expected =  "<choice>\n"
+    +"<if><test>\n"
+    +"<and><variable name='foo' /><variable name='bar' /></and></test>\n"
+    +"<option reuse='allow'>\n"
+    +"<text>Bar1</text>\n"
+    +"<p>Bar! </p>\n"
+    +"<finish />\n"
+    +"</option>\n"
+    +"</if>\n"
+    +"<if><test>\n"
+    +"<and><variable name='foo' /><variable name='bar' /></and></test>\n"
+    +"<option reuse='allow'>\n"
+    +"<text>Bar2</text>\n"
+    +"<p>Bar2 </p>\n"
+    +"<finish />\n"
+    +"</option>\n"
+    +"</if>\n"
+    +"<if><test>\n"
+    +"<variable name='baz' /></test>\n"
+    +"<option reuse='allow'>\n"
+    +"<text>Baz</text>\n"
+    +"<p>Baz </p>\n"
+    +"<paragraph-break />\n"
+    +"</option>\n"
+    +"</if>\n"
+    +"</choice>\n";
+  translateScene(scene, expected);
+})

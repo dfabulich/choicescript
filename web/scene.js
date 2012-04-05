@@ -865,11 +865,11 @@ Scene.prototype.parseOptions = function parseOptions(startIndent, choicesRemaini
         var option = {name:line, group:currentChoice};
         if (reuse != "allow") option.reuse = reuse;
         if (this.displayOptionConditions) {
-          if (inlineIf) this.displayOptionConditions.push(inlineIf);
           option.displayIf = [];
           for (var i = 0; i < this.displayOptionConditions.length; i++) {
             option.displayIf[i] = this.displayOptionConditions[i];
           }
+          if (inlineIf) option.displayIf.push(inlineIf);
         } else if (inlineIf) {
           option.displayIf = [inlineIf];
         }
