@@ -36,6 +36,7 @@ if (typeof java == "undefined") {
   load("headless.js");
   load("web/"+gameName+"/"+"mygame.js");
   load("editor/embeddable-autotester.js");
+  if (typeof(console) == "undefined") console = {log: print};
 }
 
 nav.setStartingStatsClone(stats);
