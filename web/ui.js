@@ -169,7 +169,7 @@ function moreGames() {
     if (window.isIosApp) {
       window.location.href = "itms-apps://itunes.com/apps/choiceofgames";
     } else if (window.isAndroidApp) {
-      window.location.href = "https://play.google.com/store/search?q=pub:%22Choice+of+Games,+Inc%22";
+      window.location.href = "market://search?q=pub:%22Choice+of+Games,+Inc%22";
     } else {
       window.location.href = "http://www.choiceofgames.com/";
     }
