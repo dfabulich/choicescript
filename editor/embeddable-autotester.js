@@ -331,7 +331,7 @@ function autotester(sceneText, nav, sceneName) {
   //log(printed.join('\n'));
   var uncovered = [];
   for (var i = 0; i < coverage.length; i++) {
-      log("line "+(i+1) +": " +coverage[i]);
+      //log("line "+(i+1) +": " +coverage[i]);
       line = trim(originalScene.lines[i]);
       if (!coverage[i] && line && !/\*comment /.test(line)) {
         uncovered.push(i+1);
