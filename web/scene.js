@@ -499,7 +499,7 @@ Scene.prototype.finish = function finish(buttonName) {
     var nextSceneName = this.nav && nav.nextSceneName(this.name);
     // if there are no more scenes, then just halt
     if (!nextSceneName) {
-        this.ending();
+        if (!/^choicescript_/.test(this.name)) this.ending();
         return;
     }
     if (!buttonName) buttonName = "Next Chapter";
