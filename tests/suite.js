@@ -33,7 +33,7 @@ QUnit.log = function(entry) {
 	var message = entry.message;
 	if (typeof message === "undefined") message = "";
     print("    ", entry.result ? 'PASS' : 'FAIL', message);
-    if (!entry.result && entry.expected) {
+    if (!entry.result && (typeof entry.expected != "undefined")) {
     	if (entry.actual) {
     		print("      expected <"+entry.expected+ "> was <"+entry.actual+">");
     	} else {
