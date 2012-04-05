@@ -1474,6 +1474,7 @@ Scene.prototype.ending = function ending() {
           return;
         } else if (option.moreGames) {
           self.more_games("now");
+          setTimeout(function() {callIos("curl")}, 0);
         } else if (option.share) {
           clearScreen(function() {
             self.share_this_game("now");
@@ -1481,6 +1482,7 @@ Scene.prototype.ending = function ending() {
           }) 
         } else if (option.subscribe) {
           self.subscribe("now");
+          setTimeout(function() {callIos("curl")}, 0);
         }
       });
     }
