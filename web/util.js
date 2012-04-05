@@ -18,7 +18,7 @@
  */
 
 function safeCall(obj, fn) {
-    var debug = false || window.debug;
+    var debug = false || (typeof window != "undefined" && window.debug);
     var userAgent = this.window && window.navigator && window.navigator.userAgent;
     var isSafari = /Safari/.test(userAgent);
     var isIE = /MSIE/.test(userAgent);
