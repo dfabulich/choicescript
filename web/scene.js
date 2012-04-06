@@ -1425,7 +1425,18 @@ Scene.prototype.set = function set(line) {
 Scene.prototype.setref = function setref(line) {
     var stack = this.tokenizeExpr(line);
     var reference = this.evaluateValueToken(stack.shift(), stack);
-    this.validateVariable(reference);
+    var referenceExpressionString;
+    try {
+        referenceExpressionString = trim(line.substring(0, stack[0].pos - stack[0].value.length));
+    } catch (e) {}
+
+    try {
+      this.validateVariable(reference);
+    } catch (e) {
+      if (typeof referenceExpressionString != undefined) {
+        throw new Error(this.lineMsg()+"The expression \("+referenceExpressionString+"\) was \""+reference+"\", which is invalid:\n" + e.message);
+      }
+    }
     var value = this.evaluateExpr(stack);
     this.setVar(reference, value);
 }
