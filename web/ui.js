@@ -169,7 +169,7 @@ function moreGames() {
     if (window.isIosApp) {
       window.location.href = "itms-apps://itunes.com/apps/choiceofgames";
     } else if (window.isAndroidApp) {
-      if (/Kindle Fire/.test(navigator.userAgent)) {
+      if (isKindleFire) {
         var androidLink = document.getElementById('androidLink');
         if (androidLink && androidLink.href) {
           androidUrl = androidLink.href;
@@ -214,7 +214,14 @@ function printShareLinks(target, now) {
       if (androidLink) {
         androidUrl = androidLink.href;
         if (androidUrl) {
-          mobileMesg = "  <li><a href='"+androidUrl+"'>Rate this app</a> in the Google Play Store</li>\n";
+          if (isKindleFire) {
+            var package = androidUrl.substring(androidUrl.indexOf("id=") + 3);
+            androidUrl = "http://www.amazon.com/gp/mas/dl/android?p="+package;
+            mobileMesg = "  <li><a href='"+androidUrl+"'>Rate this app</a> in the Amazon Appstore</li>\n";
+          } else {
+            mobileMesg = "  <li><a href='"+androidUrl+"'>Rate this app</a> in the Google Play Store</li>\n";
+          }
+          
         }
       }
     } else if (/webOS/.test(navigator.userAgent)) {
@@ -641,6 +648,7 @@ window.isWeb = /^https?:/.test(window.location.href);
 window.isSafari = /Safari/.test(navigator.userAgent);
 window.isIE = /MSIE/.test(navigator.userAgent);
 window.isIPad = /iPad/.test(navigator.userAgent);
+window.isKindleFire = /Kindle Fire/.test(navigator.userAgent);
 
 window.loadTime = new Date().getTime();
 
