@@ -262,13 +262,13 @@ function isWebSavePossible() {
 webSaveDomain = "www.choiceofgames.com";
 webSaveUrl = "http://" + webSaveDomain + "/ajax_proxy.php/websave";
 
-function submitRemoteSave(slot, email, callback) {
+function submitRemoteSave(slot, email, subscribe, callback) {
   if (!isWebSavePossible()) return setTimeout(function() { callback(false); });
   window.store.get("state"+slot, function(ok, value) {
     if (ok) {
       var timestamp = slot.substring(4/*"save".length*/);
       var xhr = findXhr();
-      var params = "email="+email+"&game="+window.storeName+"&json="+encodeURIComponent(value)+"&timestamp="+ timestamp;
+      var params = "email="+email+"&game="+window.storeName+"&json="+encodeURIComponent(value)+"&timestamp="+ timestamp+"&subscribe="+subscribe;
       xhr.open("POST", webSaveUrl,true);
       xhr.setRequestHeader("Content-type","application/x-www-form-urlencoded");
 
@@ -297,7 +297,7 @@ function submitRemoteSave(slot, email, callback) {
 function submitDirtySaves(dirtySaveList, email, callback) {
   function submitDirtySave(i) {
     if (dirtySaveList[i]) {
-      submitRemoteSave(dirtySaveList[i], email, function(ok) {
+      submitRemoteSave(dirtySaveList[i], email, false, function(ok) {
         if (ok) {
           submitDirtySave(i+1);
         } else {

@@ -982,6 +982,7 @@ Scene.prototype.renderOptions = function renderOptions(groups, options, callback
     var currentOptions = options;
     var div = document.createElement("div");
     form.appendChild(div);
+    setClass(div, "choice");
     for (var groupNum = 0; groupNum < groups.length; groupNum++) {
         var group = groups[groupNum];
         if (group) {
@@ -1772,6 +1773,7 @@ Scene.prototype.save_game = function save_game() {
   fetchEmail(function(defaultEmail){
     self.paragraph();
     var form = document.createElement("form");
+    setClass(form, "saveGame");
     
     form.action="#";
 
@@ -1788,7 +1790,7 @@ Scene.prototype.save_game = function save_game() {
 
     println("", form);
     println("", form);
-    println("Please login to the choiceofgames.com save system with your email address below. We promise never to spam you.", form);
+    println("Please login to the choiceofgames.com save system with your email address below.", form);
 
     var emailInput = document.createElement("input");
     // This can fail on IE
@@ -1798,12 +1800,24 @@ Scene.prototype.save_game = function save_game() {
     emailInput.setAttribute("style", "font-size: 25px; width: 90%;");
     form.appendChild(emailInput);
 
+    println("", form);
+    println("", form);
 
+    var subscribeLabel = document.createElement("label");
+    subscribeLabel.setAttribute("for", "subscribeBox");
+    var subscribeBox = document.createElement("input");
+    subscribeBox.type = "checkbox";
+    subscribeBox.name = "subscribe";
+    subscribeBox.setAttribute("id", "subscribeBox");
+    subscribeBox.setAttribute("checked", true);
+    subscribeLabel.appendChild(subscribeBox);
+    subscribeLabel.appendChild(document.createTextNode("Email me when new games are available."));
+    form.appendChild(subscribeLabel);
+    
 
     var target = this.target;
     if (!target) target = document.getElementById('text');
     target.appendChild(form);
-    println("", form);
     println("", form);
     printButton("Next", form, true);
 
@@ -1819,6 +1833,7 @@ Scene.prototype.save_game = function save_game() {
     form.onsubmit = function(e) {
       preventDefault(e);
       safeCall(this, function() {
+        var shouldSubscribe = subscribeBox.checked;
         var email = trim(emailInput.value);
         if (!/^\S+@\S+\.\S+$/.test(email)) {
           var messageText = document.createTextNode("Sorry, \""+email+"\" is not an email address.  Please type your email address again.");
@@ -1835,7 +1850,7 @@ Scene.prototype.save_game = function save_game() {
             clearScreen(function() {
               self.save(function() {
                 recordSave(slot, function() {
-                  submitRemoteSave(slot, email, function(ok) {
+                  submitRemoteSave(slot, email, shouldSubscribe, function(ok) {
                     if (!ok) {
                       asyncAlert("Couldn't upload your saved game to choiceofgames.com. You can try again later from the Restore menu.", function() {
                         self.finished = false;

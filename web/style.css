@@ -56,7 +56,7 @@ table {
     height: 2em;
 }
 
-label{
+.choice>label{
     color: rgba(0, 0, 0, 0.85);
     line-height:20px;
     padding: 11px 8px 12px;
@@ -66,14 +66,14 @@ label{
     border-width: 1px 1px 0px 1px
 }
 
-.firstChild{
+.choice>.firstChild{
     border-top-width:1px;
     -webkit-border-top-right-radius:8px;
     -webkit-border-top-left-radius:8px;
     -moz-border-radius:8px 8px 0px 0px;
 }
 /* IE doesn't support label:last-child */
-.lastChild{
+.choice>.lastChild{
     border-bottom-width:1px;
     -webkit-border-bottom-right-radius:8px;
     -webkit-border-bottom-left-radius:8px;
@@ -81,10 +81,14 @@ label{
     border-bottom-right-radius:8px;
     border-bottom-left-radius:8px;
 }
-.onlyChild{
+.choice>.onlyChild{
     border-width:1px;
     -webkit-border-radius:8px;
     -moz-border-radius:8px;
+}
+
+.saveGame>label {
+  display:block;
 }
 
 .disabled {
