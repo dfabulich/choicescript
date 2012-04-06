@@ -169,7 +169,18 @@ function moreGames() {
     if (window.isIosApp) {
       window.location.href = "itms-apps://itunes.com/apps/choiceofgames";
     } else if (window.isAndroidApp) {
-      window.location.href = "market://search?q=pub:%22Choice+of+Games,+Inc%22";
+      if (/Kindle Fire/.test(navigator.userAgent)) {
+        var androidLink = document.getElementById('androidLink');
+        if (androidLink && androidLink.href) {
+          androidUrl = androidLink.href;
+          var package = androidUrl.substring(androidUrl.indexOf("id=") + 3);
+          window.location.href = "http://www.amazon.com/gp/mas/dl/android?p="+package+"&showAll=1";
+        } else {
+          window.location.href = "http://www.amazon.com/gp/mas/dl/android?p=com.choiceofgames.dragon&showAll=1";
+        }
+      } else {
+        window.location.href = "market://search?q=pub:%22Choice+of+Games,+Inc%22";
+      }
     } else {
       window.location.href = "http://www.choiceofgames.com/";
     }
