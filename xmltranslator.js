@@ -152,7 +152,40 @@ XmlScene.prototype.create = function xmlCreate(data) {
 
 
 XmlScene.prototype.ending = function xmlEnding(data) {
-  printElement("ending");
+  closePara();
+  writer.write("<label id='_ending'/>\n"
++"<choice>\n"
++"<option reuse='allow'>\n"
++"<text>Play again.</text>\n"
++"<restart />\n"
++"</option>\n"
++"<option reuse='allow'>\n"
++"<text>Play more games like this.</text>\n"
++"<more-games now='true'/>\n"
++"<include label='_ending'/>\n"
++"</option>\n"
++"<if><test>\n"
++"<not><variable name='choice_kindle' /></not></test>\n"
++"<option reuse='allow'>\n"
++"<text>Share this game with friends.</text>\n"
++"<share-this-game now='true'/>\n"
++"<include label='_ending'/>\n"
++"</option>\n"
++"</if>\n"
++"<if><test>\n"
++"<variable name='choice_kindle' /></test>\n"
++"<option reuse='allow'>\n"
++"<text>Review this game on the Kindle Store.</text>\n"
++"<share-this-game now='true'/>\n"
++"<include label='_ending'/>\n"
++"</option>\n"
++"</if>\n"
++"<if><test>\n"
++"<variable name='choice_subscribe_allowed' /></test>\n"
++"<option reuse='allow'>\n"
++"<text>Email me when new games are available.</text>\n"
++"<subscribe now='true'/>\n"
++"<include label='_ending'/>\n");
 }
 
 XmlScene.prototype.share_this_game = function xmlShareThisGame(data) {
