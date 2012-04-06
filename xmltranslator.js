@@ -185,7 +185,11 @@ XmlScene.prototype.ending = function xmlEnding(data) {
 +"<option reuse='allow'>\n"
 +"<text>Email me when new games are available.</text>\n"
 +"<subscribe now='true'/>\n"
-+"<include label='_ending'/>\n");
++"<include label='_ending'/>\n"
++"</option>\n"
++"</if>\n"
++"</choice>\n"
+);
 }
 
 XmlScene.prototype.share_this_game = function xmlShareThisGame(data) {
