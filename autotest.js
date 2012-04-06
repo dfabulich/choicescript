@@ -16,6 +16,8 @@
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied.
  */
+
+ // autotest.js [sceneName1] [sceneName2] [sceneName3]
 var gameName = "mygame";
 if (typeof java == "undefined") {
   var fs = require('fs');
