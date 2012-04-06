@@ -17,14 +17,4 @@
 
 This is the last scene!  The game is over!
 
-*page_break
-This is the last page of the game, where we ask people to share the game with their friends.
-
-Think carefully about where to use the "share_this_game" command, because it includes the 
-"Rate this app" link.  Prefer to use it on the "Congratulations!" screen, but not the
-"Game Over, you lose" screen.
-
-Please support our work by sharing this game with friends!  The more people play, the more
-resources we'll have to work on the next game.
-*share_this_game
 *ending
