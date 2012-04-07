@@ -1509,24 +1509,14 @@ Scene.prototype.restart = function restart() {
   scene.resetPage();
 }
 
-Scene.prototype.subscribe = function scene_subscribe(now) {
-  if (trim(now) == "now") {
-    subscribe();
-    return;
-  }
-  var self = this;
-  var target = this.target;
-  if (!target) target = document.getElementById('text');
-  var button = printButton("Subscribe", target, false, 
-    function() { 
-      safeCall(self, function() {
-          subscribe();
-      });
-    }
-  );
-  
-  setClass(button, "");
+Scene.prototype.subscribe = function scene_subscribe() {
   this.prevLineEmpty = false;
+  this.finished = true;
+  var self = this;
+  subscribe(this.target, function() {
+    self.finished = false;
+    self.resetPage();
+  });
 }
 
 Scene.prototype.restore_game = function restore_game() {

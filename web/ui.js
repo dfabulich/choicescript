@@ -276,7 +276,7 @@ function printShareLinks(target, now) {
   target.appendChild(msgDiv);
 }
 
-function subscribe() {
+function subscribe(target, callback) {
   if (window.isIosApp) {
     callIos("subscribe");
     return;
@@ -287,15 +287,34 @@ function subscribe() {
     window.location.href = "mailto:subscribe-"+window.storeName+"@choiceofgames.com?subject=Sign me up&body=Please notify me when the next game is ready."
     return;
   }
-  var email = window.prompt("Type your email address; we'll notify you when our next game is ready!");
-  if (!email) return;
-  while (!/^\S+@\S+\.\S+$/.test(email)) {
-    email = window.prompt("Sorry, \""+email+"\" is not an email address.  Please type your email address again.");
-    if (!email) return;
-  }
-  email = (""+email)
-  email = email.replace(/\'/g, "\\'");
-  window.location.href = "http://www.choiceofgames.com/subscribe-redirect.html?email=" + encodeURIComponent(email) + "&gameName=" + window.storeName;
+  if (!target) target = document.getElementById('text');
+  fetchEmail(function(defaultEmail) {
+    promptEmailAddress(target, defaultEmail, function(cancel, email) {
+      if (cancel) {
+        return callback();
+      }
+      var head= document.getElementsByTagName('head')[0];
+      var script = document.createElement('script');
+      script.type = 'text/javascript';
+      var timestamp = new Date().getTime();
+      var timeout = setTimeout(function() {
+        window["jsonp"+timestamp]({
+          result:"error", msg:"Couldn't connect. Please try again later."
+        })
+      }, 10000);
+      window["jsonp"+timestamp] = function(response) {
+        clearTimeout(timeout);
+        if (response.result == "error") {
+          document.getElementById("errorMessage").innerHTML = response.msg;
+        } else {
+          callback();
+        }
+      }
+      script.src = 'http://choiceofgames.us4.list-manage.com/subscribe/post-json?u=eba910fddc9629b2810db6182&id=e9cdee1aaa&c=jsonp' + timestamp+"&EMAIL="+email;
+      head.appendChild(script);
+      
+    })
+  });
 }
 
 // Callback expects a map from product ids to booleans
@@ -536,6 +555,7 @@ function promptEmailAddress(target, defaultEmail, callback) {
   var message = document.createElement("div");
   message.style.color = "red";
   message.style.fontWeight = "bold";
+  message.setAttribute("id", "errorMessage");
   form.appendChild(message);
   
   var input = document.createElement("input");
