@@ -276,6 +276,15 @@ function printShareLinks(target, now) {
   target.appendChild(msgDiv);
 }
 
+function subscribeLink(e) {
+  clearScreen(function() {
+    println("Type your email address below; we'll notify you when our next game is ready!");
+    subscribe(text, function() {
+      clearScreen(loadAndRestoreGame);
+    })
+  })
+}
+
 function subscribe(target, callback) {
   if (window.isIosApp) {
     callIos("subscribe");
