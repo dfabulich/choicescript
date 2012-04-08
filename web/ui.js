@@ -269,7 +269,7 @@ function printShareLinks(target, now) {
     shareLinkText = "<li>TODO Share Link 1, e.g. \"Rate this App in the App Store\"<li>TODO Share Link 2, e.g. StumbleUpon<li>TODO Share Link 3, e.g. Facebook<li>TODO Share Link 4, e.g. Twitter"
   }
     
-  msgDiv.innerHTML = "<ul id='sharelist'>\n"+
+  msgDiv.innerHTML = "<p>Please support our work by sharing this game with friends!  The more people play, the more resources we'll have to work on the next game.</p><ul id='sharelist'>\n"+
     mobileMesg+
     shareLinkText+
     "</ul><br>\n"; // just one line break; <ul> provides its own
