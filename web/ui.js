@@ -284,32 +284,37 @@ function subscribeLink(e) {
   })
 }
 
-function subscribe(target, now, callback) {
-  if (window.isIosApp) {
-    if (now) {
-      callIos("subscribe");
-    } else {
-      printButton("Subscribe", target, false, function() {
-        callIos("subscribe");
+function subscribeByMail(target, now, callback, code) {
+  if (now) {
+    code();
+    setTimeout(function() {callback(now)}, 0);
+  } else {
+    printButton("Subscribe", target, false, function() {
+        code();
+        setTimeout(function() {callback(now)}, 0);
       })
-    }
-    setTimeout(function() {callback()}, 0);
+    printButton("Cancel", target, false, function() {
+      setTimeout(function() {callback(now)}, 0);
+    })
+  }
+}
+
+function subscribe(target, now, callback) {
+  if (!target) target = document.getElementById('text');
+  if (window.isIosApp) {
+    subscribeByMail(target, now, callback, function() {
+      callIos("subscribe");
+    })
     return;
   }
   var mailToSupported = isFile;
   if (window.isAndroidApp) mailToSupported = urlSupport.isSupported("mailto:support@choiceofgames.com");
   if (mailToSupported) {
-    if (now) {
-      window.location.href = "mailto:subscribe-"+window.storeName+"@choiceofgames.com?subject=Sign me up&body=Please notify me when the next game is ready."
-    } else {
-      printButton("Subscribe", target, false, function() {
-        window.location.href = "mailto:subscribe-"+window.storeName+"@choiceofgames.com?subject=Sign me up&body=Please notify me when the next game is ready."
-      })
-    }
-    setTimeout(function() {callback()}, 0);
+    subscribeByMail(target, now, callback, function() {
+      window.location.href = "mailto:subscribe-"+window.storeName+"@choiceofgames.com?subject=Sign me up&body=Please notify me when the next game is ready.";
+    })
     return;
   }
-  if (!target) target = document.getElementById('text');
   if (now) println("Type your email address below; we'll notify you when our next game is ready!");
   fetchEmail(function(defaultEmail) {
     promptEmailAddress(target, defaultEmail, function(cancel, email) {
