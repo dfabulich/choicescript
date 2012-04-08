@@ -278,25 +278,39 @@ function printShareLinks(target, now) {
 
 function subscribeLink(e) {
   clearScreen(function() {
-    println("Type your email address below; we'll notify you when our next game is ready!");
-    subscribe(text, function() {
+    subscribe(text, "now", function() {
       clearScreen(loadAndRestoreGame);
     })
   })
 }
 
-function subscribe(target, callback) {
+function subscribe(target, now, callback) {
   if (window.isIosApp) {
-    callIos("subscribe");
+    if (now) {
+      callIos("subscribe");
+    } else {
+      printButton("Subscribe", target, false, function() {
+        callIos("subscribe");
+      })
+    }
+    setTimeout(function() {callback()}, 0);
     return;
   }
   var mailToSupported = isFile;
   if (window.isAndroidApp) mailToSupported = urlSupport.isSupported("mailto:support@choiceofgames.com");
   if (mailToSupported) {
-    window.location.href = "mailto:subscribe-"+window.storeName+"@choiceofgames.com?subject=Sign me up&body=Please notify me when the next game is ready."
+    if (now) {
+      window.location.href = "mailto:subscribe-"+window.storeName+"@choiceofgames.com?subject=Sign me up&body=Please notify me when the next game is ready."
+    } else {
+      printButton("Subscribe", target, false, function() {
+        window.location.href = "mailto:subscribe-"+window.storeName+"@choiceofgames.com?subject=Sign me up&body=Please notify me when the next game is ready."
+      })
+    }
+    setTimeout(function() {callback()}, 0);
     return;
   }
   if (!target) target = document.getElementById('text');
+  if (now) println("Type your email address below; we'll notify you when our next game is ready!");
   fetchEmail(function(defaultEmail) {
     promptEmailAddress(target, defaultEmail, function(cancel, email) {
       if (cancel) {

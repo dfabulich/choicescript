@@ -1493,8 +1493,7 @@ Scene.prototype.ending = function ending() {
             endingMenu();
           }) 
         } else if (option.subscribe) {
-          self.subscribe("now");
-          setTimeout(function() {callIos("curl")}, 0);
+          subscribeLink();
         }
       });
     }
@@ -1509,13 +1508,25 @@ Scene.prototype.restart = function restart() {
   scene.resetPage();
 }
 
-Scene.prototype.subscribe = function scene_subscribe() {
+Scene.prototype.subscribe = function scene_subscribe(now) {
+  // "now" means we should immediately display the signup form
+  // otherwise, we should display a Subscribe button which displays the form
+  // On some platforms, "now" is impossible, so we ignore it.
+  now = ("now" == now);
   this.prevLineEmpty = false;
   this.finished = true;
+  this.skipFooter = true;
   var self = this;
-  subscribe(this.target, function() {
+  subscribe(this.target, now, function(now) {
     self.finished = false;
-    self.resetPage();
+    // if "now" actually worked, then continue the scene
+    // otherwise, reset the page before continuing
+    if (now) {
+      self.skipFooter = false;
+      self.execute();
+    } else {
+      self.resetPage();
+    }
   });
 }
 
