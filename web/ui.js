@@ -295,7 +295,7 @@ function subscribeByMail(target, now, callback, code) {
         code();
         setTimeout(function() {callback(now)}, 0);
       })
-    printButton("Cancel", target, false, function() {
+    printButton("Next", target, false, function() {
       setTimeout(function() {callback(now)}, 0);
     })
   }
@@ -337,7 +337,14 @@ function subscribe(target, now, callback) {
         if (response.result == "error") {
           document.getElementById("errorMessage").innerHTML = response.msg;
         } else {
-          callback();
+          clearScreen(function() {
+            target = document.getElementById('text');
+            println(response.msg, target);
+            println("", target);
+            printButton("Next", target, false, function() {
+              callback();
+            })
+          });
         }
       }
       script.src = 'http://choiceofgames.us4.list-manage.com/subscribe/post-json?u=eba910fddc9629b2810db6182&id=e9cdee1aaa&c=jsonp' + timestamp+"&EMAIL="+email;
