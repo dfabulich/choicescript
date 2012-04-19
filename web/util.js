@@ -18,11 +18,12 @@
  */
 
 function safeCall(obj, fn) {
-    var debug = false || (typeof window != "undefined" && window.debug);
+    var isHeadless = typeof window == "undefined";
+    var debug = false || (!isHeadless && window.debug);
     var userAgent = this.window && window.navigator && window.navigator.userAgent;
     var isSafari = /Safari/.test(userAgent);
     var isIE = /MSIE/.test(userAgent);
-    if (isIE) {
+    if (isIE || isHeadless) {
         // just call through; onerror will be called and debugger will handle it
         if (obj) {
             fn.call(obj);
