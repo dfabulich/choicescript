@@ -1,11 +1,11 @@
 {
   "name": "choicescript",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "author" : "Dan Fabulich (http://choiceofgames.com)",
   "contributors" : [
     "Jakub Hampl (http://gampleman.eu)"
   ],
-  "files" : ["editor", "lib", "LICENSE.txt", "public", "README.md"],
+  "files" : ["editor", "lib", "LICENSE.txt", "public", "README.md", "man"],
   "bin": {
     "choicescript" : "./lib/cli.js"
   },
@@ -16,5 +16,6 @@
   "dependencies" : {
     "commander" : "0.6.0",
     "express" : "2.5"
-  }
+  },
+  "man" : ["./man/choicescript.1", "./man/syntax.1", "./man/testing.1"]
 }

@@ -1,0 +1,1505 @@
+.TH CHOICESCRIPT-SYNTAX 1 "" "" "About the ChoiceScript Language"
+.SH Introduction to ChoiceScript
+.PP
+A basic guide to the ChoiceScript programming language.
+Please post on the ChoiceScript google
+group (http://groups.google.com/group/choicescript) if you have
+questions about this document.
+.SS What is ChoiceScript?
+.PP
+ChoiceScript is a simple programming language for writing
+multiple-choice games (MCGs) like Choice of the
+Dragon (http://www.choiceofgames.com/dragon/).
+Writing games with ChoiceScript is easy and fun, even for authors with
+no programming experience.
+.SS Trying it out
+.PP
+To begin, download the ChoiceScript source from
+GitHub (http://github.com/dfabulich/choicescript/zipball/master),
+extract the zip file, and open the \f[C]web/index.html\f[] file.
+The game will immediately begin.
+.PP
+(You can also use the ChoiceScript github
+page (http://github.com/dfabulich/choicescript) to browse our files,
+file bugs, or receive notifications when we update ChoiceScript.)
+.SS Your First Scene: \f[C]*choice\f[] and \f[C]*finish\f[]
+.PP
+Here's a simple scene written in ChoiceScript.
+You can find it in \f[C]web/mygame/startup.txt\f[].
+.PP
+``
+.IP
+.nf
+\f[C]
+\ \ Your\ majesty,\ your\ people\ are\ starving\ in\ the\ streets,\ and\ threaten\ revolution.
+\ \ Our\ enemies\ to\ the\ west\ are\ weak,\ but\ they\ threaten\ soon\ to\ invade.\ \ What\ will\ you\ do?
+
+\ \ *choice
+\ \ \ \ #Make\ pre-emptive\ war\ on\ the\ western\ lands.
+\ \ \ \ \ \ If\ you\ can\ seize\ their\ territory,\ your\ kingdom\ will\ flourish.\ \ But\ your\ army\[aq]s
+\ \ \ \ \ \ morale\ is\ low\ and\ the\ kingdom\[aq]s\ armory\ is\ empty.\ \ How\ will\ you\ win\ the\ war?
+\ \ \ \ \ \ *choice
+\ \ \ \ \ \ \ \ #Drive\ the\ peasants\ like\ slaves;\ if\ we\ work\ hard\ enough,\ we\[aq]ll\ win.
+\ \ \ \ \ \ \ \ \ \ Unfortunately,\ morale\ doesn\[aq]t\ work\ like\ that.\ \ Your\ army\ soon\ turns\ against\ you
+\ \ \ \ \ \ \ \ \ \ and\ the\ kingdom\ falls\ to\ the\ western\ barbarians.
+\ \ \ \ \ \ \ \ \ \ *finish
+\ \ \ \ \ \ \ \ #Appoint\ charismatic\ knights\ and\ give\ them\ land,\ peasants,\ and\ resources.
+\ \ \ \ \ \ \ \ \ \ Your\ majesty\[aq]s\ people\ are\ eminently\ resourceful.\ \ Your\ knights\ win\ the\ day,
+\ \ \ \ \ \ \ \ \ \ but\ take\ care:\ they\ may\ soon\ demand\ a\ convention\ of\ parliament.
+\ \ \ \ \ \ \ \ \ \ *finish
+\ \ \ \ \ \ \ \ #Steal\ food\ and\ weapons\ from\ the\ enemy\ in\ the\ dead\ of\ night.
+\ \ \ \ \ \ \ \ \ \ A\ cunning\ plan.\ \ Soon\ your\ army\ is\ a\ match\ for\ the\ westerners;\ they\ choose
+\ \ \ \ \ \ \ \ \ \ not\ to\ invade\ for\ now,\ but\ how\ long\ can\ your\ majesty\ postpone\ the\ inevitable?
+\ \ \ \ \ \ \ \ \ \ *finish
+\ \ \ \ #Beat\ swords\ to\ plowshares\ and\ trade\ food\ to\ the\ westerners\ for\ protection.
+\ \ \ \ \ \ The\ westerners\ have\ you\ at\ the\ point\ of\ a\ sword.\ \ They\ demand\ unfair\ terms
+\ \ \ \ \ \ from\ you.
+\ \ \ \ \ \ *choice
+\ \ \ \ \ \ \ \ #Accept\ the\ terms\ for\ now.
+\ \ \ \ \ \ \ \ \ \ Eventually,\ the\ barbarian\ westerners\ conquer\ you\ anyway,\ destroying\ their
+\ \ \ \ \ \ \ \ \ \ bread\ basket,\ and\ the\ entire\ region\ starves.
+\ \ \ \ \ \ \ \ \ \ *finish
+\ \ \ \ \ \ \ \ #Threaten\ to\ salt\ our\ fields\ if\ they\ don\[aq]t\ offer\ better\ terms.
+\ \ \ \ \ \ \ \ \ \ They\ blink.\ \ Your\ majesty\ gets\ a\ fair\ price\ for\ wheat.
+\ \ \ \ \ \ \ \ \ \ *finish
+\ \ \ \ #Abdicate\ the\ throne.\ I\ have\ clearly\ mismanaged\ this\ kingdom!
+\ \ \ \ \ \ The\ kingdom\ descends\ into\ chaos,\ but\ you\ manage\ to\ escape\ with\ your\ own\ hide.
+\ \ \ \ \ \ Perhaps\ in\ time\ you\ can\ return\ to\ restore\ order\ to\ this\ fair\ land.
+\ \ \ \ \ \ *finish
+\f[]
+.fi
+.PP
+As you can see, the \f[C]*choice\f[] command presents the user with a
+list of options; the result of choosing each option appears indented
+right below the option (in an “indented block”).
+.PP
+If you go to play this scene, you'll first be presented with three
+options:
+.IP "1." 3
+Make pre-emptive war on the western lands.
+.IP "2." 3
+Beat swords to plowshares and trade food to the westerners for
+protection.
+.IP "3." 3
+Abdicate the throne.
+I have clearly mismanaged this kingdom!
+.PP
+If you choose option #1, you get to choose how to win the war.
+If you choose option #2, you may decide how to negotiate with the
+westerners.
+If you choose option #3, the scene ends with no additional choices.
+.PP
+As you can see, there's a lot you can do with just the \f[C]*choice\f[]
+command and the \f[C]*finish\f[] command.
+Indeed, using only these two commands and a lot of time, you could
+develop an entire “Choose Your Own Adventure” book!
+.SS Go On, Play with It!
+.PP
+Try opening up \f[C]web/mygame/startup.txt\f[] in a simple text editor
+like Notepad or TextEdit.
+If you change the text, save the file, and refresh the
+\f[C]web/mygame/index.html\f[] page in your browser, you should be able
+to see the effect of your changes immediately.
+.SS Indentation
+.PP
+Note that indentation in ChoiceScript is mandatory.
+Without those spaces for indentation, we would have no way to tell the
+difference between options nested within other choices and options on
+the main menu.
+.PP
+You can indent blocks using spaces or with the Tab character (but not
+both in the same file).
+You can use any number of spaces you want, but you must be consistent.
+Code like this is not allowed:
+.PP
+``
+.IP
+.nf
+\f[C]
+*choice
+\ \ \ \ #Hold\ \[aq]em.
+\ \ \ \ \ \ \ \ He\ calls;\ you\ win!
+\ \ \ \ \ \ \ \ *finish
+\ \ \ \ \ \ #Fold\ \[aq]em.
+\ \ \ \ \ \ \ \ Better\ luck\ next\ time.
+\ \ \ \ \ \ \ \ *finish
+\f[]
+.fi
+.PP
+Option 1 has four spaces, but Option 2 has six spaces; since these don't
+line up, ChoiceScript will display an error message if you try to write
+scenes like this.
+.SS Reusing Code: Goto and Label
+.PP
+ChoiceScript provides a way to jump around in a scene besides just
+making choices.
+You can use the \f[C]*goto\f[] command to jump to any line in the scene,
+as long as you first put a \f[C]*label\f[] on the line you want to
+reach.
+.PP
+``
+.IP
+.nf
+\f[C]
+\ \ What\ kind\ of\ animal\ will\ you\ be?
+\ \ *choice
+\ \ \ \ #Lion
+\ \ \ \ \ \ *goto\ claws
+\ \ \ \ #Tiger
+\ \ \ \ \ \ *label\ claws
+\ \ \ \ \ \ In\ that\ case,\ you\[aq]ll\ have\ powerful\ claws\ and\ a\ mighty\ roar!
+\ \ \ \ \ \ *finish
+\ \ \ \ #Elephant
+\ \ \ \ \ \ Well,\ elephants\ are\ interesting\ animals,\ too.
+\ \ \ \ \ \ *finish
+\f[]
+.fi
+.PP
+When we reach the line \f[C]*goto\ claws\f[], we automatically jump to
+the line \f[C]*label\ claws\f[].
+You may create as many labels as you like, and use \f[C]*goto\f[] to
+reach any of them.
+.PP
+Note that every indented (nested) block must conclude with either a
+\f[C]*finish\f[] command (which ends the scene) or a \f[C]*goto\f[] line
+which jumps to another line in the scene.
+.PP
+(You can also reuse code with the \f[C]*goto_scene\f[] command,
+described later in this document.)
+.SS Setting and Checking Variables
+.PP
+In ChoiceScript, you can use variables to make scenes and decisions more
+interesting than a “Choose Your Own Adventure” book.
+.PP
+To use a variable, you must begin by defining it and setting it, like
+this:
+.PP
+``
+.IP
+.nf
+\f[C]
+\ \ *temp\ leadership
+\ \ *set\ leadership\ 20
+\f[]
+.fi
+.PP
+\f[B]TODO: Discuss \f[C]*create\f[] vs. \f[C]*temp\f[].\f[] We will
+probably remove the \f[C]*create\f[] command in the future, replacing it
+with something in \f[C]mygame.js\f[]; we should document what the new
+thing will be.
+(The basic idea is that \f[C]*temp\f[] variables only last for the
+current scene, whereas permanent variables persist through the entire
+game.)
+.PP
+Once a variable has been set, you can check the value of the variable
+like this:
+.PP
+``
+.IP
+.nf
+\f[C]
+\ \ #Run\ for\ class\ president
+\ \ \ \ *if\ leadership\ >\ 15
+\ \ \ \ \ \ You\ win\ the\ election.
+\ \ \ \ \ \ *finish
+\ \ \ \ You\ lose\ the\ election.
+\ \ \ \ *finish
+\f[]
+.fi
+.PP
+In this case, leadership is just set to 20, so the player is sure to win
+the election.
+But you can choose to give the player a different amount of leadership
+depending on the player's earlier choices.
+Using variables, the player's earlier leadership choices can have an
+effect on the story later in the game.
+.PP
+You can also add leadership points to the current number of leadership
+points, like this:
+.PP
+``
+.IP
+.nf
+\f[C]
+\ \ *set\ leadership\ +20
+\f[]
+.fi
+.PP
+This would add 20 points to the player's current leadership score.
+It's the same thing as writing \f[C]*set\ leadership\ leadership+20\f[].
+You can also subtract points with “-”, multiply with “*” or divide with
+“/”.
+.PP
+If you need to use multiple operators at once (e.g.
+you need to do both division and addition), you must use parentheses,
+like this: \f[C]*set\ honesty\ (leadership\ +\ manners)*2\f[].
+You may not omit the paretheses, even though it's perfectly
+understandable arithmetic:
+\f[C]*set\ honesty\ leadership\ +\ manners\ /\ 2\f[].
+.PP
+You can also show the player's current leadership score by using
+\f[C]${}\f[] (a dollar sign followed by curly braces), like this:
+.PP
+``
+.IP
+.nf
+\f[C]
+\ \ Your\ leadership\ score\ is:\ ${leadership}
+\f[]
+.fi
+.PP
+By the way, variables aren't just for numbers.
+You can also put text in a variable by using quotation marks:
+.PP
+``
+.IP
+.nf
+\f[C]
+\ \ *set\ lover_name\ "Jamie"
+\f[]
+.fi
+.SS Using \f[C]*else\f[] and \f[C]*elseif\f[] to Improve Readability
+.PP
+We can rewrite the leadership example above to use the \f[C]*else\f[]
+command; this will make it easier to read.
+.PP
+``
+.IP
+.nf
+\f[C]
+\ \ #Run\ for\ class\ president
+\ \ \ \ *if\ leadership\ >\ 15
+\ \ \ \ \ \ You\ win\ the\ election.
+\ \ \ \ \ \ *finish
+\ \ \ \ *else
+\ \ \ \ \ \ You\ lose\ the\ election.
+\ \ \ \ \ \ *finish
+\f[]
+.fi
+.PP
+This does exactly the same thing as before, but using \f[C]*else\f[]
+makes it clearer that only one of these two options is possible, just by
+indenting the code.
+.PP
+You can also use the \f[C]*elseif\f[] command to define three possible
+branches, like this:
+.PP
+``
+.IP
+.nf
+\f[C]
+\ \ #Run\ for\ class\ president
+\ \ \ \ *if\ leadership\ >\ 25
+\ \ \ \ \ \ You\ win\ the\ election\ by\ a\ landslide!
+\ \ \ \ \ \ *finish
+\ \ \ \ *elseif\ leadership\ >\ 15
+\ \ \ \ \ \ You\ win\ the\ election,\ but\ just\ barely.
+\ \ \ \ \ \ *finish
+\ \ \ \ *else
+\ \ \ \ \ \ You\ lose\ the\ election.
+\ \ \ \ \ \ *finish
+\f[]
+.fi
+.PP
+You can also display variables on the stats screen, available when you
+click the “Show Stats” button.
+There's a lot to discuss there, see below for more details.
+What Happens When We \f[C]*finish\f[]?
+-------------------------------
+.PP
+When we \f[C]*finish\f[], we move on to the next scene in the game.
+This is defined in a file called \f[C]mygame.js\f[].
+Here's an example:
+.IP
+.nf
+\f[C]
+\ \ //\ Specify\ the\ list\ of\ scenes\ here,\ separated\ by\ commas,\ with\ no\ final\ comma
+
+\ \ nav\ =\ new\ SceneNavigator([
+\ \ \ \ \ \ "startup"
+\ \ \ \ \ \ ,"animal"
+\ \ \ \ \ \ ,"variables"
+\ \ \ \ \ \ ,"ending"
+\ \ \ \ \ \ ,"death"
+
+\ \ ]);
+
+\ \ //\ Specify\ the\ default\ starting\ stats\ here
+
+\ \ stats\ =\ {
+\ \ \ \ \ \ leadership:\ 50
+\ \ \ \ \ \ ,strength:\ 50
+\ \ };
+
+\ \ //\ Specify\ the\ stats\ to\ use\ in\ debug\ mode
+
+\ \ debugStats\ =\ {
+\ \ \ \ \ \ leadership:\ 50
+\ \ \ \ \ \ ,strength:\ 50
+\ \ };
+
+\ \ //\ or\ just\ use\ defaults
+\ \ //\ debugStats\ =\ stats
+\f[]
+.fi
+.PP
+The first section defines the scene “navigator,” which describes how we
+move from scene to scene.
+If you \f[C]*finish\f[] in the “startup” scene, we'll move right ahead
+to the “animal” scene, then the “variables” scene.
+Finally, we reach the ending scene.
+Here's an example ending scene:
+.IP
+.nf
+\f[C]
+\ \ This\ is\ the\ last\ scene!\ \ The\ game\ is\ over!
+
+\ \ *ending
+\f[]
+.fi
+.PP
+That final \f[C]*ending\f[] command instructs the game to insert a “Play
+Again” button at the end of the scene.
+If you choose to “Play Again”, the game will begin again at the
+“startup” scene.
+.PP
+\f[B]WARNING\f[]: mygame.js is likely to change considerably very soon.
+It's currently the absolute minimum amount of code that could possibly
+work; we'd like it to be in a nicer format that looks more like
+ChoiceScript and less like JavaScript.
+.PP
+(Note that Choice of the Dragon doesn't even have a \f[C]mygame.js\f[]
+file; that feature was developed after CotD was released.
+You can see something similar in its \f[C]index.html\f[] file.)
+.PP
+You're not required to use \f[C]*finish\f[] to move on to the next
+scene; you can also jump to any scene in the game using
+\f[C]*goto_scene\f[].
+Here's an example:
+.IP
+.nf
+\f[C]
+\ \ #Lift\ weights
+\ \ \ \ *if\ strength\ >\ 15
+\ \ \ \ \ \ You\ lift\ the\ weights.
+\ \ \ \ \ \ *finish
+\ \ \ \ You\ drop\ the\ weights\ and\ hurt\ yourself\ badly.\ \ You\ never\ recover.
+
+\ \ \ \ *goto_scene\ death
+\f[]
+.fi
+.PP
+When this happens, we jump directly to the death scene.
+This allows you to provide a standard “death” message without copying
+and pasting all over the game.
+.SS Examples
+.PP
+Here some example scenes from Choice of the Dragon.
+Please don't copy their code without explicit permission from Choice of
+Games.
+.IP \[bu] 2
+startup
+.IP \[bu] 2
+queenpolitics (http://www.choiceofgames.com/dragon/scenes/queenpolitics.txt)
+.SS Using mygame.js to Create Variables
+.PP
+\f[C]*create\f[] is deprecated.
+As we mentioned above, you may create a temporary variable with
+\f[C]*temp\f[], but such a temporary variable only lasts for the current
+vignette.
+Once you transition into a new scene, a \f[C]*temp\f[] variable is
+forgotten by game.
+.PP
+Instead, of \f[C]*create\f[], you should use mygame.js to define and
+establish the baseline for variables that will be used in multiple
+vignettes.
+In the section that starts with \f[C]stats\ =\ {\f[], you should list
+the variables and their starting value.
+A very simple game's variable section might look like this:
+.PP
+\f[C]stats\ =\ {\f[]
+.IP
+.nf
+\f[C]
+\ \ \ \ leadership:\ 50
+\ \ \ \ ,strength:\ 50
+\ \ \ \ ,willpower:\ 1
+\ \ \ \ ,wounds:\ 0
+\ \ \ \ ,met_princess:\ false
+\f[]
+.fi
+.PP
+};
+.PP
+As you might have surmised, Leadership and Strength will be percentage
+variables which start at 50; Willpower will be a numerical variable that
+starts at 1, and Wounds at 0.
+Met_princess will be a boolean that starts at false.
+.PP
+There is no limit to the number of variables you can create in
+mygame.js.
+Obviously, you should not have a variable in mygame.js and then use
+\f[C]*temp\f[] to create one with the same name in a vignette.
+.SS Let Us Host Your ChoiceScript Games
+.PP
+Have you finished writing a game?
+Choice of Games encourages you to submit your finished ChoiceScript game
+to
+us (http://www.choiceofgames.com/make-your-own-games/let-us-host-your-choicescript-games/)
+so that we can host it for you publicly; we'll give you a share of the
+revenue your game produces.
+.SH Advanced Choicescript
+.SS More Commands
+.IP \[bu] 2
+\f[C]*image\f[]: This command inserts an image.
+Place the image in the “mygame” folder, and type the name of the image
+file, like this:
+.RS 2
+.PP
+``
+.IP
+.nf
+\f[C]
+\ \ *image\ beauty.jpg
+\f[]
+.fi
+.PP
+If you like, you can specify the alignment ("left" or "right") after the
+image name, like this:
+.PP
+``
+.IP
+.nf
+\f[C]
+\ \ *image\ beauty.jpg\ left
+\f[]
+.fi
+.PP
+By default, the image appears centered on a line by itself, but if you
+align the image left or right, the text will flow around the image.
+(In CSS terms, the image will "float" left or right.)
+.RE
+.IP \[bu] 2
+\f[C]*comment\f[]: This command does nothing; any text you put after
+\f[C]*comment\f[] will be ignored.
+It\[aq]s helpful to put remarks in the text that only the author should
+read.
+.RS 2
+.PP
+``
+.IP
+.nf
+\f[C]
+\ \ *comment\ TODO\ We\ should\ make\ this\ scene\ more\ interesting!
+\f[]
+.fi
+.RE
+.IP \[bu] 2
+\f[C]*page_break\f[]: Put in a "Next" button with no radio buttons.
+The game will continue on the subsequent page.
+.RS 2
+.PP
+``
+.IP
+.nf
+\f[C]
+\ \ You\ turn\ the\ corner\ slowly.\ \ Blood\ rushes\ through\ your\ ears.\ \ As\ you\ open\ the\ door...
+\ \ *page_break
+\ \ ...\ the\ masked\ murderer\ attacks!
+\f[]
+.fi
+.RE
+.IP \[bu] 2
+\f[C]*line_break\f[]: Put just one line break in your text, like a
+\f[C]<br>\f[] in HTML.
+ChoiceScript automatically converts single line breaks to spaces, and
+double line breaks to paragraphs.
+.RS 2
+.PP
+``
+.IP
+.nf
+\f[C]
+\ \ So
+\ \ this
+\ \ is
+\ \ all
+\ \ one
+\ \ line.
+
+\ \ But\ this\ is\ a\ new\ paragraph.
+
+\ \ And\ this
+\ \ *line_break
+\ \ is\ two\ lines.
+\f[]
+.fi
+.PP
+That code would display like this:
+.RS
+.PP
+So this is all one line
+.PP
+But this is a new paragraph.
+.PP
+And this
+.PD 0
+.P
+.PD
+is two lines
+.RE
+.RE
+.IP \[bu] 2
+\f[C]*input_text\f[]: Provides a text box for the user to specify the
+value of a variable, e.g.
+the user\[aq]s name.
+.RS 2
+.PP
+``
+.IP
+.nf
+\f[C]
+\ \ Please\ enter\ your\ name.
+\ \ *input_text\ name
+
+\ \ Your\ name\ is\ ${name}
+\f[]
+.fi
+.RE
+.IP \[bu] 2
+\f[C]*input_number\f[]: Just like \f[C]*input_text\f[], but only numbers
+are allowed in the text box.
+Specify a variable name as well as a minimum and a maximum.
+.RS 2
+.PP
+``
+.IP
+.nf
+\f[C]
+\ \ How\ many\ coins?
+\ \ *input_text\ coins\ 0\ 30
+
+\ \ You\ asked\ for\ ${coins}\ coins.
+\f[]
+.fi
+.RE
+.IP \[bu] 2
+\f[C]*fake_choice\f[]: This convenience command behaves exactly like
+\f[C]*choice\f[], but no commands are allowed in the body of the choice;
+thus no \f[C]*goto\f[]/\f[C]*finish\f[] is required.
+.RS 2
+.PP
+``
+.IP
+.nf
+\f[C]
+\ \ What\ color\ do\ you\ prefer?
+
+\ \ *fake_choice
+\ \ \ \ #Red
+\ \ \ \ \ \ Red\ is\ the\ color\ of\ roses.
+\ \ \ \ #Blue
+\ \ \ \ \ \ Blue\ is\ the\ color\ of\ the\ sea.
+\ \ \ \ #Green
+\ \ \ \ \ \ Green\ is\ the\ color\ of\ spring.
+
+\ \ What\ an\ excellent\ choice!\ \ And\ what\ flavor\ of\ ice\ cream\ would\ you\ like?
+
+\ \ *fake_choice
+\ \ \ \ #Vanilla
+\ \ \ \ #Chocolate
+\ \ \ \ #Strawberry
+
+\ \ Mmm,\ delicious!
+\ \ *finish
+\f[]
+.fi
+.RE
+.IP \[bu] 2
+\f[C]*rand\f[]: Set a variable to a random number.
+You set the minimum and maximum, we do the rest.
+For example, this would set the variable \f[C]die_roll\f[] to a value
+from 1 to 6 inclusive: ``
+.RS 2
+.IP
+.nf
+\f[C]
+\ \ *rand\ die_roll\ 1\ 6
+\f[]
+.fi
+.PP
+Beware! It can be very hard to adequately test games that use
+randomness.
+.RE
+.IP \[bu] 2
+\f[C]*stat_chart\f[]: Use this command to create a table of stats,
+suitable for displaying when the player clicks the "Show Stats" button.
+This command is so complicated it deserves a page all by itself.
+Customizing the ChoiceScript Stats
+Screen (http://www.choiceofgames.com/blog/customizing-the-choicescript-stats-screen/)
+.IP \[bu] 2
+\f[C]*ending\f[]: Use this command to insert a "Play Again" button; when
+the player clicks that button, all stats will reset and the game will
+start over from the beginning.
+(The \f[C]*ending\f[] command is very different from the
+\f[C]*finish\f[] command; \f[C]*finish\f[] adds a "Next Chapter" button,
+and does not reset anything.)
+.IP \[bu] 2
+\f[C]*share_this_game\f[]: Use this command to invite the player to
+share your game on Facebook, Twitter, StumbleUpon, etc.
+On iPhone/Android, \f[C]*share_this_game\f[] will invite the user to
+rate/review the game.
+Therefore, \f[B]be cautious in how you use this command.\f[] We
+recommend using \f[C]*share_this_game\f[] at the end of the game, and
+only when the player has reached a "good" ending.
+Don\[aq]t use the command if the player has reached a "bad" ending (e.g.
+if they have just died).
+Players who reach good endings tend to give positive reviews; players
+who reach bad endings tend to give negative reviews.
+.SS Advanced Techniques
+.PP
+Labeled buttons: By default, \f[C]*finish\f[] buttons say "Next Chapter"
+and \f[C]*page_break\f[] buttons say "Next".
+You can make the button say something else, instead:
+.PP
+``
+.IP
+.nf
+\f[C]
+\ \ *page_break\ On\ with\ the\ show!
+\ \ *finish\ The\ show\ is\ over!
+\f[]
+.fi
+.PP
+Conditional options: This advanced technique lets you show/hide some
+options based on the player\[aq]s variables.
+.PP
+``
+.IP
+.nf
+\f[C]
+\ \ How\ will\ you\ handle\ this?
+\ \ *choice
+\ \ \ \ #Try\ to\ talk\ them\ out\ of\ it.
+\ \ \ \ \ \ They\ cannot\ be\ dissuaded.
+\ \ \ \ \ \ *finish
+\ \ \ \ #Force\ them\ to\ relent.
+\ \ \ \ \ \ They\ back\ down,\ for\ now.
+\ \ \ \ \ \ *finish
+\ \ \ \ *if\ (president)\ #Abuse\ my\ presidential\ powers\ to\ silence\ them
+\ \ \ \ \ \ This\ works;\ you\ will\ never\ hear\ from\ them\ again.
+\ \ \ \ \ \ *finish
+\f[]
+.fi
+.PP
+In this case, players have the option to abuse their presidential power
+only if they are president; if they are not president, then the option
+is completely hidden.
+(Note that the parentheses around "president" are required.)
+.PP
+You can also use nested blocks of conditionals, but this technique is
+pretty advanced; it\[aq]s hard to get the indentation exactly right.
+.PP
+``
+.IP
+.nf
+\f[C]
+\ \ *choice
+\ \ \ \ #Rattle\ my\ saber.
+\ \ \ \ \ \ They\ rattle\ back.
+\ \ \ \ \ \ *finish
+\ \ \ \ *if\ republican
+\ \ \ \ \ \ *if\ president
+\ \ \ \ \ \ \ \ #Declare\ open\ war.
+\ \ \ \ \ \ \ \ \ \ Congress\ refuses\ to\ approve\ funding.
+\ \ \ \ \ \ \ \ \ \ *finish
+\ \ \ \ \ \ *else
+\ \ \ \ \ \ \ \ #Ask\ other\ Republicans\ to\ help\ out.
+\ \ \ \ \ \ \ \ \ \ Talk\ radio\ is\ on\ your\ side.
+\ \ \ \ \ \ \ \ \ \ *finish
+\ \ \ \ *else
+\ \ \ \ \ \ *if\ president
+\ \ \ \ \ \ \ \ #Work\ with\ the\ United\ Nations.
+\ \ \ \ \ \ \ \ \ \ Russia\ vetoes\ your\ plan.
+\ \ \ \ \ \ \ \ \ \ *finish
+\ \ \ \ \ \ *else
+\ \ \ \ \ \ \ \ #Ask\ other\ Democrats\ to\ help\ out.
+\ \ \ \ \ \ \ \ \ \ They\ do\ their\ best,\ but\ the\ party\ is\ divided.
+\ \ \ \ \ \ \ \ \ \ *finish
+\f[]
+.fi
+.PP
+Unselectable options: Instead of hiding options, you can disable
+options, making them unselectable.
+.PP
+``
+.IP
+.nf
+\f[C]
+\ \ How\ will\ you\ handle\ this?
+\ \ *choice
+\ \ \ \ #Try\ to\ talk\ them\ out\ of\ it.
+\ \ \ \ \ \ They\ cannot\ be\ dissuaded.
+\ \ \ \ \ \ *finish
+\ \ \ \ #Force\ them\ to\ relent.
+\ \ \ \ \ \ They\ back\ down,\ for\ now.
+\ \ \ \ \ \ *finish
+\ \ \ \ *selectable_if\ (president)\ #Abuse\ my\ presidential\ powers\ to\ silence\ them
+\ \ \ \ \ \ This\ works;\ you\ will\ never\ hear\ from\ them\ again.
+\ \ \ \ \ \ *finish
+\f[]
+.fi
+.PP
+If you aren\[aq]t president, you\[aq]ll see the option to abuse
+presidential power, but it will appear in grey; it won\[aq]t highlight
+if you click on it.
+This gives players a hint that if they play the game again, they might
+be able to choose that option, by making different choices earlier on.
+.PP
+Hiding used options: Sometimes you just need to hide an option after
+you\[aq]ve used it.
+You can do it the hard way, like this:
+.PP
+``
+.IP
+.nf
+\f[C]
+\ \ *temp\ unused_1
+\ \ *temp\ unused_2
+\ \ *set\ unused_1\ true
+\ \ *set\ unused_2\ true
+\ \ *label\ start
+\ \ *choice
+\ \ \ \ *if\ (unused_1)\ #One.
+\ \ \ \ \ \ *set\ unused_1\ false
+\ \ \ \ \ \ The\ loneliest\ number\ that\ you\[aq]ll\ ever\ do.
+\ \ \ \ \ \ *goto\ start
+\ \ \ \ *if\ (unused_2)\ #Two.
+\ \ \ \ \ \ *set\ unused_2\ false
+\ \ \ \ \ \ Two\ can\ be\ as\ bad\ as\ one.
+\ \ \ \ \ \ *goto\ start
+\ \ \ \ #I\ can\[aq]t\ decide!
+\ \ \ \ \ \ Well,\ think\ it\ over.
+\ \ \ \ \ \ *goto\ start
+\ \ \ \ #Done.
+\ \ \ \ \ \ OK!
+\ \ \ \ \ \ *finish
+\f[]
+.fi
+.PP
+But there\[aq]s an easier way.
+You can use the \f[C]*hide_reuse\f[] command to mark commands as
+non-reusable.
+You can use it in the middle of a \f[C]*choice\f[], like this:
+.PP
+``
+.IP
+.nf
+\f[C]
+\ \ *label\ start
+\ \ *choice
+\ \ \ \ *hide_reuse\ #One.
+\ \ \ \ \ \ The\ loneliest\ number\ that\ you\[aq]ll\ ever\ do.
+\ \ \ \ \ \ *goto\ start
+\ \ \ \ *hide_reuse\ #Two.
+\ \ \ \ \ \ Two\ can\ be\ as\ bad\ as\ one.
+\ \ \ \ \ \ *goto\ start
+\ \ \ \ #I\ can\[aq]t\ decide!
+\ \ \ \ \ \ Well,\ think\ it\ over.
+\ \ \ \ \ \ *goto\ start
+\ \ \ \ #Done.
+\ \ \ \ \ \ OK!
+\ \ \ \ \ \ *finish
+\f[]
+.fi
+.PP
+Or you can make all options non-reusable, by adding \f[C]*hide_reuse\f[]
+to the top of your ChoiceScript file.
+Then you can use the \f[C]*allow_reuse\f[] command to allow certain
+options to be reused.
+.PP
+``
+.IP
+.nf
+\f[C]
+\ \ *hide_reuse
+\ \ *label\ start
+\ \ *choice
+\ \ \ \ #One.
+\ \ \ \ \ \ The\ loneliest\ number\ that\ you\[aq]ll\ ever\ do.
+\ \ \ \ \ \ *goto\ start
+\ \ \ \ #Two.
+\ \ \ \ \ \ Two\ can\ be\ as\ bad\ as\ one.
+\ \ \ \ \ \ *goto\ start
+\ \ \ \ *allow_reuse\ #I\ can\[aq]t\ decide!
+\ \ \ \ \ \ Well,\ think\ it\ over.
+\ \ \ \ \ \ *goto\ start
+\ \ \ \ #Done.
+\ \ \ \ \ \ OK!
+\ \ \ \ \ \ *finish
+\f[]
+.fi
+.PP
+You can also use the \f[C]*disable_reuse\f[] command instead of
+\f[C]*hide_reuse\f[] to disable used options; instead of hiding them,
+the disabled options will be greyed out and unselectable.
+.PP
+Fairmath: ChoiceScript includes two rather strange operators
+specifically for use on variables that are percentages, called "%+" and
+"%-".
+You use them like this:
+.PP
+``
+.IP
+.nf
+\f[C]
+\ \ *set\ leadership\ 50
+\ \ *set\ leadership\ %+\ 20
+\ \ *set\ leadership\ %-\ 40
+\f[]
+.fi
+.PP
+The "%+" and "%-" operators are called the "fairmath" operators.
+The idea is that as your leadership score gets higher, it becomes harder
+to increase, and easier to decrease.
+According to fairmath:
+.PP
+Fair Addition: \f[C](x\ %+\ y)\ =\ (x\ +\ (100-x)*(y/100))\f[]
+.IP \[bu] 2
+Large scores are hard to increase:
+\f[C](90\ %+\ 20)\ =\ (90\ +\ 2)\ =\ 92\f[]
+.IP \[bu] 2
+Small scores are easy to increase:
+\f[C](10\ %+\ 20)\ =\ (10\ +\ 18)\ =\ 28\f[]
+.PP
+Fair Subtraction: \f[C](x\ %-\ y)\ =\ (x\ -\ x*(y/100))\f[]
+.IP \[bu] 2
+Large scores are easy to decrease:
+\f[C](90\ %-\ 20)\ =\ (90\ -\ 18)\ =\ 72\f[]
+.IP \[bu] 2
+Small scores are hard to decrease:
+\f[C](10\ %-\ 20)\ =\ (10\ -\ 2)\ =\ 8\f[]
+.PP
+50 is equally easy to increase or decrease.
+.IP \[bu] 2
+\f[C](50\ %+\ 20)\ =\ (50\ +\ 10)\ =\ 60\f[]
+.IP \[bu] 2
+\f[C](50\ %-\ 20)\ =\ (50\ -\ 10)\ =\ 40\f[]
+.PP
+Fairmath is great in expressions like:
+\f[C]*set\ leadership\ %+\ 20\f[].
+The player will get anywhere from 0 to 20 more points of leadership,
+depending on how high leadership is currently.
+.PP
+Integer math: You can round a variable to the nearest integer using
+\f[C]round()\f[].
+For example, this will set the variable "foo" to 3:
+\f[C]*set\ foo\ round(2.5)\f[]
+.PP
+You can also use the modulo
+operator (http://en.wikipedia.org/wiki/Modulo_operation) "%" to
+calculate the remainder after taking a division.
+Modulo is pretty weird, but it\[aq]s has two particularly interesting
+uses.
+First, you can check whether a number X is evenly divisible by a number
+Y by checking whether \f[C]X\ %\ Y\ =\ 0\f[].
+Second, you can use it to get the fractional part of a number X, the
+stuff that comes after the decimal point, by calculating
+\f[C]X\ %\ 1\f[].
+For example, \f[C]3.14\ %\ 1\ =\ 0.14\f[].
+.PP
+Advanced \f[C]*if\f[] statements: You can do a lot more with
+\f[C]*if\f[] statements than \f[C]leadership\ >\ 15\f[].
+Here\[aq]s a few tricks:
+.IP \[bu] 2
+Equality and Inequality
+.RS 2
+.IP \[bu] 2
+Equal to: \f[C]leadership\ =\ 40\f[] (Is leadership equal to forty?)
+.IP \[bu] 2
+Not equal to: \f[C]leadership\ !=\ 40\f[] (Is leadership different from
+forty?)
+.IP \[bu] 2
+Greater than: \f[C]leadership\ >40\f[] (Is leadership greater than
+forty?)
+.IP \[bu] 2
+Less than: \f[C]leadership\ <40\f[] (Is leadership less than forty?)
+.IP \[bu] 2
+Greater than OR equal to: \f[C]leadership\ >=50\f[] (Is leadership
+greater than or equal to fifty?)
+.IP \[bu] 2
+Less than OR equal to: \f[C]leadership\ <=40\f[] (Is leadership less
+than or equal to forty?)
+.RE
+.IP \[bu] 2
+And/or/not (with mandatory parentheses)
+.RS 2
+.IP \[bu] 2
+And: \f[C](leadership\ >\ 30)\ and\ (strength\ >\ 40)\f[]
+.IP \[bu] 2
+Or: \f[C](leadership\ >\ 60)\ or\ (strength\ >\ 70)\f[]
+.IP \[bu] 2
+Not: \f[C]not(strength\ >\ 70)\f[]
+.IP \[bu] 2
+Complex parentheses:
+\f[C]((leadership\ >\ 60)\ and\ (agility\ >\ 20))\ or\ (strength\ >\ 80)\f[]
+.RE
+.IP \[bu] 2
+Comparing text:
+.RS 2
+.IP \[bu] 2
+\f[C]lover_name\ =\ "Jamie"\f[]
+.IP \[bu] 2
+\f[C]"2"\ =\ 2\f[] (this is true!)
+.RE
+.IP \[bu] 2
+Setting variables to \f[C]true\f[] or \f[C]false\f[]:
+.RS 2
+.IP \[bu] 2
+\f[C]*set\ finished\ false\f[]
+.IP \[bu] 2
+\f[C]*set\ correct\ guess\ =\ "blue"\f[]
+.RE
+.PP
+Text tricks:
+.IP \[bu] 2
+Capitalize: You can capitalize just the first letter of a variable like
+this: \f[C]Behold!\ $!{He}\ is\ capitalized.\f[] You can also capitalize
+an entire word like this:
+\f[C]PRESIDENT\ $!!{name}\ RESIGNS\ IN\ SHAME\f[]
+.IP \[bu] 2
+Concatenation: You can join text together like this:
+\f[C]*set\ murder\ "red"&"rum"\f[].
+You can use variables in the same way:
+\f[C]*set\ title\ "Dr.\ "\ &\ last_name\f[]
+.IP \[bu] 2
+Quotes: You can put quotes in your text by using backslashes, like this:
+.RS 2
+.IP
+.nf
+\f[C]
+\ \ *set\ joke\ "she\ said\ it\ was\ "ironic"!"
+\f[]
+.fi
+.PP
+If you write \f[C]${joke}\f[], you\[aq]ll get:
+.PD 0
+.P
+.PD
+> she said it was "ironic"!
+.RE
+.IP \[bu] 2
+Backslashes: You can put backslashes in your text by using even more
+backslashes, like this:
+.RS 2
+.IP
+.nf
+\f[C]
+\ \ *set\ slashy\ "Here\[aq]s\ one\ backslash:\ \\\ and\ here\[aq]s\ two\ backslashes:\ \\\\"
+\f[]
+.fi
+.PP
+If you write \f[C]${slashy}\f[], you\[aq]ll get:
+.PD 0
+.P
+.PD
+> Here\[aq]s one backslash: and here\[aq]s two backslashes: \\
+.RE
+.IP \[bu] 2
+\f[C]*print\f[]: This command is no longer necessary; it just prints the
+value of the variable you specify.
+Use \f[C]${}\f[] variable substitution instead.
+.PP
+Subroutines: Instead of the \f[C]*goto\f[] command, you can use the
+\f[C]*gosub\f[] command to go to a label, and then use the
+\f[C]*return\f[] command to jump back to the line where you called
+\f[C]*gosub\f[].
+.PP
+``
+.IP
+.nf
+\f[C]
+\ \ *choice
+\ \ \ \ #Happy.
+\ \ \ \ \ \ You\[aq]re\ happy!
+\ \ \ \ \ \ *gosub\ saying
+\ \ \ \ \ \ Hopefully,\ you\[aq]ll\ be\ happy\ for\ a\ very\ long\ time!
+\ \ \ \ \ \ *finish
+\ \ \ \ #Sad.
+\ \ \ \ \ \ You\[aq]re\ sad.
+\ \ \ \ \ \ *gosub\ saying
+\ \ \ \ \ \ Maybe\ you\[aq]ll\ be\ happier\ soon!
+\ \ \ \ \ \ *finish
+\ \ *label\ saying
+\ \ This,\ too,\ shall\ pass.
+\ \ *return
+\f[]
+.fi
+.PP
+If you choose "Happy," the game will write:
+.PD 0
+.P
+.PD
+> You\[aq]re happy! This, too, shall pass.
+Hopefully, you\[aq]ll be happy for a > very long time!
+.PP
+It\[aq]s great for snippets of code that you would have copied and
+pasted all over the place.
+.PP
+"Subroutines" are tiny sub-programs that you run in the middle of your
+program.
+\f[C]*gosub\f[] is so-called because it activates a subroutine.
+It is possible to nest subroutines, by using \f[C]*gosub\f[] twice or
+more before using \f[C]*return\f[] command.
+.PP
+``
+.IP
+.nf
+\f[C]
+\ \ Start\ One,
+\ \ *gosub\ two
+\ \ End\ One.
+\ \ *finish
+
+\ \ *label\ two
+\ \ Start\ Two,
+\ \ *gosub\ three
+\ \ End\ Two.
+\ \ *return
+
+\ \ *label\ three
+\ \ Three.
+\ \ *return
+\f[]
+.fi
+.PP
+That code would display:
+.PD 0
+.P
+.PD
+> Start One, Start Two, Three.
+End Two.
+End One.
+.PP
+WARNING: Generally speaking, the simpler your ChoiceScript is, the
+better.
+It\[aq]s possible to abuse \f[C]*gosub\f[] to create extremely complex
+programs.
+This is rarely a good idea; complex games aren\[aq]t any more fun than
+simple games, but complex games are a lot harder to make.
+If you think you need a lot of subroutines, consider whether your game
+might be better if it were simpler.
+.PP
+Truly bizarre references: Probably only programmers will appreciate
+these.
+Beware! They add complexity without adding much value.
+.IP \[bu] 2
+\f[C]*setref\f[]: Set a variable by name, e.g.
+\f[C]*setref\ "leadership"\ 30\f[] sets leadership to 30.
+Use it in crazy code like this:
+.PD 0
+.P
+.PD
+``
+.RS 2
+.IP
+.nf
+\f[C]
+\ \ *set\ virtue\ "courage"
+\ \ *setref\ virtue\ 30
+\f[]
+.fi
+.PP
+This code would set \f[C]courage\f[] to 30.
+If this still doesn\[aq]t seem useful, consider that \f[C]virtue\f[]
+could have been determined by earlier choices, so it might have set
+\f[C]honesty\f[] to 30 instead.
+.PP
+Still not convinced?
+Don\[aq]t worry about it; you\[aq]ll probably never need it.
+.RE
+.IP \[bu] 2
+\f[C]*gotoref\f[]: Goto a label by name, like this:
+.PD 0
+.P
+.PD
+``
+.RS 2
+.IP
+.nf
+\f[C]
+\ \ *temp\ superpower
+\ \ *set\ superpower\ "invisibility"
+\ \ Your\ super\ power\ is:
+\ \ *gotoref\ superpower
+\ \ flight!
+\ \ *finish
+\ \ *label\ invisibility
+\ \ invisibility.
+\f[]
+.fi
+.RE
+.IP \[bu] 2
+Curly parens: Put some text in curly braces and we\[aq]ll turn it into
+the value of the named variable.
+.PD 0
+.P
+.PD
+``
+.RS 2
+.IP
+.nf
+\f[C]
+\ \ *set\ honesty\ 30
+\ \ *set\ virtue\ "honesty"
+\ \ *set\ score\ {virtue}
+\ \ Your\ ${virtue}\ score\ is\ ${score}
+\f[]
+.fi
+.PP
+This would print:
+.PD 0
+.P
+.PD
+> Your honesty score is 30
+.RE
+.SH Customizing the ChoiceScript Stats Screen
+.PP
+Most of our games have a “Show Stats” button (Choice of the Dragon has a
+“My Dragon” button) showing some of the stats applying to your
+character.
+.PP
+[IMAGE: image (http://www.choiceofgames.com/wp-content/uploads/2010/12/Screen-shot-2010-12-21-at-17.35.03-.png.pagespeed.ce.ZOEamYiLVh.png)]
+.PP
+This document describes how to build a stat screen in games you're
+writing in ChoiceScript.
+.SS Don't Start Here!
+.PP
+Be sure to read our basic ChoiceScript
+Introduction (http://www.choiceofgames.com/blog/choicescript-intro) page
+before reading this advanced documentation.
+.SS Create a Stat Chart
+.PP
+\f[B]tl;dr: Try experimenting with the “choicescript_stats.txt”
+file.\f[]
+.PP
+The essence of the stat screen is the “stat chart,” which you can create
+using the \f[C]*stat_chart\f[] command.
+The chart shows the value of any number of ChoiceScript variables; if
+the values are numbers between 1 and 100, you can display them as bars
+on the chart.
+.PP
+Let's suppose you've got three variables:
+.IP \[bu] 2
+the “name” variable, which contains the player's name (e.g.
+“Dan”)
+.IP \[bu] 2
+the “leadership” variable, which contains a Leadership score between
+1-100
+.IP \[bu] 2
+the “strength” variable, which contains a Strength score between 1-100
+.PP
+You could use the *stat_chart command like this:
+.PP
+``
+.IP
+.nf
+\f[C]
+*stat_chart
+\ \ text\ name
+\ \ percent\ leadership
+\ \ percent\ strength
+\f[]
+.fi
+.PP
+That would display a stat chart like this:
+.PP
+[IMAGE: image (http://www.choiceofgames.com/wp-content/uploads/2010/12/Screen-shot-2010-12-21-at-17.20.37-.png.pagespeed.ce.48VorFd32P.png)]
+.PP
+Note that when we want to display the value of the variable as text, we
+write \f[C]text\f[] before the variable; when we want to display the
+variable as a percentage bar, we write \f[C]percent\f[] before the
+variable.
+.PP
+If you don't like the percentage bars, you can use text for everything,
+in which case we'll display the number as a numeral:
+.PP
+``
+.IP
+.nf
+\f[C]
+*stat_chart
+\ \ text\ name
+\ \ text\ leadership
+\ \ text\ strength
+\f[]
+.fi
+.PP
+[IMAGE: image (http://www.choiceofgames.com/wp-content/uploads/2010/12/Screen-shot-2010-12-21-at-17.52.10-.png.pagespeed.ce.-OohMGwTDY.png)]
+.SS The “Show Stats” Button
+.PP
+You can use the \f[C]*stat_chart\f[] in any ChoiceScript vignette; it's
+just like any other command.
+For example, it's nice to display a stat chart at the end of the game,
+to give players a sense of closure and accomplishment.
+.PP
+But the most interesting place to use \f[C]*stat_chart\f[] is in a
+specially named file called \f[C]choicescript_stats.txt\f[].
+.PP
+\f[C]choicescript_stats.txt\f[] is a ChoiceScript vignette file, just
+like \f[C]startup.txt\f[] or any other file you create.
+When the player clicks the “Show Stats” button, we pause the current
+ChoiceScript scene and display the \f[C]choicescript_stats.txt\f[]
+scene; when you finish that scene, we resume the scene previously in
+action.
+.PP
+Most of the time, the \f[C]choicescript_stats.txt\f[] file contains
+almost nothing except the \f[C]*stat_chart\f[], but you may feel free to
+experiment with including other text in that file, especially if you
+want to include some information about the character that shouldn't
+appear in a data chart.
+.SS Label the Stats Poetically
+.PP
+In the previous example, the chart displayed “name”, “leadership” and
+“strength” all in lower case; normally values like this should be in
+“Title Case” (like the headline of a newspaper article).
+.PP
+You can capitalize the names of your variables any way you like, for
+example:
+.PP
+``
+.IP
+.nf
+\f[C]
+*stat_chart
+\ \ text\ Name
+\ \ percent\ LEADERSHIP
+\ \ percent\ sTrEnGtH
+\f[]
+.fi
+.PP
+[IMAGE: image (http://www.choiceofgames.com/wp-content/uploads/2010/12/Screen-shot-2010-12-21-at-17.20.46-.png.pagespeed.ce.eUKBOX4SMC.png)]
+.PP
+That's because, in ChoiceScript, variables are case-insensitive, so
+“strength” and “sTrEnGtH” mean the same thing.
+.PP
+But you can also give the variables different names.
+Perhaps you want to use more poetic labels, so instead of “Strength” you
+want to call it “Thews and Sinews”; instead of “Leadership” you want to
+call it “Serpent's Tongue;” instead of “Name” you want to call it “Nom
+de Guerre.” You can write that like this:
+.PP
+``
+.IP
+.nf
+\f[C]
+*stat_chart
+\ \ text\ name\ Nom\ de\ Guerre
+\ \ percent\ leadership\ Serpent\[aq]s\ Tongue
+\ \ percent\ strength\ Thews\ and\ Sinews
+\f[]
+.fi
+.PP
+[IMAGE: image (http://www.choiceofgames.com/wp-content/uploads/2010/12/Screen-shot-2010-12-21-at-17.20.58-.png.pagespeed.ce.lvIxapSJZU.png)]
+.SS Display Opposed Pairs on the Chart
+.PP
+In some of our games, we say that two variables are “opposed;” e.g.
+Brutality is the opposite of Finesse, Cunning is the opposite of Honor,
+and Disdain is the opposite of Vigilance.
+.PP
+However, in our ChoiceScript code, we really only have three variables:
+“brutality,” “cunning,” and “disdain.” When we say “Honor increases” we
+simply decrease Cunning.
+.PP
+We can use these variables to display opposed pairs on the chart, like
+this:
+.PP
+``
+.IP
+.nf
+\f[C]
+*stat_chart
+\ \ opposed_pair\ Brutality
+\ \ \ \ Finesse
+\ \ opposed_pair\ Cunning
+\ \ \ \ Honor
+\ \ opposed_pair\ Disdain
+\ \ \ \ Vigilance
+\f[]
+.fi
+.PP
+[IMAGE: image (http://www.choiceofgames.com/wp-content/uploads/2010/12/Screen-shot-2010-12-21-at-17.21.06-.png.pagespeed.ce.iUkHkAqLUp.png)]
+.PP
+Again, note that “Finesse,” “Honor,” and “Vigilance” don't really exist
+as variables in ChoiceScript, so we can write anything we like here.
+For example, we could have called Vigilance “Eye of the Dragon.”
+.PP
+However, if you need to use a poetic label for the LEFT side of the
+chart, you'll need to write your chart a little differently:
+.PP
+``
+.IP
+.nf
+\f[C]
+*stat_chart
+\ \ opposed_pair\ strength
+\ \ \ \ Thews\ and\ Sinews
+\ \ \ \ Fragile\ Bones
+\ \ opposed_pair\ leadership
+\ \ \ \ Serpent\[aq]s\ Tongue
+\ \ \ \ Minion\[aq]s\ Obeisance
+\f[]
+.fi
+.PP
+[IMAGE: image (http://www.choiceofgames.com/wp-content/uploads/2010/12/Screen-shot-2010-12-21-at-17.21.20-.png.pagespeed.ce.OCZvoMIKrf.png)]
+.PP
+In this case, the first indented line is the left-side label, and the
+second indented line is the right-side label.
+If there's only one indented line, then we assume it's the right-side
+label.
+.PP
+It's perfectly fine to have some variables that are opposed next to some
+other values that aren't.
+For example, in Dragon, “Infamy” is not opposed by anything, so we can
+write our chart like this:
+.PP
+``
+.IP
+.nf
+\f[C]
+*stat_chart
+\ \ opposed_pair\ Brutality
+\ \ \ \ Finesse
+\ \ opposed_pair\ Cunning
+\ \ \ \ Honor
+\ \ opposed_pair\ Disdain
+\ \ \ \ Vigilance
+\ \ percent\ Infamy
+\f[]
+.fi
+.PP
+[IMAGE: image (http://www.choiceofgames.com/wp-content/uploads/2010/12/Screen-shot-2010-12-21-at-17.21.26-.png.pagespeed.ce.vX1RwNaKuV.png)]
+.PP
+\f[B]NOTE: Some people have expressed confusion about how opposed
+variables are displayed.\f[] I think of them as bar charts; in the above
+example, the top bar is mostly red, because the dragon has 85% Brutality
+and 15% Finesse.
+.PP
+But some people look at the chart and see the opposite; they imagine
+that the chart is like a needle on a speedometer gauge; when the needle
+points all the way to “Finesse,” the dragon has lots of Finesse.
+Those people look at the chart and incorrectly think that the dragon has
+85% Finesse! I think this is a bug in the way we display stats; I hope
+to fix it in a future version of ChoiceScript.
+.SS Use Temp Variables for Weird Values
+.PP
+In Choice of the Dragon, we keep track of wounds as a simple number 0-4,
+but display it as text, like this:
+.IP \[bu] 2
+Wounds=0: Uninjured
+.IP \[bu] 2
+Wounds=1: Battle-scarred
+.IP \[bu] 2
+Wounds=2: Permanently wounded
+.IP \[bu] 2
+Wounds=3: Permanently weakened
+.IP \[bu] 2
+Wounds=4: At Death's door
+.PP
+The way we do that is by creating a temporary variable to hold the text
+describing your wounds, like this:
+.PP
+``
+.IP
+.nf
+\f[C]
+*temp\ wound_text
+*if\ wounds\ =\ 0
+\ \ *set\ wound_text\ "Uninjured"
+\ \ *goto\ chart
+*elseif\ wounds\ =\ 1
+\ \ *set\ wound_text\ "Battle-scarred"
+\ \ *goto\ chart
+*elseif\ wounds\ =\ 2
+\ \ *set\ wound_text\ "Permanently\ wounded"
+\ \ *goto\ chart
+*elseif\ wounds\ =\ 3
+\ \ *set\ wound_text\ "Permanently\ weakened"
+\ \ *goto\ chart
+*else
+\ \ *set\ wound_text\ "At\ Death\[aq]s\ door"
+*label\ chart
+
+*stat_chart
+\ \ text\ wound_text\ Wounds
+\f[]
+.fi
+.SS Adding Stat Definitions
+.PP
+\f[B]WARNING: This feature is somewhat advanced, and may not have been a
+very good idea. If you feel a need to define your stats, it may be a
+sign that they aren't named very well; maybe you're being a bit
+\f[I]too\f[] poetic.\f[]
+.PP
+Stat charts can include definitions for any line on the chart; just
+include a definition indented underneath the line in the *stat_chart
+command.
+.PP
+``
+.IP
+.nf
+\f[C]
+*stat_chart
+\ \ text\ name\ Nom\ de\ Guerre
+\ \ \ \ Your\ new\ name\ as\ a\ clan\ member
+\ \ percent\ leadership\ Serpent\[aq]s\ Tongue
+\ \ \ \ Ability\ to\ convince\ others\ to\ follow\ you
+\ \ percent\ strength\ Thews\ and\ Sinews
+\ \ \ \ Endurance\ and\ strength\ of\ arms
+\f[]
+.fi
+.PP
+[IMAGE: image (http://www.choiceofgames.com/wp-content/uploads/2010/12/Screen-shot-2010-12-21-at-17.21.36-.png.pagespeed.ce.NdirMKoU3R.png)]
+.PP
+That gets a bit more complicated when you want to define opposed pairs
+with definitions; you have to do it like this:
+.PP
+``
+.IP
+.nf
+\f[C]
+*stat_chart
+\ \ opposed_pair\ Brutality
+\ \ \ \ Brutality
+\ \ \ \ \ \ Strength\ and\ cruelty
+\ \ \ \ Finesse
+\ \ \ \ \ \ Precision\ and\ aerial\ maneuverability
+\ \ opposed_pair\ Cunning
+\ \ \ \ Cunning
+\ \ \ \ \ \ Intelligence\ and\ trickery
+\ \ \ \ Honor
+\ \ \ \ \ \ Honesty\ and\ trustworthiness
+\ \ opposed_pair\ Disdain
+\ \ \ \ Disdain
+\ \ \ \ \ \ Patience\ and\ scorn
+\ \ \ \ Vigilance
+\ \ \ \ \ \ Attention\ and\ impulsiveness
+\f[]
+.fi
+.PP
+[IMAGE: image (http://www.choiceofgames.com/wp-content/uploads/2010/12/Screen-shot-2010-12-21-at-17.21.44-.png.pagespeed.ce.uubwJVYDoS.png)]
+.SS Examples
+.PP
+Here are some example \f[C]choicescript_stats.txt\f[] files:
+.PP
+Choice of
+Broadsides (http://www.choiceofgames.com/broadsides/scenes/choicescript_stats.txt)
+stat screen
+.PP
+Choice of
+Romance (http://www.choiceofgames.com/romance/scenes/choicescript_stats.txt)
+stat screen
+.PP
+Choice of the
+Vampire (http://www.choiceofgames.com/vampire/scenes/choicescript_stats.txt)
+stat screen
