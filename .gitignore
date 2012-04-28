@@ -12,3 +12,4 @@ iphone/www
 .DS_Store
 *.svn
 randomtest-output.txt
+node_modules/**
