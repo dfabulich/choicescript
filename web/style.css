@@ -87,6 +87,10 @@ table {
     -moz-border-radius:8px;
 }
 
+input[type="radio"], input[type="checkbox"] {
+  margin-right: 8px;
+}
+
 .saveGame>label {
   display:block;
 }
