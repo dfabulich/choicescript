@@ -624,7 +624,7 @@ test("printMenu", function() {
     doh.is(([{"name":"Adam","line":4,"group":"choice","endLine":6},{"name":"Dan","line":4,"group":"choice","endLine":6},{"name":"Kevin","line":4,"group":"choice","endLine":6}]), (options), "options");
 })
 
-module("Resolve Choice");
+module("Standard Resolution");
 
 test("single", function() {
     printed = [];
@@ -636,12 +636,9 @@ test("single", function() {
         options = _options;
         groups = _groups;
     };
-    var formValues = {choice:0};
-    scene.getFormValue = function(name) {return formValues[name];}
-    scene.reset = function() {};
     scene.execute();
     doh.is([{"name":"foo","line":2,"group":"choice","endLine":4},{"name":"bar","line":5,"group":"choice","endLine":7}], options, "options");
-    scene.resolveChoice(options,groups);
+    scene.standardResolution(options[0]);
     doh.is("Foo! <br><br>", printed.join(""), "printed");
 })
 test("saveAndRestore", function() {
@@ -654,13 +651,10 @@ test("saveAndRestore", function() {
         options = _options;
         groups = _groups;
     };
-    var formValues = {choice:0};
-    scene.getFormValue = function(name) {return formValues[name];}
-    scene.reset = function() {};
-    scene.resetPage = function() {};
+    scene.save = function() {};
     scene.execute();
     doh.is([{"name":"foo","line":2,"group":"choice","endLine":4},{"name":"bar","line":5,"group":"choice","endLine":7}], options, "options");
-    scene.resolveChoice(options,groups);
+    scene.standardResolution(options[0]);
     var scene2 = new Scene();
     scene2.loadLines(text);
     scene2.temps = scene.temps;
@@ -680,13 +674,10 @@ test("saveAndRestoreGoSub", function() {
         options = _options;
         groups = _groups;
     };
-    var formValues = {choice:0};
-    scene.getFormValue = function(name) {return formValues[name];}
-    scene.reset = function() {};
-    scene.resetPage = function() {};
+    scene.save = function() {};
     scene.execute();
     doh.is([{group:"choice",endLine:9,name:"foo",line:7},{group:"choice",endLine:12,name:"bar",line:10}], options, "options");
-    scene.resolveChoice(options,groups);
+    scene.standardResolution(options[0]);
     var scene2 = new Scene();
     scene2.loadLines(text);
     scene2.temps = scene.temps;
@@ -706,12 +697,9 @@ test("extraLineBreak", function() {
         options = _options;
         groups = _groups;
     };
-    var formValues = {choice:0};
-    scene.getFormValue = function(name) {return formValues[name];}
-    scene.reset = function() {};
     scene.execute();
     doh.is([{"name":"foo","line":2,"group":"choice","endLine":5},{"name":"bar","line":6,"group":"choice","endLine":8}], options, "options");
-    scene.resolveChoice(options,groups);
+    scene.standardResolution(options[0]);
     doh.is("Foo! <br><br>", printed.join(""), "printed");
 })
 test("fake", function() {
@@ -724,12 +712,9 @@ test("fake", function() {
         options = _options;
         groups = _groups;
     };
-    var formValues = {choice:0};
-    scene.getFormValue = function(name) {return formValues[name];}
-    scene.reset = function() {};
     scene.execute();
     doh.is([{"name":"foo","line":2,"group":"choice","endLine":3},{"name":"bar","line":4,"group":"choice","endLine":5}], options, "options");
-    scene.resolveChoice(options,groups);
+    scene.standardResolution(options[0]);
     doh.is("Foo! baz <br><br>", printed.join(""), "printed");
 })
 test("fakeNoBody", function() {
@@ -742,15 +727,12 @@ test("fakeNoBody", function() {
         options = _options;
         groups = _groups;
     };
-    var formValues = {choice:0};
-    scene.getFormValue = function(name) {return formValues[name];}
-    scene.reset = function() {};
     scene.execute();
     doh.is([{"name":"foo","line":2,"group":"choice","endLine":2},{"name":"bar","line":3,"group":"choice","endLine":3}], options, "options");
-    scene.resolveChoice(options,groups);
+    scene.standardResolution(options[0]);
     doh.is("baz <br><br>", printed.join(""), "printed");
 })
-test("choiceTemp", function() {
+/*test("choiceTemp", function() {
     printed = [];
     var text = "*choice\n  #foo\n    Foo!\n    *goto end\n  #bar\n    Bar!\n*label end\n*print choice_1";
     var scene = new Scene();
@@ -767,7 +749,7 @@ test("choiceTemp", function() {
     doh.is([{"name":"foo","line":2,"group":"choice","endLine":4},{"name":"bar","line":5,"group":"choice","endLine":6}], options, "options");
     scene.resolveChoice(options,groups);
     doh.is("Foo! foo <br><br>", printed.join(""), "printed");
-})
+})*/
 test("fallingChoices", function() {
     printed = [];
     var text = "*choice\n"+
@@ -790,14 +772,11 @@ test("fallingChoices", function() {
         options = _options;
         groups = _groups;
     };
-    var formValues = {choice:1};
-    scene.getFormValue = function(name) {return formValues[name];}
-    scene.reset = function() {};
     scene.execute();
     doh.is([{"name":"foo","line":2,"group":"choice","endLine":4},{"name":"bar","line":5,"group":"choice","endLine":6}], options, "options");
-    scene.resolveChoice(options, groups);
+    scene.standardResolution(options[1]);
     doh.is([{"name":"one","line":9,"group":"choice","endLine":11},{"name":"two","line":12,"group":"choice","endLine":13}], options, "options");
-    scene.resolveChoice(options, groups);
+    scene.standardResolution(options[1]);
     doh.is("Bar baz two <br><br>", printed.join(""), "printed");
 })
 
@@ -831,9 +810,6 @@ test("modifiers", function() {
         options = _options;
         groups = _groups;
     };
-    var formValues = {choice:0};
-    scene.getFormValue = function(name) {return formValues[name];}
-    scene.reset = function() {};
     scene.execute();
     doh.is([
       {reuse:"hide",group:"choice",endLine:6,name:"A little of this.",line:4},
@@ -841,13 +817,13 @@ test("modifiers", function() {
       {group:"choice",endLine:12,name:"Let me think about it a little longer.",line:10},
       {group:"choice",endLine:15,name:"What was the question?",line:13},
       {group:"choice",endLine:19,name:"Nothing; I\'m done.",line:16}], options, "options");
-    scene.resolveChoice(options,groups);
+    scene.standardResolution(options[0]);
     doh.is([
       {reuse:"disable",group:"choice",endLine:9,name:"A little of that.",line:7},
       {group:"choice",endLine:12,name:"Let me think about it a little longer.",line:10},
       {group:"choice",endLine:15,name:"What was the question?",line:13},
       {group:"choice",endLine:19,name:"Nothing; I'm done.",line:16}], options, "options2");
-    scene.resolveChoice(options,groups);
+    scene.standardResolution(options[0]);
     var expected = [
       {reuse:"disable",group:"choice",endLine:9,unselectable:true,name:"A little of that.",line:7},
       {group:"choice",endLine:12,name:"Let me think about it a little longer.",line:10},
@@ -855,11 +831,9 @@ test("modifiers", function() {
       {group:"choice",endLine:19,name:"Nothing; I\'m done.",line:16}
     ];
     doh.is(expected, options, "options3");
-    formValues.choice = 1;
-    scene.resolveChoice(options,groups);
+    scene.standardResolution(options[1]);
     doh.is(expected, options, "options4");
-    formValues.choice = 2;
-    scene.resolveChoice(options,groups);
+    scene.standardResolution(options[2]);
     doh.is(expected, options, "options5");
     doh.is("What do you want to do? You do some of this. "
       +"What do you want to do? You do some of that. "
@@ -895,9 +869,6 @@ test("hideByDefault", function() {
         options = _options;
         groups = _groups;
     };
-    var formValues = {choice:0};
-    scene.getFormValue = function(name) {return formValues[name];}
-    scene.reset = function() {};
     scene.execute();
     doh.is([
       {reuse:"hide",group:"choice",endLine:7,name:"A little of this.",line:5},
@@ -905,13 +876,13 @@ test("hideByDefault", function() {
       {group:"choice",endLine:13,name:"Let me think about it a little longer.",line:11},
       {reuse:"hide",group:"choice",endLine:16,name:"What was the question?",line:14},
       {reuse:"hide",group:"choice",endLine:20,name:"Nothing; I\'m done.",line:17}], options, "options");
-    scene.resolveChoice(options,groups);
+    scene.standardResolution(options[0]);
     doh.is([
       {reuse:"disable",group:"choice",endLine:10,name:"A little of that.",line:8},
       {group:"choice",endLine:13,name:"Let me think about it a little longer.",line:11},
       {reuse:"hide",group:"choice",endLine:16,name:"What was the question?",line:14},
       {reuse:"hide",group:"choice",endLine:20,name:"Nothing; I\'m done.",line:17}], options, "options2");
-    scene.resolveChoice(options,groups);
+    scene.standardResolution(options[0]);
     var beforeHiding = [
       {reuse:"disable",group:"choice",endLine:10,unselectable:true,name:"A little of that.",line:8},
       {group:"choice",endLine:13,name:"Let me think about it a little longer.",line:11},
@@ -919,11 +890,9 @@ test("hideByDefault", function() {
       {reuse:"hide",group:"choice",endLine:20,name:"Nothing; I\'m done.",line:17}
     ];
     doh.is(beforeHiding, options, "options3");
-    formValues.choice = 1; // Let me think
-    scene.resolveChoice(options,groups);
+    scene.standardResolution(options[1]); // Let me think
     doh.is(beforeHiding, options, "options4");
-    formValues.choice = 2; // What was the question?
-    scene.resolveChoice(options,groups);
+    scene.standardResolution(options[2]); // What was the question?
     doh.is([
       {reuse:"disable",group:"choice",endLine:10,unselectable:true,name:"A little of that.",line:8},
       {group:"choice",endLine:13,name:"Let me think about it a little longer.",line:11},
@@ -962,9 +931,6 @@ test("disableByDefault", function() {
         options = _options;
         groups = _groups;
     };
-    var formValues = {choice:0};
-    scene.getFormValue = function(name) {return formValues[name];}
-    scene.reset = function() {};
     scene.execute();
     doh.is([
       {reuse:"hide",group:"choice",endLine:7,name:"A little of this.",line:5},
@@ -972,13 +938,13 @@ test("disableByDefault", function() {
       {group:"choice",endLine:13,name:"Let me think about it a little longer.",line:11},
       {reuse:"disable",group:"choice",endLine:16,name:"What was the question?",line:14},
       {reuse:"disable",group:"choice",endLine:20,name:"Nothing; I\'m done.",line:17}], (options), "options");
-    scene.resolveChoice(options,groups);
+    scene.standardResolution(options[0]);
     doh.is([
       {reuse:"disable",group:"choice",endLine:10,name:"A little of that.",line:8},
       {group:"choice",endLine:13,name:"Let me think about it a little longer.",line:11},
       {reuse:"disable",group:"choice",endLine:16,name:"What was the question?",line:14},
       {reuse:"disable",group:"choice",endLine:20,name:"Nothing; I\'m done.",line:17}], (options), "options2");
-    scene.resolveChoice(options,groups);
+    scene.standardResolution(options[0]);
     var beforeHiding = [
       {reuse:"disable",group:"choice",endLine:10,unselectable:true,name:"A little of that.",line:8},
       {group:"choice",endLine:13,name:"Let me think about it a little longer.",line:11},
@@ -986,11 +952,9 @@ test("disableByDefault", function() {
       {reuse:"disable",group:"choice",endLine:20,name:"Nothing; I\'m done.",line:17}
     ];
     doh.is(beforeHiding, (options), "options3");
-    formValues.choice = 1; // Let me think
-    scene.resolveChoice(options,groups);
+    scene.standardResolution(options[1]); // Let me think
     doh.is(beforeHiding, options, "options4");
-    formValues.choice = 2; // What was the question?
-    scene.resolveChoice(options,groups);
+    scene.standardResolution(options[2]); // What was the question?
     doh.is([
       {reuse:"disable",group:"choice",endLine:10,unselectable:true,name:"A little of that.",line:8},
       {group:"choice",endLine:13,name:"Let me think about it a little longer.",line:11},

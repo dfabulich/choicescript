@@ -105,10 +105,7 @@ function autotester(sceneText, nav, sceneName) {
           this.printLine(item.ultimateOption.name);
           var scene = this.clone();
           if (fakeChoice) scene.temps.fakeChoiceEnd = this.lineNum;
-          scene.testFormValues = item;
-          scene.getFormValue = function(name) {return this.testFormValues[name];}
-          scene.testOptions = options;
-          scene.testGroups = groups;
+          scene.testOption = item;
           scene.testChoiceLine = choiceLine;
           scene.testPath.push(',');
           scene.testPath.push(choiceLine+1);
@@ -117,7 +114,7 @@ function autotester(sceneText, nav, sceneName) {
           scene.testPath.push(' (');
           scene.testPath.push(item.ultimateOption.line);
           scene.testPath.push(')');
-          scene.resume = function() {this.resolveChoice(this.testOptions, this.testGroups);}
+          scene.resume = function() {this.standardResolution(this.testOption.ultimateOption);}
           sceneList.push(scene);
       }
       

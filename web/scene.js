@@ -357,8 +357,16 @@ Scene.prototype.runCommand = function runCommand(line) {
 Scene.prototype.choice = function choice(data) {
     var startLineNum = this.lineNum;
     var groups = data.split(/ /);
+    for (var i = 0; i < groups.length; i++) {
+      if (!/^\w*$/.test(groups[i])) {
+        throw new Error(this.lineMsg() + "invalid choice group name: " + groups[i]);
+      }
+    }
     var options = this.parseOptions(this.indent, groups);
-    this.renderOptions(groups, options);
+    var self = this;
+    this.renderOptions(groups, options, function(option) {
+      self.standardResolution(option);
+    });
     this.finished = true;
     if (this.fakeChoice) {
       this.temps.fakeChoiceEnd = this.lineNum;
@@ -370,42 +378,6 @@ Scene.prototype.fake_choice = function fake_choice(data) {
     this.fakeChoice = true;
     this.choice(data, true);
     delete this.fakeChoice;
-}
-
-// the user submitted the *choice form; goto the appropriate line
-Scene.prototype.resolveChoice = function resolveChoice(options, groups, callback) {
-    var option, group;
-    for (var i = 0; i < groups.length; i++) {
-        if (i > 0) {
-            options = option.suboptions;
-        }
-        group = groups[i];
-        if (!group) group = "choice";
-        var value = this.getFormValue(group);
-        if (value === null) {
-          if (groups.length == 1) {
-            alert("Please choose one of the available options first.");
-          } else {
-            var article = "a";
-            if (/^[aeiou].*/i.test(group)) article = "an";
-            alert("Please choose " + article + " " + group + " first.");
-          }
-          return;
-        }
-        option = options[value];
-        var variable = "choice_" + (i+1);
-        this.temps[variable] = null;
-        this.setVar(variable, option.name);
-    }
-    
-    if (groups.length > 1 && option.unselectable) {
-      alert("Sorry, that combination of choices is not allowed. Please select a different " + groups[groups.length-1] + ".");
-      return;
-    }
-
-    if (!callback) callback = this.standardResolution;
-    callback.call(this, option);
-    
 }
 
 Scene.prototype.standardResolution = function(option) {
@@ -861,6 +833,8 @@ Scene.prototype.parseOptions = function parseOptions(startIndent, choicesRemaini
         if (!/^\s*\#/.test(line)) {
             throw new Error(this.lineMsg() + "Expected option starting with #");
         }
+        // replace variables here and discard the result, so error messages display the correct line
+        this.replaceVariables(line);
         line = trim(trim(line).substring(1));
         var option = {name:line, group:currentChoice};
         if (reuse != "allow") option.reuse = reuse;
@@ -965,122 +939,16 @@ Scene.prototype.verifyOptionsMatch = function verifyOptionsMatch(prev, current) 
 
 // render the prompt and the radio buttons
 Scene.prototype.renderOptions = function renderOptions(groups, options, callback) {
+    for (var i = 0; i < options.length; i++) {
+      var option = options[i];
+      option.name = this.replaceVariables(option.name);
+    }
     this.paragraph();
-    var form = document.createElement("form");
-    main.appendChild(form);
-    var self = this;
-    form.action="#";
-    form.onsubmit = function() { 
-        safeCall(self, function() { self.resolveChoice(options, groups, callback);});
-        return false;
-    };
-    
-    if (!options) throw new Error(this.lineMsg()+"undefined options");
-    if (!options.length) throw new Error(this.lineMsg()+"no options");
-    // global num will be used to assign accessKeys to the options
-    var globalNum = 1;
-    var currentOptions = options;
-    var div = document.createElement("div");
-    form.appendChild(div);
-    setClass(div, "choice");
-    for (var groupNum = 0; groupNum < groups.length; groupNum++) {
-        var group = groups[groupNum];
-        if (group) {
-            var textBuilder = ["Select "];
-            textBuilder.push(/^[aeiou]/i.test(group)?"an ":"a ");
-            textBuilder.push(group);
-            textBuilder.push(":");
-            
-            var p = document.createElement("p");
-            p.appendChild(document.createTextNode(textBuilder.join("")));
-            div.appendChild(p);
-        }
-        var checked = null;
-        for (var optionNum = 0; optionNum < currentOptions.length; optionNum++) {
-            var option = currentOptions[optionNum];
-            if (!checked && !option.unselectable) checked = option;
-            var isLast = (optionNum == currentOptions.length - 1);
-            this.printRadioButton(div, group, option, optionNum, globalNum++, isLast, checked == option);
-        }
-        // for rendering, the first options' suboptions should be as good as any other
-        currentOptions = currentOptions[0].suboptions;
-    }
-
-    form.appendChild(document.createElement("br"));
-
-    var useRealForm = false;
-    if (useRealForm) {
-      printButton("Next", form, false);      
-    } else {
-      printButton("Next", main, false, function() {
-        form.onsubmit();
-      });
-    }
+    printOptions(groups, options, callback);
 
     if (this.debugMode) println(toJson(this.stats));
     
     if (this.finished) printFooter();
-}
-
-// print one radio button
-Scene.prototype.printRadioButton = function printRadioButton(div, name, option, localChoiceNumber, globalChoiceNumber, isLast, checked) {
-    var line = option.name;
-    var unselectable = false;
-    if (!name) unselectable = option.unselectable;
-    var disabledString = unselectable ? " disabled" : "";
-    var id = name + localChoiceNumber;
-    if (!name) name = "choice";
-    var radio;
-    try {
-        // IE doesn't allow you to dynamically specify the name of radio buttons
-        // Standards-complient browsers don't allow you to specify the name in createElement
-        // TODO security problem
-        radio = document.createElement(
-            "<input type='radio' name='"+name+
-            "' value='"+localChoiceNumber+"' id='"+id+
-            "' "+(checked?"checked":"")+disabledString+">"
-        );
-    } catch (e) {
-        radio = document.createElement("input");
-        radio.setAttribute("type", "radio");
-        radio.setAttribute("name", name);
-        radio.setAttribute("value", localChoiceNumber);
-        radio.setAttribute("id", id);
-        if (checked) radio.setAttribute("checked", true);
-        if (unselectable) radio.setAttribute("disabled", true);
-    }
-    
-    var label = document.createElement("label");
-    label.setAttribute("for", id);
-    if (localChoiceNumber == 0) {
-      if (isLast) {
-        setClass(label, "onlyChild"+disabledString);
-      } else {
-        setClass(label, "firstChild"+disabledString);
-      }
-    } else if (isLast) {
-      setClass(label, "lastChild"+disabledString);
-    } else if (unselectable) {
-      setClass(label, "disabled");
-    }
-    label.setAttribute("accesskey", globalChoiceNumber);
-    if (window.Touch && !unselectable) { // Make labels clickable on iPhone
-        label.onclick = function labelClick(evt) {
-            var target = evt.target;
-            if (!target) return;
-            var isLabel = /label/i.test(target.tagName);
-            if (!isLabel) return;
-            var id = target.getAttribute("for");
-            if (!id) return;
-            var button = document.getElementById(id);
-            if (!button) return;
-            button.checked = true;
-        }
-    }
-    label.appendChild(radio);
-    this.printLine(line, label);
-    
-    div.appendChild(label);
 }
 
 // *page_break
@@ -1158,19 +1026,6 @@ Scene.prototype.getIndent = function getIndent(line) {
         }
     }
     return len;
-}
-
-// retrieve value of HTML form
-Scene.prototype.getFormValue = function getFormValue(name) {
-    var field = document.forms[0][name];
-    if (!field) return "";
-    // may return either one field or an array of fields
-    if (field.checked) return field.value;
-    for (var i = 0; i < field.length; i++) {
-        var element = field[i];
-        if (element.checked) return element.value;
-    }
-    return null;
 }
 
 // *comment ignorable text

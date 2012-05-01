@@ -158,6 +158,145 @@ function printFooter() {
   setTimeout(function() {callIos("curl");}, 0);
 }
 
+// retrieve value of HTML form
+function getFormValue(name) {
+    var field = document.forms[0][name];
+    if (!field) return "";
+    // may return either one field or an array of fields
+    if (field.checked) return field.value;
+    for (var i = 0; i < field.length; i++) {
+        var element = field[i];
+        if (element.checked) return element.value;
+    }
+    return null;
+}
+
+function printOptions(groups, options, callback) {
+  var form = document.createElement("form");
+  main.appendChild(form);
+  var self = this;
+  form.action="#";
+  form.onsubmit = function() { 
+      safeCall(self, function() {
+        var option, group;
+        for (var i = 0; i < groups.length; i++) {
+            if (i > 0) {
+                options = option.suboptions;
+            }
+            group = groups[i];
+            if (!group) group = "choice";
+            var value = getFormValue(group);
+            if (value === null) {
+              if (groups.length == 1) {
+                alert("Please choose one of the available options first.");
+              } else {
+                var article = "a";
+                if (/^[aeiou].*/i.test(group)) article = "an";
+                alert("Please choose " + article + " " + group + " first.");
+              }
+              return;
+            }
+            option = options[value];
+        }
+        
+        if (groups.length > 1 && option.unselectable) {
+          alert("Sorry, that combination of choices is not allowed. Please select a different " + groups[groups.length-1] + ".");
+          return;
+        }
+        callback(option);
+      });
+      return false;
+  };
+  
+  if (!options) throw new Error(this.lineMsg()+"undefined options");
+  if (!options.length) throw new Error(this.lineMsg()+"no options");
+  // global num will be used to assign accessKeys to the options
+  var globalNum = 1;
+  var currentOptions = options;
+  var div = document.createElement("div");
+  form.appendChild(div);
+  setClass(div, "choice");
+  for (var groupNum = 0; groupNum < groups.length; groupNum++) {
+      var group = groups[groupNum];
+      if (group) {
+          var textBuilder = ["Select "];
+          textBuilder.push(/^[aeiou]/i.test(group)?"an ":"a ");
+          textBuilder.push(group);
+          textBuilder.push(":");
+          
+          var p = document.createElement("p");
+          p.appendChild(document.createTextNode(textBuilder.join("")));
+          div.appendChild(p);
+      }
+      var checked = null;
+      for (var optionNum = 0; optionNum < currentOptions.length; optionNum++) {
+          var option = currentOptions[optionNum];
+          if (!checked && !option.unselectable) checked = option;
+          var isLast = (optionNum == currentOptions.length - 1);
+          printOptionRadioButton(div, group, option, optionNum, globalNum++, isLast, checked == option);
+      }
+      // for rendering, the first options' suboptions should be as good as any other
+      currentOptions = currentOptions[0].suboptions;
+  }
+
+  form.appendChild(document.createElement("br"));
+
+  var useRealForm = false;
+  if (useRealForm) {
+    printButton("Next", form, false);      
+  } else {
+    printButton("Next", main, false, function() {
+      form.onsubmit();
+    });
+  }
+}
+
+function printOptionRadioButton(div, name, option, localChoiceNumber, globalChoiceNumber, isLast, checked) {
+    var line = option.name;
+    var unselectable = false;
+    if (!name) unselectable = option.unselectable;
+    var disabledString = unselectable ? " disabled" : "";
+    var id = name + localChoiceNumber;
+    if (!name) name = "choice";
+    var radio;
+    var label = document.createElement("label");
+    // IE doesn't allow you to dynamically specify the name of radio buttons
+    if (!/^\w+$/.test(name)) throw new Error("invalid choice group name: " + name);
+    label.innerHTML = "<input type='radio' name='"+name+
+            "' value='"+localChoiceNumber+"' id='"+id+
+            "' "+(checked?"checked":"")+disabledString+">";    
+    
+    label.setAttribute("for", id);
+    if (localChoiceNumber == 0) {
+      if (isLast) {
+        setClass(label, "onlyChild"+disabledString);
+      } else {
+        setClass(label, "firstChild"+disabledString);
+      }
+    } else if (isLast) {
+      setClass(label, "lastChild"+disabledString);
+    } else if (unselectable) {
+      setClass(label, "disabled");
+    }
+    label.setAttribute("accesskey", globalChoiceNumber);
+    if (window.Touch && !unselectable) { // Make labels clickable on iPhone
+        label.onclick = function labelClick(evt) {
+            var target = evt.target;
+            if (!target) return;
+            var isLabel = /label/i.test(target.tagName);
+            if (!isLabel) return;
+            var id = target.getAttribute("for");
+            if (!id) return;
+            var button = document.getElementById(id);
+            if (!button) return;
+            button.checked = true;
+        }
+    }
+    printx(line, label);
+    
+    div.appendChild(label);
+}
+
 function printImage(source, alignment) {
   var img = document.createElement("img");
   img.src = source;

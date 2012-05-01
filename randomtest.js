@@ -201,11 +201,10 @@ Scene.prototype.choice = function choice(data, fakeChoice) {
 
     var item = flattenedOptions[index];
     if (fakeChoice) this.temps.fakeChoiceEnd = this.lineNum;
-    this.getFormValue = function(name) {return item[name];}
 
     log(this.name + " " + (choiceLine+1)+'#'+(index+1)+' ('+item.ultimateOption.line+')');
     var self = this;
-    timeout = function() {self.resolveChoice(options, groups);}
+    timeout = function() {self.standardResolution(item.ultimateOption);}
     this.finished = true;
 
     function flattenOptions(list, options, flattenedOption) {
