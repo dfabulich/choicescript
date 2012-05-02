@@ -570,7 +570,7 @@ return r;},version:'0.2.1',enabled:false};me.enabled=alive.call(me);return me;}(
           key = this.key(key);
 
           // get value
-          val = this.getItem(key);
+          val = this.store.getItem(key);
 
           // delete value
           this.store.removeItem(key);
