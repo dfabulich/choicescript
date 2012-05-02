@@ -2170,6 +2170,42 @@ Scene.prototype.delay_break = function(durationInSeconds) {
   });
 }
 
+Scene.prototype.delay_ending = function(durationInSeconds) {
+  var price = "$2.99";
+  this.finished = true;
+  this.skipFooter = true;
+  var finishedWaiting = {name: "Play again."};
+  var upgradeSkip = {name: "Upgrade to the full version for " + price + " to skip the wait."}
+  var facebookSkip = {name: "Share this game on Facebook to skip the wait."};
+  var playMoreGames = {name: "Play more games like this."};
+  var emailMe = {name: "Email me when new games are available."};
+  var self = this;
+  this.renderOptions([""], [finishedWaiting, upgradeSkip, facebookSkip, playMoreGames, emailMe], function(option) {
+    if (option == playMoreGames) {
+      self.more_games("now");
+      setTimeout(function() {callIos("curl")}, 0);
+    } else if (option == emailMe) {
+      subscribeLink();
+    } else {
+      self.restart();
+    }
+  })
+  /*var target = this.target;
+  if (!target) target = document.getElementById('text');
+  
+  delayBreakStart(function(delayStart) {
+    var endTimeInSeconds = durationInSeconds * 1 + delayStart * 1;
+    showTicker(target, endTimeInSeconds, function() {
+      printButton("Next", target, false, function() {
+        delayBreakEnd();
+        self.finished = false;
+        self.resetPage();
+      })
+    });
+    printFooter();
+  });*/
+}
+
 // *if booleanExpr
 // execute different code depending on whether the booleanExpr is true or false
 //
@@ -2659,5 +2695,5 @@ Scene.validCommands = {"comment":1, "goto":1, "gotoref":1, "label":1, "looplimit
     ,"subscribe":1, "show_password":1, "gosub":1, "return":1, "hide_reuse":1, "disable_reuse":1, "allow_reuse":1
     ,"check_purchase":1,"restore_purchases":1,"purchase":1,"restore_game":1,"advertisement":1
     ,"save_game":1,"delay_break":1,"image":1,"link":1,"input_number":1,"goto_random_scene":1
-    ,"restart":1,"more_games":1
+    ,"restart":1,"more_games":1,"delay_ending":1
     };
