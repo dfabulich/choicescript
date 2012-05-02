@@ -576,6 +576,7 @@ function showFullScreenAdvertisement(callback) {
 function showTicker(target, endTimeInSeconds, finishedCallback) {
   if (!target) target = document.getElementById('text');
   var div = document.createElement("span");
+  div.setAttribute("id", "delayTicker");
   target.appendChild(div);
   var timerDisplay = document.createElement("span");
   div.appendChild(timerDisplay);
@@ -622,7 +623,8 @@ function showTicker(target, endTimeInSeconds, finishedCallback) {
 
   function tick() {
     window.tickerRunning = true;
-    var tickerStillVisible = div.parentNode && div.parentNode.parentNode;
+    var tickerElement = document.getElementById("delayTicker");
+    var tickerStillVisible = tickerElement && tickerElement.parentNode && tickerElement.parentNode.parentNode;
     if (!tickerStillVisible) {
       cleanUpTicker();
       return;
@@ -633,7 +635,7 @@ function showTicker(target, endTimeInSeconds, finishedCallback) {
       timerDisplay.innerHTML = "" + formatSecondsRemaining(secondsRemaining) + " seconds remaining";
     } else {
       cleanUpTicker();
-      div.innerHTML = "0s remaining";
+      tickerElement.innerHTML = "0s remaining";
       if (finishedCallback) finishedCallback();
     }
   }
