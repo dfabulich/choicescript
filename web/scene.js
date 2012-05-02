@@ -2171,39 +2171,54 @@ Scene.prototype.delay_break = function(durationInSeconds) {
   });
 }
 
-Scene.prototype.delay_ending = function(durationInSeconds) {
-  var price = "$2.99";
+Scene.prototype.delay_ending = function(data) {
+  var args = data.split(/ /);
+  var durationInSeconds = args[0];
+  var price = args[1];
   this.finished = true;
   this.skipFooter = true;
-  var finishedWaiting = {name: "Play again after a short wait. ", unselectable: true};
-  var upgradeSkip = {name: "Upgrade to the full version for " + price + " to skip the wait."}
-  var facebookSkip = {name: "Share this game on Facebook to skip the wait."};
-  var playMoreGames = {name: "Play more games like this."};
-  var emailMe = {name: "Email me when new games are available."};
   var self = this;
-  this.paragraph();
-  printOptions([""], [finishedWaiting, upgradeSkip, facebookSkip, playMoreGames, emailMe], function(option) {
-    if (option == playMoreGames) {
-      self.more_games("now");
-      setTimeout(function() {callIos("curl")}, 0);
-    } else if (option == emailMe) {
-      subscribeLink();
-    } else {
-      self.restart();
+  checkPurchase("adfree", function(result) {
+    if (result.adfree || !result.billingSupported) {
+      self.ending();
+      return;
     }
-  });
-  
-  var target = document.getElementById("0").parentElement;
-
-  delayBreakStart(function(delayStart) {
-    var endTimeInSeconds = durationInSeconds * 1 + delayStart * 1;
-    showTicker(target, endTimeInSeconds, function() {
-      clearScreen(function() {
-        self.ending();
-      })
+    var finishedWaiting = {name: "Play again after a short wait. ", unselectable: true};
+    var upgradeSkip = {name: "Upgrade to the full version for " + price + " to skip the wait."}
+    //var facebookSkip = {name: "Share this game on Facebook to skip the wait."};
+    var playMoreGames = {name: "Play more games like this."};
+    var emailMe = {name: "Email me when new games are available."};
+    self.paragraph();
+    printOptions([""], [finishedWaiting, upgradeSkip, /*facebookSkip,*/ playMoreGames, emailMe], function(option) {
+      if (option == playMoreGames) {
+        self.more_games("now");
+        setTimeout(function() {callIos("curl")}, 0);
+      } else if (option == emailMe) {
+        subscribeLink();
+      } else if (option == upgradeSkip) {
+        purchase("adfree", function() {
+          safeCall(self, function() {
+            self.restart();
+          });
+        });
+      } else {
+        self.restart();
+      }
     });
-    printFooter();
-  });
+    
+    var target = document.getElementById("0").parentElement;
+
+    delayBreakStart(function(delayStart) {
+      var endTimeInSeconds = durationInSeconds * 1 + delayStart * 1;
+      showTicker(target, endTimeInSeconds, function() {
+        clearScreen(function() {
+          self.ending();
+        })
+      });
+      printFooter();
+    });
+  })
+  
 }
 
 // *if booleanExpr
