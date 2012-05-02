@@ -1358,6 +1358,7 @@ Scene.prototype.ending = function ending() {
 Scene.prototype.restart = function restart() {
   this.finished = true;
   this.reset();
+  delayBreakEnd();
   var startupScene = this.nav.getStartupScene();
   var scene = new Scene(startupScene, this.stats, this.nav, this.debugMode);
   scene.resetPage();
@@ -2174,13 +2175,14 @@ Scene.prototype.delay_ending = function(durationInSeconds) {
   var price = "$2.99";
   this.finished = true;
   this.skipFooter = true;
-  var finishedWaiting = {name: "Play again."};
+  var finishedWaiting = {name: "Play again after a short wait. ", unselectable: true};
   var upgradeSkip = {name: "Upgrade to the full version for " + price + " to skip the wait."}
   var facebookSkip = {name: "Share this game on Facebook to skip the wait."};
   var playMoreGames = {name: "Play more games like this."};
   var emailMe = {name: "Email me when new games are available."};
   var self = this;
-  this.renderOptions([""], [finishedWaiting, upgradeSkip, facebookSkip, playMoreGames, emailMe], function(option) {
+  this.paragraph();
+  printOptions([""], [finishedWaiting, upgradeSkip, facebookSkip, playMoreGames, emailMe], function(option) {
     if (option == playMoreGames) {
       self.more_games("now");
       setTimeout(function() {callIos("curl")}, 0);
@@ -2189,21 +2191,19 @@ Scene.prototype.delay_ending = function(durationInSeconds) {
     } else {
       self.restart();
     }
-  })
-  /*var target = this.target;
-  if (!target) target = document.getElementById('text');
+  });
   
+  var target = document.getElementById("0").parentElement;
+
   delayBreakStart(function(delayStart) {
     var endTimeInSeconds = durationInSeconds * 1 + delayStart * 1;
     showTicker(target, endTimeInSeconds, function() {
-      printButton("Next", target, false, function() {
-        delayBreakEnd();
-        self.finished = false;
-        self.resetPage();
+      clearScreen(function() {
+        self.ending();
       })
     });
     printFooter();
-  });*/
+  });
 }
 
 // *if booleanExpr

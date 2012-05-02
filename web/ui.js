@@ -573,11 +573,11 @@ function showFullScreenAdvertisement(callback) {
   }
 }
 
-function showTicker(target, endTimeInSeconds, finishedCallback, skipCallback) {
+function showTicker(target, endTimeInSeconds, finishedCallback) {
   if (!target) target = document.getElementById('text');
-  var div = document.createElement("div");
+  var div = document.createElement("span");
   target.appendChild(div);
-  var timerDisplay = document.createElement("div");
+  var timerDisplay = document.createElement("span");
   div.appendChild(timerDisplay);
   var timer;
 
@@ -640,11 +640,6 @@ function showTicker(target, endTimeInSeconds, finishedCallback, skipCallback) {
 
   timer = setInterval(tick, 1000);
   tick();
-
-  if (skipCallback) skipCallback(div, function() {
-    endTimeInSeconds = 0;
-    tick();
-  });
 }
 
 function printButton(name, parent, isSubmit, code) {
