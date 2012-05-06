@@ -419,7 +419,7 @@ function printShareLinks(target, now) {
 
 function subscribeLink(e) {
   clearScreen(function() {
-    subscribe(text, "now", function() {
+    subscribe(document.getElementById('text'), "now", function() {
       clearScreen(loadAndRestoreGame);
     })
   })
