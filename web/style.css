@@ -100,8 +100,8 @@ input[type="radio"], input[type="checkbox"] {
     font-weight:bolder;
     margin-bottom: 16px; /* reset button margin */
     -webkit-appearance: none; /* Safari, don't override my CSS styles */
-    color: rgba(247, 244, 241, 1); /* Match background color */ 
-    background-color: rgba(0, 0, 0, 0.6);
+    color: #f7f4f1; /* Match background color */ 
+    background-color: #626160;
     border: none;
     -webkit-border-radius: 0.5em;
     -moz-border-radius: 0.5em;
@@ -109,7 +109,7 @@ input[type="radio"], input[type="checkbox"] {
 }
 
 .next:hover {
-  color: rgba(228,222,216, 1);
+  color: #E4DED8;
 }
 
 h1 {
