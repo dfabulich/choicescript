@@ -3,15 +3,8 @@ body {
   font-family: Georgia,"Times New Roman",serif;
   background-color: #F7F4F1;
   color: rgba(0, 0, 0, 0.85);
-}
-
-/* When max-width kicks in, center the body
-   When we margin: auto on iPhone, margin disappears entirely
-   So let's make sure there's some margin for centering */
-@media only screen and (min-width: 721px) {
-  body {
-    margin: 2em auto; 
-  }
+  margin: 8px auto; 
+  padding: 0 8px;
 }
 
 #text {
