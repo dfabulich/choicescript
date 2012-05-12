@@ -22,8 +22,21 @@ function printx(msg, parent) {
     if (msg == null) return;
     if (msg === "") return;
     if (!parent) parent = document.getElementById('text');
-    var text = window.document.createTextNode(msg);
-    parent.appendChild(text);
+    msg = (msg+"").replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/\[b\]/g, '<b>')
+      .replace(/\[\/b\]/g, '</b>')
+      .replace(/\[i\]/g, '<i>')
+      .replace(/\[\/i\]/g, '</i>')
+    var frag = document.createDocumentFragment();
+    temp = document.createElement('div');
+    temp.innerHTML = msg;
+    while (temp.firstChild) {
+        frag.appendChild(temp.firstChild);
+    }
+    parent.appendChild(frag);
 }
     
 function println(msg, parent) {

@@ -38,11 +38,13 @@ function xmlEscape(str, attribute) {
   var result = "" + str;
   result = result.replace(/&/g, "&amp;");
   if (attribute) {
-    result = result.replace(/'/g, "&apos;");
-    result = result.replace(/"/g, "&quot;");    
+    result = result.replace(/'/g, "&apos;").replace(/"/g, "&quot;");    
   } else {
-    result = result.replace(/</g, "&lt;");
-    result = result.replace(/>/g, "&gt;");
+    result = result.replace(/</g, "&lt;").replace(/>/g, "&gt;")
+      .replace(/\[b\]/g, '<b>')
+      .replace(/\[\/b\]/g, '</b>')
+      .replace(/\[i\]/g, '<i>')
+      .replace(/\[\/i\]/g, '</i>');
   }
   return result;
 }
