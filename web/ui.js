@@ -334,7 +334,11 @@ function moreGames() {
         window.location.href = "market://search?q=pub:%22Choice+of+Games,+Inc%22";
       }
     } else {
-      window.location.href = "http://www.choiceofgames.com/category/our-games/";
+      try {
+        window.location.href = "http://www.choiceofgames.com/category/our-games/";
+      } catch (e) {
+        // in xulrunner, this will be blocked, but it will trigger opening the external browser
+      }
     }
 }
 
