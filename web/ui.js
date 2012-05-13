@@ -854,6 +854,7 @@ function showPassword(target, password) {
 window.isWebOS = /webOS/.test(navigator.userAgent);
 window.isMobile = isWebOS || /Mobile/.test(navigator.userAgent);
 window.isFile = /^file:/.test(window.location.href);
+window.isXul = /^chrome:/.test(window.location.href);
 window.isWeb = /^https?:/.test(window.location.href);
 window.isSafari = /Safari/.test(navigator.userAgent);
 window.isIE = /MSIE/.test(navigator.userAgent);
