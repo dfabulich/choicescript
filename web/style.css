@@ -7,6 +7,13 @@ body {
   padding: 0 8px;
 }
 
+a {
+  /* colored underlined links for XULRunner support */
+  color: blue;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
 #text {
 	line-height: 1.5;
 }
