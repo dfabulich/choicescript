@@ -465,7 +465,7 @@ function subscribe(target, now, callback) {
     })
     return;
   }
-  var mailToSupported = isFile;
+  var mailToSupported = isFile && !window.isMacApp;
   if (window.isAndroidApp) mailToSupported = urlSupport.isSupported("mailto:support@choiceofgames.com");
   if (mailToSupported) {
     subscribeByMail(target, now, callback, function() {
