@@ -50,7 +50,7 @@ window.storeName = null;
 //Scene.generatedFast = true;
 </script>
 <script type="text/javascript">
-if (!isWeb && window.isIosApp) {
+if (!isWeb && (window.isIosApp || window.isMacApp)) {
   document.write("<style>"
   +"#header { display: none; }"
   +""
