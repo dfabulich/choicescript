@@ -434,9 +434,19 @@ function printShareLinks(target, now) {
   target.appendChild(msgDiv);
 }
 
+function shareAction(e) {
+  clearScreen(function() {
+    var target = document.getElementById('text');
+    printShareLinks(target, "now");
+    printButton("Next", target, false, function () {
+      clearScreen(loadAndRestoreGame);
+    })
+  })
+}
+
 function subscribeLink(e) {
   clearScreen(function() {
-    subscribe(document.getElementById('text'), "now", function() {
+    printShareLinks(document.getElementById('text'), "now", function() {
       clearScreen(loadAndRestoreGame);
     })
   })
