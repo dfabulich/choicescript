@@ -50,7 +50,7 @@ window.storeName = null;
 //Scene.generatedFast = true;
 </script>
 <script type="text/javascript">
-if (!isWeb && (window.isIosApp || window.isMacApp)) {
+if (!isWeb && window.isIosApp) {
   document.write("<style>"
   +"#header { display: none; }"
   +""
@@ -70,6 +70,14 @@ if (!isWeb && (window.isIosApp || window.isMacApp)) {
       window.setTimeout(function() {document.body.removeChild(dummy)}, 10);
     }, false);
 }
+if (window.isMacApp) {
+  document.write("<style>"
+  +"#headerLinks { display: none; }"
+  +""
+  +"#emailUs { display: none; }"
+  +""
+  +"</style>");
+}
 if (isWeb) {
   document.write("<style>label:hover {background-color: #E4DED8;}</style>");
 }
@@ -80,7 +88,7 @@ var rootDir = "../";
 <div id="advertisement">
 </div>
 <div id="header"><h1 class="gameTitle">My First ChoiceScript Game</h1>
-  <p>
+  <p id="headerLinks">
       <!-- INSERT uncomment about links here
       <a href="credits.html" class="spacedLink">About</a>
       <a href="http://www.choiceofgames.com/category/our-games/" onclick="moreGames(); return false;" class="spacedLink">More Games</a>
