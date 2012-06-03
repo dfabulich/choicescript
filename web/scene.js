@@ -1195,8 +1195,12 @@ Scene.prototype.rand = function rand(data) {
     if (isNaN(diff)) {
         throw new Error(this.lineMsg() + "Invalid rand statement, min and max must be numbers");
     }
-    if (diff <= 0) {
-        throw new Error(this.lineMsg() + "Invalid rand statement, min must be less than max");
+    if (diff < 0) {
+        throw new Error(this.lineMsg() + "Invalid rand statement, min must be less than max: " + minimum + " > " + maximum);
+    }
+    if (diff == 0) {
+      this.setVar(variable, minimum);
+      return;
     }
     function isInt(x) {
        var y=parseInt(x);
