@@ -191,10 +191,11 @@ function printOptions(groups, options, callback) {
   form.action="#";
   form.onsubmit = function() { 
       safeCall(self, function() {
+        var currentOptions = options;
         var option, group;
         for (var i = 0; i < groups.length; i++) {
             if (i > 0) {
-                options = option.suboptions;
+                currentOptions = option.suboptions;
             }
             group = groups[i];
             if (!group) group = "choice";
@@ -209,7 +210,7 @@ function printOptions(groups, options, callback) {
               }
               return;
             }
-            option = options[value];
+            option = currentOptions[value];
         }
         
         if (groups.length > 1 && option.unselectable) {
