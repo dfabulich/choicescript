@@ -50,7 +50,7 @@ function fileExists(filePath) {
 
 function fileLastMod(filePath) {
     if (isRhino) {
-        return new java.io.File("xmltranslator.js").lastModified()
+        return new java.io.File(filePath).lastModified()
     } else {
         if (path.existsSync(filePath)) return fs.statSync(filePath).mtime.getTime();
         return 0;
