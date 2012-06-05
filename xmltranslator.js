@@ -280,6 +280,8 @@ XmlScene.prototype.replaceLine = function xmlReplaceLine(data) {
   });
 }
 
+XmlScene.prototype.replaceVariables = function xmlReplaceVariables() {}
+
 XmlScene.prototype.print = function xmlPrint(data) {
   closePara();
   writer.write("<print>");
