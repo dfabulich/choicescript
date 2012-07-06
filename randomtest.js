@@ -83,7 +83,10 @@ function debughelp() {
 
 function noop() {}
 Scene.prototype.page_break = noop;
-Scene.prototype.printLine = noop;
+Scene.prototype.printLine = function randomtest_printLine(line) {
+  if (!line) return null;
+  line = this.replaceVariables(line);
+}
 Scene.prototype.subscribe = noop;
 Scene.prototype.save = function(callback) { if (callback) callback.call(); };
 Scene.prototype.stat_chart = function() {
