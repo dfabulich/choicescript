@@ -62,7 +62,37 @@ function isDefined(x) {
     return "undefined" !== typeof x;
 }
 
+function jsonStringifyAscii(obj) {
+  var stringified = JSON.stringify(obj, function replacer(key, value) {
+    if (key == "scene") return undefined;
+    return value;
+  });
+  var output = stringified.replace(/(.)/g, function(x) {
+    var code = x.charCodeAt(0);
+    if (code > 127 || code < 32) {
+     var outCode = code.toString(16);
+     switch (outCode.length) {
+       case 4:
+         return "\\u" + outCode;
+       case 3:
+         return "\\u0" + outCode;
+       case 2:
+         return "\\u00" + outCode;
+       case 1:
+         return "\\u000" + outCode;
+       default:
+         return x;
+     }
+    }
+    return x;
+  });
+  return output;
+}
+
 function toJson(obj, standardized) {
+ if (typeof JSON != "undefined" && JSON.stringify) {
+  return jsonStringifyAscii(obj);
+ }
  switch (typeof obj) {
   case 'object':
    if (obj) {
@@ -218,7 +248,7 @@ function restoreObject(key, defaultValue, callback) {
     var result = defaultValue;
     if (ok && value) {
       try{
-        result = eval("result="+value);
+        result = jsonParse(value);
       } catch (e) {}
     }
     callback(result);
@@ -328,7 +358,7 @@ function getRemoteSaves(email, callback) {
       callback(null);
     } else {
       var result = xhr.responseText;
-      result = eval("result="+result);
+      result = jsonParse(result);
       var remoteSaveList = [];
       for (var i = 0; i < result.length; i++) {
         var save = result[i].json;
@@ -422,7 +452,7 @@ function loadAndRestoreGame(slot, forcedScene) {
     safeCall(null, function() {
       var state = null;
       if (ok && value && ""+value) {
-        state = eval("state="+value);
+        state = jsonParse(value);
       } else if (window.Persist.type == "androidStorage" && document.cookie) {
         return upgradeAndroidCookies(slot,forcedScene);
       }
@@ -588,4 +618,12 @@ function simpleDateTimeFormat(date) {
   var minutes = date.getMinutes();
   if (minutes < 10) minutes = "0" + (""+minutes);
   return day + " " + month + " " + date.getDate() + " " + date.getHours() + ":" + minutes;
+}
+
+function jsonParse(str) {
+  try {
+    return JSON.parse(str);
+  } catch (e) {
+    return eval('('+str+')');
+  }
 }

@@ -54,6 +54,8 @@ function Scene(name, stats, nav, debugMode) {
     // Have we ever printed any text?
     this.screenEmpty = true;
 
+    this.stats.sceneName = name;
+
     // for easy reachability from the window
     this.stats.scene = this;
     
@@ -1534,7 +1536,7 @@ Scene.prototype.restore_password = function restore_password() {
     token = token.replace(/^[^\{]*/, "");
     token = token.replace(/[^\}]*$/, "");
     try {
-      var state = eval("state="+token);
+      var state = jsonParse(token);
     } catch (e) {
       var supportEmail = "support-unknown@choiceofgames.com";
       try {
