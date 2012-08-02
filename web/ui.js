@@ -706,6 +706,7 @@ function printLink(target, href, anchorText) {
   link.setAttribute("href", href);
   link.appendChild(document.createTextNode(anchorText));
   target.appendChild(link);
+  target.appendChild(document.createTextNode(" "));
 }
 
 function printInput(target, inputType, callback, minimum, maximum, step) {
