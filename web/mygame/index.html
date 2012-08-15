@@ -37,9 +37,6 @@ either express or implied.
 <!-- <script src="../version.js"></script> -->
 <script src="mygame.js"></script>
 <link href="../style.css" rel="stylesheet" type="text/css">
-<script>
-if (window.isWebOS) document.write("<style>body {font-family: Prelude; font-size: 14pt}\n#header {font-size: 13pt}</style>");
-</script>
 <link rel="icon" type="image/vnd.microsoft.icon" href="../favicon.ico">
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <link rel="apple-touch-icon-precomposed" href="mobile-icon.png"/>
@@ -48,39 +45,6 @@ if (window.isWebOS) document.write("<style>body {font-family: Prelude; font-size
 // INSERT store name; disabled by default because it's confusing for newbie authors
 window.storeName = null;
 //Scene.generatedFast = true;
-</script>
-<script type="text/javascript">
-if (!isWeb && window.isIosApp) {
-  document.write("<style>"
-  +"#header { display: none; }"
-  +""
-  +"#emailUs { display: none; }"
-  +""
-  +"#main { padding-top: 1em; }"
-  +"</style>"
-  // Use UIWebView width, not screen width, on iPad
-  +"<meta name = 'viewport' content = 'width = "+window.innerWidth+"'>"
-  ); 
-  window.addEventListener("resize", function() {
-      document.querySelector("meta[name=viewport]").setAttribute("content", "width="+window.innerWidth);
-      // this dummy element seems to be required to get the viewport to stick
-      var dummy = document.createElement("p");
-      dummy.innerHTML = "&nbsp;";
-      document.body.appendChild(dummy);
-      window.setTimeout(function() {document.body.removeChild(dummy)}, 10);
-    }, false);
-}
-if (window.isMacApp) {
-  document.write("<style>"
-  +"#headerLinks { display: none; }"
-  +""
-  +"#emailUs { display: none; }"
-  +""
-  +"</style>");
-}
-if (isWeb) {
-  document.write("<style>label:hover {background-color: #E4DED8;}</style>");
-}
 var rootDir = "../";
 </script>
 </head>
@@ -124,9 +88,6 @@ var rootDir = "../";
   -->
 </div>
 <p id="emailUs">Love it?  Hate it?  Write us at <a id="supportEmail" href='mailto:support-external@choiceofgames.com'>support@choiceofgames.com</a></p>
-<script>
-  document.write("<style>noscript {display: none;}</style>");
-</script>
 <noscript>
 <p>This is just an example game.</p>
 <p>This game requires JavaScript; please enable JavaScript and refresh this page.</p>

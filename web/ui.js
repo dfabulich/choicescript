@@ -941,6 +941,39 @@ if ( document.addEventListener ) {
   document.addEventListener( "DOMContentLoaded", window.onload, false );
 }
 
+document.write("<style>noscript {display: none;}</style>");
 if (window.isWeb) {
   document.write("<style>.webOnly { display: block !important; }</style>");
+}
+if (!isWeb && window.isIosApp) {
+  document.write("<style>"
+  +"#header { display: none; }"
+  +""
+  +"#emailUs { display: none; }"
+  +""
+  +"#main { padding-top: 1em; }"
+  +"</style>"
+  // Use UIWebView width, not screen width, on iPad
+  +"<meta name = 'viewport' content = 'width = "+window.innerWidth+"'>"
+  ); 
+  window.addEventListener("resize", function() {
+      document.querySelector("meta[name=viewport]").setAttribute("content", "width="+window.innerWidth);
+      // this dummy element seems to be required to get the viewport to stick
+      var dummy = document.createElement("p");
+      dummy.innerHTML = "&nbsp;";
+      document.body.appendChild(dummy);
+      window.setTimeout(function() {document.body.removeChild(dummy)}, 10);
+    }, false);
+}
+if (window.isWebOS) document.write("<style>body {font-family: Prelude; font-size: 14pt}\n#header {font-size: 13pt}</style>");
+if (window.isMacApp) {
+  document.write("<style>"
+  +"#headerLinks { display: none; }"
+  +""
+  +"#emailUs { display: none; }"
+  +""
+  +"</style>");
+}
+if (isWeb && !window.Touch) {
+  document.write("<style>label:hover {background-color: #E4DED8;}</style>");
 }
