@@ -94,7 +94,14 @@ function autotester(sceneText, nav, sceneName) {
   
   Scene.prototype.choice = function choice(data, fakeChoice) {
       var groups = ["choice"];
-      if (data) groups = data.split(/ /);
+      if (data) {
+        groups = data.split(/ /);
+        for (var i = 0; i < groups.length; i++) {
+          if (!/^\w*$/.test(groups[i])) {
+            throw new Error(this.lineMsg() + "invalid choice group name: " + groups[i]);
+          }
+        }
+      }
       var choiceLine = this.lineNum;
       var options = this.parseOptions(this.indent, groups);
       var flattenedOptions = [];
