@@ -350,7 +350,7 @@ XmlScene.prototype["if"] = function xmlIf(data, inChoice) {
     }
     this.skipTrueBranch();
     var endLine = this.lineNum;
-    if (!/\s*\*else/.test(this.lines[this.lineNum])) {
+    if (!/\s*\*els/.test(this.lines[this.lineNum])) {
       // skipTrueBranch retreats one step from the last line
       // except for *else commands, which it skips
       // our endLine is this.lineNum if the block ends with *else
