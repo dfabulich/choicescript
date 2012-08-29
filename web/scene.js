@@ -299,16 +299,30 @@ Scene.prototype.parseLabels = function parseLabels() {
 }
 
 // if this is a command line, run it
+// ThornBreed: extended by double asterisks for further commands of
+// Scene.validCommands on the same line
 Scene.prototype.runCommand = function runCommand(line) {
+    var commandPos = 1;
+    var dataPos = 2;
     var result = /^\s*\*(\w+)(.*)/.exec(line);
     if (!result) return false;
-    var command = result[1].toLowerCase();
-    var data = trim(result[2]);
-    if (Scene.validCommands[command]) {
-        this[command](data);
-    } else {
-        throw new Error(this.lineMsg() + "Non-existent command '"+command+"'");
-    }
+    do {
+        var command = result[commandPos].toLowerCase();
+        var data = trim(result[dataPos]);
+        result = /(.*)\*{2}(\w+)(.*)/.exec(data);
+        if (result) {
+            data = trim(result[1]);
+            if (commandPos === 1) {
+                commandPos = 2;
+                dataPos = 3;
+            }
+        }		 
+        if (Scene.validCommands[command]) {
+            this[command](data);
+        } else {
+            throw new Error(this.lineMsg() + "Non-existent command '"+command+"'");
+        }
+    } while (result !== null);
     return true;
 }
 
