@@ -22,6 +22,11 @@ function printx(msg, parent) {
     if (msg == null) return;
     if (msg === "") return;
     if (!parent) parent = document.getElementById('text');
+    if (msg == " ") {
+      // IE7 doesn't like innerHTML that's nothing but " "
+      parent.appendChild(document.createTextNode(" "));
+      return;
+    }
     msg = (msg+"").replace(/&/g, '&amp;')
       .replace(/</g, '&lt;')
       .replace(/>/g, '&gt;')
