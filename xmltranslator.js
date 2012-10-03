@@ -228,6 +228,8 @@ XmlScene.prototype.ending = function xmlEnding(data) {
 );
 }
 
+XmlScene.prototype.delay_ending = XmlScene.prototype.ending;
+
 XmlScene.prototype.advertisement = function xmlAdvertisement() {
   printElement("advertisement");
 }
