@@ -46,6 +46,16 @@ function autotester(sceneText, nav, sceneName) {
   
   Scene.prototype.delay_break = function() {};
 
+  Scene.prototype.delay_ending = function test_delayEnding(data) {
+    var args = data.split(/ /);
+    var durationInSeconds = args[0];
+    var price = args[1];
+    if (isNaN(durationInSeconds * 1)) throw new Error(this.lineMsg() + "invalid duration");
+    if (!/^\$/.test(price)) throw new Error(this.lineMsg() + "invalid price");
+    this.paragraph();
+    this.finished = true;
+  }
+
   Scene.prototype.check_purchase = function scene_checkPurchase(data) {
     var products = data.split(/ /);
     for (var i = 0; i < products.length; i++) {

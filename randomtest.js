@@ -107,6 +107,20 @@ Scene.prototype.restore_game = function() {
   this.parseRestoreGame(false/*alreadyFinished*/);
 };
 
+Scene.prototype.delay_break = function randomtest_delayBreak(durationInSeconds) {
+  if (isNaN(durationInSeconds * 1)) throw new Error(this.lineMsg() + "invalid duration");
+}
+
+Scene.prototype.delay_ending = function test_delayEnding(data) {
+    var args = data.split(/ /);
+    var durationInSeconds = args[0];
+    var price = args[1];
+    if (isNaN(durationInSeconds * 1)) throw new Error(this.lineMsg() + "invalid duration");
+    if (!/^\$/.test(price)) throw new Error(this.lineMsg() + "invalid price");
+    this.paragraph();
+    this.finished = true;
+}
+
 crc32 = noop;
 
 parsedLines = {};

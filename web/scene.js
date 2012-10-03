@@ -2159,6 +2159,7 @@ Scene.prototype.parseStatChart = function parseStatChart() {
 }
 
 Scene.prototype.delay_break = function(durationInSeconds) {
+  if (isNaN(durationInSeconds * 1)) throw new Error(this.lineMsg() + "invalid duration");
   this.finished = true;
   this.skipFooter = true;
   var target = this.target;
@@ -2181,6 +2182,8 @@ Scene.prototype.delay_ending = function(data) {
   var args = data.split(/ /);
   var durationInSeconds = args[0];
   var price = args[1];
+  if (isNaN(durationInSeconds * 1)) throw new Error(this.lineMsg() + "invalid duration");
+  if (!/^\$/.test(price)) throw new Error(this.lineMsg() + "invalid price");
   this.finished = true;
   this.skipFooter = true;
   var self = this;
