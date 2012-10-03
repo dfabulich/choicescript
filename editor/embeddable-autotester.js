@@ -20,6 +20,40 @@ function autotester(sceneText, nav, sceneName) {
   
   Scene.prototype.page_break = function() {};
   Scene.prototype.subscribe = function() {};
+  Scene.prototype.restore_game = function() {};
+  Scene.prototype.restore_purchases = function() {};
+  Scene.prototype.purchase = function(data) {
+    var result = /^(\w+)\s+(\S+)\s+(.*)/.exec(data);
+    if (!result) throw new Error(this.lineMsg() + "invalid line; can't parse purchaseable product: " + data);
+    var product = result[1];
+    var priceGuess = trim(result[2]);
+    var label = trim(result[3]);
+    if (seen[label]) return;
+    var scene = this.clone();
+    scene.testPath.push(',');
+    scene.testPath.push(this.lineNum+1);
+    scene.testPath.push('$');
+    scene.lineNum = this.lineNum;
+    scene.rollbackLineCoverage();
+    scene.indent = this.indent;
+    scene["goto"](label);
+    scene.rollbackLineCoverage(); // we haven't actually covered the line yet
+    scene.resume = function() {
+      this.lineNum = this.lineNum; // NOW we've covered it
+      scene.printLoop(); }
+    sceneList.push(scene);
+  };
+  
+  Scene.prototype.delay_break = function() {};
+
+  Scene.prototype.check_purchase = function scene_checkPurchase(data) {
+    var products = data.split(/ /);
+    for (var i = 0; i < products.length; i++) {
+      this.temps["choice_purchased_"+products[i]] = true;
+    }
+    this.temps.choice_purchase_supported = false;
+    this.temps.choice_purchased_everything = true;
+  }
   
   var inputCallback;
 
@@ -63,12 +97,11 @@ function autotester(sceneText, nav, sceneName) {
     }
   }
   
-  Scene.prototype.save_game = function(data) {
-    var stack = this.tokenizeExpr(data);
-    var result = this.evaluateExpr(stack);
-  }
+  Scene.prototype.save_game = function() {}
   
-  Scene.prototype.restore_game = function() {};
+  Scene.prototype.restore_game = function() {
+    this.parseRestoreGame(false/*alreadyFinished*/);
+  };
   
   Scene.prototype.rollbackLineCoverage = function(lineNum) {
     if (!lineNum) lineNum = this.lineNum;

@@ -92,13 +92,20 @@ Scene.prototype.save = function(callback) { if (callback) callback.call(); };
 Scene.prototype.stat_chart = function() {
   this.parseStatChart();
 }
-
-Scene.prototype.save_game = function(data) {
-  var stack = this.tokenizeExpr(data);
-  var result = this.evaluateExpr(stack);
+Scene.prototype.check_purchase = function scene_checkPurchase(data) {
+  var products = data.split(/ /);
+  for (var i = 0; i < products.length; i++) {
+    this.temps["choice_purchased_"+products[i]] = true;
+  }
+  this.temps.choice_purchase_supported = false;
+  this.temps.choice_purchased_everything = true;
 }
 
-Scene.prototype.restore_game = function() {};
+Scene.prototype.save_game = noop;
+
+Scene.prototype.restore_game = function() {
+  this.parseRestoreGame(false/*alreadyFinished*/);
+};
 
 crc32 = noop;
 
@@ -180,7 +187,7 @@ Scene.prototype.input_number = function(data) {
    this.rand(data);
 }
 
-Scene.prototype.finish = function random_finish() {
+Scene.prototype.finish = Scene.prototype.autofinish = function random_finish() {
     var nextSceneName = this.nav && nav.nextSceneName(this.name);
     this.finished = true;
     // if there are no more scenes, then just halt
