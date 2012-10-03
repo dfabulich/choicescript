@@ -115,6 +115,32 @@ XmlScene.prototype.image = function xmlImage(data) {
   writer.write("'/>\n");
 }
 
+XmlScene.prototype.kindle_image = XmlScene.prototype.image;
+
+XmlScene.prototype.kindle_search = function kindle_search(data) {
+  var result = /^\((.+)\) ([^\)]+)/.exec(data);
+  var query = result[1];
+  var buttonName = result[2];
+  closePara();
+  writer.write("<kindle-search query='");
+  writer.write(xmlEscape(query));
+  writer.write("'>");
+  writer.write(this.replaceLine(buttonName));
+  writer.write("</kindle-search>\n");
+}
+
+XmlScene.prototype.kindle_product = function kindle_product(data) {
+  var result = /^\((.+)\) ([^\)]+)/.exec(data);
+  var query = result[1];
+  var buttonName = result[2];
+  closePara();
+  writer.write("<kindle-product asin='");
+  writer.write(xmlEscape(query));
+  writer.write("'>");
+  writer.write(this.replaceLine(buttonName));
+  writer.write("</kindle-product>\n");
+}
+
 XmlScene.prototype.page_break = function xmlPageBreak(data) {
   printNestedElement("page-break", this.replaceLine(data));
 }
@@ -134,6 +160,14 @@ XmlScene.prototype["goto"] = function xmlGoto(data) {
 XmlScene.prototype.gosub = function xmlGosub(data) {
   printElement("gosub", "label", (""+data).toLowerCase());
   this.indent = this.getIndent(this.nextNonBlankLine());
+}
+
+XmlScene.prototype.restore_purchases = function xmlRestorePurchases(data) {
+  printElement("restore-purchases", "label", (""+data).toLowerCase());
+}
+
+XmlScene.prototype.delay_break = function xmlDelayBreak(data) {
+  printElement("delay-break", "seconds", (""+data).toLowerCase());
 }
 
 XmlScene.prototype["return"] = function xmlReturn(data) {
@@ -192,6 +226,10 @@ XmlScene.prototype.ending = function xmlEnding(data) {
 +"</if>\n"
 +"</choice>\n"
 );
+}
+
+XmlScene.prototype.advertisement = function xmlAdvertisement() {
+  printElement("advertisement");
 }
 
 XmlScene.prototype.share_this_game = function xmlShareThisGame(data) {
@@ -681,11 +719,29 @@ XmlScene.prototype.goto_random_scene = function xmlGotoRandomScene(data) {
   writer.write("</goto-random-scene>\n");
 }
 
+XmlScene.prototype.check_purchase = function xmlCheckPurchase(data) {
+  writer.write("<check-purchase>\n");
+  var products = data.split(/ /);
+  for (var i = 0; i < products.length; i++) {
+    writer.write("<product name='"+products[i]+"' />\n");
+  }
+  writer.write("</check-purchase>\n");
+}
+
+XmlScene.prototype.purchase = function xmlPurchase(data) {
+  var result = /^(\w+)\s+(\S+)\s+(.*)/.exec(data);
+  if (!result) throw new Error(this.lineMsg() + "invalid line; can't parse purchaseable product: " + data);
+  var product = result[1];
+  var priceGuess = trim(result[2]);
+  var label = trim(result[3]);
+  writer.write("<purchase product='"+product+"' priceGuess='"+priceGuess+"' label='"+label+"' />\n");
+}
+
 if (args[1]) {
   if (isRhino) {
     list = [new java.io.File(dir, args[1] + ".txt")];
   } else {
-    list = [dir + '/' + args[1] + ".txt"];
+    list = [args[1] + ".txt"];
   }
 } else if (true) {
   if (isRhino) {
