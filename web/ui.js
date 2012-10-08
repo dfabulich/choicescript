@@ -176,6 +176,10 @@ function printFooter() {
   setTimeout(function() {callIos("curl");}, 0);
 }
 
+function fastRefresh() {
+  clearScreen(function() {loadAndRestoreGame(window.slot, window.forcedScene)});
+}
+
 // retrieve value of HTML form
 function getFormValue(name) {
     var field = document.forms[0][name];
@@ -926,13 +930,13 @@ window.onload=function() {
     var map = parseQueryString(window.location.search);
         
     if (map) {
-      var forcedScene = map.forcedScene
+      window.forcedScene = map.forcedScene
       window.slot = map.slot;
       window.debug = map.debug;
       if (map.restart) {
         restoreGame(null, forcedScene);
       } else {
-        safeCall(null, function() {loadAndRestoreGame(window.slot, forcedScene)});
+        safeCall(null, function() {loadAndRestoreGame(window.slot, window.forcedScene)});
       }
     } else {
       safeCall(null, loadAndRestoreGame);
