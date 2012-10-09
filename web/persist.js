@@ -927,15 +927,17 @@ return r;},version:'0.2.1',enabled:false};me.enabled=alive.call(me);return me;}(
       b = B[keys[i]];
 
       // test for backend
-      if (b.test()) {
-        // found backend, save type and size
-        P.type = keys[i];
-        P.size = b.size;
+      try {
+        if (b.test()) {
+          // found backend, save type and size
+          P.type = keys[i];
+          P.size = b.size;
 
-        // extend store prototype with backend methods
-        for (key in b.methods)
-          P.Store.prototype[key] = b.methods[key];
-      }
+          // extend store prototype with backend methods
+          for (key in b.methods)
+            P.Store.prototype[key] = b.methods[key];
+        }
+      } catch (e) {}
     }
 
     // mark library as initialized
