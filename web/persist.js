@@ -142,6 +142,7 @@ return r;},version:'0.2.1',enabled:false};me.enabled=alive.call(me);return me;}(
      */ 
     search_order: [
       // TODO: air
+      'iosStorage',
       'androidStorage',
       'whatwg_db', 
       'localstorage',
@@ -638,6 +639,88 @@ return r;},version:'0.2.1',enabled:false};me.enabled=alive.call(me);return me;}(
 
           if (fn)
             fn.call(scope || this, (val !== null), val);
+        } 
+      }
+    }, 
+
+    // DGF iOS managed storage
+    iosStorage: {
+      size: -1,
+
+      test: function() {
+        try {
+          return window.isIosApp ? true : false;
+        } catch (e) {
+          return false;
+        }
+      },
+
+      methods: {
+        key: function(key) {
+          return esc(this.name) + esc(key);
+        },
+
+        init: function() {
+
+        },
+
+        callIos: function(url) {
+          var iframe = document.createElement("IFRAME");
+          iframe.setAttribute("src", url);
+          document.documentElement.appendChild(iframe);
+          iframe.parentNode.removeChild(iframe);
+          iframe = null;
+        },
+
+        get: function(key, fn, scope) {
+          if (!fn) return;
+          // expand key
+          key = this.key(key);
+
+          var nonce = "storageget" + key + (+new Date);
+          window[nonce] = function(value) {
+            delete window[nonce];
+            fn.call(scope || this, true, value);
+          }
+          this.callIos("storageget://" + key + " " + nonce);
+        },
+
+        set: function(key, val, fn, scope) {
+          // expand key
+          key = this.key(key);
+
+          // set value
+          var nonce = "storageset" + key + (+new Date);
+          window[nonce] = function() {
+            delete window[nonce];
+            if (fn) fn.call(scope || this, true, val);
+          }
+          this.callIos("storageset://" + key + " " + nonce + " " + encodeURIComponent(encodeURIComponent(val)));
+        },
+
+        remove: function(key, fn, scope) {
+          if (fn) {
+            this.get(key, function(val) {
+              this._remove(key, fn, scope, val);
+            }, this);
+          } else {
+            this._remove(key, fn, scope);
+          }
+        },
+
+        _remove: function(key, fn, scope, val) {
+          var val;
+
+          // expand key
+          key = this.key(key);
+
+          // delete value
+          var nonce = "storagerem" + key + (+new Date);
+          window[nonce] = function() {
+            delete window[nonce];
+            if (fn) fn.call(scope || this, (val !== null), val);
+          }
+          this.callIos("storagerem://" + key + " " + nonce + " " + encodeURIComponent(val));
         } 
       }
     }, 
