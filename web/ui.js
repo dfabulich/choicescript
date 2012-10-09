@@ -177,9 +177,32 @@ function printFooter() {
 }
 
 function fastRefresh() {
-  if (window.forcedScene && window.stats.scene.name == window.forcedScene) {
+  if (window.forcedScene && window.stats && window.stats.scene && window.stats.scene.name == window.forcedScene) {
     var scene = window.stats.scene;
     window.cachedResult = {crc:scene.temps.choice_crc, lines:scene.lines, labels:scene.labels};
+    function fastRestore(state) {
+      window.stats = state.stats;
+      var scene = new Scene(state.stats.sceneName, state.stats, window.nav, state.debug || window.debug);
+      scene.loadSceneFast();
+      clearScreen(function() {scene.execute();});
+    }
+    function valueLoaded(ok, value) {
+      safeCall(null, function() {
+        var state = null;
+        if (ok && value && ""+value) {
+          state = jsonParse(value);
+          state.stats.sceneName = forcedScene;
+          fastRestore(state);
+        }
+      });
+    };
+    if (!slot) slot = "";
+    if (initStore()) {
+      window.store.get("state"+slot, valueLoaded);
+    } else {
+      fastRestore({stats:{sceneName:forcedScene}});
+    }
+    return;
   }
   clearScreen(function() {loadAndRestoreGame(window.slot, window.forcedScene)});
 }
