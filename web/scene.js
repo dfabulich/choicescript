@@ -1374,7 +1374,6 @@ Scene.prototype.more_games = function more_games(now) {
 }
 
 Scene.prototype.ending = function ending() {
-    this.finished = true;
     if (typeof window == "undefined") return;
     var groups = [""];
     var options = [
@@ -1403,6 +1402,7 @@ Scene.prototype.ending = function ending() {
       });
     }
     endingMenu();
+    this.finished = true;
 }
 
 Scene.prototype.restart = function restart() {
