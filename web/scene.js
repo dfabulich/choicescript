@@ -297,7 +297,7 @@ Scene.prototype.loadLines = function loadLines(str) {
 Scene.prototype.execute = function execute() {
     if (!this.loaded) {
         this.executing = true;
-        if (Scene.generatedFast) {
+        if (Scene.generatedFast || (typeof generatedFast != "undefined" && generatedFast) ) {
           this.loadSceneFast();
         } else {
           this.loadScene();
