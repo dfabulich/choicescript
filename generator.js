@@ -1,9 +1,10 @@
-var dir = arguments[0] || "web/mygame/scenes";
+var inputDir = arguments[0] || "web/mygame/scenes";
+var outputDir = arguments[1] || "web/mygame/scenes";
 load("web/scene.js");
 load("web/util.js");
 load("headless.js");
 
-var list = new java.io.File(dir).listFiles();
+var list = new java.io.File(inputDir).listFiles();
 
 var i = list.length;
 while (i--) {
@@ -19,8 +20,8 @@ while (i--) {
   var scene = new Scene();
   scene.loadLines(str);
   
-  var writer = new java.io.BufferedWriter(new java.io.OutputStreamWriter(new java.io.FileOutputStream(list[i].getAbsolutePath()+".js"), "UTF-8"));
-  writer.write("window.stats.scene.loadLinesFast(" + scene.temps.choice_crc + ", " + toJson(scene.lines)+ ", " + toJson(scene.labels) + ");");
+  var writer = new java.io.BufferedWriter(new java.io.OutputStreamWriter(new java.io.FileOutputStream(outputDir+"/"+list[i].getName().replaceAll(" ", "_") +".js"), "UTF-8"));
+  writer.write("{\"crc\":" + scene.temps.choice_crc + ", \"lines\":" + toJson(scene.lines)+ ", \"labels\":" + toJson(scene.labels) + "}");
   
   writer.close();
 }

@@ -17,6 +17,7 @@ software distributed under the License is distributed on an
 either express or implied.
 -->
 <project default="quicktest">
+  <property name = "game.dir" value="mygame" />
   <target name="burn-revision-numbers" unless="skipVersion">
     <condition property="git" value="gitx.cmd">
         <os family="windows" />
@@ -42,7 +43,8 @@ either express or implied.
     <presetdef name="rhino">
       <exec taskName="node" failonerror="true" executable="node" />
     </presetdef>
-    <property name="gen.dir" location="${basedir}/web/mygame/scenes" />
+    <property name="input.dir" location="${basedir}/web/${game.dir}/scenes" />
+    <property name="output.dir" location="${basedir}/deploy/scenes" />
     <property name="test.dir" location="${basedir}/tests" />
   </target>
 
@@ -56,7 +58,8 @@ either express or implied.
         <arg line="-w -opt -1 -debug"/>
       </java>
     </presetdef>
-    <property name="gen.dir" location="${basedir}/web/mygame/scenes" />
+    <property name="input.dir" location="${basedir}/web/${game.dir}/scenes" />
+    <property name="output.dir" location="${basedir}/deploy/scenes" />
     <property name="test.dir" location="${basedir}/tests" />
   </target>
   
@@ -113,7 +116,7 @@ either express or implied.
 
   <target name="randomtest" depends="rhino">
     <property name="num" value="10000" />
-    <property name="game" value="mygame" />
+    <property name="game" value="${game.dir}" />
     <property name="output" value="randomtest-output.txt" />
     <echo>Executing randomtest, writing to ${output}</echo>
     <rhino output="${output}">
@@ -138,9 +141,11 @@ either express or implied.
       <isset property="hasNode" />
     </condition>
     <property name="scriptSuffix" value="" />
+    <mkdir dir="${output.dir}" />
     <rhino>
       <arg file="generator${scriptSuffix}.js"/>
-      <arg value="${gen.dir}" />
+      <arg value="${input.dir}" />
+      <arg value="${output.dir}" />
     </rhino>
   </target>
   
@@ -148,17 +153,38 @@ either express or implied.
     <property name="vig" value="" />
     <rhino>
       <arg file="xmltranslator.js"/>
-      <arg value="${gen.dir}" />
+      <arg value="${input.dir}" />
       <arg value="${vig}" />
     </rhino>
   </target>
   
-  <target name="cleangen">
-    <property name="gen.dir" location="${basedir}" />
-    <delete>
-      <fileset dir="web/mygame/scenes">
-        <include name="*.js" />
-      </fileset>
-    </delete>
+  <target name="clean">
+    <delete dir="deploy" />
   </target>
+
+  <target name="copy-deploy">
+    <mkdir dir="deploy" />
+    <copy todir="deploy">
+      <fileset dir="web">
+        <include name="*/**" />
+        <exclude name="${game.dir}/**" />
+        <exclude name=".htaccess" />
+      </fileset>
+      <fileset dir="web/${game.dir}">
+        <include name="*/**" />
+        <exclude name="index.html" />
+        <exclude name="credits.html" />
+      </fileset>
+    </copy>
+  </target>
+
+  <target name="deploy" depends="generator">
+    <copy file="web/${game.dir}/index.html" tofile="deploy/index.html" overwrite="true"/>
+    <replace file="deploy/index.html" token="../" value="" />
+    <copy file="web/${game.dir}/credits.html" tofile="deploy/credits.html" overwrite="true"/>
+    <replace file="deploy/credits.html" token="../" value="" />
+    <exec executable="svnversion" outputproperty="revision" failonerror="true"/>
+    <echo file="deploy/version.js">window.version="${revision}"&#10;window.generatedFast = true;</echo>
+  </target>
+
 </project>

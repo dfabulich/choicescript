@@ -1,16 +1,17 @@
 var fs = require('fs');
 var path = require('path');
-var dir = process.argv[2] || "web/mygame/scenes";
+var inputDir = process.argv[2] || "web/mygame/scenes";
+var outputDir = process.argv[3] || "web/mygame/scenes";
 eval(fs.readFileSync("web/scene.js", "utf-8"));
 eval(fs.readFileSync("web/util.js", "utf-8"));
 eval(fs.readFileSync("headless.js", "utf-8"));
 
-var list = fs.readdirSync(dir);
+var list = fs.readdirSync(inputDir);
 
 var i = list.length;
 while (i--) {
   if (!/\.txt$/.test(list[i])) continue;
-  var filePath = dir + '/' + list[i];
+  var filePath = inputDir + '/' + list[i];
   var inputMod = fs.statSync(filePath).mtime.getTime();
   var outputMod = 0;
   if (path.existsSync(filePath + ".js")) {
@@ -25,8 +26,8 @@ while (i--) {
   var scene = new Scene();
   scene.loadLines(str);
   
-  var writer = fs.createWriteStream(filePath + ".js");
-  writer.write("window.stats.scene.loadLinesFast(" + scene.temps.choice_crc + ", " + toJson(scene.lines)+ ", " + toJson(scene.labels) + ");", "utf-8");
+  var writer = fs.createWriteStream(outputDir + '/' + list[i].replace(/ /g, "_") + ".js");
+  writer.write("{\"crc\":" + scene.temps.choice_crc + ", \"lines\":" + toJson(scene.lines)+ ", \"labels\":" + toJson(scene.labels) + "}", "utf-8");
   
   writer.end();
 }
