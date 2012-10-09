@@ -159,16 +159,50 @@ Scene.prototype.paragraph = function paragraph() {
 }
 
 Scene.prototype.loadSceneFast = function loadSceneFast(url) {
-  if (this.loading) return;
-  this.loading = true;
-  startLoading();
-  if (!url) {
-    url = Scene.baseUrl + "/" + this.name + ".txt.js";
-  }
-  var tag = document.createElement("script");
-  tag.setAttribute("src", url);
-  var head = document.getElementsByTagName("head")[0];
-  head.appendChild(tag);
+    if (this.loading) return;
+    this.loading = true;
+    if (window.cachedResult) {
+      var result = window.cachedResult;
+      window.cachedResult = null;
+      return this.loadLinesFast(result.crc, result.lines, result.labels);
+    }
+    startLoading();
+    if (!url) {
+        url = Scene.baseUrl + "/" + this.name.replace(/ /g, "_") + ".txt.js";
+    }
+    var xhr = findXhr();
+    xhr.open("GET", url, true);
+    var self = this;
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState != 4) return;
+        if (xhr.status != 200 && xhr.status) {
+            main.innerHTML = "<p>Our apologies; there was a " + xhr.status + " error while loading game data."+
+            "  Please refresh your browser now; if that doesn't work, please email support@choiceofgames.com with details.</p>"+
+            " <p><button onclick='window.location.reload();'>Refresh Now</button></p>";
+            return;
+        }
+        var result = xhr.responseText;
+        result = jsonParse(result);
+        self.loadLinesFast(result.crc, result.lines, result.labels);
+    }
+    if (isIE) {
+      // IE8 swallows errors in onreadystatechange if xhr.send is in a try block
+      xhr.send(null);
+    } else {
+      try {
+        xhr.send(null);
+      } catch (e) {
+        if (window.location.protocol == "file:" && !window.isMobile) {
+          if (/Chrome/.test(navigator.userAgent)) {
+            window.onerror("We're sorry, Google Chrome has blocked ChoiceScript from functioning.  (\"file:\" URLs cannot "+
+            "load files in Chrome.)  ChoiceScript works just fine in Chrome, but only on a published website like "+
+            "choiceofgames.com.  For the time being, please try another browser like Mozilla Firefox.")
+            return;
+          }
+        }
+        window.onerror("Couldn't load URL: " + url + "\n" + e);        
+      }
+    }
 }
 
 Scene.prototype.loadLinesFast = function loadLinesFast(crc, lines, labels) {

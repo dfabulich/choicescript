@@ -177,6 +177,10 @@ function printFooter() {
 }
 
 function fastRefresh() {
+  if (window.forcedScene && window.stats.scene.name == window.forcedScene) {
+    var scene = window.stats.scene;
+    window.cachedResult = {crc:scene.temps.choice_crc, lines:scene.lines, labels:scene.labels};
+  }
   clearScreen(function() {loadAndRestoreGame(window.slot, window.forcedScene)});
 }
 
