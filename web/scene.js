@@ -1193,7 +1193,14 @@ Scene.prototype.input_number = function input_number(data) {
 Scene.prototype.script = function script(code) {
     var stats = this.stats;
     var temps = this.temps;
-    eval(code);
+    if (typeof window == "undefined") {
+      (function() {
+        var window = _global;
+        eval(code);
+      }).call(this);
+    } else {
+      eval(code);
+    }
 }
 
 // is this a valid variable name?

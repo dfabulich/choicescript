@@ -973,6 +973,8 @@ window.onload=function() {
     }
 };
 
+_global = this;
+
 if ( document.addEventListener ) {
   document.addEventListener( "DOMContentLoaded", window.onload, false );
 }
