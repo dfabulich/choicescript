@@ -554,9 +554,23 @@ function subscribe(target, now, callback) {
           });
         }
       }
-      script.src = 'http://choiceofgames.us4.list-manage.com/subscribe/post-json?u=eba910fddc9629b2810db6182&id=e9cdee1aaa&c=jsonp' + timestamp+"&EMAIL="+email;
-      head.appendChild(script);
-      
+      if (window.isChromeApp) {
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", 'http://choiceofgames.us4.list-manage.com/subscribe/post-json?u=eba910fddc9629b2810db6182&id=e9cdee1aaa&EMAIL='+email, true);
+        xhr.onreadystatechange = function() {
+          if (xhr.readyState != 4) return;
+          if (xhr.status == 200) {
+            var response = JSON.parse(xhr.responseText);
+            window["jsonp"+timestamp](response);
+          } else {
+            window["jsonp"+timestamp]({result:"error", msg:"Sorry, our mail server had an error. It's our fault. Please try again later."});
+          }
+        }
+        xhr.send();
+      } else {
+        script.src = 'http://choiceofgames.us4.list-manage.com/subscribe/post-json?u=eba910fddc9629b2810db6182&id=e9cdee1aaa&c=jsonp' + timestamp+"&EMAIL="+email;
+        head.appendChild(script);
+      }
     })
   });
 }
