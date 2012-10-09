@@ -600,6 +600,8 @@ Scene.prototype.purchase = function purchase_button(data) {
   getPrice(product, function (price) {
     if (!price || "free" == price) {
       self["goto"](label);
+      self.finished = false;
+      self.resetPage();
     } else {
       if (price == "guess") price = priceGuess;
       var target = self.target;
