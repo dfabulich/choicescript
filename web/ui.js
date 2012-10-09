@@ -362,7 +362,7 @@ function moreGames() {
     if (window.isIosApp) {
       window.location.href = "itms-apps://itunes.com/apps/choiceofgames";
     } else if (window.isAndroidApp) {
-      if (isKindleFire) {
+      if (window.isAmazonAndroidApp) {
         var androidLink = document.getElementById('androidLink');
         if (androidLink && androidLink.href) {
           androidUrl = androidLink.href;
@@ -405,13 +405,13 @@ function printShareLinks(target, now) {
   
   var mobileMesg = "";
   if (isMobile && isFile) {
-    if (/Android/.test(navigator.userAgent)) {
+    if (window.isAndroidApp) {
       var androidLink = document.getElementById('androidLink');
       var androidUrl;
       if (androidLink) {
         androidUrl = androidLink.href;
         if (androidUrl) {
-          if (isKindleFire) {
+          if (window.isAmazonAndroidApp) {
             var package = androidUrl.substring(androidUrl.indexOf("id=") + 3);
             androidUrl = "http://www.amazon.com/gp/mas/dl/android?p="+package;
             mobileMesg = "  <li><a href='"+androidUrl+"'>Rate this app</a> in the Amazon Appstore</li>\n";

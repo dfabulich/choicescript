@@ -652,6 +652,7 @@ Scene.prototype.getVar = function getVar(variable) {
     if (variable == "true") return true;
     if (variable == "false") return false;
     if (variable == "choice_subscribe_allowed") return true;
+    if (variable == "choice_kindle") return false;
     if (variable == "choice_restore_purchases_allowed") return isRestorePurchasesSupported();
     if (variable == "choice_save_allowed") return areSaveSlotsSupported();
     if ("undefined" === typeof this.temps[variable]) {
