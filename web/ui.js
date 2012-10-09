@@ -98,7 +98,11 @@ function showStats() {
 function callIos(scheme, path) {
   if (!window.isIosApp) return;
   if (!path) path = "";
-  window.location = scheme + "://" + path;
+  var iframe = document.createElement("IFRAME");
+  iframe.setAttribute("src", scheme + "://" + path);
+  document.documentElement.appendChild(iframe);
+  iframe.parentNode.removeChild(iframe);
+  iframe = null;
 }
 
 function asyncAlert(message, callback) {
@@ -128,7 +132,7 @@ function clearScreen(code) {
     
     if (useAjax) {
       doneLoading();
-      setTimeout(function() { window.scrollTo(0,0); callIos("curl");}, 0);
+      setTimeout(function() { window.scrollTo(0,0); }, 0);
       safeCall(null, code);
     } else {
       if (!initStore()) alert("Your browser has disabled cookies; this game requires cookies to work properly.  Please re-enable cookies and refresh this page to continue.");
