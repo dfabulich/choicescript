@@ -194,6 +194,8 @@ function autotester(sceneText, nav, sceneName) {
     scene.temps = dojoClone(this.temps);
     scene.loaded = true;
     scene.testPath = dojoClone(this.testPath);
+    scene.firstTab = this.firstTab;
+    scene.firstSpace = this.firstSpace;
     this.stats.scene = this;
     return scene;
   }
