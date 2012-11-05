@@ -583,6 +583,18 @@ function num(x, line) {
     return x_num;
 }
 
+function bool(x, line) {
+  if (!line) line = "UNKNOWN";
+  if ("boolean" == typeof x) {
+    return x;
+  } else if ("true" === x) {
+    return true;
+  } else if ("false" === x) {
+    return false;
+  }
+  throw new Error("line "+line+": Neither true nor false: " + x);
+}
+
 function findXhr() {
   var ieFile = isIE && isFile;
   if (window.XMLHttpRequest && !ieFile) return new window.XMLHttpRequest();

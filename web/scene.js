@@ -930,9 +930,7 @@ Scene.prototype.parseOptionIf = function parseOptionIf(data) {
   var stack = this.tokenizeExpr(condition);
   var result = this.evaluateExpr(stack);
   if (this.debugMode) println(condition + " :: " + result);
-  if ("boolean" != typeof result) {
-      throw new Error(this.lineMsg() + "Invalid boolean expression; this isn't a boolean: " + result);
-  }
+  result = bool(result, this.lineNum+1);
   // In the autotester, all conditionals are enabled
   result = result || this.testPath;
   return {result:result, line:parsed[2], condition:null};
@@ -2310,9 +2308,7 @@ Scene.prototype["if"] = function scene_if(line) {
     var stack = this.tokenizeExpr(line);
     var result = this.evaluateExpr(stack);
     if (this.debugMode) println(line + " :: " + result);
-    if ("boolean" != typeof result) {
-        throw new Error(this.lineMsg() + "Invalid boolean expression; this isn't a boolean: " + result);
-    }
+    result = bool(result, this.lineNum+1);
     if (result) {
         // "true" branch, just go on to the next line
         this.indent = this.getIndent(this.nextNonBlankLine());
@@ -2497,10 +2493,7 @@ Scene.prototype.evaluateValueToken = function evaluateValueToken(token, stack) {
 
 Scene.prototype.functions = {
   not: function(value) {
-    if ("boolean" != typeof value) {
-        throw new Error(this.lineMsg()+"not() value is neither true nor false: " + value);
-    }
-    return !value;
+    return !bool(value, this.lineNum+1);
   },
   round: function(value) {
     if (isNaN(value*1)) throw new Error(this.lineMsg()+"round() value is not a number: " + value);
@@ -2735,24 +2728,10 @@ Scene.operators = {
     ,">=": function greaterThanOrEquals(v1,v2,line) { return num(v1,line) >= num(v2,line); }
     ,"!=": function notEquals(v1,v2) { return v1 != v2; }
     ,"and": function and(v1, v2, line) {
-        // do we need to convert strings to booleans here?
-        if ("boolean" != typeof v1) {
-            throw new Error("line "+line+": value 1 is not a boolean: " + v1);
-        }
-        if ("boolean" != typeof v2) {
-            throw new Error("line "+line+": value 2 is not a boolean: " + v2);
-        }
-        return v1 && v2;
+        return bool(v1,line) && bool(v2,line);
     }
     ,"or": function or(v1, v2, line) {
-        // do we need to convert strings to booleans here?
-        if ("boolean" != typeof v1) {
-            throw new Error("line "+line+": value 1 is not a boolean: " + v1);
-        }
-        if ("boolean" != typeof v2) {
-            throw new Error("line "+line+": value 2 is not a boolean: " + v2);
-        }
-        return v1 || v2;
+        return bool(v1,line) || bool(v2,line);
     }
 };
 
