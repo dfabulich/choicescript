@@ -330,7 +330,7 @@ Scene.prototype.parseLabels = function parseLabels() {
         var data = trim(result[3]);
         if ("label" == command) {
             data = data.toLowerCase();
-            if (this.labels[data]) throw new Error(this.lineMsg() + "label '"+data+"' already defined on line " + this.labels[data]);
+            if (this.labels[data]) throw new Error(this.lineMsg() + "label '"+data+"' already defined on line " + (this.labels[data]*1+1));
             this.labels[data] = this.lineNum;
         }
     }
