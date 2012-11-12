@@ -302,10 +302,12 @@ function submitRemoteSave(slot, email, subscribe, callback) {
       var params = "email="+email+"&game="+window.storeName+"&json="+encodeURIComponent(value)+"&timestamp="+ timestamp+"&subscribe="+subscribe;
       xhr.open("POST", webSaveUrl,true);
       xhr.setRequestHeader("Content-type","application/x-www-form-urlencoded");
-
+      var done = false;
 
       xhr.onreadystatechange = function() {
+        if (done) return;
         if (xhr.readyState != 4) return;
+        done = true;
         var ok = xhr.status == 200;
         if (ok) {
           callback(true);
@@ -351,8 +353,11 @@ function getRemoteSaves(email, callback) {
   }
   var xhr = findXhr();
   xhr.open("GET", webSaveUrl + "?email="+email+"&game="+window.storeName, true);
+  var done = false;
   xhr.onreadystatechange = function() {
+    if (done) return;
     if (xhr.readyState != 4) return;
+    done = true;
     if (xhr.status != 200) {
       if (window.console) console.log("Couldn't load remote saves. " + xhr.status + ": " + xhr.responseText);
       callback(null);

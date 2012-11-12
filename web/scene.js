@@ -173,7 +173,9 @@ Scene.prototype.loadSceneFast = function loadSceneFast(url) {
     var xhr = findXhr();
     xhr.open("GET", url, true);
     var self = this;
+    var done = false;
     xhr.onreadystatechange = function() {
+        if (done) return;
         if (xhr.readyState != 4) return;
         if (xhr.status != 200 && xhr.status) {
             main.innerHTML = "<p>Our apologies; there was a " + xhr.status + " error while loading game data."+
@@ -181,6 +183,7 @@ Scene.prototype.loadSceneFast = function loadSceneFast(url) {
             " <p><button onclick='window.location.reload();'>Refresh Now</button></p>";
             return;
         }
+        done = true;
         var result = xhr.responseText;
         result = jsonParse(result);
         self.loadLinesFast(result.crc, result.lines, result.labels);
@@ -231,7 +234,9 @@ Scene.prototype.loadScene = function loadScene(url) {
     var xhr = findXhr();
     xhr.open("GET", url, true);
     var self = this;
+    var done = false;
     xhr.onreadystatechange = function() {
+        if (done) return;
         if (xhr.readyState != 4) return;
         if (xhr.status != 200 && xhr.status) {
             main.innerHTML = "<p>Our apologies; there was a " + xhr.status + " error while loading game data."+
@@ -239,6 +244,7 @@ Scene.prototype.loadScene = function loadScene(url) {
             " <p><button onclick='window.location.reload();'>Refresh Now</button></p>";
             return;
         }
+        done = true;
         var result = xhr.responseText;
         scene = result;
         scene = scene.replace(/\r/g, "");
