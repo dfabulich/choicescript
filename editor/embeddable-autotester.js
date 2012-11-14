@@ -379,11 +379,21 @@ function autotester(sceneText, nav, sceneName) {
   
   //log(printed.join('\n'));
   var uncovered = [];
+  var startRange = null;
   for (var i = 0; i < coverage.length; i++) {
       //log("line "+(i+1) +": " +coverage[i]);
       line = trim(originalScene.lines[i]);
-      if (!coverage[i] && line && !/\*comment /.test(line)) {
-        uncovered.push(i+1);
+      if (!coverage[i]) {
+        if (startRange === null) {
+          if (!line || /\*comment\b/.test(line)) continue;
+          startRange = i+1;
+        }
+      } else if (startRange == i) {
+        uncovered.push(startRange);
+        startRange = null;
+      } else if (startRange) {
+        uncovered.push(startRange + "-" + i);
+        startRange = null;
       }
   }
   
