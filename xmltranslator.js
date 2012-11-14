@@ -752,16 +752,29 @@ if (args[1]) {
     var list = fs.readdirSync(dir);
   }
 } else {
-  load("web/navigator.js");
-  load("web/mygame/mygame.js");
-  list = [];
-  if (typeof(nav) != "undefined") {
-    var statsFile = new java.io.File(dir, "choicescript_stats.txt");
-    if (statsFile.exists()) list.push(statsFile);
-    for (nextScene = nav.getStartupScene(); nextScene; nextScene = nav.nextSceneName(nextScene)) {
-      list.push(new java.io.File(dir, nextScene + ".txt"));
+  if (isRhino) {
+    load("web/navigator.js");
+    load("web/mygame/mygame.js");
+    list = [];
+    if (typeof(nav) != "undefined") {
+      var statsFile = new java.io.File(dir, "choicescript_stats.txt");
+      if (statsFile.exists()) list.push(statsFile);
+      for (nextScene = nav.getStartupScene(); nextScene; nextScene = nav.nextSceneName(nextScene)) {
+        list.push(new java.io.File(dir, nextScene + ".txt"));
+      }
+    }
+  } else {
+    eval(fs.readFileSync("web/navigator.js", "utf-8"));
+    eval(fs.readFileSync("web/mygame/mygame.js", "utf-8"));
+    list = [];
+    if (typeof(nav) != "undefined") {
+      if (fs.existsSync(dir + "/choicescript_stats.txt")) list.push("choicescript_stats.txt");
+      for (nextScene = nav.getStartupScene(); nextScene; nextScene = nav.nextSceneName(nextScene)) {
+        list.push(nextScene + ".txt");
+      }
     }
   }
+  
 }
 
 if (typeof xmlTranslatorTestOverride != "undefined") {
