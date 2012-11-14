@@ -2414,9 +2414,10 @@ Scene.prototype.evaluateExpr = function evaluateExpr(stack, parenthetical) {
     if (!stack.length) {
         throw new Error(this.lineMsg() + "no expression specified");
     }
+    var self = this;
     function getToken() {
         var token = stack.shift();
-        if (!token) throw new Error(this.lineMsg() + "null token");
+        if (!token) throw new Error(self.lineMsg() + "null token");
         return token;
     }
     
