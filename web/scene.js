@@ -510,6 +510,16 @@ Scene.prototype["gotoref"] = function scene_gotoref(expression) {
 Scene.prototype.finish = function finish(buttonName) {
     this.paragraph();
     this.finished = true;
+    var self = this;
+    if (this.name == "choicescript_stats") {
+      printButton(buttonName || "Next", main, false, 
+        function() { 
+          window.stats.scene = self.originalScene;
+          clearScreen(loadAndRestoreGame);
+        }
+      );
+      return;
+    }
     var nextSceneName = this.nav && nav.nextSceneName(this.name);
     // if there are no more scenes, then just halt
     if (!nextSceneName) {
@@ -519,7 +529,7 @@ Scene.prototype.finish = function finish(buttonName) {
     if (!buttonName) buttonName = "Next Chapter";
     buttonName = this.replaceVariables(buttonName);
 
-    var self = this;
+    
     printButton(buttonName, main, false, 
       function() { 
         safeCall(self, function() {

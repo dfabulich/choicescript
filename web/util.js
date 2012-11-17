@@ -500,15 +500,23 @@ function isStateValid(state) {
   return true;
 }
 
-function restartGame() {
+function restartGame(shouldPrompt) {
   if (window.tickerRunning) {
     alert("Please wait until the timer has run out.");
     return;
   }
-  clearCookie(function() {
-    window.nav.resetStats(window.stats);
-    clearScreen(restoreGame);
-  }, "");
+  function actuallyRestart(result) {
+    if (!result) return;
+    clearCookie(function() {
+      window.nav.resetStats(window.stats);
+      clearScreen(restoreGame);
+    }, "");
+  }
+  if (shouldPrompt) {
+    asyncConfirm("Start over from the beginning?", actuallyRestart);
+  } else {
+    actuallyRestart(true);
+  }
 }
 
 function restoreGame(state, forcedScene, userRestored) {

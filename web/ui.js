@@ -53,45 +53,11 @@ function println(msg, parent) {
 
 
 function showStats() {
-    if (window.showingStatsAlready) return;
-    window.showingStatsAlready = true;
-    document.getElementById("statsButton").style.display = "none";
-    main.innerHTML = "<div id='text'></div>";
-    
+    if (window.stats.sceneName == "choicescript_stats") return;
     var currentScene = window.stats.scene;
-    
     var scene = new Scene("choicescript_stats", window.stats, this.nav);
-    scene.save = function(callback) {if (callback) callback.call(scene);}; // Don't save state in stats screen, issue #70
-    // TODO ban *choice/*page_break/etc. in stats screen
-    scene.finish = scene.autofinish = function(buttonName) {
-      this.finished = true;
-      this.paragraph();
-      var p = document.createElement("p");
-      var restartLink = document.createElement("a");
-      restartLink.setAttribute("style", "text-decoration: underline; cursor: pointer; text-align: left");
-      restartLink.onclick = function() {
-          if (window.confirm("Restart your game?  Did you click that intentionally?")) {
-              window.showingStatsAlready = false;
-              document.getElementById("statsButton").style.display = "inline";
-              clearCookie(function() {
-                window.nav.resetStats(window.stats);
-                clearScreen(restoreGame);
-              }, "");
-          }
-          return false;
-      }
-      restartLink.innerHTML = "Start Over from the Beginning";  
-      p.appendChild(restartLink);
-      var text = document.getElementById('text');
-      text.appendChild(p);
-
-      printButton(buttonName || "Next", main, false, function() {
-          window.stats.scene = currentScene;
-          window.showingStatsAlready = false;
-          document.getElementById("statsButton").style.display = "inline";
-          clearScreen(loadAndRestoreGame);
-      });
-    }
+    scene.originalScene = currentScene;
+    main.innerHTML = "<div id='text'></div>";
     scene.execute();
 }
 
@@ -120,6 +86,20 @@ function asyncAlert(message, callback) {
   }
 }
 
+function asyncConfirm(message, callback) {
+  if (false/*window.isIosApp*/) {
+    // TODO asyncConfirm
+    window.confirmCallback = callback;
+    callIos("confirm", message)
+  } else {
+    setTimeout(function() {
+      var result = confirm(message);
+      if (callback) callback(result);
+    }, 0);
+  }
+}
+
+
 function clearScreen(code) {
     // can't create div via innerHTML; div mysteriously doesn't show up on iOS
     main.innerHTML = "";
@@ -127,6 +107,8 @@ function clearScreen(code) {
     text.setAttribute("id", "text");
     main.appendChild(text);
     
+
+
     var useAjax = true;
     if (isWeb && window.noAjax) {
       useAjax = false;
@@ -179,6 +161,14 @@ function setClass(element, classString) {
 function printFooter() {
   // var footer = document.getElementById('footer');
   // We could put anything we want in the footer here, but perhaps we should avoid it.
+  var statsButton = document.getElementById("statsButton");
+  if (statsButton) {
+    if (window.stats.sceneName == "choicescript_stats") {
+      statsButton.style.display = "none";
+    } else {
+      statsButton.style.display = "inline";
+    }
+  }
   setTimeout(function() {callIos("curl");}, 0);
 }
 
