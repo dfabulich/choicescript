@@ -511,7 +511,7 @@ Scene.prototype.finish = function finish(buttonName) {
     this.paragraph();
     this.finished = true;
     var self = this;
-    if (this.name == "choicescript_stats") {
+    if (this.name == "choicescript_stats" && this.originalScene) {
       printButton(buttonName || "Next", main, false, 
         function() { 
           window.stats.scene = self.originalScene;
