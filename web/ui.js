@@ -53,7 +53,11 @@ function println(msg, parent) {
 
 
 function showStats() {
-    if (window.stats.sceneName == "choicescript_stats") return;
+    if (window.stats.sceneName == "choicescript_stats") {
+      window.stats.scene = window.stats.scene.originalScene;
+      clearScreen(loadAndRestoreGame);
+      return;
+    }
     var currentScene = window.stats.scene;
     var scene = new Scene("choicescript_stats", window.stats, this.nav);
     scene.originalScene = currentScene;
@@ -164,9 +168,9 @@ function printFooter() {
   var statsButton = document.getElementById("statsButton");
   if (statsButton) {
     if (window.stats.sceneName == "choicescript_stats") {
-      statsButton.style.display = "none";
+      statsButton.innerHTML = "Return to the Game";
     } else {
-      statsButton.style.display = "inline";
+      statsButton.innerHTML = "Show Stats";
     }
   }
   setTimeout(function() {callIos("curl");}, 0);
