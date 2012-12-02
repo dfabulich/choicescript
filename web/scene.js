@@ -2360,7 +2360,12 @@ Scene.prototype.skipTrueBranch = function skipTrueBranch(inElse) {
           var command = parsed[1].toLowerCase();
           var data = trim(parsed[2]);
           if ("else" == command) {
-              if (data) throw new Error(this.lineMsg() + "nothing should appear on a line after 'else': " + data);
+              if (data) {
+                if (/^if\b/.test(data)) {
+                  throw new Error(this.lineMsg() + "'else if' is invalid, use 'elseif'");
+                }
+                throw new Error(this.lineMsg() + "nothing should appear on a line after 'else': " + data);
+              }
               this.lineNum = this.lineNum; // code coverage
               // go on to the next line
               this.indent = this.getIndent(this.nextNonBlankLine());
