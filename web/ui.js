@@ -1047,17 +1047,7 @@ if (isWeb && !window.Touch) {
   document.write("<style>label:hover {background-color: #E4DED8;}</style>");
 }
 if (window.isChromeApp) {
-  (function() {
-    function chromeResize() {
-      document.body.style["overflow-y"]="scroll";
-      document.body.style.height=window.innerHeight+"px";
-    }
-    window.addEventListener("resize", chromeResize, true);
-    window.addEventListener("load", function() {
-      chromeResize();
-      var base = document.createElement('base');
-      base.setAttribute("target", "_blank");
-      document.head.appendChild(base);
-    }, true);
-  })();
+  var base = document.createElement('base');
+  base.setAttribute("target", "_blank");
+  document.head.appendChild(base);
 }
