@@ -885,7 +885,7 @@ Scene.prototype.parseOptions = function parseOptions(startIndent, choicesRemaini
         }
         
         // this line should be a valid option
-        if (!/^\s*\#/.test(line)) {
+        if (!/^\s*\#\s*\S/.test(line)) {
             throw new Error(this.lineMsg() + "Expected option starting with #");
         }
         // replace variables here and discard the result, so error messages display the correct line
