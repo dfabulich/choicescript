@@ -228,5 +228,10 @@ h2 {
   #header {
     margin-top: 30px;
   }
+
+  /** Floating images should leave enough room for text */
+  #text .alignleft, #text .alignright {
+    max-width: 45%;
+  }
   
 }
