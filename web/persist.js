@@ -143,6 +143,7 @@ return r;},version:'0.2.1',enabled:false};me.enabled=alive.call(me);return me;}(
     search_order: [
       // TODO: air
       'iosStorage',
+      'localChromeStorage',
       'androidStorage',
       'whatwg_db', 
       'localstorage',
@@ -578,6 +579,78 @@ return r;},version:'0.2.1',enabled:false};me.enabled=alive.call(me);return me;}(
 
           if (fn)
             fn.call(scope || this, (val !== null), val);
+        } 
+      }
+    }, 
+
+    // chrome packaged app storage
+    // http://developer.chrome.com/stable/apps/storage.html
+    localChromeStorage: {
+      // (unknown?)
+      // ie has the remainingSpace property, see:
+      // http://msdn.microsoft.com/en-us/library/cc197016(VS.85).aspx
+      size: -1,
+
+      test: function() {
+        try {
+          return window.chrome && window.chrome.storage && window.chrome.storage.local;
+        } catch (e) {
+          return false;
+        }
+      },
+
+      methods: {
+        key: function(key) {
+          return esc(this.name) + esc(key);
+        },
+
+        init: function() {
+          this.store = chrome.storage.local;
+        },
+
+        get: function(key, fn, scope) {
+          // expand key
+          key = this.key(key);
+
+          scope = scope || this;
+          this.store.get(key, function(val){
+            if (fn) fn.call(scope, true, val[key]);
+          });
+        },
+
+        set: function(key, val, fn, scope) {
+          // expand key
+          key = this.key(key);
+
+          var out = {};
+          out[key] = val;
+          if (fn) {
+            scope = scope || this;  
+            this.store.set(out, function(){
+              fn.call(scope, true, val);
+            });
+          } else {
+            this.store.set(out);
+          }
+        },
+
+        remove: function(key, fn, scope) {
+          var val;
+
+          // expand key
+          key = this.key(key);
+
+          if (fn) {
+            // get value first
+            scope = scope || this;
+            this.store.get(key, function(val){
+              this.store.remove(key, function(){
+                fn.call(scope, (val[key] !== null), val[key]);
+              });
+            });
+          } else {
+            this.store.remove(key);
+          }
         } 
       }
     }, 

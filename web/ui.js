@@ -120,7 +120,13 @@ function clearScreen(code) {
     
     if (useAjax) {
       doneLoading();
-      setTimeout(function() { window.scrollTo(0,0); }, 0);
+      setTimeout(function() {
+        if (window.isChromeApp) {
+          document.body.firstElementChild.scrollIntoView();
+        } else {
+          window.scrollTo(0,0);
+        }
+      }, 0);
       safeCall(null, code);
     } else {
       if (!initStore()) alert("Your browser has disabled cookies; this game requires cookies to work properly.  Please re-enable cookies and refresh this page to continue.");
@@ -372,7 +378,11 @@ function moreGames() {
       }
     } else {
       try {
-        window.location.href = "http://www.choiceofgames.com/category/our-games/";
+        if (window.isChromeApp) {
+          window.open("http://www.choiceofgames.com/category/our-games/");
+        } else {
+          window.location.href = "http://www.choiceofgames.com/category/our-games/";
+        }
       } catch (e) {
         // in xulrunner, this will be blocked, but it will trigger opening the external browser
       }
@@ -993,7 +1003,11 @@ if ( document.addEventListener ) {
   document.addEventListener( "DOMContentLoaded", window.onload, false );
 }
 
-document.write("<style>noscript {display: none;}</style>");
+var style = document.createElement('style');
+style.type = 'text/css';
+style.innerHTML = 'noscript {display: none;}';
+document.getElementsByTagName('head')[0].appendChild(style);
+
 if (window.isWeb) {
   document.write("<style>.webOnly { display: block !important; }</style>");
 }
@@ -1028,4 +1042,19 @@ if (window.isMacApp) {
 }
 if (isWeb && !window.Touch) {
   document.write("<style>label:hover {background-color: #E4DED8;}</style>");
+}
+if (window.isChromeApp) {
+  (function() {
+    function chromeResize() {
+      document.body.style["overflow-y"]="scroll";
+      document.body.style.height=window.innerHeight+"px";
+    }
+    window.addEventListener("resize", chromeResize, true);
+    window.addEventListener("load", function() {
+      chromeResize();
+      var base = document.createElement('base');
+      base.setAttribute("target", "_blank");
+      document.head.appendChild(base);
+    }, true);
+  })();
 }

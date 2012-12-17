@@ -5,6 +5,7 @@ body {
   color: rgba(0, 0, 0, 0.85);
   margin: 8px auto; 
   padding: 0 8px;
+  -webkit-user-select: text; /* selectable text for Chrome app support */
 }
 
 a {
