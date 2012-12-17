@@ -999,7 +999,7 @@ if ( document.addEventListener ) {
 
 var style = document.createElement('style');
 style.type = 'text/css';
-style.innerHTML = 'noscript {display: none;}';
+try {style.innerHTML = 'noscript {display: none;}'; } catch (e) {}
 document.getElementsByTagName('head')[0].appendChild(style);
 
 if (window.isWeb) {
