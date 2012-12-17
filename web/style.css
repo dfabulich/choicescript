@@ -157,6 +157,12 @@ h2 {
   line-height: 1cm; /* Don't let the links bunch up */
 }
 
+.alertify-cover {
+  background-color: black;
+  filter:alpha(opacity=50);
+  opacity: 0.5;
+}
+
 #greybackground {
     position: fixed;
     width:100%;

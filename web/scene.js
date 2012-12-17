@@ -1182,19 +1182,19 @@ Scene.prototype.input_number = function input_number(data) {
       safeCall(self, function() {
         var numValue = parseFloat(""+value);
         if (isNaN(numValue)) {
-          alert("Please type in a number.");
+          asyncAlert("Please type in a number.");
           return;
         }
         if (intRequired && !isInt(numValue)) {
-          alert("Please type in an integer number.");
+          asyncAlert("Please type in an integer number.");
           return;
         }
         if (numValue < minimum * 1) {
-          alert("Please use a number greater than or equal to " + minimum);
+          asyncAlert("Please use a number greater than or equal to " + minimum);
           return;
         }
         if (numValue > maximum * 1) {
-          alert("Please use a number less than or equal to " + maximum);
+          asyncAlert("Please use a number less than or equal to " + maximum);
           return;
         }
         self.setVar(variable, value);
@@ -1551,7 +1551,7 @@ Scene.prototype.restore_game = function restore_game() {
           var unrestorable = unrestorableScenes[sceneName];
 
           if (unrestorable) {
-            alert(unrestorable);
+            asyncAlert(unrestorable);
             self.finished = false;
             self.resetPage();
             return;
@@ -1604,7 +1604,7 @@ Scene.prototype.restore_password = function restore_password() {
       } catch (e) {
         supportEmail = "support-unknown@choiceofgames.com";
       }
-      alert("Sorry, that password was invalid. Please contact " + supportEmail + " for assistance. Be sure to include your password in the email.");
+      asyncAlert("Sorry, that password was invalid. Please contact " + supportEmail + " for assistance. Be sure to include your password in the email.");
       return;
     }
     
@@ -1613,7 +1613,7 @@ Scene.prototype.restore_password = function restore_password() {
     
     var unrestorable = unrestorableScenes[sceneName];
     if (unrestorable) {
-      alert(unrestorable);
+      asyncAlert(unrestorable);
       self.finished = false;
       self.resetPage();
       return;

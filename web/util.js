@@ -320,8 +320,9 @@ function submitRemoteSave(slot, email, subscribe, callback) {
       xhr.send(params);
     } else {
       recordDirtySlots([slot], function() {
-        alert("There was a problem uploading the saved game. This is probably a bug; please contact support@choiceofgames.com with code 17891.");
-        callback(false);
+        asyncAlert("There was a problem uploading the saved game. This is probably a bug; please contact support@choiceofgames.com with code 17891.", function() {
+          callback(false);
+        });
       });
     }
   });
@@ -502,7 +503,7 @@ function isStateValid(state) {
 
 function restartGame(shouldPrompt) {
   if (window.tickerRunning) {
-    alert("Please wait until the timer has run out.");
+    asyncAlert("Please wait until the timer has run out.");
     return;
   }
   function actuallyRestart(result) {

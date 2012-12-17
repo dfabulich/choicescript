@@ -83,10 +83,7 @@ function asyncAlert(message, callback) {
     window.alertCallback = callback;
     callIos("alert", message)
   } else {
-    setTimeout(function() {
-      alert(message);
-      if (callback) callback();
-    }, 0);
+    alertify.alert(message, callback);
   }
 }
 
@@ -96,10 +93,7 @@ function asyncConfirm(message, callback) {
     window.confirmCallback = callback;
     callIos("confirm", message)
   } else {
-    setTimeout(function() {
-      var result = confirm(message);
-      if (callback) callback(result);
-    }, 0);
+    alertify.confirm(message, callback);
   }
 }
 
@@ -244,11 +238,11 @@ function printOptions(groups, options, callback) {
             var value = getFormValue(group);
             if (value === null) {
               if (groups.length == 1) {
-                alert("Please choose one of the available options first.");
+                asyncAlert("Please choose one of the available options first.");
               } else {
                 var article = "a";
                 if (/^[aeiou].*/i.test(group)) article = "an";
-                alert("Please choose " + article + " " + group + " first.");
+                asyncAlert("Please choose " + article + " " + group + " first.");
               }
               return;
             }
@@ -256,7 +250,7 @@ function printOptions(groups, options, callback) {
         }
         
         if (groups.length > 1 && option.unselectable) {
-          alert("Sorry, that combination of choices is not allowed. Please select a different " + groups[groups.length-1] + ".");
+          asyncAlert("Sorry, that combination of choices is not allowed. Please select a different " + groups[groups.length-1] + ".");
           return;
         }
         callback(option);
@@ -795,7 +789,7 @@ function printInput(target, inputType, callback, minimum, maximum, step) {
         if (!input.value) {
             // TODO optional value?
             // TODO configurable error message?
-            alert("Don't just leave it blank!  Type something!");
+            asyncAlert("Don't just leave it blank!  Type something!");
             return;
         }
         callback(input.value);
