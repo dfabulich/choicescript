@@ -772,7 +772,7 @@ function printInput(target, inputType, callback, minimum, maximum, step) {
     
     
     var input = document.createElement("input");
-    input.type=inputType;
+    input.setAttribute("type", inputType);
     if (inputType == "number") {
       input.setAttribute("min", minimum);
       input.setAttribute("max", maximum);
