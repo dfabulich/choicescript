@@ -78,10 +78,14 @@ function callIos(scheme, path) {
 }
 
 function asyncAlert(message, callback) {
-  if (false/*window.isIosApp*/) {
-    // TODO asyncAlert
+  if (window.isIosApp) {
     window.alertCallback = callback;
     callIos("alert", message)
+  } else if (window.isAndroidApp) {
+    setTimeout(function() {
+      alert(message);
+      if (callback) callback();
+    }, 0);
   } else {
     alertify.alert(message, callback);
   }
@@ -92,6 +96,11 @@ function asyncConfirm(message, callback) {
     // TODO asyncConfirm
     window.confirmCallback = callback;
     callIos("confirm", message)
+  } else if (window.isAndroidApp) {
+    setTimeout(function() {
+      var result = confirm(message);
+      if (callback) callback(result);
+    }, 0);
   } else {
     alertify.confirm(message, callback);
   }
