@@ -89,6 +89,14 @@ Scene.prototype.printLoop = function printLoop() {
         } else if (indent < this.indent) {
             this.dedent(indent);
         }
+        if (this.temps.fakeChoiceLines && this.temps.fakeChoiceLines[this.lineNum]) {
+          this.rollbackLineCoverage();
+          this.lineNum = this.temps.fakeChoiceEnd;
+          this.rollbackLineCoverage();
+          delete this.temps.fakeChoiceEnd;
+          delete this.temps.fakeChoiceLines;
+          continue;
+        }
         this.indent = indent;
         if (!this.runCommand(line)) {
             if (/^\s*#/.test(line)) {
@@ -97,6 +105,7 @@ Scene.prototype.printLoop = function printLoop() {
                     this.lineNum = this.temps.fakeChoiceEnd;
                     this.rollbackLineCoverage();
                     delete this.temps.fakeChoiceEnd;
+                    delete this.temps.fakeChoiceLines;
                     continue;
                 } else {
                     throw new Error(this.lineMsg() + "It is illegal to fall out of a *choice statement; you must *goto or *finish before the end of the indented block.");
@@ -412,6 +421,11 @@ Scene.prototype.choice = function choice(data) {
     this.finished = true;
     if (this.fakeChoice) {
       this.temps.fakeChoiceEnd = this.lineNum;
+      var fakeChoiceLines = {};
+      for (var i = 0; i < options.length; i++) {
+        fakeChoiceLines[options[i].line-1] = 1;
+      };
+      this.temps.fakeChoiceLines = fakeChoiceLines;
     }
     this.lineNum = startLineNum;
 }

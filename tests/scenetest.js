@@ -732,6 +732,36 @@ test("fakeNoBody", function() {
     scene.standardResolution(options[0]);
     doh.is("baz <br><br>", printed.join(""), "printed");
 })
+test("unselectableFake", function() {
+    printed = [];
+    var text = "*fake_choice\n  #foo\n    Foo!\n  *selectable_if (false) #bar\n    Bar!\nbaz";
+    var scene = new Scene();
+    scene.loadLines(text);
+    var options, groups;
+    scene.renderOptions = function(_groups, _options) {
+        options = _options;
+        groups = _groups;
+    };
+    scene.execute();
+    doh.is([{"name":"foo","line":2,"group":"choice","endLine":3},{"name":"bar","line":4,"group":"choice","unselectable":true,"endLine":5}], (options), "options");
+    scene.standardResolution(options[0]);
+    doh.is("Foo! baz <br><br>", printed.join(""), "printed");
+})
+test("unselecteableFakeNoBody", function() {
+    printed = [];
+    var text = "*fake_choice\n  #foo\n  *selectable_if (false) #bar\nbaz";
+    var scene = new Scene();
+    scene.loadLines(text);
+    var options, groups;
+    scene.renderOptions = function(_groups, _options) {
+        options = _options;
+        groups = _groups;
+    };
+    scene.execute();
+    doh.is([{"name":"foo","line":2,"group":"choice","endLine":2},{"name":"bar","line":3,"group":"choice","unselectable":true,"endLine":3}], (options), "options");
+    scene.standardResolution(options[0]);
+    doh.is("baz <br><br>", printed.join(""), "printed");
+})
 /*test("choiceTemp", function() {
     printed = [];
     var text = "*choice\n  #foo\n    Foo!\n    *goto end\n  #bar\n    Bar!\n*label end\n*print choice_1";
