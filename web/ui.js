@@ -377,7 +377,7 @@ function moreGames() {
           window.location.href = "http://www.amazon.com/gp/mas/dl/android?p=com.choiceofgames.dragon&showAll=1";
         }
       } else {
-        window.location.href = "market://search?q=pub:%22Choice+of+Games,+Inc%22";
+        window.location.href = "market://search?q=pub:%22Choice+of+Games+LLC";
       }
     } else {
       try {
