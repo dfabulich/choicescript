@@ -220,7 +220,7 @@ test("afterFakeChoice", function() {
     +"\n    Baz"
     +"\nQuz"
   ;
-  autotestScene(scene,  [1,1,1,1,1,1,0]);
+  autotestScene(scene,  [1,1,1,1,1,2,0]);
 })
 test("ifInChoiceMistakenForRealIf", function() {
   var scene = ""

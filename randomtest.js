@@ -224,7 +224,14 @@ Scene.prototype.choice = function choice(data, fakeChoice) {
     var index = randomIndex(flattenedOptions.length);
 
     var item = flattenedOptions[index];
-    if (fakeChoice) this.temps.fakeChoiceEnd = this.lineNum;
+    if (this.fakeChoice) {
+      this.temps.fakeChoiceEnd = this.lineNum;
+      var fakeChoiceLines = {};
+      for (var i = 0; i < options.length; i++) {
+        fakeChoiceLines[options[i].line-1] = 1;
+      };
+      this.temps.fakeChoiceLines = fakeChoiceLines;
+    }
 
     log(this.name + " " + (choiceLine+1)+'#'+(index+1)+' ('+item.ultimateOption.line+')');
     var self = this;

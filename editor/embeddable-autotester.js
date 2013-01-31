@@ -154,7 +154,14 @@ function autotester(sceneText, nav, sceneName) {
           var item = flattenedOptions[index];
           this.printLine(item.ultimateOption.name);
           var scene = this.clone();
-          if (fakeChoice) scene.temps.fakeChoiceEnd = this.lineNum;
+          if (this.fakeChoice) {
+            scene.temps.fakeChoiceEnd = this.lineNum;
+            var fakeChoiceLines = {};
+            for (var i = 0; i < options.length; i++) {
+              fakeChoiceLines[options[i].line-1] = 1;
+            };
+            scene.temps.fakeChoiceLines = fakeChoiceLines;
+          }
           scene.testOption = item;
           scene.testChoiceLine = choiceLine;
           scene.testPath.push(',');
