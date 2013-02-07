@@ -763,11 +763,18 @@ function printButton(name, parent, isSubmit, code) {
   return button;
 }
 
-function printLink(target, href, anchorText) {
+function printLink(target, href, anchorText, onclick) {
   if (!target) target = document.getElementById('text');
   var link = document.createElement("a");
   link.setAttribute("href", href);
   link.appendChild(document.createTextNode(anchorText));
+  if (onclick) {
+    if (link.addEventListener) {
+      link.addEventListener("click", onclick, true);
+    } else {
+      link.onclick = onclick;
+    }
+  }
   target.appendChild(link);
   target.appendChild(document.createTextNode(" "));
 }
