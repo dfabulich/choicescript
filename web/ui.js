@@ -564,18 +564,38 @@ function subscribe(target, now, callback) {
         }
       }
       if (window.isChromeApp) {
-        var xhr = new XMLHttpRequest();
-        xhr.open("GET", 'http://choiceofgames.us4.list-manage.com/subscribe/post-json?u=eba910fddc9629b2810db6182&id=e9cdee1aaa&EMAIL='+email, true);
-        xhr.onreadystatechange = function() {
-          if (xhr.readyState != 4) return;
-          if (xhr.status == 200) {
-            var response = JSON.parse(xhr.responseText);
-            window["jsonp"+timestamp](response);
+        chrome.permissions.contains({origins: ["http://choiceofgames.us4.list-manage.com/"]},function(isXhrAllowed) {
+          if (isXhrAllowed) {
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", 'http://choiceofgames.us4.list-manage.com/subscribe/post-json?u=eba910fddc9629b2810db6182&id=e9cdee1aaa&EMAIL='+email, true);
+            xhr.onreadystatechange = function() {
+              if (xhr.readyState != 4) return;
+              if (xhr.status == 200) {
+                var response = JSON.parse(xhr.responseText);
+                window["jsonp"+timestamp](response);
+              } else {
+                window["jsonp"+timestamp]({result:"error", msg:"Sorry, our mail server had an error. It's our fault. Please try again later, or email subscribe@choiceofgames.com instead."});
+              }
+            }
+            xhr.send();
           } else {
-            window["jsonp"+timestamp]({result:"error", msg:"Sorry, our mail server had an error. It's our fault. Please try again later."});
+            window.addEventListener('message', function(event) {
+              if (window["jsonp"+timestamp]) {
+                var jsonpt = window["jsonp"+timestamp];
+                window["jsonp"+timestamp] = null;
+                if (jsonpt) jsonpt(event.data);
+              }
+            });
+            var iframe = document.createElement("IFRAME");
+            iframe.setAttribute("src", "sandbox.html");
+            iframe.setAttribute("name", "sandbox");
+            iframe.onload = function() {
+              iframe.contentWindow.postMessage({email:email}, "*");
+            }
+            document.documentElement.appendChild(iframe);
+            return;
           }
-        }
-        xhr.send();
+        })
       } else {
         script.src = 'http://choiceofgames.us4.list-manage.com/subscribe/post-json?u=eba910fddc9629b2810db6182&id=e9cdee1aaa&c=jsonp' + timestamp+"&EMAIL="+email;
         head.appendChild(script);
