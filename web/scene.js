@@ -552,6 +552,12 @@ Scene.prototype.reset = function reset() {
     this.stats.scene = this;
 }
 
+Scene.prototype.goto_sceneref = function scene_sceneref(expression) {
+    var stack = this.tokenizeExpr(expression);
+    var value = this.evaluateExpr(stack);
+    this.goto_scene(value);
+}
+
 // *goto_scene foo
 // 
 Scene.prototype.goto_scene = function gotoScene(sceneName) {
