@@ -1,16 +1,16 @@
 /*
  * Copyright 2010 by Dan Fabulich.
- * 
+ *
  * Dan Fabulich licenses this file to you under the
  * ChoiceScript License, Version 1.0 (the "License"); you may
- * not use this file except in compliance with the License. 
+ * not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *  http://www.choiceofgames.com/LICENSE-1.0.txt
- * 
+ *
  * See the License for the specific language governing
  * permissions and limitations under the License.
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
@@ -19,8 +19,7 @@
 
 
 function printx(msg, parent) {
-    if (msg == null) return;
-    if (msg === "") return;
+    if (msg === null || msg === undefined || msg === "") return;
     if (!parent) parent = document.getElementById('text');
     if (msg == " ") {
       // IE7 doesn't like innerHTML that's nothing but " "
@@ -34,7 +33,7 @@ function printx(msg, parent) {
       .replace(/\[b\]/g, '<b>')
       .replace(/\[\/b\]/g, '</b>')
       .replace(/\[i\]/g, '<i>')
-      .replace(/\[\/i\]/g, '</i>')
+      .replace(/\[\/i\]/g, '</i>');
     var frag = document.createDocumentFragment();
     temp = document.createElement('div');
     temp.innerHTML = msg;
@@ -43,7 +42,7 @@ function printx(msg, parent) {
     }
     parent.appendChild(frag);
 }
-    
+
 function println(msg, parent) {
     if (!parent) parent = document.getElementById('text');
     printx(msg, parent);
@@ -80,7 +79,7 @@ function callIos(scheme, path) {
 function asyncAlert(message, callback) {
   if (window.isIosApp) {
     window.alertCallback = callback;
-    callIos("alert", message)
+    callIos("alert", message);
   } else if (window.isAndroidApp) {
     setTimeout(function() {
       alert(message);
@@ -95,7 +94,7 @@ function asyncConfirm(message, callback) {
   if (false/*window.isIosApp*/) {
     // TODO asyncConfirm
     window.confirmCallback = callback;
-    callIos("confirm", message)
+    callIos("confirm", message);
   } else if (window.isAndroidApp) {
     setTimeout(function() {
       var result = confirm(message);
@@ -113,14 +112,14 @@ function clearScreen(code) {
     var text = document.createElement("div");
     text.setAttribute("id", "text");
     main.appendChild(text);
-    
+
 
 
     var useAjax = true;
     if (isWeb && window.noAjax) {
       useAjax = false;
     }
-    
+
     if (useAjax) {
       doneLoading();
       setTimeout(function() {
@@ -147,7 +146,7 @@ function safeSubmit(code) {
     return function safelySubmitted() {
         safeCall(code);
         return false;
-    }
+    };
 }
 
 function startLoading() {
@@ -170,7 +169,7 @@ function setClass(element, classString) {
   element.setAttribute("class", classString);
   element.setAttribute("className", classString);
 }
-  
+
 function printFooter() {
   // var footer = document.getElementById('footer');
   // We could put anything we want in the footer here, but perhaps we should avoid it.
@@ -186,25 +185,25 @@ function printFooter() {
 }
 
 function fastRefresh() {
+  function fastRestore(state) {
+    window.stats = state.stats;
+    var scene = new Scene(state.stats.sceneName, state.stats, window.nav, state.debug || window.debug);
+    scene.loadSceneFast();
+    clearScreen(function() {scene.execute();});
+  }
+  function valueLoaded(ok, value) {
+    safeCall(null, function() {
+      var state = null;
+      if (ok && value && ""+value) {
+        state = jsonParse(value);
+        state.stats.sceneName = forcedScene;
+        fastRestore(state);
+      }
+    });
+  }
   if (window.forcedScene && window.stats && window.stats.scene && window.stats.scene.name == window.forcedScene) {
     var scene = window.stats.scene;
     window.cachedResult = {crc:scene.temps.choice_crc, lines:scene.lines, labels:scene.labels};
-    function fastRestore(state) {
-      window.stats = state.stats;
-      var scene = new Scene(state.stats.sceneName, state.stats, window.nav, state.debug || window.debug);
-      scene.loadSceneFast();
-      clearScreen(function() {scene.execute();});
-    }
-    function valueLoaded(ok, value) {
-      safeCall(null, function() {
-        var state = null;
-        if (ok && value && ""+value) {
-          state = jsonParse(value);
-          state.stats.sceneName = forcedScene;
-          fastRestore(state);
-        }
-      });
-    };
     if (!slot) slot = "";
     if (initStore()) {
       window.store.get("state"+slot, valueLoaded);
@@ -213,7 +212,7 @@ function fastRefresh() {
     }
     return;
   }
-  clearScreen(function() {loadAndRestoreGame(window.slot, window.forcedScene)});
+  clearScreen(function() {loadAndRestoreGame(window.slot, window.forcedScene);});
 }
 
 // retrieve value of HTML form
@@ -234,7 +233,7 @@ function printOptions(groups, options, callback) {
   main.appendChild(form);
   var self = this;
   form.action="#";
-  form.onsubmit = function() { 
+  form.onsubmit = function() {
       safeCall(self, function() {
         var currentOptions = options;
         var option, group;
@@ -245,7 +244,7 @@ function printOptions(groups, options, callback) {
             group = groups[i];
             if (!group) group = "choice";
             var value = getFormValue(group);
-            if (value === null) {
+            if (value === null || value === undefined) {
               if (groups.length == 1) {
                 asyncAlert("Please choose one of the available options first.");
               } else {
@@ -257,7 +256,7 @@ function printOptions(groups, options, callback) {
             }
             option = currentOptions[value];
         }
-        
+
         if (groups.length > 1 && option.unselectable) {
           asyncAlert("Sorry, that combination of choices is not allowed. Please select a different " + groups[groups.length-1] + ".");
           return;
@@ -266,7 +265,7 @@ function printOptions(groups, options, callback) {
       });
       return false;
   };
-  
+
   if (!options) throw new Error(this.lineMsg()+"undefined options");
   if (!options.length) throw new Error(this.lineMsg()+"no options");
   // global num will be used to assign accessKeys to the options
@@ -282,7 +281,7 @@ function printOptions(groups, options, callback) {
           textBuilder.push(/^[aeiou]/i.test(group)?"an ":"a ");
           textBuilder.push(group);
           textBuilder.push(":");
-          
+
           var p = document.createElement("p");
           p.appendChild(document.createTextNode(textBuilder.join("")));
           div.appendChild(p);
@@ -302,7 +301,7 @@ function printOptions(groups, options, callback) {
 
   var useRealForm = false;
   if (useRealForm) {
-    printButton("Next", form, false);      
+    printButton("Next", form, false);
   } else {
     printButton("Next", main, false, function() {
       form.onsubmit();
@@ -323,10 +322,10 @@ function printOptionRadioButton(div, name, option, localChoiceNumber, globalChoi
     if (!/^\w+$/.test(name)) throw new Error("invalid choice group name: " + name);
     label.innerHTML = "<input type='radio' name='"+name+
             "' value='"+localChoiceNumber+"' id='"+id+
-            "' "+(checked?"checked":"")+disabledString+">";    
-    
+            "' "+(checked?"checked":"")+disabledString+">";
+
     label.setAttribute("for", id);
-    if (localChoiceNumber == 0) {
+    if (localChoiceNumber === 0) {
       if (isLast) {
         setClass(label, "onlyChild"+disabledString);
       } else {
@@ -349,10 +348,10 @@ function printOptionRadioButton(div, name, option, localChoiceNumber, globalChoi
             var button = document.getElementById(id);
             if (!button) return;
             button.checked = true;
-        }
+        };
     }
     printx(line, label);
-    
+
     div.appendChild(label);
 }
 
@@ -411,7 +410,7 @@ function printShareLinks(target, now) {
     target.appendChild(msgDiv);
     return;
   }
-  
+
   var mobileMesg = "";
   if (isMobile && isFile) {
     if (window.isAndroidApp) {
@@ -427,7 +426,7 @@ function printShareLinks(target, now) {
           } else {
             mobileMesg = "  <li><a href='"+androidUrl+"'>Rate this app</a> in the Google Play Store</li>\n";
           }
-          
+
         }
       }
     } else if (/webOS/.test(navigator.userAgent)) {
@@ -438,20 +437,6 @@ function printShareLinks(target, now) {
         if (palmUrl) {
           mobileMesg = "  <li><a href='"+palmUrl+"'>Rate this app</a> in the Palm App Catalog</li>\n";
         }
-      }
-    } else if (/iPad/.test(navigator.userAgent)) {
-      var ipadLink = document.getElementById('ipadLink');
-      var ipadUrl;
-      if (ipadLink) {
-        ipadUrl = ipadLink.href;
-      } else {
-        var iphoneLink = document.getElementById('iphoneLink');
-        if (iphoneLink) {
-          ipadUrl = iphoneLink.href;
-        }
-      }
-      if (ipadUrl) {
-        mobileMesg = "  <li><a href='"+ipadUrl+"'>Rate this app</a> in the App Store</li>\n";
       }
     } else if (/iPhone/.test(navigator.userAgent)) {
       var iphoneLink = document.getElementById('iphoneLink');
@@ -472,9 +457,9 @@ function printShareLinks(target, now) {
       shareLinkText += "<li>" + spans[i].innerHTML;
     }
   } else {
-    shareLinkText = "<li>TODO Share Link 1, e.g. \"Rate this App in the App Store\"<li>TODO Share Link 2, e.g. StumbleUpon<li>TODO Share Link 3, e.g. Facebook<li>TODO Share Link 4, e.g. Twitter"
+    shareLinkText = "<li>TODO Share Link 1, e.g. \"Rate this App in the App Store\"<li>TODO Share Link 2, e.g. StumbleUpon<li>TODO Share Link 3, e.g. Facebook<li>TODO Share Link 4, e.g. Twitter";
   }
-    
+
   var nowMsg = "";
   if (now) nowMsg = "<p>Please support our work by sharing this game with friends!  The more people play, the more resources we'll have to work on the next game.</p>";
   msgDiv.innerHTML = nowMsg + "<ul id='sharelist'>\n"+
@@ -490,30 +475,30 @@ function shareAction(e) {
     printShareLinks(target, "now");
     printButton("Next", target, false, function () {
       clearScreen(loadAndRestoreGame);
-    })
-  })
+    });
+  });
 }
 
 function subscribeLink(e) {
   clearScreen(function() {
     subscribe(document.getElementById('text'), "now", function() {
       clearScreen(loadAndRestoreGame);
-    })
-  })
+    });
+  });
 }
 
 function subscribeByMail(target, now, callback, code) {
   if (now) {
     code();
-    setTimeout(function() {callback(now)}, 0);
+    setTimeout(function() {callback(now);}, 0);
   } else {
     printButton("Subscribe", target, false, function() {
         code();
-        setTimeout(function() {callback(now)}, 0);
-      })
+        setTimeout(function() {callback(now);}, 0);
+      });
     printButton("Next", target, false, function() {
-      setTimeout(function() {callback(now)}, 0);
-    })
+      setTimeout(function() {callback(now);}, 0);
+    });
   }
 }
 
@@ -522,7 +507,7 @@ function subscribe(target, now, callback) {
   if (window.isIosApp) {
     subscribeByMail(target, now, callback, function() {
       callIos("subscribe");
-    })
+    });
     return;
   }
   var mailToSupported = isFile && !window.isMacApp;
@@ -530,7 +515,7 @@ function subscribe(target, now, callback) {
   if (mailToSupported) {
     subscribeByMail(target, now, callback, function() {
       window.location.href = "mailto:subscribe-"+window.storeName+"@choiceofgames.com?subject=Sign me up&body=Please notify me when the next game is ready.";
-    })
+    });
     return;
   }
   if (now) println("Type your email address below; we'll notify you when our next game is ready!");
@@ -546,7 +531,7 @@ function subscribe(target, now, callback) {
       var timeout = setTimeout(function() {
         window["jsonp"+timestamp]({
           result:"error", msg:"Couldn't connect. Please try again later."
-        })
+        });
       }, 10000);
       window["jsonp"+timestamp] = function(response) {
         clearTimeout(timeout);
@@ -559,10 +544,10 @@ function subscribe(target, now, callback) {
             println("", target);
             printButton("Next", target, false, function() {
               callback();
-            })
+            });
           });
         }
-      }
+      };
       if (window.isChromeApp) {
         chrome.permissions.contains({origins: ["http://choiceofgames.us4.list-manage.com/"]},function(isXhrAllowed) {
           if (isXhrAllowed) {
@@ -576,7 +561,7 @@ function subscribe(target, now, callback) {
               } else {
                 window["jsonp"+timestamp]({result:"error", msg:"Sorry, our mail server had an error. It's our fault. Please try again later, or email subscribe@choiceofgames.com instead."});
               }
-            }
+            };
             xhr.send();
           } else {
             window.addEventListener('message', function(event) {
@@ -591,16 +576,16 @@ function subscribe(target, now, callback) {
             iframe.setAttribute("name", "sandbox");
             iframe.onload = function() {
               iframe.contentWindow.postMessage({email:email}, "*");
-            }
+            };
             document.documentElement.appendChild(iframe);
             return;
           }
-        })
+        });
       } else {
         script.src = 'http://choiceofgames.us4.list-manage.com/subscribe/post-json?u=eba910fddc9629b2810db6182&id=e9cdee1aaa&c=jsonp' + timestamp+"&EMAIL="+email;
         head.appendChild(script);
       }
-    })
+    });
   });
 }
 
@@ -619,7 +604,7 @@ function checkPurchase(products, callback) {
       purchases[productList[i]] = true;
     }
     purchases.billingSupported = false;
-    setTimeout(function() {callback(purchases)}, 0);
+    setTimeout(function() {callback(purchases);}, 0);
   }
 }
 
@@ -656,7 +641,7 @@ function purchase(product, callback) {
   var purchaseCallback = function() {
     window.purchaseCallback = null;
     callback();
-  }
+  };
   if (window.isIosApp) {
     window.purchaseCallback = purchaseCallback;
     callIos("purchase", product);
@@ -704,7 +689,7 @@ function showTicker(target, endTimeInSeconds, finishedCallback) {
       callIos("schedulenotification", endTimeInSeconds);
     }
   }
-  
+
   function cleanUpTicker() {
     window.tickerRunning = false;
     if (window.isAndroidApp) {
@@ -721,12 +706,13 @@ function showTicker(target, endTimeInSeconds, finishedCallback) {
       return ""+secondsRemaining+"s";
     } else {
       var minutesRemaining = Math.floor(secondsRemaining / 60);
+      var remainderSeconds;
       if (minutesRemaining < 60) {
-        var remainderSeconds = secondsRemaining - minutesRemaining * 60;
+        remainderSeconds = secondsRemaining - minutesRemaining * 60;
         return ""+minutesRemaining+"m " + formatSecondsRemaining(remainderSeconds);
       } else {
         var hoursRemaining = Math.floor(secondsRemaining / 3600);
-        var remainderSeconds = secondsRemaining - hoursRemaining * 3600;
+        remainderSeconds = secondsRemaining - hoursRemaining * 3600;
         return ""+hoursRemaining+"h " + formatSecondsRemaining(remainderSeconds, true);
       }
     }
@@ -772,12 +758,12 @@ function printButton(name, parent, isSubmit, code) {
       window.freezeCallback = function() {
         window.freezeCallback = null;
         code();
-      }
+      };
       callIos("freeze");
     } else {
       safeCall(null, code);
     }
-  }
+  };
   if (!isMobile) try { button.focus(); } catch (e) {}
   parent.appendChild(button);
   return button;
@@ -805,22 +791,22 @@ function printInput(target, inputType, callback, minimum, maximum, step) {
     target.appendChild(form);
     var self = this;
     form.action="#";
-    
-    
+
+
     var input = document.createElement("input");
     input.setAttribute("type", inputType);
     if (inputType == "number") {
       input.setAttribute("min", minimum);
       input.setAttribute("max", maximum);
-      step = step || "any"
+      step = step || "any";
       input.setAttribute("step", step);
     }
 
     input.name="text";
     input.setAttribute("style", "font-size: 25px; width: 90%;");
     form.appendChild(input);
-    
-    form.onsubmit = function(e) { 
+
+    form.onsubmit = function(e) {
         preventDefault(e);
         if (!input.value) {
             // TODO optional value?
@@ -843,13 +829,13 @@ function promptEmailAddress(target, defaultEmail, callback) {
   var form = document.createElement("form");
   var self = this;
   form.action="#";
-  
+
   var message = document.createElement("div");
   message.style.color = "red";
   message.style.fontWeight = "bold";
   message.setAttribute("id", "errorMessage");
   form.appendChild(message);
-  
+
   var input = document.createElement("input");
   // This can fail on IE
   try { input.type="email"; } catch (e) {}
@@ -861,11 +847,11 @@ function promptEmailAddress(target, defaultEmail, callback) {
   println("", form);
   println("", form);
   printButton("Next", form, true);
-  
+
   printButton("Cancel", target, false, function() {
     callback(true);
   });
-  
+
   form.onsubmit = function(e) {
     preventDefault(e);
     safeCall(this, function() {
@@ -881,7 +867,7 @@ function promptEmailAddress(target, defaultEmail, callback) {
       }
     });
   };
-  
+
   setTimeout(function() {callIos("curl");}, 0);
 }
 
@@ -905,7 +891,7 @@ function getPassword(target, code) {
   printButton("Next", target, false, function() {
     code(false, textArea.value);
   });
-  
+
   printButton("Cancel", target, false, function() {
     code(true);
   });
@@ -913,21 +899,21 @@ function getPassword(target, code) {
 
 function showPassword(target, password) {
   if (!target) target = document.getElementById('text');
-  
+
   var textBuffer = [];
   var colWidth = 40;
   for (var i = 0; i < password.length; i++) {
     textBuffer.push(password.charAt(i));
-    if ((i + 1) % colWidth == 0) {
+    if ((i + 1) % colWidth === 0) {
       textBuffer.push('\n');
     }
   }
   password = "----- BEGIN PASSWORD -----\n" + textBuffer.join('') + "\n----- END PASSWORD -----";
-  
+
   var shouldButton = isMobile;
   if (shouldButton) {
-    var button = printButton("Email My Password to Me", target, false, 
-      function() { 
+    var button = printButton("Email My Password to Me", target, false,
+      function() {
         safeCall(self, function() {
             if (isWeb) {
               // TODO more reliable system
@@ -938,7 +924,7 @@ function showPassword(target, password) {
     );
     setClass(button, "");
   }
-  
+
   var shouldTextArea = !isMobile;
   if (shouldTextArea) {
     var textArea = document.createElement("textarea");
@@ -947,11 +933,11 @@ function showPassword(target, password) {
     setClass(textArea, "savePassword");
 
     textArea.setAttribute("readonly", true);
-    textArea.onclick = function() {textArea.select();}
+    textArea.onclick = function() {textArea.select();};
     textArea.value = (password);
     target.appendChild(textArea);
   }
-} 
+}
 
 window.isWebOS = /webOS/.test(navigator.userAgent);
 window.isMobile = isWebOS || /Mobile/.test(navigator.userAgent);
@@ -1009,15 +995,15 @@ window.onload=function() {
     window.nav.setStartingStatsClone(window.stats);
     stats.sceneName = window.nav.getStartupScene();
     var map = parseQueryString(window.location.search);
-        
+
     if (map) {
-      window.forcedScene = map.forcedScene
+      window.forcedScene = map.forcedScene;
       window.slot = map.slot;
       window.debug = map.debug;
       if (map.restart) {
         restoreGame(null, forcedScene);
       } else {
-        safeCall(null, function() {loadAndRestoreGame(window.slot, window.forcedScene)});
+        safeCall(null, function() {loadAndRestoreGame(window.slot, window.forcedScene);});
       }
     } else {
       safeCall(null, loadAndRestoreGame);
@@ -1042,33 +1028,33 @@ if (window.isWeb) {
   document.write("<style>.webOnly { display: block !important; }</style>");
 }
 if (!isWeb && window.isIosApp) {
-  document.write("<style>"
-  +"#header { display: none; }"
-  +""
-  +"#emailUs { display: none; }"
-  +""
-  +"#main { padding-top: 1em; }"
-  +"</style>"
+  document.write("<style>"+
+  "#header { display: none; }"+
+  ""+
+  "#emailUs { display: none; }"+
+  ""+
+  "#main { padding-top: 1em; }"+
+  "</style>"+
   // Use UIWebView width, not screen width, on iPad
-  +"<meta name = 'viewport' content = 'width = "+window.innerWidth+"'>"
-  ); 
+  "<meta name = 'viewport' content = 'width = "+window.innerWidth+"'>"
+  );
   window.addEventListener("resize", function() {
       document.querySelector("meta[name=viewport]").setAttribute("content", "width="+window.innerWidth);
       // this dummy element seems to be required to get the viewport to stick
       var dummy = document.createElement("p");
       dummy.innerHTML = "&nbsp;";
       document.body.appendChild(dummy);
-      window.setTimeout(function() {document.body.removeChild(dummy)}, 10);
+      window.setTimeout(function() {document.body.removeChild(dummy);}, 10);
     }, false);
 }
 if (window.isWebOS) document.write("<style>body {font-family: Prelude; font-size: 14pt}\n#header {font-size: 13pt}</style>");
 if (window.isMacApp) {
-  document.write("<style>"
-  +"#headerLinks { display: none; }"
-  +""
-  +"#emailUs { display: none; }"
-  +""
-  +"</style>");
+  document.write("<style>"+
+    "#headerLinks { display: none; }"+
+    ""+
+    "#emailUs { display: none; }"+
+    ""+
+    "</style>");
 }
 if (isWeb && !window.Touch) {
   document.write("<style>label:hover {background-color: #E4DED8;}</style>");

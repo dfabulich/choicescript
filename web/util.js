@@ -45,7 +45,7 @@ function safeCall(obj, fn) {
             } else {
               window.onerror(toJson(e, '\n'));
             }
-            
+
             if (window.console) {
               window.console.error(e);
               if (e.message) window.console.error("Message: " + e.message);
@@ -116,6 +116,7 @@ function toJson(obj, standardized) {
    } else {
     return 'null';
    }
+   break;
   case 'string':
    var encoded = obj.replace(/(.)/g, function(x) {
      if (x == "'" || x == '"' || x == '\\') {
@@ -142,7 +143,7 @@ function toJson(obj, standardized) {
    return '"' + encoded + '"';
   case 'number':
   case 'boolean':
-   return new String(obj);
+   return String(obj);
   case 'function':
    return 'badfunction';
   case 'undefined':
@@ -209,7 +210,7 @@ function recordDirtySlots(slots, callback) {
     for (var i = 0; i < saveList.length; i++) {
       saveSet[saveList[i]] = 1;
     }
-    for (var i = 0; i < slots.length; i++) {
+    for (i = 0; i < slots.length; i++) {
       if (!saveSet[slots[i]]) saveList.push(slots[i]);
     }
     window.store.set("dirty_save_list", toJson(saveList), callback);
@@ -222,12 +223,11 @@ function recordEmail(email, callback) {
   } else {
     setTimeout(callback, 0);
   }
-  
 }
 
 function fetchEmail(callback) {
   if (!initStore()) {
-    setTimeout(function(){callback("")}, 0);
+    setTimeout(function(){callback("");}, 0);
     return;
   }
   window.store.get("email", function(ok, value) {
@@ -241,7 +241,7 @@ function fetchEmail(callback) {
 
 function restoreObject(key, defaultValue, callback) {
   if (!initStore()) {
-    setTimeout(function() {callback(defaultValue)}, 0);
+    setTimeout(function() {callback(defaultValue);}, 0);
     return;
   }
   window.store.get(key, function(ok, value) {
@@ -275,7 +275,7 @@ function fetchSavesFromSlotList(slotList, i, saveList, callback) {
     saveState.timestamp = slotList[i].substring(4/*"save".length*/);
     saveList.push(saveState);
     fetchSavesFromSlotList(slotList, i+1, saveList, callback);
-  })
+  });
 }
 
 function isWebSavePossible() {
@@ -286,7 +286,6 @@ function isWebSavePossible() {
   // if it's a file URL with a valid store, either you're a 3rd party developer
   // who knows what you're doing, or you're a mobile app
   return true;
-  
 }
 
 
@@ -316,7 +315,7 @@ function submitRemoteSave(slot, email, subscribe, callback) {
             callback(false);
           });
         }
-      }
+      };
       xhr.send(params);
     } else {
       recordDirtySlots([slot], function() {
@@ -349,7 +348,7 @@ function submitDirtySaves(dirtySaveList, email, callback) {
 
 function getRemoteSaves(email, callback) {
   if (!isWebSavePossible()) {
-    setTimeout(function() {callback([])}, 0);
+    setTimeout(function() {callback([]);}, 0);
     return;
   }
   var xhr = findXhr();
@@ -373,7 +372,7 @@ function getRemoteSaves(email, callback) {
       }
       callback(remoteSaveList);
     }
-  }
+  };
   xhr.send();
 }
 
@@ -389,11 +388,11 @@ function mergeRemoteSaves(remoteSaveList, callback) {
         localSlotMap[localSlotList[i]] = 1;
       }
       var remoteSlotMap = {};
-      for (var i = 0; i < remoteSaveList.length; i++) {
+      for (i = 0; i < remoteSaveList.length; i++) {
         remoteSlotMap["save"+remoteSaveList[i].timestamp] = 1;
       }
       var newRemoteSaves = 0;
-      for (var i = 0; i < remoteSaveList.length; i++) {
+      for (i = 0; i < remoteSaveList.length; i++) {
         var remoteSave = remoteSaveList[i];
         var slot = "save"+remoteSave.timestamp;
         if (!localSlotMap[slot]) {
@@ -403,14 +402,14 @@ function mergeRemoteSaves(remoteSaveList, callback) {
           newRemoteSaves++;
         }
       }
-      
+
       var dirtySaveList = [];
-      for (var i = 0; i < localSlotList.length; i++) {
+      for (i = 0; i < localSlotList.length; i++) {
         if (!remoteSlotMap[localSlotList[i]]) {
           dirtySaveList.push(localSlotList[i]);
         }
       }
-      
+
       window.store.set("dirty_save_list", toJson(dirtySaveList), function() {
         if (newRemoteSaves) {
           window.store.set("save_list", toJson(localSlotList), function() {
@@ -435,7 +434,7 @@ function delayBreakStart(callback) {
     if (ok && value && !isNaN(valueNum)) {
       callback(valueNum);
     } else {
-      window.store.set("delayBreakStart", nowInSeconds)
+      window.store.set("delayBreakStart", nowInSeconds);
       callback(nowInSeconds);
     }
   });
@@ -464,7 +463,7 @@ function loadAndRestoreGame(slot, forcedScene) {
       }
       restoreGame(state, forcedScene);
     });
-  };
+  }
   if (!slot) slot = "";
   if (window.cachedValue) return valueLoaded(true, window.cachedValue);
   if (!initStore()) return restoreGame(null, forcedScene);
@@ -521,15 +520,16 @@ function restartGame(shouldPrompt) {
 }
 
 function restoreGame(state, forcedScene, userRestored) {
+    var scene;
     if (!isStateValid(state)) {
         var startupScene = forcedScene ? forcedScene : window.nav.getStartupScene();
-        var scene = new Scene(startupScene, window.stats, window.nav, window.debug);
+        scene = new Scene(startupScene, window.stats, window.nav, window.debug);
         safeCall(scene, scene.execute);
     } else {
       if (forcedScene) state.stats.sceneName = forcedScene;
       window.stats = state.stats;
       // Someday, inflate the navigator using the state object
-      var scene = new Scene(state.stats.sceneName, state.stats, window.nav, state.debug || window.debug);
+      scene = new Scene(state.stats.sceneName, state.stats, window.nav, state.debug || window.debug);
       if (!forcedScene) {
         scene.temps = state.temps;
         scene.lineNum = state.lineNum;
@@ -570,7 +570,7 @@ function parseQueryString(str) {
   return map;
 }
 function trim(str) {
-    if (str == null) return null;
+    if (str === null || str === undefined) return null;
     var result = str.replace(/^\s+/g, "");
     // strip leading
     return result.replace(/\s+$/g, "");
@@ -592,7 +592,7 @@ function findOptimalDomain(docDomain) {
 
 function num(x, line) {
     if (!line) line = "UNKNOWN";
-    var x_num = x * 1; 
+    var x_num = x * 1;
     if (isNaN(x_num)) throw new Error("line "+line+": Not a number: " + x);
     return x_num;
 }
@@ -621,22 +621,22 @@ function findXhr() {
   throw new Error("Couldn't create XHR object");
 }
 
-    crcTable = "00000000 77073096 EE0E612C 990951BA 076DC419 706AF48F E963A535 9E6495A3 0EDB8832 79DCB8A4 E0D5E91E 97D2D988 09B64C2B 7EB17CBD E7B82D07 90BF1D91 1DB71064 6AB020F2 F3B97148 84BE41DE 1ADAD47D 6DDDE4EB F4D4B551 83D385C7 136C9856 646BA8C0 FD62F97A 8A65C9EC 14015C4F 63066CD9 FA0F3D63 8D080DF5 3B6E20C8 4C69105E D56041E4 A2677172 3C03E4D1 4B04D447 D20D85FD A50AB56B 35B5A8FA 42B2986C DBBBC9D6 ACBCF940 32D86CE3 45DF5C75 DCD60DCF ABD13D59 26D930AC 51DE003A C8D75180 BFD06116 21B4F4B5 56B3C423 CFBA9599 B8BDA50F 2802B89E 5F058808 C60CD9B2 B10BE924 2F6F7C87 58684C11 C1611DAB B6662D3D 76DC4190 01DB7106 98D220BC EFD5102A 71B18589 06B6B51F 9FBFE4A5 E8B8D433 7807C9A2 0F00F934 9609A88E E10E9818 7F6A0DBB 086D3D2D 91646C97 E6635C01 6B6B51F4 1C6C6162 856530D8 F262004E 6C0695ED 1B01A57B 8208F4C1 F50FC457 65B0D9C6 12B7E950 8BBEB8EA FCB9887C 62DD1DDF 15DA2D49 8CD37CF3 FBD44C65 4DB26158 3AB551CE A3BC0074 D4BB30E2 4ADFA541 3DD895D7 A4D1C46D D3D6F4FB 4369E96A 346ED9FC AD678846 DA60B8D0 44042D73 33031DE5 AA0A4C5F DD0D7CC9 5005713C 270241AA BE0B1010 C90C2086 5768B525 206F85B3 B966D409 CE61E49F 5EDEF90E 29D9C998 B0D09822 C7D7A8B4 59B33D17 2EB40D81 B7BD5C3B C0BA6CAD EDB88320 9ABFB3B6 03B6E20C 74B1D29A EAD54739 9DD277AF 04DB2615 73DC1683 E3630B12 94643B84 0D6D6A3E 7A6A5AA8 E40ECF0B 9309FF9D 0A00AE27 7D079EB1 F00F9344 8708A3D2 1E01F268 6906C2FE F762575D 806567CB 196C3671 6E6B06E7 FED41B76 89D32BE0 10DA7A5A 67DD4ACC F9B9DF6F 8EBEEFF9 17B7BE43 60B08ED5 D6D6A3E8 A1D1937E 38D8C2C4 4FDFF252 D1BB67F1 A6BC5767 3FB506DD 48B2364B D80D2BDA AF0A1B4C 36034AF6 41047A60 DF60EFC3 A867DF55 316E8EEF 4669BE79 CB61B38C BC66831A 256FD2A0 5268E236 CC0C7795 BB0B4703 220216B9 5505262F C5BA3BBE B2BD0B28 2BB45A92 5CB36A04 C2D7FFA7 B5D0CF31 2CD99E8B 5BDEAE1D 9B64C2B0 EC63F226 756AA39C 026D930A 9C0906A9 EB0E363F 72076785 05005713 95BF4A82 E2B87A14 7BB12BAE 0CB61B38 92D28E9B E5D5BE0D 7CDCEFB7 0BDBDF21 86D3D2D4 F1D4E242 68DDB3F8 1FDA836E 81BE16CD F6B9265B 6FB077E1 18B74777 88085AE6 FF0F6A70 66063BCA 11010B5C 8F659EFF F862AE69 616BFFD3 166CCF45 A00AE278 D70DD2EE 4E048354 3903B3C2 A7672661 D06016F7 4969474D 3E6E77DB AED16A4A D9D65ADC 40DF0B66 37D83BF0 A9BCAE53 DEBB9EC5 47B2CF7F 30B5FFE9 BDBDF21C CABAC28A 53B39330 24B4A3A6 BAD03605 CDD70693 54DE5729 23D967BF B3667A2E C4614AB8 5D681B02 2A6F2B94 B40BBE37 C30C8EA1 5A05DF1B 2D02EF8D";     
- 
-    /* Number */ 
-    function crc32( /* String */ str, /* Number */ crc ) { 
-        if( !crc ) crc = 0; 
+    crcTable = "00000000 77073096 EE0E612C 990951BA 076DC419 706AF48F E963A535 9E6495A3 0EDB8832 79DCB8A4 E0D5E91E 97D2D988 09B64C2B 7EB17CBD E7B82D07 90BF1D91 1DB71064 6AB020F2 F3B97148 84BE41DE 1ADAD47D 6DDDE4EB F4D4B551 83D385C7 136C9856 646BA8C0 FD62F97A 8A65C9EC 14015C4F 63066CD9 FA0F3D63 8D080DF5 3B6E20C8 4C69105E D56041E4 A2677172 3C03E4D1 4B04D447 D20D85FD A50AB56B 35B5A8FA 42B2986C DBBBC9D6 ACBCF940 32D86CE3 45DF5C75 DCD60DCF ABD13D59 26D930AC 51DE003A C8D75180 BFD06116 21B4F4B5 56B3C423 CFBA9599 B8BDA50F 2802B89E 5F058808 C60CD9B2 B10BE924 2F6F7C87 58684C11 C1611DAB B6662D3D 76DC4190 01DB7106 98D220BC EFD5102A 71B18589 06B6B51F 9FBFE4A5 E8B8D433 7807C9A2 0F00F934 9609A88E E10E9818 7F6A0DBB 086D3D2D 91646C97 E6635C01 6B6B51F4 1C6C6162 856530D8 F262004E 6C0695ED 1B01A57B 8208F4C1 F50FC457 65B0D9C6 12B7E950 8BBEB8EA FCB9887C 62DD1DDF 15DA2D49 8CD37CF3 FBD44C65 4DB26158 3AB551CE A3BC0074 D4BB30E2 4ADFA541 3DD895D7 A4D1C46D D3D6F4FB 4369E96A 346ED9FC AD678846 DA60B8D0 44042D73 33031DE5 AA0A4C5F DD0D7CC9 5005713C 270241AA BE0B1010 C90C2086 5768B525 206F85B3 B966D409 CE61E49F 5EDEF90E 29D9C998 B0D09822 C7D7A8B4 59B33D17 2EB40D81 B7BD5C3B C0BA6CAD EDB88320 9ABFB3B6 03B6E20C 74B1D29A EAD54739 9DD277AF 04DB2615 73DC1683 E3630B12 94643B84 0D6D6A3E 7A6A5AA8 E40ECF0B 9309FF9D 0A00AE27 7D079EB1 F00F9344 8708A3D2 1E01F268 6906C2FE F762575D 806567CB 196C3671 6E6B06E7 FED41B76 89D32BE0 10DA7A5A 67DD4ACC F9B9DF6F 8EBEEFF9 17B7BE43 60B08ED5 D6D6A3E8 A1D1937E 38D8C2C4 4FDFF252 D1BB67F1 A6BC5767 3FB506DD 48B2364B D80D2BDA AF0A1B4C 36034AF6 41047A60 DF60EFC3 A867DF55 316E8EEF 4669BE79 CB61B38C BC66831A 256FD2A0 5268E236 CC0C7795 BB0B4703 220216B9 5505262F C5BA3BBE B2BD0B28 2BB45A92 5CB36A04 C2D7FFA7 B5D0CF31 2CD99E8B 5BDEAE1D 9B64C2B0 EC63F226 756AA39C 026D930A 9C0906A9 EB0E363F 72076785 05005713 95BF4A82 E2B87A14 7BB12BAE 0CB61B38 92D28E9B E5D5BE0D 7CDCEFB7 0BDBDF21 86D3D2D4 F1D4E242 68DDB3F8 1FDA836E 81BE16CD F6B9265B 6FB077E1 18B74777 88085AE6 FF0F6A70 66063BCA 11010B5C 8F659EFF F862AE69 616BFFD3 166CCF45 A00AE278 D70DD2EE 4E048354 3903B3C2 A7672661 D06016F7 4969474D 3E6E77DB AED16A4A D9D65ADC 40DF0B66 37D83BF0 A9BCAE53 DEBB9EC5 47B2CF7F 30B5FFE9 BDBDF21C CABAC28A 53B39330 24B4A3A6 BAD03605 CDD70693 54DE5729 23D967BF B3667A2E C4614AB8 5D681B02 2A6F2B94 B40BBE37 C30C8EA1 5A05DF1B 2D02EF8D";
+
+    /* Number */
+    function crc32( /* String */ str, /* Number */ crc ) {
+        if( !crc ) crc = 0;
         var n = 0; //a number between 0 and 255 
         var x = 0; //an hex number 
- 
-        crc = crc ^ (-1); 
-        for( var i = 0, iTop = str.length; i < iTop; i++ ) { 
-            n = ( crc ^ str.charCodeAt( i ) ) & 0xFF; 
-            x = "0x" + crcTable.substr( n * 9, 8 ); 
-            crc = ( crc >>> 8 ) ^ x; 
-        } 
-        return crc ^ (-1); 
-    };
+
+        crc = crc ^ (-1);
+        for( var i = 0, iTop = str.length; i < iTop; i++ ) {
+            n = ( crc ^ str.charCodeAt( i ) ) & 0xFF;
+            x = "0x" + crcTable.substr( n * 9, 8 );
+            crc = ( crc >>> 8 ) ^ x;
+        }
+        return crc ^ (-1);
+    }
 
 function simpleDateTimeFormat(date) {
   var day = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][date.getDay()];
