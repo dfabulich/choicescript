@@ -939,7 +939,11 @@ function loginForm(target, errorMessage) {
                 showMessage('Those email addresses don\'t match.  Please type your email address again.');
                 return;
               }
+              startLoading();
+              target.removeChild(form);
               login(email, form.password.value, /*register*/true, subscribe, function(ok, response) {
+                target.appendChild(form);
+                doneLoading();
                 if (ok) {
                   showMessage("ok");
                 } else if ("incorrect password" == response.error) {
@@ -954,7 +958,11 @@ function loginForm(target, errorMessage) {
             println("", form);
             printButton("Next", form, true);
           } else if ("passwordButton" == choice) {
+            startLoading();
+            target.removeChild(form);
             login(email, form.password.value, /*register*/false, /*subscribe*/false, function(ok, response) {
+              doneLoading();
+              target.appendChild(form);
               if (ok) {
                 showMessage("ok");
               } else if ("unknown email" == response.error) {
@@ -966,7 +974,11 @@ function loginForm(target, errorMessage) {
               }
             });
           } else if ("forgot" == choice) {
+            startLoading();
+            target.removeChild(form);
             forgotPassword(email, function(ok, response) {
+              doneLoading();
+              target.appendChild(form);
               if (ok) {
                 showMessage("We've emailed you a link to reset your password. Please check your email and click on the link, then return here to sign in.");
                 document.getElementById('passwordButton').checked = true;
