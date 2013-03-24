@@ -1712,15 +1712,13 @@ Scene.prototype.login = function login() {
     self.paragraph();
     var form = document.createElement("form");
 
-    form.action="#";
-
     var escapedEmail = defaultEmail.replace(/'/g, "&apos;");
     form.innerHTML = "<div id=message style='color:red; font-weight:bold'>message</div><span><span>My email address is: </span><input type=email name=email id=email value='"+
-      escapedEmail+"' style='font-size: 25px; width: 15em'></span><p>Do you have a Choiceofgames.com password?</p>"+
+      escapedEmail+"' style='font-size: 25px; width: 12em'></span><p>Do you have a Choiceofgames.com password?</p>"+
       "<div class='choice'>"+
       "<label for=new class=firstChild><input type=radio name=choice id=new checked> No, I'm new.</label>"+
       "<label for=passwordButton><input type=radio name=choice id=passwordButton> "+
-      "Yes, I have a password: <input id=password type=password name=password disabled></label>"+
+      "Yes, I have a password: <input id=password type=password name=password disabled style='width:8em'></label>"+
       "<label for=forgot class=lastChild><input type=radio name=choice id=forgot> I forgot my password.</label>"+
       "</div>";
 
@@ -1735,6 +1733,27 @@ Scene.prototype.login = function login() {
     for (var i = radioButtons.length - 1; i >= 0; i--) {
       radioButtons[i].onchange = onchange;
     }
+
+    form.onsubmit = function(event) {
+      preventDefault(event);
+      var choice = form.querySelector("input:checked").id;
+      if ("new" == choice) {
+        target.removeChild(form);
+        var registrationForm = document.createElement("form");
+        form.style.display = "table";
+        registrationForm.innerHTML = "<div id=message style='color:red; font-weight:bold'>message</div>"+
+          "<div style='display:table-row'><span style='display:table-cell'>My email address is: </span><input type=email name=email id=email value='"+
+          escapedEmail+"' style='display:table-cell; font-size: 25px; width: 12em'></div>"+
+          "<div style='display:table-row'><span style='display:table-cell'>Type it again: </span><input type=email name=email2 id=email2 autocomplete='off' style='display:table-cell; font-size: 25px; width: 12em'></div>"+
+          "<div style='display:table-row'><span style='display:table-cell'>Enter a new password:&nbsp;</span><input type=password name=password id=password style='display:table-cell; font-size: 25px; width: 12em'></span></div>";
+        registrationForm.onsubmit = function(event) {
+          preventDefault(event);
+        };
+        target.appendChild(registrationForm);
+        println("", registrationForm);
+        printButton("Next", registrationForm, true);
+      }
+    };
 
     var target = this.target;
     if (!target) target = document.getElementById('text');

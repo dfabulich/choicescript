@@ -102,6 +102,10 @@ input[type="radio"], input[type="checkbox"] {
   color: gray;
 }
 
+input[type=password]:disabled {
+  background-color: lightgray;
+}
+
 .next {
     clear: both;
     display:block;

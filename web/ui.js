@@ -873,6 +873,7 @@ function promptEmailAddress(target, defaultEmail, callback) {
 
 function preventDefault(event) {
   if (!event) event = window.event;
+  if (!event) return;
   if (event.preventDefault) {
     event.preventDefault();
   } else {
