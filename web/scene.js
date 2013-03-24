@@ -1709,7 +1709,9 @@ Scene.prototype.login = function scene_login() {
   this.finished = true;
   this.skipFooter = true;
   this.paragraph();
-  loginForm();
+  var target = this.target;
+  if (!target) target = document.getElementById('text');
+  loginForm(target);
 };
 
 Scene.prototype.save_game = function save_game() {

@@ -871,12 +871,14 @@ function promptEmailAddress(target, defaultEmail, callback) {
   setTimeout(function() {callIos("curl");}, 0);
 }
 
-function loginForm() {
+function loginForm(target, errorMessage) {
   fetchEmail(function(defaultEmail) {
     var form = document.createElement("form");
 
+    if (!errorMessage) errorMessage = "";
+
     var escapedEmail = defaultEmail.replace(/'/g, "&apos;");
-    form.innerHTML = "<div id=message style='color:red; font-weight:bold'>message</div><span><span>My email address is: </span><input type=email name=email id=email value='"+
+    form.innerHTML = "<div id=message style='color:red; font-weight:bold'>"+errorMessage+"</div><span><span>My email address is: </span><input type=email name=email id=email value='"+
       escapedEmail+"' style='font-size: 25px; width: 12em'></span><p>Do you have a Choiceofgames.com password?</p>"+
       "<div class='choice'>"+
       "<label for=new class=firstChild><input type=radio name=choice id=new checked> No, I'm new.</label>"+
@@ -932,7 +934,8 @@ function loginForm() {
             if (ok) {
               showMessage("ok");
             } else if ("incorrect password" == response.error) {
-              alert("TODO");
+              target.removeChild(form);
+              loginForm(target, 'Sorry, the email address "'+email+'" is already in use. Please type your password below, or use a different email address.');
             } else {
               showMessage("Sorry, we weren't able to sign you in. (Your network connection may be down.) Please try again later, or contact support@choiceofgames.com for assistance.");
             }
@@ -958,8 +961,6 @@ function loginForm() {
       }
     };
 
-    var target = this.target;
-    if (!target) target = document.getElementById('text');
     target.appendChild(form);
     println("", form);
     printButton("Next", form, true);
