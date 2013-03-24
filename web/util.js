@@ -154,11 +154,11 @@ function toJson(obj, standardized) {
 }
 
 var loginUrlBase = "/~dfabulich/git/cogapi/api/";
-function login(email, password, register, callback) {
+function login(email, password, register, subscribe, callback) {
   var xhr = findXhr();
   xhr.open("POST", loginUrlBase + "login.php", true);
   xhr.setRequestHeader("Content-type","application/x-www-form-urlencoded");
-  var params = "email="+encodeURIComponent(email) + "&password=" + encodeURIComponent(password) + "&register="+register;
+  var params = "email="+encodeURIComponent(email) + "&password=" + encodeURIComponent(password) + "&register="+register + "&subscribe="+subscribe;
   var done = false;
 
   xhr.onreadystatechange = function() {
