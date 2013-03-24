@@ -106,6 +106,12 @@ input[type=password]:disabled {
   background-color: lightgray;
 }
 
+/* Reset for Firefox vs. Chrome */
+input[type=email],input[type=password] {
+  padding: 1px;
+  margin: 2px 0;
+}
+
 .next {
     clear: both;
     display:block;
