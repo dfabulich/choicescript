@@ -1711,7 +1711,14 @@ Scene.prototype.login = function scene_login() {
   this.paragraph();
   var target = this.target;
   if (!target) target = document.getElementById('text');
-  loginForm(target);
+  loginForm(target, null, function() {
+    clearScreen(function() {
+      self.finished = false;
+      self.prevLineEmpty = true;
+      self.screenEmpty = true;
+      self.execute();
+    });
+  });
 };
 
 Scene.prototype.save_game = function save_game() {

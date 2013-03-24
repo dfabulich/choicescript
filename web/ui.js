@@ -871,7 +871,7 @@ function promptEmailAddress(target, defaultEmail, callback) {
   setTimeout(function() {callIos("curl");}, 0);
 }
 
-function loginForm(target, errorMessage) {
+function loginForm(target, errorMessage, callback) {
   fetchEmail(function(defaultEmail) {
     var form = document.createElement("form");
 
@@ -942,14 +942,13 @@ function loginForm(target, errorMessage) {
               startLoading();
               target.removeChild(form);
               login(email, form.password.value, /*register*/true, subscribe, function(ok, response) {
-                target.appendChild(form);
                 doneLoading();
                 if (ok) {
-                  showMessage("ok");
+                  callback("ok");
                 } else if ("incorrect password" == response.error) {
-                  target.removeChild(form);
-                  loginForm(target, 'Sorry, the email address "'+email+'" is already in use. Please type your password below, or use a different email address.');
+                  loginForm(target, 'Sorry, the email address "'+email+'" is already in use. Please type your password below, or use a different email address.', callback);
                 } else {
+                  target.appendChild(form);
                   showMessage("Sorry, we weren't able to sign you in. (Your network connection may be down.) Please try again later, or contact support@choiceofgames.com for assistance.");
                 }
               });
@@ -964,7 +963,7 @@ function loginForm(target, errorMessage) {
               doneLoading();
               target.appendChild(form);
               if (ok) {
-                showMessage("ok");
+                callback("ok");
               } else if ("unknown email" == response.error) {
                 showMessage('Sorry, we can\'t find a record for the email address "'+email+'". Please try a different email address, or create a new account.');
               } else if ("incorrect password" == response.error) {
