@@ -178,6 +178,30 @@ function login(email, password, register, callback) {
   xhr.send(params);
 }
 
+function forgotPassword(email, callback) {
+  var xhr = findXhr();
+  xhr.open("POST", loginUrlBase + "forgot.php", true);
+  xhr.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+  var params = "email="+encodeURIComponent(email);
+  var done = false;
+
+  xhr.onreadystatechange = function() {
+    if (done) return;
+    if (xhr.readyState != 4) return;
+    done = true;
+    var ok = xhr.status == 200;
+    var response = {};
+    try {
+      if (xhr.responseText) response = JSON.parse(xhr.responseText);
+    } catch (e) {
+      ok = false;
+    }
+    if (!ok && !response.error) response.error = "unknown error";
+    callback(ok, response);
+  };
+  xhr.send(params);
+}
+
 function saveCookie(callback, slot, stats, temps, lineNum, indent) {
     var value = computeCookie(stats, temps, lineNum, indent);
     return writeCookie(value, slot, callback);
