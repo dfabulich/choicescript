@@ -1704,7 +1704,7 @@ Scene.prototype.parseRestoreGame = function parseRestoreGame(alreadyFinished) {
     return unrestorableScenes;
 };
 
-Scene.prototype.login = function login() {
+Scene.prototype.login = function scene_login() {
   var self = this;
   this.finished = true;
   this.skipFooter = true;
@@ -1735,23 +1735,63 @@ Scene.prototype.login = function login() {
     }
 
     form.onsubmit = function(event) {
+      function showMessage(msg) {
+        var message = document.getElementById('message');
+        var messageText = document.createTextNode(msg);
+        message.innerHTML = "";
+        message.appendChild(messageText);
+      }
       preventDefault(event);
+
+      var email = trim(form.email.value);
+      if (!/^\S+@\S+\.\S+$/.test(email)) {
+        showMessage('Sorry, "'+email+'" is not an email address.  Please type your email address again.');
+        return;
+      }
       var choice = form.querySelector("input:checked").id;
       if ("new" == choice) {
         target.removeChild(form);
-        var registrationForm = document.createElement("form");
-        form.style.display = "table";
-        registrationForm.innerHTML = "<div id=message style='color:red; font-weight:bold'>message</div>"+
-          "<div style='display:table-row'><span style='display:table-cell'>My email address is: </span><input type=email name=email id=email value='"+
+        form = document.createElement("form");
+        var escapedEmail = email.replace(/'/g, "&apos;");
+        form.innerHTML = "<div id=message style='color:red; font-weight:bold'>message</div>"+
+          "<div style='display:table'><div style='display:table-row'><span style='display:table-cell'>My email address is: </span><input type=email name=email id=email value='"+
           escapedEmail+"' style='display:table-cell; font-size: 25px; width: 12em'></div>"+
           "<div style='display:table-row'><span style='display:table-cell'>Type it again: </span><input type=email name=email2 id=email2 autocomplete='off' style='display:table-cell; font-size: 25px; width: 12em'></div>"+
-          "<div style='display:table-row'><span style='display:table-cell'>Enter a new password:&nbsp;</span><input type=password name=password id=password style='display:table-cell; font-size: 25px; width: 12em'></span></div>";
-        registrationForm.onsubmit = function(event) {
+          "<div style='display:table-row'><span style='display:table-cell'>Enter a new password:&nbsp;</span><input type=password name=password id=password style='display:table-cell; font-size: 25px; width: 12em'></span></div></div>";
+        form.onsubmit = function(event) {
           preventDefault(event);
+          var email = trim(form.email.value);
+          if (!/^\S+@\S+\.\S+$/.test(email)) {
+            showMessage('Sorry, "'+email+'" is not an email address.  Please type your email address again.');
+            return;
+          }
+          login(email, form.password.value, true, function(ok, response) {
+            if (ok) {
+              showMessage("ok");
+            } else if ("incorrect password" == response.error) {
+              alert("TODO");
+            } else {
+              showMessage("Sorry, we weren't able to sign you in. (Your network connection may be down.) Please try again later, or contact support@choiceofgames.com for assistance.");
+            }
+          });
         };
-        target.appendChild(registrationForm);
-        println("", registrationForm);
-        printButton("Next", registrationForm, true);
+        target.appendChild(form);
+        println("", form);
+        printButton("Next", form, true);
+      } else if ("passwordButton" == choice) {
+        login(email, form.password.value, false, function(ok, response) {
+          if (ok) {
+            showMessage("ok");
+          } else if ("unknown email" == response.error) {
+            showMessage('Sorry, we can\'t find a record for the email address "'+email+'". Please try a different email address, or create a new account.');
+          } else if ("incorrect password" == response.error) {
+            showMessage('Sorry, that password is incorrect. Please try again, or select "I forgot my password" to reset your password.');
+          } else {
+            showMessage("Sorry, we weren't able to sign you in. (Your network connection may be down.) Please try again later, or contact support@choiceofgames.com for assistance.");
+          }
+        });
+      } else if ("forgot" == choice) {
+        alert("TODO");
       }
     };
 
