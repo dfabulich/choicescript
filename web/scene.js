@@ -1704,6 +1704,46 @@ Scene.prototype.parseRestoreGame = function parseRestoreGame(alreadyFinished) {
     return unrestorableScenes;
 };
 
+Scene.prototype.login = function login() {
+  var self = this;
+  this.finished = true;
+  this.skipFooter = true;
+  fetchEmail(function(defaultEmail) {
+    self.paragraph();
+    var form = document.createElement("form");
+
+    form.action="#";
+
+    var escapedEmail = defaultEmail.replace(/'/g, "&apos;");
+    form.innerHTML = "<div id=message style='color:red; font-weight:bold'>message</div><span><span>My email address is: </span><input type=email name=email id=email value='"+
+      escapedEmail+"' style='font-size: 25px; width: 15em'></span><p>Do you have a Choiceofgames.com password?</p>"+
+      "<div class='choice'>"+
+      "<label for=new class=firstChild><input type=radio name=choice id=new checked> No, I'm new.</label>"+
+      "<label for=passwordButton><input type=radio name=choice id=passwordButton> "+
+      "Yes, I have a password: <input id=password type=password name=password disabled></label>"+
+      "<label for=forgot class=lastChild><input type=radio name=choice id=forgot> I forgot my password.</label>"+
+      "</div>";
+
+    var password = form.password;
+    var passwordButton = form.passwordButton;
+    var radioButtons = form.choice;
+    var onchange = function() {
+      var enabled = passwordButton.checked;
+      password.disabled = !enabled;
+      if (enabled) password.focus();
+    };
+    for (var i = radioButtons.length - 1; i >= 0; i--) {
+      radioButtons[i].onchange = onchange;
+    }
+
+    var target = this.target;
+    if (!target) target = document.getElementById('text');
+    target.appendChild(form);
+    println("", form);
+    printButton("Next", form, true);
+  });
+};
+
 Scene.prototype.save_game = function save_game() {
   if (this.temps.choice_user_restored) return;
   var self = this;
@@ -2799,5 +2839,5 @@ Scene.validCommands = {"comment":1, "goto":1, "gotoref":1, "label":1, "looplimit
     "subscribe":1, "show_password":1, "gosub":1, "return":1, "hide_reuse":1, "disable_reuse":1, "allow_reuse":1,
     "check_purchase":1,"restore_purchases":1,"purchase":1,"restore_game":1,"advertisement":1,
     "save_game":1,"delay_break":1,"image":1,"link":1,"input_number":1,"goto_random_scene":1,
-    "restart":1,"more_games":1,"delay_ending":1,"end_trial":1
+    "restart":1,"more_games":1,"delay_ending":1,"end_trial":1,"login":1
     };
