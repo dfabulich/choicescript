@@ -339,7 +339,7 @@ function isWebSavePossible() {
 
 
 webSaveDomain = "www.choiceofgames.com";
-webSaveUrl = "http://" + webSaveDomain + "/ajax_proxy.php/websave";
+webSaveUrl = "https://" + webSaveDomain + "/ajax_proxy.php/websave";
 
 function submitRemoteSave(slot, email, subscribe, callback) {
   if (!isWebSavePossible()) return setTimeout(function() { callback(false); });
