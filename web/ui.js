@@ -890,6 +890,9 @@ function promptEmailAddress(target, defaultEmail, callback) {
 }
 
 function loginForm(target, errorMessage, callback) {
+  if (!isRegisterAllowed()) return setTimeout(function() {
+    callback(!"ok");
+  }, 0);
   startLoading();
   fetchEmail(function(defaultEmail) {
     if (getCookieByName("login")) {
@@ -1070,6 +1073,10 @@ function loginDiv(email) {
 
 function isRegistered() {
   return !!getCookieByName("login");
+}
+
+function isRegisterAllowed() {
+  return window.isWeb;
 }
 
 function preventDefault(event) {
