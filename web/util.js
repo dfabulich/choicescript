@@ -153,7 +153,7 @@ function toJson(obj, standardized) {
  }
 }
 
-var loginUrlBase = "/~dfabulich/git/cogapi/api/";
+var loginUrlBase = "https://www.choiceofgames.com/api/";
 function xhrAuthRequest(method, endpoint, callback) {
   var paramBuilder = new Array(arguments.length*3);
   for (var i = 3; i < arguments.length; i=i+2) {
