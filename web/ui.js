@@ -1068,6 +1068,10 @@ function loginDiv(email) {
   }
 }
 
+function isRegistered() {
+  return !!getCookieByName("login");
+}
+
 function preventDefault(event) {
   if (!event) event = window.event;
   if (!event) return;
