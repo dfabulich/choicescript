@@ -872,6 +872,7 @@ function promptEmailAddress(target, defaultEmail, callback) {
 }
 
 function loginForm(target, errorMessage, callback) {
+  if (getCookieByName("login")) return setTimeout(callback, 0);
   fetchEmail(function(defaultEmail) {
     var form = document.createElement("form");
 
