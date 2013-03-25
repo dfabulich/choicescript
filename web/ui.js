@@ -895,6 +895,7 @@ function loginForm(target, errorMessage, callback) {
     if (getCookieByName("login")) {
       if (defaultEmail) {
         doneLoading();
+        loginDiv(defaultEmail);
         return callback();
       }
       // Cookie says I'm logged in, but we have no local record of the email address
@@ -902,12 +903,14 @@ function loginForm(target, errorMessage, callback) {
         doneLoading();
         if (ok) {
           if (response.email) {
+            loginDiv(response.email);
             return recordEmail(response.email, callback);
           } else if (getCookieByName("login")) {
             // if no email, then we should be logged out
             throw new Exception("Error code 1787 during log in.");
           } else {
             // not really logged in after all
+            loginDiv();
             return loginForm(target, errorMessage, callback);
           }
         } else {
@@ -988,6 +991,7 @@ function loginForm(target, errorMessage, callback) {
               login(email, form.password.value, /*register*/true, subscribe, function(ok, response) {
                 doneLoading();
                 if (ok) {
+                  loginDiv(email);
                   callback("ok");
                 } else if ("incorrect password" == response.error) {
                   loginForm(target, 'Sorry, the email address "'+email+'" is already in use. Please type your password below, or use a different email address.', callback);
@@ -1007,6 +1011,7 @@ function loginForm(target, errorMessage, callback) {
               doneLoading();
               target.appendChild(form);
               if (ok) {
+                loginDiv(email);
                 callback("ok");
               } else if ("unknown email" == response.error) {
                 showMessage('Sorry, we can\'t find a record for the email address "'+email+'". Please try a different email address, or create a new account.');
@@ -1042,6 +1047,25 @@ function loginForm(target, errorMessage, callback) {
     println("", form);
     printButton("Next", form, true);
   });
+}
+
+function loginDiv(email) {
+  var domain = "https://www.choiceofgames.com/";
+  if (getCookieByName("login")) {
+    var emailLink = document.getElementById("email");
+    emailLink.innerHTML = "";
+    emailLink.appendChild(document.createTextNode(email));
+    emailLink.href = domain + "profile" + "/";
+    document.getElementById("identity").style.display = "block";
+    var logoutLink = document.getElementById("logout");
+    logoutLink.onclick = function(event) {
+      preventDefault(event);
+      logout();
+      loginDiv();
+    };
+  } else {
+    document.getElementById("identity").style.display = "none";
+  }
 }
 
 function preventDefault(event) {
@@ -1185,6 +1209,7 @@ window.onload=function() {
     if (window.Touch && window.isWeb) {
       // INSERT ADMOB AD
     }
+    fetchEmail(loginDiv);
 };
 
 _global = this;

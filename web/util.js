@@ -185,7 +185,7 @@ function xhrAuthRequest(method, endpoint, callback) {
       ok = false;
     }
     if (!ok && !response.error) response.error = "unknown error";
-    callback(ok, response);
+    if (callback) callback(ok, response);
   };
   xhr.send(params);
 }
@@ -196,6 +196,11 @@ function login(email, password, register, subscribe, callback) {
 
 function forgotPassword(email, callback) {
   xhrAuthRequest("POST", "forgot", callback, "email", encodeURIComponent(email));
+}
+
+function logout(callback) {
+  document.cookie = 'login=0;path=/;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+  xhrAuthRequest("GET", "logout", callback);
 }
 
 function getRemoteEmail(callback) {

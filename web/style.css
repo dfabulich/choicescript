@@ -143,6 +143,16 @@ h2 {
   font-weight: normal;
 }
 
+#identity {
+  float: right;
+  display: none;
+}
+
+#identity > a {
+  display: block;
+  text-align: end;
+}
+
 #footer {
   margin:10px 0px 75px 0px;
 }
