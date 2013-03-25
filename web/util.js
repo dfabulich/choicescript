@@ -154,11 +154,18 @@ function toJson(obj, standardized) {
 }
 
 var loginUrlBase = "/~dfabulich/git/cogapi/api/";
-function login(email, password, register, subscribe, callback) {
+function xhrAuthPost(endpoint, callback) {
+  var paramBuilder = new Array(arguments.length*3);
+  for (var i = 2; i < arguments.length; i=i+2) {
+    if (i > 0) paramBuilder.push("&");
+    paramBuilder.push(arguments[i]);
+    paramBuilder.push("=");
+    paramBuilder.push(arguments[i+1]);
+  }
+  var params = paramBuilder.join("");
   var xhr = findXhr();
-  xhr.open("POST", loginUrlBase + "login.php", true);
+  xhr.open("POST", loginUrlBase + endpoint + ".php", true);
   xhr.setRequestHeader("Content-type","application/x-www-form-urlencoded");
-  var params = "email="+encodeURIComponent(email) + "&password=" + encodeURIComponent(password) + "&register="+register + "&subscribe="+subscribe;
   var done = false;
 
   xhr.onreadystatechange = function() {
@@ -178,28 +185,12 @@ function login(email, password, register, subscribe, callback) {
   xhr.send(params);
 }
 
-function forgotPassword(email, callback) {
-  var xhr = findXhr();
-  xhr.open("POST", loginUrlBase + "forgot.php", true);
-  xhr.setRequestHeader("Content-type","application/x-www-form-urlencoded");
-  var params = "email="+encodeURIComponent(email);
-  var done = false;
+function login(email, password, register, subscribe, callback) {
+  xhrAuthPost("login", callback, "email", encodeURIComponent(email), "password", encodeURIComponent(password), "register", register, "subscribe", subscribe);
+}
 
-  xhr.onreadystatechange = function() {
-    if (done) return;
-    if (xhr.readyState != 4) return;
-    done = true;
-    var ok = xhr.status == 200;
-    var response = {};
-    try {
-      if (xhr.responseText) response = JSON.parse(xhr.responseText);
-    } catch (e) {
-      ok = false;
-    }
-    if (!ok && !response.error) response.error = "unknown error";
-    callback(ok, response);
-  };
-  xhr.send(params);
+function forgotPassword(email, callback) {
+  xhrAuthPost("forgot", callback, "email", encodeURIComponent(email));
 }
 
 function saveCookie(callback, slot, stats, temps, lineNum, indent) {
