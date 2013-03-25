@@ -154,9 +154,9 @@ function toJson(obj, standardized) {
 }
 
 var loginUrlBase = "/~dfabulich/git/cogapi/api/";
-function xhrAuthPost(endpoint, callback) {
+function xhrAuthRequest(method, endpoint, callback) {
   var paramBuilder = new Array(arguments.length*3);
-  for (var i = 2; i < arguments.length; i=i+2) {
+  for (var i = 3; i < arguments.length; i=i+2) {
     if (i > 0) paramBuilder.push("&");
     paramBuilder.push(arguments[i]);
     paramBuilder.push("=");
@@ -164,8 +164,13 @@ function xhrAuthPost(endpoint, callback) {
   }
   var params = paramBuilder.join("");
   var xhr = findXhr();
-  xhr.open("POST", loginUrlBase + endpoint + ".php", true);
-  xhr.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+  if (method == "POST") {
+    xhr.open(method, loginUrlBase + endpoint + ".php", true);
+    xhr.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+  } else {
+    xhr.open(method, loginUrlBase + endpoint + ".php?" + params, true);
+  }
+
   var done = false;
 
   xhr.onreadystatechange = function() {
@@ -186,11 +191,15 @@ function xhrAuthPost(endpoint, callback) {
 }
 
 function login(email, password, register, subscribe, callback) {
-  xhrAuthPost("login", callback, "email", encodeURIComponent(email), "password", encodeURIComponent(password), "register", register, "subscribe", subscribe);
+  xhrAuthRequest("POST", "login", callback, "email", encodeURIComponent(email), "password", encodeURIComponent(password), "register", register, "subscribe", subscribe);
 }
 
 function forgotPassword(email, callback) {
-  xhrAuthPost("forgot", callback, "email", encodeURIComponent(email));
+  xhrAuthRequest("POST", "forgot", callback, "email", encodeURIComponent(email));
+}
+
+function getRemoteEmail(callback) {
+  xhrAuthRequest("GET", "getuser", callback);
 }
 
 function saveCookie(callback, slot, stats, temps, lineNum, indent) {

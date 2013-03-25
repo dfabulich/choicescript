@@ -872,8 +872,33 @@ function promptEmailAddress(target, defaultEmail, callback) {
 }
 
 function loginForm(target, errorMessage, callback) {
-  if (getCookieByName("login")) return setTimeout(callback, 0);
+  startLoading();
   fetchEmail(function(defaultEmail) {
+    if (getCookieByName("login")) {
+      if (defaultEmail) {
+        doneLoading();
+        return callback();
+      }
+      // Cookie says I'm logged in, but we have no local record of the email address
+      return getRemoteEmail(function(ok, response) {
+        doneLoading();
+        if (ok) {
+          if (response.email) {
+            return recordEmail(response.email, callback);
+          } else if (getCookieByName("login")) {
+            // if no email, then we should be logged out
+            throw new Exception("Error code 1787 during log in.");
+          } else {
+            // not really logged in after all
+            return loginForm(target, errorMessage, callback);
+          }
+        } else {
+          // missed an opportunity to record email locally. meh.
+          return callback();
+        }
+      });
+    }
+    doneLoading();
     var form = document.createElement("form");
 
     if (!errorMessage) errorMessage = "";
