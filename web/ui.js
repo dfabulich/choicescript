@@ -899,7 +899,7 @@ function loginForm(target, errorMessage, callback) {
       if (defaultEmail) {
         doneLoading();
         loginDiv(defaultEmail);
-        return callback();
+        return setTimeout(callback, 0);
       }
       // Cookie says I'm logged in, but we have no local record of the email address
       return getRemoteEmail(function(ok, response) {
@@ -933,10 +933,10 @@ function loginForm(target, errorMessage, callback) {
     form.innerHTML = "<div id=message style='color:red; font-weight:bold'>"+errorMessage+"</div><span><span>My email address is: </span><input type=email name=email id=email value='"+
       escapedEmail+"' style='font-size: 25px; width: 12em'></span><p>Do you have a Choiceofgames.com password?</p>"+
       "<div class='choice'>"+
-      "<label for=new class=firstChild><input type=radio name=choice id=new "+newChecked+"> No, I'm new.</label>"+
-      "<label for=passwordButton><input type=radio name=choice id=passwordButton "+passwordChecked+"> "+
+      "<label for=new class=firstChild><input type=radio name=choice value=new id=new "+newChecked+"> No, I'm new.</label>"+
+      "<label for=passwordButton><input type=radio name=choice value=passwordButton id=passwordButton "+passwordChecked+"> "+
       "Yes, I have a password: <input id=password type=password name=password disabled style='width:8em'></label>"+
-      "<label for=forgot class=lastChild><input type=radio name=choice id=forgot> I forgot my password.</label>"+
+      "<label for=forgot class=lastChild><input type=radio name=choice value=forgot id=forgot> I forgot my password.</label>"+
       "</div>";
 
     var password = form.password;
@@ -965,7 +965,7 @@ function loginForm(target, errorMessage, callback) {
             message.innerHTML = "";
             message.appendChild(messageText);
           }
-          var choice = form.querySelector("input:checked").id;
+          var choice = getFormValue("choice");
           if ("new" == choice) {
             target.removeChild(form);
             form = document.createElement("form");
@@ -1056,9 +1056,9 @@ function loginDiv(email) {
   var domain = "https://www.choiceofgames.com/";
   if (getCookieByName("login")) {
     var emailLink = document.getElementById("email");
+    emailLink.setAttribute("href", domain + "profile" + "/");
     emailLink.innerHTML = "";
     emailLink.appendChild(document.createTextNode(email));
-    emailLink.href = domain + "profile" + "/";
     document.getElementById("identity").style.display = "block";
     var logoutLink = document.getElementById("logout");
     logoutLink.onclick = function(event) {
