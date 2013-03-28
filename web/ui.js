@@ -930,8 +930,11 @@ function loginForm(target, errorMessage, callback) {
     var escapedEmail = defaultEmail.replace(/'/g, "&apos;");
     var newChecked = defaultEmail ? "" : "checked";
     var passwordChecked = defaultEmail ? "checked" : "";
-    form.innerHTML = "<div id=message style='color:red; font-weight:bold'>"+errorMessage+"</div><span><span>My email address is: </span><input type=email name=email id=email value='"+
-      escapedEmail+"' style='font-size: 25px; width: 12em'></span><p>Do you have a Choiceofgames.com password?</p>"+
+    form.innerHTML = "<div id=message style='color:red; font-weight:bold'>"+errorMessage+
+      "</div><span><span>My email address is: </span><input type=email name=email id=email value='"+
+      escapedEmail+"' style='font-size: 25px; width: 12em'></span><p><label for=subscribe>"+
+      "<input type=checkbox name=subscribe id=subscribe checked> "+
+      "Email me when new games are available.</label></p><p>Do you have a Choiceofgames.com password?</p>"+
       "<div class='choice'>"+
       "<label for=new class=firstChild><input type=radio name=choice value=new id=new "+newChecked+"> No, I'm new.</label>"+
       "<label for=passwordButton><input type=radio name=choice value=passwordButton id=passwordButton "+passwordChecked+"> "+
@@ -1010,7 +1013,7 @@ function loginForm(target, errorMessage, callback) {
           } else if ("passwordButton" == choice) {
             startLoading();
             target.removeChild(form);
-            login(email, form.password.value, /*register*/false, /*subscribe*/false, function(ok, response) {
+            login(email, form.password.value, /*register*/false, form.subscribe.checked, function(ok, response) {
               doneLoading();
               target.appendChild(form);
               if (ok) {
