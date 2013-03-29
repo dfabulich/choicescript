@@ -40,6 +40,11 @@ printLink = function() {};
 printImage = function() {};
 showPassword = function() {};
 
+isRegistered = function() {return false;};
+isRegisterAllowed = function() {return false;};
+isRestorePurchasesSupported = function() {return false;};
+areSaveSlotsSupported = function() {return false;};
+
 function fileExists(filePath) {
     if (isRhino) {
         return new java.io.File(filePath).exists();
