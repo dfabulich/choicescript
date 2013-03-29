@@ -1707,6 +1707,7 @@ Scene.prototype.parseRestoreGame = function parseRestoreGame(alreadyFinished) {
 };
 
 Scene.prototype.login = function scene_login() {
+  if (typeof window == "undefined") return;
   var self = this;
   this.finished = true;
   this.skipFooter = true;
