@@ -20,10 +20,10 @@ printed = [];
 headless = true;
 debughelp = function debughelp() {
   debugger;
-}
+};
 printx = function printx(msg, parent) {
     printed.push(msg);
-}
+};
 function println(msg, parent) {
     printed.push(msg);
     printed.push("<br>");
@@ -31,14 +31,14 @@ function println(msg, parent) {
 
 isRhino = typeof(java) != "undefined";
 
-clearScreen = function clearScreen(code) {code.call();}
-saveCookie = function(callback) { if (callback) callback.call(); }
-doneLoading = function() {}
-printFooter = function() {}
-printShareLinks = function() {}
-printLink = function() {}
-printImage = function() {}
-showPassword = function() {}
+clearScreen = function clearScreen(code) {code.call();};
+saveCookie = function(callback) { if (callback) callback.call(); };
+doneLoading = function() {};
+printFooter = function() {};
+printShareLinks = function() {};
+printLink = function() {};
+printImage = function() {};
+showPassword = function() {};
 
 function fileExists(filePath) {
     if (isRhino) {
@@ -50,7 +50,7 @@ function fileExists(filePath) {
 
 function fileLastMod(filePath) {
     if (isRhino) {
-        return new java.io.File(filePath).lastModified()
+        return new java.io.File(filePath).lastModified();
     } else {
         if (path.existsSync(filePath)) return fs.statSync(filePath).mtime.getTime();
         return 0;
@@ -59,7 +59,7 @@ function fileLastMod(filePath) {
 
 function mkdirs(filePath) {
     if (isRhino) {
-        new java.io.File(filePath).mkdirs()
+        new java.io.File(filePath).mkdirs();
     } else {
         if (!path.existsSync(filePath)) {
             var parentDir = path.dirname(filePath);
@@ -68,7 +68,6 @@ function mkdirs(filePath) {
             }
             fs.mkdirSync(filePath);
         }
-        
     }
 }
 
@@ -77,14 +76,14 @@ function slurpFile(name, throwOnError) {
 }
 
 function slurpFileLines(name, throwOnError) {
+    var lines, line, i, invalidCharacter;
     if (isRhino) {
-        var lines = [];
+        lines = [];
         var reader = new java.io.BufferedReader(new java.io.InputStreamReader(new java.io.FileInputStream(name), "UTF-8"));
-        var line;
-        for (var i = 0; line = reader.readLine(); i++) {
-            if (i == 0 && line.charCodeAt(0) == 65279) line = line.substring(1);
+        for (i = 0; !!(line = reader.readLine()); i++) {
+            if (i === 0 && line.charCodeAt(0) == 65279) line = line.substring(1);
             if (throwOnError) {
-                var invalidCharacter = line.match(/^(.*)\ufffd/);
+                invalidCharacter = line.match(/^(.*)\ufffd/);
                 if (invalidCharacter) throw new Error("line " + (i+1) + ": invalid character. Is this text Unicode?\n" + invalidCharacter[0]);
             }
             lines.push(line);
@@ -92,14 +91,14 @@ function slurpFileLines(name, throwOnError) {
         return lines;
     } else {
         var blob = fs.readFileSync(name, "utf-8");
-        var lines = blob.split(/\r?\n/);
-        var firstLine = lines[0]
+        lines = blob.split(/\r?\n/);
+        var firstLine = lines[0];
         // strip byte order mark
         if (firstLine.charCodeAt(0) == 65279) lines[0] = firstLine.substring(1);
         if (throwOnError) {
-            for (var i = 0; i < lines.length; i++) {
-                var line = lines[i];
-                var invalidCharacter = line.match(/^(.*)\ufffd/);
+            for (i = 0; i < lines.length; i++) {
+                line = lines[i];
+                invalidCharacter = line.match(/^(.*)\ufffd/);
                 if (invalidCharacter) throw new Error("line " + (i+1) + ": invalid character. Is this text Unicode?\n" + invalidCharacter[0]);
             }
         }
