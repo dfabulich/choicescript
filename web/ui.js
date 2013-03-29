@@ -768,7 +768,7 @@ function printButton(name, parent, isSubmit, code) {
     button.name = name;
   } else {
     button = document.createElement("button");
-    button.appendChild(document.createTextNode(name));
+    printx(name, button);
   }
   setClass(button, "next");
   if (code) button.onclick = function() {
