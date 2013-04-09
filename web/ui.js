@@ -370,10 +370,10 @@ function moreGames() {
         var androidLink = document.getElementById('androidLink');
         if (androidLink && androidLink.href) {
           androidUrl = androidLink.href;
-          var package = androidUrl.substring(androidUrl.indexOf("id=") + 3);
-          window.location.href = "http://www.amazon.com/gp/mas/dl/android?p="+package+"&showAll=1";
+          var package = /id=([\.\w]+)/.exec(androidUrl)[1];
+          window.location.href = "http://www.amazon.com/gp/mas/dl/android?p="+package+"&showAll=1&t=choofgam-20&ref=moreGames";
         } else {
-          window.location.href = "http://www.amazon.com/gp/mas/dl/android?p=com.choiceofgames.dragon&showAll=1";
+          window.location.href = "http://www.amazon.com/gp/mas/dl/android?p=com.choiceofgames.dragon&showAll=1&t=choofgam-20&ref=moreGames";
         }
       } else {
         window.location.href = "market://search?q=pub:%22Choice+of+Games+LLC";
@@ -420,8 +420,8 @@ function printShareLinks(target, now) {
         androidUrl = androidLink.href;
         if (androidUrl) {
           if (window.isAmazonAndroidApp) {
-            var package = androidUrl.substring(androidUrl.indexOf("id=") + 3);
-            androidUrl = "http://www.amazon.com/gp/mas/dl/android?p="+package;
+            var package = /id=([\.\w]+)/.exec(androidUrl)[1];
+            androidUrl = "http://www.amazon.com/gp/mas/dl/android?p="+package+"&t=choofgam-20&ref=rate";
             mobileMesg = "  <li><a href='"+androidUrl+"'>Rate this app</a> in the Amazon Appstore</li>\n";
           } else {
             mobileMesg = "  <li><a href='"+androidUrl+"'>Rate this app</a> in the Google Play Store</li>\n";
