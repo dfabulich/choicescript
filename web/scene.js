@@ -2719,13 +2719,17 @@ Scene.prototype.end_trial = function endTrial() {
   this.finished = true;
 };
 
-Scene.prototype.achieve = function scene_achieve(name) {
-  name = trim(name);
-  if (!name) throw new Error(this.lineMsg() + "missing achievement name");
+Scene.prototype.achieve = function scene_achieve(data) {
+  data = trim(data);
+  if (!data) throw new Error(this.lineMsg() + "missing achievement name and description");
+  var index = data.indexOf(' ');
+  if (index == -1) throw new Error(this.lineMsg() + "missing achievement description: " + data);
+  var name = data.substr(0, index);
+  var description = data.substr(index+1);
   if (typeof window != "undefined") {
-    achieve(name);
+    achieve(name, description);
   }
-}
+};
 
 Scene.prototype.lineMsg = function lineMsg() {
     return "line " + (this.lineNum+1) + ": ";

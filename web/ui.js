@@ -671,9 +671,9 @@ function purchase(product, callback) {
   }
 }
 
-function achieve(name) {
+function achieve(name, description) {
   if (window.isIosApp) {
-    callIos("achieve", name);
+    callIos("achieve", name+"/"+description);
   }
 }
 
