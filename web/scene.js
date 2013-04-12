@@ -2719,6 +2719,14 @@ Scene.prototype.end_trial = function endTrial() {
   this.finished = true;
 };
 
+Scene.prototype.achieve = function scene_achieve(name) {
+  name = trim(name);
+  if (!name) throw new Error(this.lineMsg() + "missing achievement name");
+  if (typeof window != "undefined") {
+    achieve(name);
+  }
+}
+
 Scene.prototype.lineMsg = function lineMsg() {
     return "line " + (this.lineNum+1) + ": ";
 };
@@ -2819,5 +2827,5 @@ Scene.validCommands = {"comment":1, "goto":1, "gotoref":1, "label":1, "looplimit
     "subscribe":1, "show_password":1, "gosub":1, "return":1, "hide_reuse":1, "disable_reuse":1, "allow_reuse":1,
     "check_purchase":1,"restore_purchases":1,"purchase":1,"restore_game":1,"advertisement":1,
     "save_game":1,"delay_break":1,"image":1,"link":1,"input_number":1,"goto_random_scene":1,
-    "restart":1,"more_games":1,"delay_ending":1,"end_trial":1,"login":1
+    "restart":1,"more_games":1,"delay_ending":1,"end_trial":1,"login":1,"achieve":1
     };

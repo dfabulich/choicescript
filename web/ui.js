@@ -671,6 +671,12 @@ function purchase(product, callback) {
   }
 }
 
+function achieve(name) {
+  if (window.isIosApp) {
+    callIos("achieve", name);
+  }
+}
+
 function isFullScreenAdvertisingSupported() {
   return window.isIosApp || window.isAndroidApp;
 }
