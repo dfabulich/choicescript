@@ -23,38 +23,35 @@ a {
   max-width: 100%;
 }
 
+.statBar {
+  background-color: #949291;
+  height: 2em;
+  line-height: 2em;
+  margin: 4px 0;
+  width: 300px;
+  color: #f7f4f1;
+  position: relative; /* to allow absolute positioned value */
+}
+.opposed {
+  background-color: #6D6DFC;
+}
+
 table {
-    margin-bottom: 1em;
+  margin-bottom: 1.5em;
 }
 
-.leftStatName {
-    text-align: right;
-    font-weight: bold;
+.statBar > span, .statLine > span {
+  position: relative;
+  z-index: 1; /* visible over stat value */
+  padding: 0 0.5em;
 }
-.definition {
-    font-weight: normal;
-    font-style: italic;
-}
-.leftStatBar {
-    background-color: #FF0000;
-    height: 2em;
-    line-height: 2em;
-    color: white;
-}
-.rightStatName {
-    text-align: left;
-    font-weight: bold;
-}
-.rightStatBar {
-    width: 10em;
-    background-color: #8888FF;
-    height: 2em;
-}
-
-.rightStatBarOpposed {
-    width: 5em;
-    background-color: #8888FF;
-    height: 2em;
+.statValue {
+  background-color: #ff5955;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  /* width will be determined at runtime, 0-100% */
 }
 
 .choice>label{

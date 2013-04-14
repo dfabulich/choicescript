@@ -2072,16 +2072,11 @@ Scene.prototype.deobfuscatePassword = function deobfuscatePassword(password) {
 
 Scene.prototype.stat_chart = function stat_chart() {
   var rows = this.parseStatChart();
-  var containsOpposedPair = false;
-  for (var i = 0; i < rows.length && !containsOpposedPair; i++) {
-    if (rows[i].type == "opposed_pair") {
-      containsOpposedPair = true;
-    }
-  }
-  var textBuilder = ["<table class='statChart'>"];
-  var barWidth = 10; /*em*/
-  var barWidthOpposed = 5; /*em*/
-  // BEWARE: Can't use DOM to build this table due to IE bugs
+  var target = this.target;
+  if (!target) target = document.getElementById('text');
+
+  if (!this.prevLineEmpty) println("", target);
+
   for (i = 0; i < rows.length; i++) {
     var row = rows[i];
     var type = row.type;
@@ -2090,52 +2085,54 @@ Scene.prototype.stat_chart = function stat_chart() {
     var label = this.replaceVariables(row.label);
     var definition = this.replaceVariables(row.definition || "");
 
-    textBuilder.push("<tr><td class='leftStatName'>");
-    textBuilder.push(label);
-    if (definition) {
-      textBuilder.push("<div class='definition'>");
-      // TODO security problem
-      textBuilder.push(definition);
-      textBuilder.push("</div>");
-    }
-    textBuilder.push("</td>");
-
-    var statWidth;
+    var statWidth, div, span, statValue;
     if (type == "text") {
-      textBuilder.push("<td colspan='2'>");
-      // TODO security problem
-      textBuilder.push(value);
-    } else if (type == "percent") {
-      if (containsOpposedPair) {
-        statWidth = barWidthOpposed / 100 * value;
-        textBuilder.push("<td><div class='rightStatBarOpposed'><div style='width: "+
-          statWidth+"em;' class='leftStatBar'>&nbsp;"+value+"</div></div>");
+      div = document.createElement("div");
+      setClass(div, "statLine");
+      span = document.createElement("span");
+      if (trim(label) || trim(value)) {
+        printx(label + ": " + value, span);
       } else {
-        statWidth = barWidth / 100 * value;
-        textBuilder.push("<td><div class='rightStatBar'><div style='width: "+
-          statWidth+"em;' class='leftStatBar'>&nbsp;"+value+"</div></div>");
+        // unofficial line_break
+        printx(" ", span);
       }
+      div.appendChild(span);
+      target.appendChild(div);
+    } else if (type == "percent") {
+      div = document.createElement("div");
+      setClass(div, "statBar statLine");
+      span = document.createElement("span");
+      printx(label+": "+value+"%", span);
+      div.appendChild(span);
+      statValue = document.createElement("div");
+      setClass(statValue, "statValue");
+      statValue.style.width = value+"%";
+      statValue.innerHTML = "&nbsp;";
+      div.appendChild(statValue);
+      target.appendChild(div);
     } else if (type == "opposed_pair") {
-      statWidth = barWidthOpposed / 100 * value;
-      textBuilder.push("<td><div class='rightStatBarOpposed'><div style='width: "+
-        statWidth+"em;' class='leftStatBar'>&nbsp;"+value+"</div></div>");
-      textBuilder.push("<td class='rightStatName'>");
-      // TODO security problem
-      textBuilder.push(row.opposed_label);
-      if (definition) {
-        textBuilder.push("<div class='definition'>");
-        // TODO security problem
-        textBuilder.push(row.opposed_definition);
-        textBuilder.push("</div>");
-      }
+      div = document.createElement("div");
+      setClass(div, "statBar statLine opposed");
+      span = document.createElement("span");
+      printx(label+": "+value+"% ", span);
+      div.appendChild(span);
+      span = document.createElement("span");
+      span.setAttribute("style", "float: right");
+      printx(row.opposed_label+": "+(100-value)+"%", span);
+      div.appendChild(span);
+      statValue = document.createElement("div");
+      setClass(statValue, "statValue");
+      statValue.style.width = value+"%";
+      statValue.innerHTML = "&nbsp;";
+      div.appendChild(statValue);
+      target.appendChild(div);
     } else {
       throw new Error("Bug! Parser accepted an unknown row type: " + type);
     }
-    textBuilder.push("</td></tr>");
   }
-  var target = this.target;
-  if (!target) target = document.getElementById('text');
-  target.innerHTML += textBuilder.join("");
+  println("", target);
+  this.prevLineEmpty = true;
+  this.screenEmpty = false;
 };
 
 Scene.prototype.parseStatChart = function parseStatChart() {
