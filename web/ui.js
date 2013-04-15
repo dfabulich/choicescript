@@ -1181,6 +1181,7 @@ window.onerror=function(msg, file, line, stack) {
       return; // ignore "adsense offline" error
     }
     alert(msg);
+    if (!window.storeName) return;
     var ok = confirm("Sorry, an error occured.  Click OK to email error data to support.");
     if (ok) {
         var statMsg = "(unknown)";
@@ -1203,7 +1204,7 @@ window.onerror=function(msg, file, line, stack) {
         } catch (e) {}
         window.location.href=(supportEmail + "?subject=Error Report&body=" + encodeURIComponent(body));
     }
-}
+};
 
 window.onload=function() {
     if (window.alreadyLoaded) return;
