@@ -2077,6 +2077,35 @@ Scene.prototype.stat_chart = function stat_chart() {
 
   if (!this.prevLineEmpty) println("", target);
 
+  var barWidth = 0;
+  var standardFontSize = 0;
+
+  function fixFontSize(span1, span2) {
+    if (!standardFontSize) {
+      if (window.getComputedStyle) {
+        standardFontSize = parseInt(getComputedStyle(document.body).fontSize, 10);
+      } else if (document.body.currentStyle) {
+        standardFontSize = parseInt(document.body.currentStyle.fontSize, 10);
+      } else {
+        standardFontSize = 16;
+      }
+    }
+    if (!barWidth) barWidth = span1.parentNode.offsetWidth;
+    var spanMaxWidth, biggestSpanWidth;
+    if (span2) {
+      spanMaxWidth = barWidth / 2;
+      biggestSpanWidth = Math.max(span1.offsetWidth, span2.offsetWidth);
+    } else {
+      spanMaxWidth = barWidth;
+      biggestSpanWidth = span1.offsetWidth;
+    }
+
+    if (biggestSpanWidth > spanMaxWidth) {
+      span1.parentNode.style.fontSize = (standardFontSize * spanMaxWidth / biggestSpanWidth) + "px";
+    }
+
+  }
+
   for (i = 0; i < rows.length; i++) {
     var row = rows[i];
     var type = row.type;
@@ -2110,12 +2139,13 @@ Scene.prototype.stat_chart = function stat_chart() {
       statValue.innerHTML = "&nbsp;";
       div.appendChild(statValue);
       target.appendChild(div);
+      fixFontSize(span);
     } else if (type == "opposed_pair") {
       div = document.createElement("div");
       setClass(div, "statBar statLine opposed");
-      span = document.createElement("span");
-      printx(label+": "+value+"% ", span);
-      div.appendChild(span);
+      span0 = document.createElement("span");
+      printx(label+": "+value+"% ", span0);
+      div.appendChild(span0);
       span = document.createElement("span");
       span.setAttribute("style", "float: right");
       printx(row.opposed_label+": "+(100-value)+"%", span);
@@ -2126,6 +2156,7 @@ Scene.prototype.stat_chart = function stat_chart() {
       statValue.innerHTML = "&nbsp;";
       div.appendChild(statValue);
       target.appendChild(div);
+      fixFontSize(span0, span);
     } else {
       throw new Error("Bug! Parser accepted an unknown row type: " + type);
     }

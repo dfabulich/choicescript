@@ -1,6 +1,7 @@
 body {
   max-width: 680px;
   font-family: Georgia,"Times New Roman",serif;
+  font-size: 16px; /* reset, specified in px so IE currentStyle works */
   background-color: #F7F4F1;
   color: rgba(0, 0, 0, 0.85);
   margin: 8px auto; 
