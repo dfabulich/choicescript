@@ -1063,12 +1063,14 @@ function loginForm(target, errorMessage, callback) {
 
 function loginDiv(email) {
   var domain = "https://www.choiceofgames.com/";
+  var identity = document.getElementById("identity");
+  if (!identity) return;
   if (getCookieByName("login")) {
     var emailLink = document.getElementById("email");
     emailLink.setAttribute("href", domain + "profile" + "/");
     emailLink.innerHTML = "";
     emailLink.appendChild(document.createTextNode(email));
-    document.getElementById("identity").style.display = "block";
+    identity.style.display = "block";
     var logoutLink = document.getElementById("logout");
     logoutLink.onclick = function(event) {
       preventDefault(event);
@@ -1076,7 +1078,7 @@ function loginDiv(email) {
       loginDiv();
     };
   } else {
-    document.getElementById("identity").style.display = "none";
+    identity.style.display = "none";
   }
 }
 
