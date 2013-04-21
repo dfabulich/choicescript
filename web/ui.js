@@ -777,15 +777,15 @@ function printButton(name, parent, isSubmit, code) {
     printx(name, button);
   }
   setClass(button, "next");
-  if (code) button.onclick = function() {
+  if (code) button.onclick = function(event) {
     if (window.isIosApp) {
       window.freezeCallback = function() {
         window.freezeCallback = null;
-        code();
+        code(event);
       };
       callIos("freeze");
     } else {
-      safeCall(null, code);
+      safeCall(null, function() {code(event);});
     }
   };
   if (!isMobile) try { button.focus(); } catch (e) {}
@@ -895,7 +895,7 @@ function promptEmailAddress(target, defaultEmail, callback) {
   setTimeout(function() {callIos("curl");}, 0);
 }
 
-function loginForm(target, errorMessage, callback) {
+function loginForm(target, optional, errorMessage, callback) {
   if (!isRegisterAllowed()) return setTimeout(function() {
     callback(!"ok");
   }, 0);
@@ -916,11 +916,11 @@ function loginForm(target, errorMessage, callback) {
             return recordEmail(response.email, callback);
           } else if (getCookieByName("login")) {
             // if no email, then we should be logged out
-            throw new Exception("Error code 1787 during log in.");
+            throw new Error("Error code 1787 during log in.");
           } else {
             // not really logged in after all
             loginDiv();
-            return loginForm(target, errorMessage, callback);
+            return loginForm(target, optional, errorMessage, callback);
           }
         } else {
           // missed an opportunity to record email locally. meh.
@@ -1006,7 +1006,7 @@ function loginForm(target, errorMessage, callback) {
                   loginDiv(email);
                   callback("ok");
                 } else if ("incorrect password" == response.error) {
-                  loginForm(target, 'Sorry, the email address "'+email+'" is already in use. Please type your password below, or use a different email address.', callback);
+                  loginForm(target, optional, 'Sorry, the email address "'+email+'" is already in use. Please type your password below, or use a different email address.', callback);
                 } else {
                   target.appendChild(form);
                   showMessage("Sorry, we weren't able to sign you in. (Your network connection may be down.) Please try again later, or contact support@choiceofgames.com for assistance.");
@@ -1016,6 +1016,12 @@ function loginForm(target, errorMessage, callback) {
             target.appendChild(form);
             println("", form);
             printButton("Next", form, true);
+            if (optional) {
+              printButton("No, Thanks", form, false, function(event) {
+                preventDefault(event);
+                callback("ok");
+              });
+            }
           } else if ("passwordButton" == choice) {
             startLoading();
             target.removeChild(form);
@@ -1058,6 +1064,12 @@ function loginForm(target, errorMessage, callback) {
     if (defaultEmail) passwordButton.onchange();
     println("", form);
     printButton("Next", form, true);
+    if (optional) {
+      printButton("No, Thanks", form, false, function(event) {
+        preventDefault(event);
+        callback("ok");
+      });
+    }
   });
 }
 

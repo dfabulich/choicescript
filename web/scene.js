@@ -1706,15 +1706,17 @@ Scene.prototype.parseRestoreGame = function parseRestoreGame(alreadyFinished) {
     return unrestorableScenes;
 };
 
-Scene.prototype.login = function scene_login() {
+Scene.prototype.login = function scene_login(optional) {
   if (typeof window == "undefined") return;
+  optional = trim(optional);
+  if (optional && optional != "optional") throw new Error(this.lineMsg() + "invalid *login option: " + optional);
   var self = this;
   this.finished = true;
   this.skipFooter = true;
   this.paragraph();
   var target = this.target;
   if (!target) target = document.getElementById('text');
-  loginForm(target, null, function() {
+  loginForm(target, optional, null, function() {
     clearScreen(function() {
       self.finished = false;
       self.prevLineEmpty = true;
