@@ -960,20 +960,20 @@ function loginForm(target, optional, errorMessage, callback) {
       radioButtons[i].onchange = onchange;
     }
 
+    function showMessage(msg) {
+      var message = document.getElementById('message');
+      var messageText = document.createTextNode(msg);
+      message.innerHTML = "";
+      message.appendChild(messageText);
+    }
+
     form.onsubmit = function(event) {
       preventDefault(event);
-
       var email = trim(form.email.value);
       if (!/^\S+@\S+\.\S+$/.test(email)) {
         showMessage('Sorry, "'+email+'" is not an email address.  Please type your email address again.');
       } else {
         recordEmail(email, function() {
-          function showMessage(msg) {
-            var message = document.getElementById('message');
-            var messageText = document.createTextNode(msg);
-            message.innerHTML = "";
-            message.appendChild(messageText);
-          }
           var choice = getFormValue("choice");
           if ("new" == choice) {
             target.removeChild(form);
