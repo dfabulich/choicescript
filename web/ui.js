@@ -1103,10 +1103,12 @@ function isRegistered(callback) {
     return setTimeout(function() {
       callback(!!getCookieByName("login"));
     }, 0);
-  } else {
+  } else if (initStore()) {
     return window.store.get("login", function(ok, value) {
       callback(ok && value && "false" != value);
     });
+  } else {
+    callback(false);
   }
 }
 
