@@ -1099,7 +1099,7 @@ function isRegistered() {
 }
 
 function isRegisterAllowed() {
-  return window.isWeb;
+  return window.isWeb || window.isIosApp;
 }
 
 function preventDefault(event) {
