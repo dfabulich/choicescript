@@ -902,7 +902,8 @@ function loginForm(target, optional, errorMessage, callback) {
   }, 0);
   startLoading();
   fetchEmail(function(defaultEmail) {
-    if (getCookieByName("login")) {
+    var registered = isRegistered();
+    if (registered) {
       if (defaultEmail) {
         doneLoading();
         loginDiv(defaultEmail);
@@ -915,7 +916,7 @@ function loginForm(target, optional, errorMessage, callback) {
           if (response.email) {
             loginDiv(response.email);
             return recordEmail(response.email, callback);
-          } else if (getCookieByName("login")) {
+          } else if (registered) {
             // if no email, then we should be logged out
             throw new Error("Error code 1787 during log in.");
           } else {
@@ -1079,7 +1080,7 @@ function loginDiv(email) {
   var domain = "https://www.choiceofgames.com/";
   var identity = document.getElementById("identity");
   if (!identity) return;
-  if (getCookieByName("login")) {
+  if (isRegistered()) {
     var emailLink = document.getElementById("email");
     emailLink.setAttribute("href", domain + "profile" + "/");
     emailLink.innerHTML = "";
