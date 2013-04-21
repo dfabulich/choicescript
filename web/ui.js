@@ -1071,6 +1071,7 @@ function loginForm(target, optional, errorMessage, callback) {
         callback("ok");
       });
     }
+    printFooter();
   });
 }
 
