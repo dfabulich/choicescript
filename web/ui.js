@@ -1004,6 +1004,7 @@ function loginForm(target, optional, errorMessage, callback) {
                   doneLoading();
                   if (ok) {
                     loginDiv(ok, email);
+                    recordLogin(ok);
                     callback("ok");
                   } else if ("incorrect password" == response.error) {
                     loginForm(target, optional, 'Sorry, the email address "'+email+'" is already in use. Please type your password below, or use a different email address.', callback);
@@ -1030,6 +1031,7 @@ function loginForm(target, optional, errorMessage, callback) {
                 target.appendChild(form);
                 if (ok) {
                   loginDiv(ok, email);
+                  recordLogin(ok);
                   callback("ok");
                 } else if ("unknown email" == response.error) {
                   showMessage('Sorry, we can\'t find a record for the email address "'+email+'". Please try a different email address, or create a new account.');
@@ -1101,11 +1103,11 @@ function isRegistered(callback) {
     return setTimeout(function() {
       callback(!!getCookieByName("login"));
     }, 0);
-  } else if (window.isIosApp) {
-    window.registerCallback = callback;
-    callIos("isRegistered");
+  } else {
+    return window.store.get("login", function(ok, value) {
+      callback(ok && value && "false" != value);
+    });
   }
-  return setTimeout(function() { callback(false); }, 0);
 }
 
 function isRegisterAllowed() {

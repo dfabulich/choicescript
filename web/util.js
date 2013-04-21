@@ -201,6 +201,15 @@ function forgotPassword(email, callback) {
 function logout(callback) {
   document.cookie = 'login=0;path=/;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
   xhrAuthRequest("GET", "logout", callback);
+  recordLogin(false);
+}
+
+function recordLogin(registered, callback) {
+  if (initStore()) {
+    window.store.set("login", registered, callback);
+  } else {
+    setTimeout(callback, 0);
+  }
 }
 
 function getRemoteEmail(callback) {
