@@ -686,6 +686,7 @@ Scene.prototype.getVar = function getVar(variable) {
     if (variable == "choice_subscribe_allowed") return true;
     if (variable == "choice_registered") return isRegistered();
     if (variable == "choice_register_allowed") return isRegisterAllowed();
+    if (variable == "choice_is_web") return typeof window != "undefined" && window.isWeb;
     if (variable == "choice_kindle") return false;
     if (variable == "choice_restore_purchases_allowed") return isRestorePurchasesSupported();
     if (variable == "choice_save_allowed") return areSaveSlotsSupported();
