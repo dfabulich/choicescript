@@ -774,6 +774,7 @@ function printButton(name, parent, isSubmit, code) {
     button.name = name;
   } else {
     button = document.createElement("button");
+    button.setAttribute("type", "button");
     printx(name, button);
   }
   setClass(button, "next");
