@@ -902,185 +902,184 @@ function loginForm(target, optional, errorMessage, callback) {
   }, 0);
   startLoading();
   fetchEmail(function(defaultEmail) {
-    var registered = isRegistered();
-    if (registered) {
-      if (defaultEmail) {
-        doneLoading();
-        loginDiv(defaultEmail);
-        return setTimeout(callback, 0);
-      }
-      // Cookie says I'm logged in, but we have no local record of the email address
-      return getRemoteEmail(function(ok, response) {
-        doneLoading();
-        if (ok) {
-          if (response.email) {
-            loginDiv(response.email);
-            return recordEmail(response.email, callback);
-          } else if (registered) {
-            // if no email, then we should be logged out
-            throw new Error("Error code 1787 during log in.");
-          } else {
-            // not really logged in after all
-            loginDiv();
-            return loginForm(target, optional, errorMessage, callback);
-          }
-        } else {
-          // missed an opportunity to record email locally. meh.
-          return callback();
+    isRegistered(function(registered) {
+      if (registered) {
+        if (defaultEmail) {
+          doneLoading();
+          loginDiv(registered, defaultEmail);
+          return setTimeout(callback, 0);
         }
-      });
-    }
-    doneLoading();
-    var form = document.createElement("form");
-
-    if (!errorMessage) errorMessage = "";
-
-    var escapedEmail = defaultEmail.replace(/'/g, "&apos;");
-    var newChecked = defaultEmail ? "" : "checked";
-    var passwordChecked = defaultEmail ? "checked" : "";
-    form.innerHTML = "<div id=message style='color:red; font-weight:bold'>"+errorMessage+
-      "</div><span><span>My email address is: </span><input type=email name=email id=email value='"+
-      escapedEmail+"' style='font-size: 25px; width: 12em'></span><p><label for=subscribe>"+
-      "<input type=checkbox name=subscribe id=subscribe checked> "+
-      "Email me when new games are available.</label></p><p>Do you have a Choiceofgames.com password?</p>"+
-      "<div class='choice'>"+
-      "<label for=new class=firstChild><input type=radio name=choice value=new id=new "+newChecked+"> No, I'm new.</label>"+
-      "<label for=passwordButton><input type=radio name=choice value=passwordButton id=passwordButton "+passwordChecked+"> "+
-      "Yes, I have a password: <input id=password type=password name=password disabled style='width:8em'></label>"+
-      "<label for=forgot class=lastChild><input type=radio name=choice value=forgot id=forgot> I forgot my password.</label>"+
-      "</div>";
-
-    var password = form.password;
-    var passwordButton = form.passwordButton;
-    var radioButtons = form.choice;
-    var onchange = function() {
-      var enabled = passwordButton.checked;
-      password.disabled = !enabled;
-      if (enabled) password.focus();
-    };
-    for (var i = radioButtons.length - 1; i >= 0; i--) {
-      radioButtons[i].onchange = onchange;
-    }
-
-    function showMessage(msg) {
-      var message = document.getElementById('message');
-      var messageText = document.createTextNode(msg);
-      message.innerHTML = "";
-      message.appendChild(messageText);
-    }
-
-    form.onsubmit = function(event) {
-      preventDefault(event);
-      var email = trim(form.email.value);
-      if (!/^\S+@\S+\.\S+$/.test(email)) {
-        showMessage('Sorry, "'+email+'" is not an email address.  Please type your email address again.');
-      } else {
-        recordEmail(email, function() {
-          var choice = getFormValue("choice");
-          if ("new" == choice) {
-            target.removeChild(form);
-            form = document.createElement("form");
-            var escapedEmail = email.replace(/'/g, "&apos;");
-            form.innerHTML = "<div id=message style='color:red; font-weight:bold'></div>"+
-              "<div style='display:table'><div style='display:table-row'><span style='display:table-cell'>My email address is: </span><input type=email name=email id=email value='"+
-              escapedEmail+"' style='display:table-cell; font-size: 25px; width: 12em'></div>"+
-              "<div style='display:table-row'><span style='display:table-cell'>Type it again: </span><input type=email name=email2 id=email2 autocomplete='off' style='display:table-cell; font-size: 25px; width: 12em'></div>"+
-              "<div style='display:table-row'><span style='display:table-cell'>Enter a new password:&nbsp;</span>"+
-              "<input type=password name=password id=password style='display:table-cell; font-size: 25px; width: 12em'></span></div></div>"+
-              "<p><label for=subscribe><input type=checkbox name=subscribe id=subscribe checked> Email me when new games are available.</label></p>";
-            form.onsubmit = function(event) {
-              preventDefault(event);
-              var email = trim(form.email.value);
-              var email2 = trim(form.email2.value);
-              var subscribe = form.subscribe.checked;
-              if (!/^\S+@\S+\.\S+$/.test(email)) {
-                showMessage('Sorry, "'+email+'" is not an email address.  Please type your email address again.');
-                return;
-              } else if (email != email2) {
-                showMessage('Those email addresses don\'t match.  Please type your email address again.');
-                return;
-              }
-              startLoading();
-              target.removeChild(form);
-              login(email, form.password.value, /*register*/true, subscribe, function(ok, response) {
-                doneLoading();
-                if (ok) {
-                  loginDiv(email);
-                  callback("ok");
-                } else if ("incorrect password" == response.error) {
-                  loginForm(target, optional, 'Sorry, the email address "'+email+'" is already in use. Please type your password below, or use a different email address.', callback);
-                } else {
-                  target.appendChild(form);
-                  showMessage("Sorry, we weren't able to sign you in. (Your network connection may be down.) Please try again later, or contact support@choiceofgames.com for assistance.");
-                }
-              });
-            };
-            target.appendChild(form);
-            println("", form);
-            printButton("Next", form, true);
-            if (optional) {
-              printButton("No, Thanks", form, false, function(event) {
-                preventDefault(event);
-                callback("ok");
-              });
+        // Cookie says I'm logged in, but we have no local record of the email address
+        return getRemoteEmail(function(ok, response) {
+          doneLoading();
+          if (ok) {
+            if (response.email) {
+              loginDiv(registered, response.email);
+              return recordEmail(response.email, callback);
+            } else {
+              // not really logged in after all
+              logout();
+              loginDiv();
+              return loginForm(target, optional, errorMessage, callback);
             }
-          } else if ("passwordButton" == choice) {
-            startLoading();
-            target.removeChild(form);
-            login(email, form.password.value, /*register*/false, form.subscribe.checked, function(ok, response) {
-              doneLoading();
-              target.appendChild(form);
-              if (ok) {
-                loginDiv(email);
-                callback("ok");
-              } else if ("unknown email" == response.error) {
-                showMessage('Sorry, we can\'t find a record for the email address "'+email+'". Please try a different email address, or create a new account.');
-              } else if ("incorrect password" == response.error) {
-                showMessage('Sorry, that password is incorrect. Please try again, or select "I forgot my password" to reset your password.');
-              } else {
-                showMessage("Sorry, we weren't able to sign you in. (Your network connection may be down.) Please try again later, or contact support@choiceofgames.com for assistance.");
-              }
-            });
-          } else if ("forgot" == choice) {
-            startLoading();
-            target.removeChild(form);
-            forgotPassword(email, function(ok, response) {
-              doneLoading();
-              target.appendChild(form);
-              if (ok) {
-                showMessage("We've emailed you a link to reset your password. Please check your email and click on the link, then return here to sign in.");
-                document.getElementById('passwordButton').checked = true;
-                document.getElementById('passwordButton').onchange();
-              } else if ("unknown email" == response.error) {
-                showMessage('Sorry, we can\'t find a record for the email address "'+email+'". Please try a different email address, or create a new account.');
-              } else {
-                showMessage("Sorry, we weren't able to sign you in. (Your network connection may be down.) Please try again later, or contact support@choiceofgames.com for assistance.");
-              }
-            });
+          } else {
+            // missed an opportunity to record email locally. meh.
+            return callback();
           }
         });
       }
-    };
+      doneLoading();
+      var form = document.createElement("form");
 
-    target.appendChild(form);
-    if (defaultEmail) passwordButton.onchange();
-    println("", form);
-    printButton("Next", form, true);
-    if (optional) {
-      printButton("No, Thanks", form, false, function(event) {
+      if (!errorMessage) errorMessage = "";
+
+      var escapedEmail = defaultEmail.replace(/'/g, "&apos;");
+      var newChecked = defaultEmail ? "" : "checked";
+      var passwordChecked = defaultEmail ? "checked" : "";
+      form.innerHTML = "<div id=message style='color:red; font-weight:bold'>"+errorMessage+
+        "</div><span><span>My email address is: </span><input type=email name=email id=email value='"+
+        escapedEmail+"' style='font-size: 25px; width: 12em'></span><p><label for=subscribe>"+
+        "<input type=checkbox name=subscribe id=subscribe checked> "+
+        "Email me when new games are available.</label></p><p>Do you have a Choiceofgames.com password?</p>"+
+        "<div class='choice'>"+
+        "<label for=new class=firstChild><input type=radio name=choice value=new id=new "+newChecked+"> No, I'm new.</label>"+
+        "<label for=passwordButton><input type=radio name=choice value=passwordButton id=passwordButton "+passwordChecked+"> "+
+        "Yes, I have a password: <input id=password type=password name=password disabled style='width:8em'></label>"+
+        "<label for=forgot class=lastChild><input type=radio name=choice value=forgot id=forgot> I forgot my password.</label>"+
+        "</div>";
+
+      var password = form.password;
+      var passwordButton = form.passwordButton;
+      var radioButtons = form.choice;
+      var onchange = function() {
+        var enabled = passwordButton.checked;
+        password.disabled = !enabled;
+        if (enabled) password.focus();
+      };
+      for (var i = radioButtons.length - 1; i >= 0; i--) {
+        radioButtons[i].onchange = onchange;
+      }
+
+      function showMessage(msg) {
+        var message = document.getElementById('message');
+        var messageText = document.createTextNode(msg);
+        message.innerHTML = "";
+        message.appendChild(messageText);
+      }
+
+      form.onsubmit = function(event) {
         preventDefault(event);
-        callback("ok");
-      });
-    }
-    printFooter();
+        var email = trim(form.email.value);
+        if (!/^\S+@\S+\.\S+$/.test(email)) {
+          showMessage('Sorry, "'+email+'" is not an email address.  Please type your email address again.');
+        } else {
+          recordEmail(email, function() {
+            var choice = getFormValue("choice");
+            if ("new" == choice) {
+              target.removeChild(form);
+              form = document.createElement("form");
+              var escapedEmail = email.replace(/'/g, "&apos;");
+              form.innerHTML = "<div id=message style='color:red; font-weight:bold'></div>"+
+                "<div style='display:table'><div style='display:table-row'><span style='display:table-cell'>My email address is: </span><input type=email name=email id=email value='"+
+                escapedEmail+"' style='display:table-cell; font-size: 25px; width: 12em'></div>"+
+                "<div style='display:table-row'><span style='display:table-cell'>Type it again: </span><input type=email name=email2 id=email2 autocomplete='off' style='display:table-cell; font-size: 25px; width: 12em'></div>"+
+                "<div style='display:table-row'><span style='display:table-cell'>Enter a new password:&nbsp;</span>"+
+                "<input type=password name=password id=password style='display:table-cell; font-size: 25px; width: 12em'></span></div></div>"+
+                "<p><label for=subscribe><input type=checkbox name=subscribe id=subscribe checked> Email me when new games are available.</label></p>";
+              form.onsubmit = function(event) {
+                preventDefault(event);
+                var email = trim(form.email.value);
+                var email2 = trim(form.email2.value);
+                var subscribe = form.subscribe.checked;
+                if (!/^\S+@\S+\.\S+$/.test(email)) {
+                  showMessage('Sorry, "'+email+'" is not an email address.  Please type your email address again.');
+                  return;
+                } else if (email != email2) {
+                  showMessage('Those email addresses don\'t match.  Please type your email address again.');
+                  return;
+                }
+                startLoading();
+                target.removeChild(form);
+                login(email, form.password.value, /*register*/true, subscribe, function(ok, response) {
+                  doneLoading();
+                  if (ok) {
+                    loginDiv(ok, email);
+                    callback("ok");
+                  } else if ("incorrect password" == response.error) {
+                    loginForm(target, optional, 'Sorry, the email address "'+email+'" is already in use. Please type your password below, or use a different email address.', callback);
+                  } else {
+                    target.appendChild(form);
+                    showMessage("Sorry, we weren't able to sign you in. (Your network connection may be down.) Please try again later, or contact support@choiceofgames.com for assistance.");
+                  }
+                });
+              };
+              target.appendChild(form);
+              println("", form);
+              printButton("Next", form, true);
+              if (optional) {
+                printButton("No, Thanks", form, false, function(event) {
+                  preventDefault(event);
+                  callback("ok");
+                });
+              }
+            } else if ("passwordButton" == choice) {
+              startLoading();
+              target.removeChild(form);
+              login(email, form.password.value, /*register*/false, form.subscribe.checked, function(ok, response) {
+                doneLoading();
+                target.appendChild(form);
+                if (ok) {
+                  loginDiv(ok, email);
+                  callback("ok");
+                } else if ("unknown email" == response.error) {
+                  showMessage('Sorry, we can\'t find a record for the email address "'+email+'". Please try a different email address, or create a new account.');
+                } else if ("incorrect password" == response.error) {
+                  showMessage('Sorry, that password is incorrect. Please try again, or select "I forgot my password" to reset your password.');
+                } else {
+                  showMessage("Sorry, we weren't able to sign you in. (Your network connection may be down.) Please try again later, or contact support@choiceofgames.com for assistance.");
+                }
+              });
+            } else if ("forgot" == choice) {
+              startLoading();
+              target.removeChild(form);
+              forgotPassword(email, function(ok, response) {
+                doneLoading();
+                target.appendChild(form);
+                if (ok) {
+                  showMessage("We've emailed you a link to reset your password. Please check your email and click on the link, then return here to sign in.");
+                  document.getElementById('passwordButton').checked = true;
+                  document.getElementById('passwordButton').onchange();
+                } else if ("unknown email" == response.error) {
+                  showMessage('Sorry, we can\'t find a record for the email address "'+email+'". Please try a different email address, or create a new account.');
+                } else {
+                  showMessage("Sorry, we weren't able to sign you in. (Your network connection may be down.) Please try again later, or contact support@choiceofgames.com for assistance.");
+                }
+              });
+            }
+          });
+        }
+      };
+
+      target.appendChild(form);
+      if (defaultEmail) passwordButton.onchange();
+      println("", form);
+      printButton("Next", form, true);
+      if (optional) {
+        printButton("No, Thanks", form, false, function(event) {
+          preventDefault(event);
+          callback("ok");
+        });
+      }
+      printFooter();
+    });
   });
 }
 
-function loginDiv(email) {
+function loginDiv(registered, email) {
   var domain = "https://www.choiceofgames.com/";
   var identity = document.getElementById("identity");
   if (!identity) return;
-  if (isRegistered()) {
+  if (registered) {
     var emailLink = document.getElementById("email");
     emailLink.setAttribute("href", domain + "profile" + "/");
     emailLink.innerHTML = "";
@@ -1097,8 +1096,16 @@ function loginDiv(email) {
   }
 }
 
-function isRegistered() {
-  return !!getCookieByName("login");
+function isRegistered(callback) {
+  if (window.isWeb) {
+    return setTimeout(function() {
+      callback(!!getCookieByName("login"));
+    }, 0);
+  } else if (window.isIosApp) {
+    window.registerCallback = callback;
+    callIos("isRegistered");
+  }
+  return setTimeout(function() { callback(false); }, 0);
 }
 
 function isRegisterAllowed() {
@@ -1247,7 +1254,15 @@ window.onload=function() {
     if (window.Touch && window.isWeb) {
       // INSERT ADMOB AD
     }
-    fetchEmail(loginDiv);
+    isRegistered(function(registered){
+      if (registered) {
+        fetchEmail(function(email) {
+          loginDiv(registered, email);
+        });
+      } else {
+        loginDiv();
+      }
+    });
 };
 
 _global = this;
