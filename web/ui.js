@@ -962,7 +962,10 @@ function loginForm(target, optional, errorMessage, callback) {
         var onchange = function() {
           var enabled = passwordButton.checked;
           password.disabled = !enabled;
-          if (enabled) password.focus();
+          if (enabled) {
+            password.focus();
+            setTimeout(function() {password.parentNode.scrollIntoView();}, 0);
+          }
         };
         for (var i = radioButtons.length - 1; i >= 0; i--) {
           radioButtons[i].onchange = onchange;
