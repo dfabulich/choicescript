@@ -976,7 +976,7 @@ function loginForm(target, optional, errorMessage, callback) {
           recordEmail(email, function() {
             var choice = getFormValue("choice");
             if ("new" == choice) {
-              target.removeChild(form);
+              target.innerHTML = "";
               form = document.createElement("form");
               var escapedEmail = email.replace(/'/g, "&apos;");
               form.innerHTML = "<div id=message style='color:red; font-weight:bold'></div>"+
@@ -999,7 +999,7 @@ function loginForm(target, optional, errorMessage, callback) {
                   return;
                 }
                 startLoading();
-                target.removeChild(form);
+                target.innerHTML = "";
                 login(email, form.password.value, /*register*/true, subscribe, function(ok, response) {
                   doneLoading();
                   if (ok) {
@@ -1025,7 +1025,7 @@ function loginForm(target, optional, errorMessage, callback) {
               }
             } else if ("passwordButton" == choice) {
               startLoading();
-              target.removeChild(form);
+              target.innerHTML = "";
               login(email, form.password.value, /*register*/false, form.subscribe.checked, function(ok, response) {
                 doneLoading();
                 target.appendChild(form);
@@ -1043,7 +1043,7 @@ function loginForm(target, optional, errorMessage, callback) {
               });
             } else if ("forgot" == choice) {
               startLoading();
-              target.removeChild(form);
+              target.innerHTML = "";
               forgotPassword(email, function(ok, response) {
                 doneLoading();
                 target.appendChild(form);
