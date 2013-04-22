@@ -980,11 +980,11 @@ function loginForm(target, optional, errorMessage, callback) {
               form = document.createElement("form");
               var escapedEmail = email.replace(/'/g, "&apos;");
               form.innerHTML = "<div id=message style='color:red; font-weight:bold'></div>"+
-                "<div style='display:table'><div style='display:table-row'><span style='display:table-cell'>My email address is: </span><input type=email name=email id=email value='"+
-                escapedEmail+"' style='display:table-cell; font-size: 25px; width: 12em'></div>"+
-                "<div style='display:table-row'><span style='display:table-cell'>Type it again: </span><input type=email name=email2 id=email2 autocomplete='off' style='display:table-cell; font-size: 25px; width: 12em'></div>"+
-                "<div style='display:table-row'><span style='display:table-cell'>Enter a new password:&nbsp;</span>"+
-                "<input type=password name=password id=password style='display:table-cell; font-size: 25px; width: 12em'></span></div></div>"+
+                "<div>My email address is: </div><div><input type=email name=email id=email value='"+
+                escapedEmail+"' style='font-size: 25px; width: 12em'></div>"+
+                "<div>Type it again: </div><div><input type=email name=email2 id=email2 autocomplete='off' style='font-size: 25px; width: 12em'></div>"+
+                "<div>Enter a new password:&nbsp;</div><div>"+
+                "<input type=password name=password id=password style='font-size: 25px; width: 12em'></div>"+
                 "<p><label for=subscribe><input type=checkbox name=subscribe id=subscribe checked> Email me when new games are available.</label></p>";
               form.onsubmit = function(event) {
                 preventDefault(event);
