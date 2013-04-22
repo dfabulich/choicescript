@@ -1709,7 +1709,10 @@ Scene.prototype.parseRestoreGame = function parseRestoreGame(alreadyFinished) {
 Scene.prototype.login = function scene_login(optional) {
   if (typeof window == "undefined") return;
   optional = trim(optional);
-  if (optional && optional != "optional") throw new Error(this.lineMsg() + "invalid *login option: " + optional);
+  if (optional) {
+    if (optional != "optional") throw new Error(this.lineMsg() + "invalid *login option: " + optional);
+    optional = 1;
+  }
   var self = this;
   this.finished = true;
   this.skipFooter = true;

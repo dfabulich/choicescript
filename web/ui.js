@@ -936,28 +936,42 @@ function loginForm(target, optional, errorMessage, callback) {
       var escapedEmail = defaultEmail.replace(/'/g, "&apos;");
       var newChecked = defaultEmail ? "" : "checked";
       var passwordChecked = defaultEmail ? "checked" : "";
-      form.innerHTML = "<div id=message style='color:red; font-weight:bold'>"+errorMessage+
-        "</div><span><span>My email address is: </span><input type=email name=email id=email value='"+
-        escapedEmail+"' style='font-size: 25px; width: 12em'></span><p><label for=subscribe>"+
-        "<input type=checkbox name=subscribe id=subscribe checked> "+
-        "Email me when new games are available.</label></p><p>Do you have a Choiceofgames.com password?</p>"+
-        "<div class='choice'>"+
-        "<label for=new class=firstChild><input type=radio name=choice value=new id=new "+newChecked+"> No, I'm new.</label>"+
-        "<label for=passwordButton><input type=radio name=choice value=passwordButton id=passwordButton "+passwordChecked+"> "+
-        "Yes, I have a password: <input id=password type=password name=password disabled style='width:8em'></label>"+
-        "<label for=forgot class=lastChild><input type=radio name=choice value=forgot id=forgot> I forgot my password.</label>"+
-        "</div>";
+      var passwordButton;
+      if (optional == 1) {
+        form.innerHTML = "<div id=message style='color:red; font-weight:bold'>"+errorMessage+
+          "</div><div class='choice'>"+
+          "<label for=yes class=firstChild><input type=radio name=choice value=yes id=yes checked> My email address is: "+
+          "<input type=email name=email id=email value='"+escapedEmail+"' style='font-size: 25px; width: 11em'></label>"+
+          "<label for=no class=lastChild><input type=radio name=choice value=no id=no > No, thanks.</label>"+
+          "<p><label for=subscribe><input type=checkbox name=subscribe id=subscribe checked> "+
+          "Email me when new games are available.</label></p>";
+      } else {
+        form.innerHTML = "<div id=message style='color:red; font-weight:bold'>"+errorMessage+
+          "</div><span><span>My email address is: </span><input type=email name=email id=email value='"+
+          escapedEmail+"' style='font-size: 25px; width: 12em'></span><p><label id=subscribeLabel for=subscribe>"+
+          "<input type=checkbox name=subscribe id=subscribe checked> "+
+          "Email me when new games are available.</label></p><p>Do you have a Choiceofgames.com password?</p>"+
+          "<div class='choice'>"+
+          "<label for=new class=firstChild><input type=radio name=choice value=new id=new "+newChecked+"> No, I'm new.</label>"+
+          "<label for=passwordButton><input type=radio name=choice value=passwordButton id=passwordButton "+passwordChecked+"> "+
+          "Yes, I have a password: <input id=password type=password name=password disabled style='width:8em'></label>"+
+          "<label for=forgot class=lastChild><input type=radio name=choice value=forgot id=forgot> I forgot my password.</label>"+
+          "</div><br>";
 
-      var password = form.password;
-      var passwordButton = form.passwordButton;
-      var radioButtons = form.choice;
-      var onchange = function() {
-        var enabled = passwordButton.checked;
-        password.disabled = !enabled;
-        if (enabled) password.focus();
-      };
-      for (var i = radioButtons.length - 1; i >= 0; i--) {
-        radioButtons[i].onchange = onchange;
+        var password = form.password;
+        passwordButton = form.passwordButton;
+        var radioButtons = form.choice;
+        var onchange = function() {
+          var enabled = passwordButton.checked;
+          password.disabled = !enabled;
+          if (enabled) password.focus();
+        };
+        for (var i = radioButtons.length - 1; i >= 0; i--) {
+          radioButtons[i].onchange = onchange;
+        }
+        if (optional) {
+          form.subscribe.checked = (optional == 2);
+        }
       }
 
       function showMessage(msg) {
@@ -970,12 +984,19 @@ function loginForm(target, optional, errorMessage, callback) {
       form.onsubmit = function(event) {
         preventDefault(event);
         var email = trim(form.email.value);
+        var subscribe = form.subscribe.checked;
         if (!/^\S+@\S+\.\S+$/.test(email)) {
           showMessage('Sorry, "'+email+'" is not an email address.  Please type your email address again.');
         } else {
           recordEmail(email, function() {
             var choice = getFormValue("choice");
-            if ("new" == choice) {
+            if ("yes" == choice) {
+              clearScreen(function() {
+                loginForm(document.getElementById("text"), subscribe ? 2 : 3, null, callback);
+              });
+            } else if ("no" == choice) {
+              callback(false);
+            } else if ("new" == choice) {
               target.innerHTML = "";
               window.scrollTo(0,0);
               form = document.createElement("form");
@@ -985,13 +1006,11 @@ function loginForm(target, optional, errorMessage, callback) {
                 escapedEmail+"' style='font-size: 25px; width: 12em'></div>"+
                 "<div>Type it again: </div><div><input type=email name=email2 id=email2 autocomplete='off' style='font-size: 25px; width: 12em'></div>"+
                 "<div>Enter a new password:&nbsp;</div><div>"+
-                "<input type=password name=password id=password style='font-size: 25px; width: 12em'></div>"+
-                "<p><label for=subscribe><input type=checkbox name=subscribe id=subscribe checked> Email me when new games are available.</label></p>";
+                "<input type=password name=password id=password style='font-size: 25px; width: 12em'></div>";
               form.onsubmit = function(event) {
                 preventDefault(event);
                 var email = trim(form.email.value);
                 var email2 = trim(form.email2.value);
-                var subscribe = form.subscribe.checked;
                 if (!/^\S+@\S+\.\S+$/.test(email)) {
                   showMessage('Sorry, "'+email+'" is not an email address.  Please type your email address again.');
                   return;
@@ -1019,12 +1038,6 @@ function loginForm(target, optional, errorMessage, callback) {
               target.appendChild(form);
               println("", form);
               printButton("Next", form, true);
-              if (optional) {
-                printButton("No, Thanks", form, false, function(event) {
-                  preventDefault(event);
-                  callback("ok");
-                });
-              }
             } else if ("passwordButton" == choice) {
               startLoading();
               target.innerHTML = "";
@@ -1067,15 +1080,9 @@ function loginForm(target, optional, errorMessage, callback) {
       };
 
       target.appendChild(form);
-      if (defaultEmail) passwordButton.onchange();
-      println("", form);
+      if (defaultEmail && passwordButton) passwordButton.onchange();
+      if (optional && optional > 1) document.getElementById("subscribeLabel").style.display = "none";
       printButton("Next", form, true);
-      if (optional) {
-        printButton("No, Thanks", form, false, function(event) {
-          preventDefault(event);
-          callback("ok");
-        });
-      }
       printFooter();
     });
   });
