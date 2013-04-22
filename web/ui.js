@@ -934,8 +934,6 @@ function loginForm(target, optional, errorMessage, callback) {
       if (!errorMessage) errorMessage = "";
 
       var escapedEmail = defaultEmail.replace(/'/g, "&apos;");
-      var newChecked = defaultEmail ? "" : "checked";
-      var passwordChecked = defaultEmail ? "checked" : "";
       var passwordButton;
       if (optional == 1) {
         form.innerHTML = "<div id=message style='color:red; font-weight:bold'>"+errorMessage+
@@ -952,9 +950,9 @@ function loginForm(target, optional, errorMessage, callback) {
           "<input type=checkbox name=subscribe id=subscribe checked> "+
           "Email me when new games are available.</label></p><p>Do you have a Choiceofgames.com password?</p>"+
           "<div class='choice'>"+
-          "<label for=new class=firstChild><input type=radio name=choice value=new id=new "+newChecked+"> No, I'm new.</label>"+
-          "<label for=passwordButton><input type=radio name=choice value=passwordButton id=passwordButton "+passwordChecked+"> "+
-          "Yes, I have a password: <input id=password type=password name=password disabled style='width:8em'></label>"+
+          "<label for=new class=firstChild><input type=radio name=choice value=new id=new checked> No, I'm new.</label>"+
+          "<label for=passwordButton><input type=radio name=choice value=passwordButton id=passwordButton> "+
+          "Yes, I have a password: <input id=password type=password name=password disabled style='font-size: 25px; width: 11em'></label>"+
           "<label for=forgot class=lastChild><input type=radio name=choice value=forgot id=forgot> I forgot my password.</label>"+
           "</div><br>";
 
@@ -970,7 +968,8 @@ function loginForm(target, optional, errorMessage, callback) {
           radioButtons[i].onchange = onchange;
         }
         if (optional) {
-          form.subscribe.checked = (optional == 2);
+          form.subscribe.checked = (optional == 2 || optional == 4);
+          passwordButton.checked = (optional == 2 || optional == 3);
         }
       }
 
@@ -992,7 +991,12 @@ function loginForm(target, optional, errorMessage, callback) {
             var choice = getFormValue("choice");
             if ("yes" == choice) {
               clearScreen(function() {
-                loginForm(document.getElementById("text"), subscribe ? 2 : 3, null, callback);
+                if (defaultEmail) {
+                  optional = subscribe ? 2 : 3;
+                } else {
+                  optional = subscribe ? 4 : 5;
+                }
+                loginForm(document.getElementById("text"), optional, null, callback);
               });
             } else if ("no" == choice) {
               callback(false);
@@ -1080,7 +1084,7 @@ function loginForm(target, optional, errorMessage, callback) {
       };
 
       target.appendChild(form);
-      if (defaultEmail && passwordButton) passwordButton.onchange();
+      if (passwordButton && passwordButton.checked) passwordButton.onchange();
       if (optional && optional > 1) document.getElementById("subscribeLabel").style.display = "none";
       printButton("Next", form, true);
       printFooter();
