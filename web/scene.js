@@ -673,6 +673,7 @@ Scene.prototype.create = function create(line) {
     if (!result) throw new Error(this.lineMsg()+"Invalid create instruction, no variable specified: " + line);
     var variable = result[1];
     this.validateVariable(variable);
+    variable = variable.toLowerCase();
     var expr = result[2];
     var stack = this.tokenizeExpr(expr);
     if (stack.length === 0) throw new Error(this.lineMsg()+"Invalid create instruction, no value specified: " + line);
@@ -686,7 +687,8 @@ Scene.prototype.create = function create(line) {
     if ("VAR" == token.name && !/^true|false$/i.test(token.value)) complexError();
     if ("STRING" == token.name && /\$!?!?{/.test(token.value)) throw new Error(this.lineMsg() + "Invalid create instruction, value must be a simple string without ${}: " + line);
     var value = this.evaluateExpr(stack);
-    this.stats[variable.toLowerCase()] = value;
+    this.stats[variable] = value;
+    this.nav.startingStats[variable] = value;
 };
 
 // *temp
