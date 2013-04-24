@@ -2802,7 +2802,7 @@ Scene.prototype.scene_list = function scene_list() {
   this.nav.setSceneList(scenes);
 };
 
-Scene.prototype.parseSceneList = function() {
+Scene.prototype.parseSceneList = function parseSceneList() {
   var nextIndent = null;
   var scenes = [];
   var line;
