@@ -492,6 +492,7 @@ function subscribeByMail(target, now, callback, code) {
     code();
     setTimeout(function() {callback(now);}, 0);
   } else {
+    println("Click here to subscribe to our mailing list; we'll notify you when our next game is ready!");
     printButton("Subscribe", target, false, function() {
         code();
         setTimeout(function() {callback(now);}, 0);
@@ -518,7 +519,7 @@ function subscribe(target, now, callback) {
     });
     return;
   }
-  if (now) println("Type your email address below; we'll notify you when our next game is ready!");
+  println("Type your email address below; we'll notify you when our next game is ready!");
   fetchEmail(function(defaultEmail) {
     promptEmailAddress(target, defaultEmail, function(cancel, email) {
       if (cancel) {
@@ -873,7 +874,7 @@ function promptEmailAddress(target, defaultEmail, callback) {
   println("", form);
   printButton("Next", form, true);
 
-  printButton("Cancel", target, false, function() {
+  printButton("No, Thanks", target, false, function() {
     callback(true);
   });
 
