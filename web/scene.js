@@ -2795,6 +2795,51 @@ Scene.prototype.achieve = function scene_achieve(data) {
   }
 };
 
+Scene.prototype.scene_list = function scene_list() {
+  if ("startup" != this.name || !this.screenEmpty || !this.initialCommands) throw new Error(this.lineMsg() +
+    "Invalid scene_list instruction, only allowed at the top of startup.txt");
+  var scenes = this.parseSceneList();
+  this.nav.setSceneList(scenes);
+};
+
+Scene.prototype.parseSceneList = function() {
+  var nextIndent = null;
+  var scenes = [];
+  var line;
+  var startIndent = this.indent;
+  while(isDefined(line = this.lines[++this.lineNum])) {
+      if (!trim(line)) {
+          this.rollbackLineCoverage();
+          continue;
+      }
+      var indent = this.getIndent(line);
+      if (nextIndent === null || nextIndent === undefined) {
+          // initialize nextIndent with whatever indentation the line turns out to be
+          // ...unless it's not indented at all
+          if (indent <= startIndent) {
+              throw new Error(this.lineMsg() + "invalid indent, expected at least one row");
+          }
+          this.indent = nextIndent = indent;
+      }
+      if (indent <= startIndent) {
+          // it's over!
+          this.rollbackLineCoverage();
+          this.lineNum--;
+          this.rollbackLineCoverage();
+          return scenes;
+      }
+      if (indent != this.indent) {
+          // all scenes are supposed to be at the same indentation level
+          throw new Error(this.lineMsg() + "invalid indent, expected "+this.indent+", was " + indent);
+      }
+
+      line = trim(line);
+      if (!scenes.length && "startup" != line) scenes.push("startup");
+      scenes.push(line);
+  }
+  return scenes;
+};
+
 Scene.prototype.lineMsg = function lineMsg() {
     return "line " + (this.lineNum+1) + ": ";
 };
@@ -2895,5 +2940,5 @@ Scene.validCommands = {"comment":1, "goto":1, "gotoref":1, "label":1, "looplimit
     "subscribe":1, "show_password":1, "gosub":1, "return":1, "hide_reuse":1, "disable_reuse":1, "allow_reuse":1,
     "check_purchase":1,"restore_purchases":1,"purchase":1,"restore_game":1,"advertisement":1,
     "save_game":1,"delay_break":1,"image":1,"link":1,"input_number":1,"goto_random_scene":1,
-    "restart":1,"more_games":1,"delay_ending":1,"end_trial":1,"login":1,"achieve":1
+    "restart":1,"more_games":1,"delay_ending":1,"end_trial":1,"login":1,"achieve":1,"scene_list":1
     };

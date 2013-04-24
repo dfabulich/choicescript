@@ -17,18 +17,18 @@
  * either express or implied.
  */
 function SceneNavigator(sceneList) {
-    this._sceneMap = {};
-    this._sceneList = sceneList;
-    this.addArray(sceneList);
-    this._startupScene = sceneList[0];
+    this.setSceneList(sceneList);
 }
 
-SceneNavigator.prototype.addArray = function addArray(arr) {
-    for (var i = 0; i < arr.length-1; i++) {
-        var scene1 = arr[i];
-        var scene2 = arr[i+1];
+SceneNavigator.prototype.setSceneList = function setSceneList(sceneList) {
+    this._sceneList = sceneList;
+    this._sceneMap = {};
+    for (var i = 0; i < sceneList.length-1; i++) {
+        var scene1 = sceneList[i];
+        var scene2 = sceneList[i+1];
         this._sceneMap[scene1] = scene2;
     }
+    this._startupScene = sceneList[0];
 };
 
 SceneNavigator.prototype.nextSceneName = function nextSceneName(currentSceneName) {
