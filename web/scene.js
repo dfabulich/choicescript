@@ -54,6 +54,9 @@ function Scene(name, stats, nav, debugMode) {
     // Have we ever printed any text?
     this.screenEmpty = true;
 
+    // Have we run any commands (except for create and scene_list) yet?
+    this.initialCommands = true;
+
     this.stats.sceneName = name;
 
     // for easy reachability from the window
@@ -354,6 +357,7 @@ Scene.prototype.runCommand = function runCommand(line) {
     var command = result[1].toLowerCase();
     var data = trim(result[2]);
     if (Scene.validCommands[command]) {
+        if (!/^create|scene_list$/.test(command)) this.initialCommands = false;
         this[command](data);
     } else {
         throw new Error(this.lineMsg() + "Non-existent command '"+command+"'");
@@ -663,10 +667,26 @@ Scene.prototype.abort = Scene.prototype.finish;
 
 // *create
 // create a new permanent stat
-Scene.prototype.create = function create(variable) {
-    variable = variable.toLowerCase();
+Scene.prototype.create = function create(line) {
+    if ("startup" != this.name || !this.screenEmpty || !this.initialCommands) throw new Error(this.lineMsg() + "Invalid create instruction, only allowed at the top of startup.txt");
+    var result = /^(\w*)(.*)/.exec(line);
+    if (!result) throw new Error(this.lineMsg()+"Invalid create instruction, no variable specified: " + line);
+    var variable = result[1];
     this.validateVariable(variable);
-    this.stats[variable] = null;
+    var expr = result[2];
+    var stack = this.tokenizeExpr(expr);
+    if (stack.length === 0) throw new Error(this.lineMsg()+"Invalid create instruction, no value specified: " + line);
+    var self = this;
+    function complexError() {
+      throw new Error(self.lineMsg()+"Invalid create instruction, value must be a a number, true/false, or a quoted string: " + line);
+    }
+    if (stack.length > 1) complexError();
+    var token = stack[0];
+    if (!/STRING|NUMBER|VAR/.test(token.name)) complexError();
+    if ("VAR" == token.name && !/^true|false$/i.test(token.value)) complexError();
+    if ("STRING" == token.name && /\$!?!?{/.test(token.value)) throw new Error(this.lineMsg() + "Invalid create instruction, value must be a simple string without ${}: " + line);
+    var value = this.evaluateExpr(stack);
+    this.stats[variable.toLowerCase()] = value;
 };
 
 // *temp
