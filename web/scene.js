@@ -357,7 +357,7 @@ Scene.prototype.runCommand = function runCommand(line) {
     var command = result[1].toLowerCase();
     var data = trim(result[2]);
     if (Scene.validCommands[command]) {
-        if (!/^create|scene_list$/.test(command)) this.initialCommands = false;
+        if (!/^create|scene_list|comment$/.test(command)) this.initialCommands = false;
         this[command](data);
     } else {
         throw new Error(this.lineMsg() + "Non-existent command '"+command+"'");
