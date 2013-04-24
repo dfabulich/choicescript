@@ -1204,6 +1204,13 @@ function showPassword(target, password) {
   }
 }
 
+function changeTitle(title) {
+  document.title = title;
+  var h1 = document.getElementsByTagName("h1");
+  if (h1) h1 = h1[0];
+  h1.innerText = title;
+}
+
 window.isWebOS = /webOS/.test(navigator.userAgent);
 window.isMobile = isWebOS || /Mobile/.test(navigator.userAgent);
 window.isFile = /^file:/.test(window.location.href);
