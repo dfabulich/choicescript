@@ -668,7 +668,12 @@ Scene.prototype.abort = Scene.prototype.finish;
 // *create
 // create a new permanent stat
 Scene.prototype.create = function create(line) {
-    if ("startup" != this.name || !this.screenEmpty || !this.initialCommands) throw new Error(this.lineMsg() + "Invalid create instruction, only allowed at the top of startup.txt");
+    if ((this.name && "startup" != this.name) ||
+      !this.screenEmpty ||
+      !this.initialCommands) {
+      throw new Error(this.lineMsg() + "Invalid create instruction, only allowed at the top of startup.txt");
+    }
+
     var result = /^(\w*)(.*)/.exec(line);
     if (!result) throw new Error(this.lineMsg()+"Invalid create instruction, no variable specified: " + line);
     var variable = result[1];
@@ -688,7 +693,7 @@ Scene.prototype.create = function create(line) {
     if ("STRING" == token.name && /\$!?!?{/.test(token.value)) throw new Error(this.lineMsg() + "Invalid create instruction, value must be a simple string without ${}: " + line);
     var value = this.evaluateExpr(stack);
     this.stats[variable] = value;
-    this.nav.startingStats[variable] = value;
+    if (this.nav) this.nav.startingStats[variable] = value;
 };
 
 // *temp
@@ -701,7 +706,7 @@ Scene.prototype.temp = function temp(line) {
     var expr = result[2];
     var stack = this.tokenizeExpr(expr);
     if (stack.length === 0) {
-      this.temps[variable] = null;
+      this.temps[variable.toLowerCase()] = null;
       return;
     }
     var value = this.evaluateExpr(stack);

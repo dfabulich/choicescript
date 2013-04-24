@@ -370,20 +370,20 @@ test("deleteTemp", function() {
 })
 test("setStat", function() {
     var scene = new Scene();
-    scene.loadLines("*create foo\n*set foo 2");
+    scene.loadLines("*create foo 0\n*set foo 2");
     scene.execute();
     doh.is(2, scene.stats.foo, "scene.stats.foo");
 })
 test("deleteStat", function() {
     var scene = new Scene();
-    scene.loadLines("*create foo\n*set foo 2\n*delete foo");
+    scene.loadLines("*create foo 0\n*set foo 2\n*delete foo");
     scene.execute();
     doh.is("undefined", typeof scene.stats.foo, "typeof scene.stats.foo");
 })
 test("setTempOverridingStat", function() {
     printed = [];
     var scene = new Scene();
-    scene.loadLines("*create foo\n*set foo 2\n*temp foo\n*set foo 3\n*print foo");
+    scene.loadLines("*create foo 0\n*set foo 2\n*temp foo\n*set foo 3\n*print foo");
     scene.execute();
     doh.is(2, scene.stats.foo, "scene.stats.foo");
     doh.is(3, scene.temps.foo, "scene.temps.foo");
@@ -392,7 +392,7 @@ test("setTempOverridingStat", function() {
 test("deleteTempOverridingStat", function() {
     printed = [];
     var scene = new Scene();
-    scene.loadLines("*create foo\n*set foo 2\n*temp foo\n*set foo 3\n*delete foo\n*print foo");
+    scene.loadLines("*create foo 0\n*set foo 2\n*temp foo\n*set foo 3\n*delete foo\n*print foo");
     scene.execute();
     doh.is(2, scene.stats.foo, "scene.stats.foo");
     doh.is("undefined", typeof scene.temps.foo, "typeof scene.temps.foo");
@@ -400,7 +400,7 @@ test("deleteTempOverridingStat", function() {
 })
 test("implicitVariable", function() {
     var scene = new Scene();
-    scene.loadLines("*create foo\n*set foo 2\n*set foo+2");
+    scene.loadLines("*create foo 0\n*set foo 2\n*set foo+2");
     scene.execute();
     doh.is(4, scene.stats.foo, "scene.stats.foo");
 })
@@ -421,18 +421,18 @@ test("errorNoExpression", function() {
 })
 test("setRef", function() {
     var scene = new Scene();
-    scene.loadLines("*create foo\n*create bar\n*set foo \"bar\"\n*setref foo 2");
+    scene.loadLines("*create foo 0\n*create bar 0\n*set foo \"bar\"\n*setref foo 2");
     scene.execute();
     doh.is(2, scene.stats.bar, "scene.stats.bar");
 })
 test("errorSetRefNoExpression", function() {
     var scene = new Scene();
-    scene.loadLines("*create foo\n*create bar\n*set foo \"bar\"\n*setref foo");
+    scene.loadLines("*create foo 0\n*create bar 0\n*set foo \"bar\"\n*setref foo");
     doh.assertError(Error, scene, "execute", null, "No expression");
 })
 test("setRefWhitespace", function() {
     var scene = new Scene();
-    scene.loadLines("*create foo\n*create bar\n*set foo \"bar\"\n*setref foo(2)");
+    scene.loadLines("*create foo 0\n*create bar 0\n*set foo \"bar\"\n*setref foo(2)");
     scene.execute();
     doh.is(2, scene.stats.bar, "scene.stats.bar");
     //doh.assertError(Error, scene, "execute", null, "No expression");
