@@ -691,10 +691,19 @@ Scene.prototype.create = function create(line) {
 
 // *temp
 // create a temporary stat for the current scene
-Scene.prototype.temp = function temp(variable) {
-    variable = variable.toLowerCase();
+Scene.prototype.temp = function temp(line) {
+    var result = /^(\w*)(.*)/.exec(line);
+    if (!result) throw new Error(this.lineMsg()+"Invalid temp instruction, no variable specified: " + line);
+    var variable = result[1];
     this.validateVariable(variable);
-    this.temps[variable] = null;
+    var expr = result[2];
+    var stack = this.tokenizeExpr(expr);
+    if (stack.length === 0) {
+      this.temps[variable] = null;
+      return;
+    }
+    var value = this.evaluateExpr(stack);
+    this.temps[variable.toLowerCase()] = value;
 };
 
 // retrieve the value of the variable, preferring temp scope
