@@ -11,6 +11,16 @@ function autotester(sceneText, nav, sceneName) {
     
   var sceneList = [];
   
+  if (!Scene.prototype.oldSceneList) Scene.prototype.oldSceneList = Scene.prototype.scene_list;
+  Scene.prototype.scene_list = function test_scene_list() {
+    if ("startup" != this.name || !this.screenEmpty || !this.initialCommands) throw new Error(this.lineMsg() +
+    "Invalid scene_list instruction, only allowed at the top of startup.txt");
+    var scenes = this.parseSceneList();
+    for (var i = 0; i < scenes.length; i++) {
+      verifyFileName(scenes[i]);
+    };
+  }
+
   Scene.prototype.finish = function test_finish(buttonName) {
     this.paragraph();
     this.finished = true;
@@ -370,7 +380,7 @@ function autotester(sceneText, nav, sceneName) {
   var startingStats = new StartingStats();
   
   // *finish will barf if we use the real sceneName
-  var scene = new Scene("test"/*sceneName*/, startingStats, nav);
+  var scene = new Scene(sceneName, startingStats, nav);
   var originalScene = scene;
   scene.testPath = [sceneName];
   scene.loadLines(sceneText);

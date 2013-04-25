@@ -49,6 +49,7 @@ function debughelp() {
     debugger;
 }
 var list;
+var known;
 if (isRhino) {
   list = arguments;
 } else {
@@ -58,8 +59,10 @@ if (isRhino) {
 }
 if (!list.length || (list.length == 1 && !list[0])) {
   list = [];
+  known = {};
   var name = nav.getStartupScene();
   while (name) {
+    known[name] = 1;
     list.push(name);
     name = nav.nextSceneName(name);
   }
@@ -81,6 +84,10 @@ function verifyFileName(name) {
   } else {
     var canonicalName = path.basename(fs.realpathSync(filePath));
     if (name+".txt" != canonicalName) throw new Error("Incorrect capitalization/canonicalization; the file is called " + canonicalName + " but you requested " + name + ".txt");
+  }
+  if (known && !known[name]) {
+    known[name] = 1;
+    list.push(name);
   }
 }
 
