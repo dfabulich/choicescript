@@ -15,8 +15,6 @@
 *comment "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
 *comment either express or implied.
 
-*temp leadership
-*temp strength
 *set leadership 10
 *set strength 10
 
