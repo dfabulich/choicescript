@@ -105,6 +105,11 @@ for (var sceneNum = 0; sceneNum < knownScenes.length; sceneNum++) {
 		if (/^choicescript_(stats|upgrade)$/.test(sceneName)) continue;
 		console.log("QUICKTEST FAILED");
 		console.log("ERROR: couldn't open " + url);
+		if (window.location.protocol == "file:" && /Chrome/.test(navigator.userAgent)) {
+          console.log("We're sorry, Google Chrome has blocked ChoiceScript from functioning.  (\"file:\" URLs cannot "+
+            "load files in Chrome.)  ChoiceScript works just fine in Chrome, but only on a published website like "+
+            "choiceofgames.com.  For the time being, please try another browser like Mozilla Firefox.");
+        }
 		success = false;
 		break;
 	}
