@@ -41,7 +41,7 @@ for (var i = 0; i < lines.length; i++) {
   else if (!!(result = create.exec(line))) {
     variable = result[1];
     value = eval(result[2]);
-    stats[variable] = value;
+    stats[variable.toLowerCase()] = value;
   } else if (/^\*scene_list/.test(line)) {
     result = parseSceneList(lines, i);
     scenes = result.scenes;
