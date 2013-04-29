@@ -135,6 +135,9 @@ Scene.prototype.verifyFileName = function commandLineVerifyFileName(name) {
 // We'll catch these with randomtest instead
 Scene.prototype.conflictingOptions = function() {};
 
+// test startup scene first, to run *create commands
+if (list[0] != nav.getStartupScene()+".txt") list.unshift(nav.getStartupScene()+".txt");
+
 for (var i = 0; i < list.length; i++) {
   print(list[i]);
   if (isRhino) java.lang.Thread.sleep(100); // sleep to allow print statements to flush :-(
