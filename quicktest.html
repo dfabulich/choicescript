@@ -9,12 +9,14 @@
 	<script src=editor/embeddable-autotester.js></script>
 <script>
 
+nav.setStartingStatsClone(stats);
+
 function doneLoading() {
 	var loadingDiv = document.getElementById("loading");
 	if (loadingDiv) loadingDiv.parentNode.removeChild(loadingDiv);
 }
 function changeTitle() {}
-knownScenes = ["startup.txt", "choicescript_stats.txt"];
+knownScenes = [];
 function verifyFileName(name) {
 	var found = false;
 	for (var i = knownScenes.length - 1; i >= 0; i--) {
@@ -27,6 +29,14 @@ function verifyFileName(name) {
 		knownScenes.push(name);
 	}
 }
+
+var sceneName = nav.getStartupScene();
+while (sceneName) {
+	verifyFileName(sceneName + ".txt")
+	sceneName = nav.nextSceneName(sceneName);
+}
+verifyFileName("choicescript_stats.txt");
+verifyFileName("choicescript_upgrade.txt");
 
 printFooter = function() {};
 printShareLinks = function() {};
