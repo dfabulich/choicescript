@@ -15,4 +15,4 @@
 ::software distributed under the License is distributed on an
 ::"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
 ::either express or implied.
-java -jar js.jar -w -opt -1 -debug autotest.js %*
+java -jar js.jar -w -opt -1 -debug autotest.js mygame %*

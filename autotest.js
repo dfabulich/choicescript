@@ -17,21 +17,32 @@
  * either express or implied.
  */
 
- // autotest.js [sceneName1] [sceneName2] [sceneName3]
-var gameName = "mygame";
+ // autotest.js mygame [sceneName1] [sceneName2] [sceneName3]
+var list;
+var gameName;
 if (typeof java == "undefined") {
-  var fs = require('fs');
-  var path = require('path');
-  eval(fs.readFileSync("web/scene.js", "utf-8"));
-  eval(fs.readFileSync("web/navigator.js", "utf-8"));
-  eval(fs.readFileSync("web/util.js", "utf-8"));
-  eval(fs.readFileSync("headless.js", "utf-8"));
-  eval(fs.readFileSync("web/"+gameName+"/"+"mygame.js", "utf-8"));
-  eval(fs.readFileSync("editor/embeddable-autotester.js", "utf-8"));
-  function print(str) {
+  list = process.argv;
+  list.shift();
+  list.shift();
+  gameName = list.shift();
+  fs = require('fs');
+  vm = require('vm');
+  path = require('path');
+  load = function(file) {
+    vm.runInThisContext(fs.readFileSync(file), file);
+  };
+  load("web/scene.js");
+  load("web/navigator.js");
+  load("web/util.js");
+  load("headless.js");
+  load("web/"+gameName+"/"+"mygame.js");
+  load("editor/embeddable-autotester.js");
+  print = function print(str) {
     console.log(str);
-  }
+  };
 } else {
+  list = arguments;
+  gameName = list.shift();
   load("web/scene.js");
   load("web/navigator.js");
   load("web/util.js");
@@ -48,57 +59,64 @@ var sceneList = [];
 function debughelp() {
     debugger;
 }
-var list;
-var known;
-if (isRhino) {
-  list = arguments;
-} else {
-  list = process.argv;
-  list.shift();
-  list.shift();
-}
+var fullGame = false;
 if (!list.length || (list.length == 1 && !list[0])) {
+  fullGame = true;
   list = [];
-  known = {};
-  var name = nav.getStartupScene();
-  while (name) {
-    known[name] = 1;
-    list.push(name);
-    name = nav.nextSceneName(name);
+  var sceneName = nav.getStartupScene();
+  while (sceneName) {
+    list.push(sceneName+".txt");
+    sceneName = nav.nextSceneName(sceneName);
   }
   if (fileExists("web/"+gameName+"/scenes/choicescript_stats.txt")) {
-    list.push("choicescript_stats");
+    list.push("choicescript_stats.txt");
+  }
+  if (fileExists("web/"+gameName+"/scenes/choicescript_upgrade.txt")) {
+    list.push("choicescript_upgrade.txt");
+  }
+} else {
+  for (var i = list.length - 1; i >= 0; i--) {
+    list[i] += ".txt";
   }
 }
 
 var uncoveredScenes = [];
 var uncovered;
 
-function verifyFileName(name) {
-  var filePath = "web/"+gameName+"/scenes/"+name+".txt";
+verifyFileName = function verifyFileName(name) {
+  var filePath = "web/"+gameName+"/scenes/"+name;
   if (!fileExists(filePath)) throw new Error("File does not exist: " + name);
+  var canonicalName, fileName;
   if (isRhino) {
     var file = new java.io.File(filePath);
-    var canonicalName = file.getCanonicalFile().getName();
-    if (name+".txt" != canonicalName) throw new Error("Incorrect capitalization/canonicalization; the file is called " + canonicalName + " but you requested " + name + ".txt");
+    fileName = file.getName();
+    canonicalName = file.getCanonicalFile().getName();
+    if (fileName != canonicalName) throw new Error("Incorrect capitalization/canonicalization; the file is called " + canonicalName + " but you requested " + name);
   } else {
-    var canonicalName = path.basename(fs.realpathSync(filePath));
-    if (name+".txt" != canonicalName) throw new Error("Incorrect capitalization/canonicalization; the file is called " + canonicalName + " but you requested " + name + ".txt");
+    canonicalName = path.basename(fs.realpathSync(filePath));
+    fileName = path.basename(filePath);
+    if (fileName != canonicalName) throw new Error("Incorrect capitalization/canonicalization; the file is called " + canonicalName + " but you requested " + name);
   }
-  if (known && !known[name]) {
-    known[name] = 1;
-    list.push(name);
+  if (fullGame) {
+    // add the scene to the list if it isn't in mygame.js
+    var found = false;
+    for (var i = 0; i < list.length && !found; i++) {
+      found = list[i] == name;
+    }
+    if (!found) {
+      list.push(name);
+    }
   }
-}
+};
 
 Scene.prototype.verifyFileName = function commandLineVerifyFileName(name) {
   try {
-    verifyFileName(name);
+    verifyFileName(name+".txt");
   } catch (e) {
     throw new Error(this.lineMsg() + e.message);
   }
   this.finish();
-}
+};
 
 // In autotest, impossible combinations occur, so ignore all conflicting options
 // We'll catch these with randomtest instead
@@ -108,9 +126,11 @@ for (var i = 0; i < list.length; i++) {
   print(list[i]);
   if (isRhino) java.lang.Thread.sleep(100); // sleep to allow print statements to flush :-(
   try {
-    verifyFileName(list[i]);
-    var sceneText = slurpFile("web/"+gameName+"/scenes/"+list[i]+".txt", true /*throwOnError*/);
-    uncovered = autotester(sceneText, nav, list[i])[1];
+    var fileName = list[i];
+    var sceneName = fileName.replace(/\.txt$/, "");
+    verifyFileName(fileName);
+    var sceneText = slurpFile("web/"+gameName+"/scenes/"+fileName, true /*throwOnError*/);
+    uncovered = autotester(sceneText, nav, sceneName)[1];
   } catch (e) {
     print("QUICKTEST FAILED\n");
     print(e);

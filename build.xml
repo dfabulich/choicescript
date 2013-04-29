@@ -132,6 +132,7 @@ either express or implied.
     <property name="vig" value="" />
     <rhino>
       <arg value="autotest.js"/>
+      <arg value="${game.dir}" />
       <arg value="${vig}" />
     </rhino>
   </target>

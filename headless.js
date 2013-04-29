@@ -49,7 +49,7 @@ function fileExists(filePath) {
     if (isRhino) {
         return new java.io.File(filePath).exists();
     } else {
-        return path.existsSync(filePath);
+        return fs.existsSync(filePath);
     }
 }
 
@@ -57,7 +57,7 @@ function fileLastMod(filePath) {
     if (isRhino) {
         return new java.io.File(filePath).lastModified();
     } else {
-        if (path.existsSync(filePath)) return fs.statSync(filePath).mtime.getTime();
+        if (fs.existsSync(filePath)) return fs.statSync(filePath).mtime.getTime();
         return 0;
     }
 }
@@ -66,9 +66,9 @@ function mkdirs(filePath) {
     if (isRhino) {
         new java.io.File(filePath).mkdirs();
     } else {
-        if (!path.existsSync(filePath)) {
+        if (!fs.existsSync(filePath)) {
             var parentDir = path.dirname(filePath);
-            if (!path.existsSync(parentDir)) {
+            if (!fs.existsSync(parentDir)) {
                 mkdirs(parentDir);
             }
             fs.mkdirSync(filePath);

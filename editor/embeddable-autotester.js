@@ -17,7 +17,7 @@ function autotester(sceneText, nav, sceneName) {
     "Invalid scene_list instruction, only allowed at the top of startup.txt");
     var scenes = this.parseSceneList();
     for (var i = 0; i < scenes.length; i++) {
-      verifyFileName(scenes[i]);
+      verifyFileName(scenes[i]+".txt");
     };
   }
 
