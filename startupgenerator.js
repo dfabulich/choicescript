@@ -23,7 +23,7 @@ for (var i = 0; i < nav._sceneList.length; i++) {
 }
 console.log("");
 var mygame = ""+fs.readFileSync("web/mygame/mygame.js");
-var statBlock = /stats\s*=\s*{((\n|.)*?)}/.exec(mygame)[1];
+var statBlock = /stats\s*=\s*{((\r|\n|.)*?)}/.exec(mygame)[1];
 var lines = statBlock.split(/\r?\n/);
 for (var i = 0; i < lines.length; i++) {
 	var line = lines[i].trim();

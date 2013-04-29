@@ -66,7 +66,7 @@ var mygameBuffer = ["nav = new SceneNavigator(["];
 
 for (var i = 0; i < scenes.length; i++) {
   if (i > 0) mygameBuffer.push(',\n');
-  mygameBuffer.push("'", scenes[i], "'");
+  mygameBuffer.push('"', scenes[i], '"');
 }
 
 mygameBuffer.push("]);\nstats = {");
@@ -77,9 +77,9 @@ for (var stat in stats) {
   } else {
     mygameBuffer.push(",\n");
   }
-  mygameBuffer.push("'", stat, "':");
+  mygameBuffer.push('"', stat, "\":");
   if (typeof stats[stat] == "string") {
-    mygameBuffer.push("'", stats[stat], "'");
+    mygameBuffer.push('"', stats[stat], '"');
   } else {
     mygameBuffer.push(stats[stat]);
   }
