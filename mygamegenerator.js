@@ -3,11 +3,15 @@ if (typeof load == "undefined") {
   vm = require("vm");
   vm.runInThisContext(fs.readFileSync("headless.js"), "headless.js");
   print = console.log;
+  args = process.argv;
+  args.shift();
+  args.shift();
 } else {
   load("headless.js");
+  args = arguments;
 }
 
-
+gameDir = args[0] || "mygame";
 
 function parseSceneList(lines, lineNum) {
   var nextIndent = null;
@@ -36,7 +40,7 @@ function parseSceneList(lines, lineNum) {
   return {scenes:scenes, lineNum:lineNum-1};
 }
 
-var lines = slurpFileLines("web/mygame/scenes/startup.txt");
+var lines = slurpFileLines("web/"+gameDir+"/scenes/startup.txt");
 var stats = {};
 var scenes;
 var create = /^\*create +(\w+) +(.*)/;
@@ -63,11 +67,11 @@ var mygameBuffer = ["nav = new SceneNavigator(["];
 for (var i = 0; i < scenes.length; i++) {
   if (i > 0) mygameBuffer.push(',');
   mygameBuffer.push("'", scenes[i], "'");
-};
+}
 
 mygameBuffer.push("]);\nstats = {");
 var first = true;
-for (stat in stats) {
+for (var stat in stats) {
   if (first) {
     first = false;
   } else {
