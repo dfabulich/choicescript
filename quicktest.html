@@ -87,14 +87,10 @@ console.log = function() {
 }
 
 uncoveredScenes = [];
-</script>
-</head>
-<body>
-<div id="loading">Loading...</div>
-<script>
+
 var success = true;
-for (var sceneNum = 0; sceneNum < knownScenes.length; sceneNum++) {
-	var fileName = knownScenes[sceneNum];
+function testScene(sceneNum) {
+var fileName = knownScenes[sceneNum];
 	var sceneName = fileName.replace(/.txt$/, "");
 	var url = "web/mygame/scenes/" + fileName;
 	xhr = new XMLHttpRequest();
@@ -102,7 +98,10 @@ for (var sceneNum = 0; sceneNum < knownScenes.length; sceneNum++) {
 	try {
 		xhr.send();
 	} catch (x) {
-		if (/^choicescript_(stats|upgrade)$/.test(sceneName)) continue;
+		if (/^choicescript_(stats|upgrade)$/.test(sceneName)) {
+			if (++sceneNum < knownScenes.length) return setTimeout(function(){testScene(sceneNum)}, 0);
+		}
+		doneLoading();
 		console.log("QUICKTEST FAILED");
 		console.log("ERROR: couldn't open " + url);
 		if (window.location.protocol == "file:" && /Chrome/.test(navigator.userAgent)) {
@@ -111,33 +110,42 @@ for (var sceneNum = 0; sceneNum < knownScenes.length; sceneNum++) {
             "choiceofgames.com.  For the time being, please try another browser like Mozilla Firefox.");
         }
 		success = false;
-		break;
+		return;
 	}
 	console.log(sceneName);
 	try {
 		var uncovered = autotester(xhr.responseText, nav, sceneName)[1];
+		if (uncovered) {
+		  uncoveredScenes.push({name:sceneName, lines:uncovered});
+		}
 	} catch (x) {
 		console.log("QUICKTEST FAILED");
     	console.log(x);
     	success = false;
-    	break;
+    	return;
 	}
-	if (uncovered) {
-	  uncoveredScenes.push({name:sceneName, lines:uncovered});
+	
+	if (++sceneNum < knownScenes.length) return setTimeout(function(){testScene(sceneNum)}, 0);
+
+	if (success) {
+		var allLinesTested = true;
+		for (var i = 0; i < uncoveredScenes.length; i++) {
+		  allLinesTested = false;
+		  var uncoveredScene = uncoveredScenes[i];
+		  uncoveredScene.lines.push("");
+		  console.log(uncoveredScene.lines.join(" UNTESTED " + uncoveredScene.name));
+		}
+		if (!allLinesTested) console.log("SOME LINES UNTESTED");
+		console.log("QUICKTEST PASSED");
 	}
 }
 
-if (success) {
-	var allLinesTested = true;
-	for (var i = 0; i < uncoveredScenes.length; i++) {
-	  allLinesTested = false;
-	  var uncoveredScene = uncoveredScenes[i];
-	  uncoveredScene.lines.push("");
-	  console.log(uncoveredScene.lines.join(" UNTESTED " + uncoveredScene.name));
-	}
-	if (!allLinesTested) console.log("SOME LINES UNTESTED");
-	console.log("QUICKTEST PASSED");	
-}
+</script>
+</head>
+<body>
+<div id="loading">Loading...</div>
+<script>
+testScene(0);
 </script>
 </body>
 </html>
