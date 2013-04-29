@@ -367,18 +367,15 @@ function autotester(sceneText, nav, sceneName) {
   
   if (!sceneName) sceneName = "test";
   
-  function StartingStats() {};
-  for (var i in stats) {
-    StartingStats.prototype[i] = stats[i];
+  var startingStats = {};
+  if (!nav) {
+    nav = {
+      repairStats: function() {},
+      resetStats: function() {}
+    }
   }
-  
-  if (!nav) nav = {
-    repairStats: function() {}
-    ,resetStats: function() {}
-  }
-  
-  var startingStats = new StartingStats();
-  
+  nav.resetStats(startingStats);
+
   // *finish will barf if we use the real sceneName
   var scene = new Scene(sceneName, startingStats, nav);
   var originalScene = scene;
