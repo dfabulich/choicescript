@@ -25,6 +25,7 @@ if (typeof java == "undefined") {
   list.shift();
   list.shift();
   gameName = list.shift();
+  if (!gameName) gameName = "mygame";
   fs = require('fs');
   vm = require('vm');
   path = require('path');
@@ -43,6 +44,7 @@ if (typeof java == "undefined") {
 } else {
   list = arguments;
   gameName = list.shift();
+  if (!gameName) gameName = "mygame";
   load("web/scene.js");
   load("web/navigator.js");
   load("web/util.js");
