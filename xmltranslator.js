@@ -1,8 +1,8 @@
 var isRhino;
 if (typeof java == "undefined") {
   isRhino = false;
-  var fs = require('fs');
-  var path = require('path');
+  if (!fs) fs = require('fs');
+  if (!path) path = require('path');
   var args = process.argv;
   args.shift();
   args.shift();

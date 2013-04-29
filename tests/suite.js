@@ -1,13 +1,16 @@
-with(this) {
 var isRhino;
 if (typeof java == "undefined") {
 	isRhino = false;
-	var fs = require('fs');
+	fs = require('fs');
+	vm = require('vm');
+	path = require('path');
 	var args = process.argv.slice(0);
 	args.shift();
 	args.shift();
-	var contents = fs.readFileSync(args[0], "utf-8");
-	eval(contents);
+	load = function load(file) {
+		vm.runInThisContext(fs.readFileSync(file), file);
+	};
+	load(args[0]);
 	print = console.log;
 } else {
 	isRhino = true;
@@ -48,13 +51,7 @@ QUnit.done = function(results) {
 }
 
 for (var i = 1; i < args.length; i++) {
-	if (isRhino) {
-		load(args[i]);
-	} else {
-		var contents = fs.readFileSync(args[i], 'utf-8');
-		eval(contents);
-	}
-	
+	load(args[i]);
 }
 
 if (finalResults.failed) {
@@ -62,6 +59,4 @@ if (finalResults.failed) {
 	isRhino ? java.lang.System.exit(1) : process.exit(1);
 } else {
 	print(finalResults.total, "PASSED");
-}
-
 }
