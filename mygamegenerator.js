@@ -1,5 +1,12 @@
-var fs = require("fs");
-eval(fs.readFileSync("headless.js", "utf-8"));
+if (typeof load == "undefined") {
+  fs = require("fs");
+  vm = require("vm");
+  vm.runInThisContext(fs.readFileSync("headless.js"), "headless.js");
+  print = console.log;
+} else {
+  load("headless.js");
+}
+
 
 
 function parseSceneList(lines, lineNum) {
@@ -35,7 +42,7 @@ var scenes;
 var create = /^\*create +(\w+) +(.*)/;
 var result, variable, value;
 for (var i = 0; i < lines.length; i++) {
-  var line = lines[i].trim();
+  var line = (""+lines[i]).replace(/^\s*/, "").replace(/\s*$/, "");
   if (!line) { continue; }
   else if (/^\*(comment|title)/.test(line)) { continue; }
   else if (!!(result = create.exec(line))) {
@@ -51,9 +58,31 @@ for (var i = 0; i < lines.length; i++) {
   }
 }
 
-var mygame = "nav = new SceneNavigator(" + JSON.stringify(scenes) +
-  ");\nstats = " + JSON.stringify(stats) + ";\n";
+var mygameBuffer = ["nav = new SceneNavigator(["];
 
-console.log(mygame);
+for (var i = 0; i < scenes.length; i++) {
+  if (i > 0) mygameBuffer.push(',');
+  mygameBuffer.push("'", scenes[i], "'");
+};
+
+mygameBuffer.push("]);\nstats = {");
+var first = true;
+for (stat in stats) {
+  if (first) {
+    first = false;
+  } else {
+    mygameBuffer.push(",");
+  }
+  mygameBuffer.push("'", stat, "':");
+  if (typeof stats[stat] == "string") {
+    mygameBuffer.push("'", stats[stat], "'");
+  } else {
+    mygameBuffer.push(stats[stat]);
+  }
+}
+
+mygameBuffer.push("};\n");
+
+print(mygameBuffer.join(""));
 
 
