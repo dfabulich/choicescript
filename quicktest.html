@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Quicktest</title>
+	<script src=web/scene.js></script>
+	<script src=web/navigator.js></script>
+	<script src=web/util.js></script>
+	<script src=web/mygame/mygame.js></script>
+	<script src=editor/embeddable-autotester.js></script>
+<script>
+
+function doneLoading() {
+	var loadingDiv = document.getElementById("loading");
+	if (loadingDiv) loadingDiv.parentNode.removeChild(loadingDiv);
+}
+function changeTitle() {}
+knownScenes = ["startup.txt", "choicescript_stats.txt"];
+function verifyFileName(name) {
+	var found = false;
+	for (var i = knownScenes.length - 1; i >= 0; i--) {
+		if (name == knownScenes[i]) {
+			found = true;
+			break;
+		}
+	};
+	if (!found) {
+		knownScenes.push(name);
+	}
+}
+
+printFooter = function() {};
+printShareLinks = function() {};
+printLink = function() {};
+printImage = function() {};
+showPassword = function() {};
+
+isRegistered = function() {return false;};
+isRegisterAllowed = function() {return false;};
+isRestorePurchasesSupported = function() {return false;};
+areSaveSlotsSupported = function() {return false;};
+
+function initStore() { return false; }
+
+clearScreen = function clearScreen(code) {
+	code.call();
+};
+
+var oldLog = console.log;
+
+saveCookie = function(callback) { if (callback) callback.call(); };
+
+function printBody(msg, parent) {
+    if (msg === null || msg === undefined || msg === "") return;
+    if (!parent) parent = document.body;
+    if (msg == " ") {
+      // IE7 doesn't like innerHTML that's nothing but " "
+      parent.appendChild(document.createTextNode(" "));
+      return;
+    }
+    msg = (msg+"").replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/\[b\]/g, '<b>')
+      .replace(/\[\/b\]/g, '</b>')
+      .replace(/\[i\]/g, '<i>')
+      .replace(/\[\/i\]/g, '</i>');
+    var frag = document.createDocumentFragment();
+    temp = document.createElement('div');
+    temp.innerHTML = msg;
+    while (temp.firstChild) {
+        frag.appendChild(temp.firstChild);
+    }
+    parent.appendChild(frag);
+
+}
+
+function println() {}
+
+console.log = function() {
+	var msg = arguments[0];
+	printBody(msg);
+	var br = document.createElement("br");
+	document.body.appendChild(br);
+	br.scrollIntoView();
+	oldLog.apply(this, arguments);
+}
+
+uncoveredScenes = [];
+</script>
+</head>
+<body>
+<div id="loading">Loading...</div>
+<script>
+var success = true;
+for (var sceneNum = 0; sceneNum < knownScenes.length; sceneNum++) {
+	var fileName = knownScenes[sceneNum];
+	var sceneName = fileName.replace(/.txt$/, "");
+	var url = "web/mygame/scenes/" + fileName;
+	xhr = new XMLHttpRequest();
+	xhr.open("GET", url, false);
+	try {
+		xhr.send();
+	} catch (x) {
+		if (/^choicescript_(stats|upgrade)$/.test(sceneName)) continue;
+		console.log("QUICKTEST FAILED");
+		console.log("ERROR: couldn't open " + url);
+		success = false;
+		break;
+	}
+	console.log(sceneName);
+	try {
+		var uncovered = autotester(xhr.responseText, nav, sceneName)[1];
+	} catch (x) {
+		console.log("QUICKTEST FAILED");
+    	console.log(x);
+    	success = false;
+    	break;
+	}
+	if (uncovered) {
+	  uncoveredScenes.push({name:sceneName, lines:uncovered});
+	}
+}
+
+if (success) {
+	var allLinesTested = true;
+	for (var i = 0; i < uncoveredScenes.length; i++) {
+	  allLinesTested = false;
+	  var uncoveredScene = uncoveredScenes[i];
+	  uncoveredScene.lines.push("");
+	  console.log(uncoveredScene.lines.join(" UNTESTED " + uncoveredScene.name));
+	}
+	if (!allLinesTested) console.log("SOME LINES UNTESTED");
+	console.log("QUICKTEST PASSED");	
+}
+</script>
+</body>
+</html>

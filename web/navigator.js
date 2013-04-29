@@ -18,6 +18,7 @@
  */
 function SceneNavigator(sceneList) {
     this.setSceneList(sceneList);
+    this.startingStats = {};
 }
 
 SceneNavigator.prototype.setSceneList = function setSceneList(sceneList) {

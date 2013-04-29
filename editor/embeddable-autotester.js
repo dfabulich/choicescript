@@ -248,6 +248,10 @@ function autotester(sceneText, nav, sceneName) {
   	return r; // Object
   }
   
+  // In autotest, impossible combinations occur, so ignore all conflicting options
+  // We'll catch these with randomtest instead
+  Scene.prototype.conflictingOptions = function() {};
+
   if (!Scene.prototype.oldRunCommand) Scene.prototype.oldRunCommand = Scene.prototype.runCommand;
   Scene.prototype.runCommand = function test_runCommand(line) {
     // skip commands that have already been covered
