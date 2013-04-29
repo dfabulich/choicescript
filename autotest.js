@@ -83,24 +83,37 @@ if (!list.length || (list.length == 1 && !list[0])) {
 var uncoveredScenes = [];
 var uncovered;
 
+var sceneFileSet;
 verifyFileName = function verifyFileName(name) {
   var filePath = "web/"+gameName+"/scenes/"+name;
   if (!fileExists(filePath)) throw new Error("File does not exist: " + name);
-  var canonicalName, fileName;
+  var canonicalName, fileName, i;
   if (isRhino) {
     var file = new java.io.File(filePath);
     fileName = file.getName();
     canonicalName = file.getCanonicalFile().getName();
     if (fileName != canonicalName) throw new Error("Incorrect capitalization/canonicalization; the file is called " + canonicalName + " but you requested " + name);
   } else {
-    canonicalName = path.basename(fs.realpathSync(filePath));
-    fileName = path.basename(filePath);
-    if (fileName != canonicalName) throw new Error("Incorrect capitalization/canonicalization; the file is called " + canonicalName + " but you requested " + name);
+    if (!sceneFileSet) {
+      sceneFileSet = {};
+      var sceneFiles = fs.readdirSync("web/"+gameName+"/scenes");
+      for (i = sceneFiles.length - 1; i >= 0; i--) {
+        sceneFileSet[sceneFiles[i]] = 1;
+      }
+    }
+    if (!sceneFileSet[name]) {
+      for (var sceneFile in sceneFileSet) {
+        if (sceneFile.toLowerCase() == name.toLowerCase()) {
+          throw new Error("Incorrect capitalization/canonicalization; the file is called " + sceneFile + " but you requested " + name);
+        }
+      }
+      throw new Error("Incorrect capitalization/canonicalization? you requested " + name + " but that file doesn't exist");
+    }
   }
   if (fullGame) {
     // add the scene to the list if it isn't in mygame.js
     var found = false;
-    for (var i = 0; i < list.length && !found; i++) {
+    for (i = 0; i < list.length && !found; i++) {
       found = list[i] == name;
     }
     if (!found) {
