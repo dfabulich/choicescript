@@ -130,6 +130,7 @@ var fileName = knownScenes[sceneNum];
 	} catch (x) {
 		console.log("QUICKTEST FAILED");
     	console.log(x);
+    	console.error(x.stack);
     	success = false;
     	return;
 	}
