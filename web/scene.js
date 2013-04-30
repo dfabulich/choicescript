@@ -1424,7 +1424,7 @@ Scene.prototype.share_this_game = function share_links(now) {
 };
 
 Scene.prototype.more_games = function more_games(now) {
-  if (typeof window == "undefined") return;
+  if (typeof window == "undefined" || typeof moreGames == "undefined") return;
   if (!!trim(now)) {
     moreGames();
     return;
