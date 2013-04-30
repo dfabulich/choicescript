@@ -17,23 +17,21 @@ function doneLoading() {
 }
 function changeTitle() {}
 knownScenes = [];
+
+function addFile(name) {
+  for (var i = 0; i < knownScenes.length; i++) {
+    if (knownScenes[i] == name) return;
+  }
+  knownScenes.push(name);
+}
+
 function verifyFileName(name) {
-	var found = false;
-	for (var i = knownScenes.length - 1; i >= 0; i--) {
-		if (name == knownScenes[i]) {
-			found = true;
-			break;
-		}
-	};
-	if (!found) {
-		knownScenes.push(name);
-	}
+	addFile(name);
 }
 
 var sceneName = nav.getStartupScene();
-while (sceneName) {
-	verifyFileName(sceneName + ".txt")
-	sceneName = nav.nextSceneName(sceneName);
+for (var i = 0; i < nav._sceneList.length; i++) {
+	addFile(nav._sceneList[i] + ".txt");
 }
 verifyFileName("choicescript_stats.txt");
 verifyFileName("choicescript_upgrade.txt");

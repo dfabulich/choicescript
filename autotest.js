@@ -65,10 +65,8 @@ var fullGame = false;
 if (!list.length || (list.length == 1 && !list[0])) {
   fullGame = true;
   list = [];
-  var sceneName = nav.getStartupScene();
-  while (sceneName) {
-    list.push(sceneName+".txt");
-    sceneName = nav.nextSceneName(sceneName);
+  for (var i = 0; i < nav._sceneList.length; i++) {
+    addFile(nav._sceneList[i]+".txt");
   }
   if (fileExists("web/"+gameName+"/scenes/choicescript_stats.txt")) {
     list.push("choicescript_stats.txt");
@@ -80,6 +78,13 @@ if (!list.length || (list.length == 1 && !list[0])) {
   for (var i = list.length - 1; i >= 0; i--) {
     list[i] += ".txt";
   }
+}
+
+function addFile(name) {
+  for (var i = 0; i < list.length; i++) {
+    if (list[i] == name) return;
+  }
+  list.push(name);
 }
 
 var uncoveredScenes = [];
@@ -113,14 +118,7 @@ verifyFileName = function verifyFileName(name) {
     }
   }
   if (fullGame) {
-    // add the scene to the list if it isn't in mygame.js
-    var found = false;
-    for (i = 0; i < list.length && !found; i++) {
-      found = list[i] == name;
-    }
-    if (!found) {
-      list.push(name);
-    }
+    addFile(name);
   }
 };
 
@@ -140,28 +138,32 @@ Scene.prototype.conflictingOptions = function() {};
 // test startup scene first, to run *create commands
 if (list[0] != nav.getStartupScene()+".txt") list.unshift(nav.getStartupScene()+".txt");
 
-for (var i = 0; i < list.length; i++) {
-  print(list[i]);
-  if (isRhino) java.lang.Thread.sleep(100); // sleep to allow print statements to flush :-(
-  try {
-    var fileName = list[i];
-    var sceneName = fileName.replace(/\.txt$/, "");
-    verifyFileName(fileName);
-    var sceneText = slurpFile("web/"+gameName+"/scenes/"+fileName, true /*throwOnError*/);
-    uncovered = autotester(sceneText, nav, sceneName)[1];
-  } catch (e) {
-    print("QUICKTEST FAILED\n");
-    print(e);
-    if (isRhino) {
-      java.lang.System.exit(1);
-    } else {
-      process.exit(1);
+(function(){
+  for (var i = 0; i < list.length; i++) {
+    print(list[i]);
+    if (isRhino) java.lang.Thread.sleep(100); // sleep to allow print statements to flush :-(
+    try {
+      var fileName = list[i];
+      var sceneName = fileName.replace(/\.txt$/, "");
+      verifyFileName(fileName);
+      var sceneText = slurpFile("web/"+gameName+"/scenes/"+fileName, true /*throwOnError*/);
+      uncovered = autotester(sceneText, nav, sceneName)[1];
+      debugger;
+    } catch (e) {
+      print("QUICKTEST FAILED\n");
+      print(e);
+      if (isRhino) {
+        java.lang.System.exit(1);
+      } else {
+        process.exit(1);
+      }
+    }
+    if (uncovered) {
+      uncoveredScenes.push({name:list[i], lines:uncovered});
     }
   }
-  if (uncovered) {
-    uncoveredScenes.push({name:list[i], lines:uncovered});
-  }
-}
+}());
+
 
 var allLinesTested = true;
 for (var i = 0; i < uncoveredScenes.length; i++) {
