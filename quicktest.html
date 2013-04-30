@@ -142,8 +142,9 @@ var fileName = knownScenes[sceneNum];
 		for (var i = 0; i < uncoveredScenes.length; i++) {
 		  allLinesTested = false;
 		  var uncoveredScene = uncoveredScenes[i];
-		  uncoveredScene.lines.push("");
-		  console.log(uncoveredScene.lines.join(" UNTESTED " + uncoveredScene.name));
+		  for (var j = 0; j < uncoveredScene.lines.length; j++) {
+		  	console.log("UNTESTED " + uncoveredScene.name + " " + uncoveredScene.lines[j]);
+		  };
 		}
 		if (!allLinesTested) console.log("SOME LINES UNTESTED");
 		console.log("QUICKTEST PASSED");
