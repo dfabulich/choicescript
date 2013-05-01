@@ -32,7 +32,7 @@ for (var i = 0; i < lines.length; i++) {
 		continue;
 	}
 	if (/^,/.test(line)) line = line.substr(1);
-	var parts = /"(.*?)"\s*:\s*(.*)/.exec(line);
+	var parts = /"?(.*?)"?\s*:\s*(.*)/.exec(line);
 	var stat = parts[1];
 	var value = parts[2];
 	var commentParts = /(.*?)\/\/(.*)$/.exec(value);
