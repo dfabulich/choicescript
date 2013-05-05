@@ -1239,7 +1239,7 @@ Scene.prototype.input_number = function input_number(data) {
           asyncAlert("Please type in a number.");
           return;
         }
-        if (intRequired && !isInt(numValue)) {
+        if (intRequired && !isInt(value)) {
           asyncAlert("Please type in an integer number.");
           return;
         }
@@ -1251,7 +1251,7 @@ Scene.prototype.input_number = function input_number(data) {
           asyncAlert("Please use a number less than or equal to " + maximum);
           return;
         }
-        self.setVar(variable, value);
+        self.setVar(variable, numValue);
         self.finished = false;
         self.resetPage();
       });
