@@ -495,7 +495,6 @@ function subscribeByMail(target, now, callback, code) {
     println("Click here to subscribe to our mailing list; we'll notify you when our next game is ready!");
     printButton("Subscribe", target, false, function() {
         code();
-        setTimeout(function() {callback(now);}, 0);
       });
     printButton("Next", target, false, function() {
       setTimeout(function() {callback(now);}, 0);
