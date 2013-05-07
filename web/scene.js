@@ -1412,6 +1412,8 @@ Scene.prototype.setref = function setref(line) {
           "The expression ("+referenceExpressionString+") was \""+reference+"\", which is invalid:\n" + e.message);
       }
     }
+    // if the first token is an operator, then it's implicitly based on the variable
+    if (/OPERATOR|FAIRMATH/.test(stack[0].name)) stack.unshift({name:"VAR", value:reference, pos:"(implicit)"});
     var value = this.evaluateExpr(stack);
     this.setVar(reference, value);
 };
