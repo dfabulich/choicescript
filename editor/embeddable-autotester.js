@@ -28,6 +28,9 @@ function autotester(sceneText, nav, sceneName) {
     buttonName = this.replaceVariables(buttonName);
   }
   
+  // Don't test for *bugs; *if cheating makes *bugs fake-reachable
+  Scene.prototype.bug = Scene.prototype.finish;
+
   Scene.prototype.page_break = function() {};
   Scene.prototype.subscribe = function() {};
   Scene.prototype.restore_game = function() {};
@@ -403,7 +406,7 @@ function autotester(sceneText, nav, sceneName) {
       line = trim(originalScene.lines[i]);
       if (!coverage[i]) {
         if (startRange === null) {
-          if (!line || /\*comment\b/.test(line)) continue;
+          if (!line || /\*(comment|bug)\b/.test(line)) continue;
           startRange = i+1;
         }
       } else if (startRange == i) {
