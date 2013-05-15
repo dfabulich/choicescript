@@ -19,12 +19,15 @@
 
 // usage: randomtest 10000 mygame 0
 
-var gameName = "mygame";
-var args;
-if (typeof java == "undefined") {
+var isRhino = false;
+var iterations = 10, gameName = "mygame", randomSeed = 0;
+if (typeof java == "undefined" && typeof args == "undefined") {
   args = process.argv;
   args.shift();
   args.shift();
+  if (args[0]) iterations = args[0];
+  if (args[1]) gameName = args[1];
+  if (args[2]) randomSeed = args[2];
   var fs = require('fs');
   var path = require('path');
   eval(fs.readFileSync("web/scene.js", "utf-8"));
@@ -36,7 +39,8 @@ if (typeof java == "undefined") {
   function print(str) {
     console.log(str);
   }
-} else {
+} else if (typeof args == "undefined") {
+  isRhino = true;
   args = arguments;  
   load("web/scene.js");
   load("web/navigator.js");
@@ -45,9 +49,6 @@ if (typeof java == "undefined") {
   load("seedrandom.js");
   load("web/"+gameName+"/"+"mygame.js");
 }
-if (args[1]) gameName = args[1];
-
-var randomSeed = args[2] || 1;
 
 Math.seedrandom(randomSeed);
 
@@ -326,8 +327,7 @@ var sceneNames = [];
 
 nav.setStartingStatsClone(stats);
 
-var iterations = 10000;
-if (args[0]) iterations = args[0];
+var processExit = false;
 for (i = 0; i < iterations; i++) {
   log("*****" + i);
   timeout = null;
@@ -344,19 +344,24 @@ for (i = 0; i < iterations; i++) {
     print(e);
     if (isRhino) {
       java.lang.System.exit(1);
-    } else {
+    } else if (typeof process != "undefined" && process.exit) {
       process.exit(1);
+    } else {
+      processExit = true;
+      break;
     }
   }
   nav.resetStats(stats);
 }
 
-for (i = 0; i < sceneNames.length; i++) {
-  var sceneName = sceneNames[i];
-  var sceneLines = slurpFileLines('web/'+gameName+'/scenes/'+sceneName+'.txt');
-  var sceneCoverage = coverage[sceneName];
-  for (var j = 0; j < sceneCoverage.length; j++) {
-    log(sceneName + " "+ (sceneCoverage[j] || 0) + ": " + sceneLines[j]);
+if (!processExit) {
+  for (i = 0; i < sceneNames.length; i++) {
+    var sceneName = sceneNames[i];
+    var sceneLines = slurpFileLines('web/'+gameName+'/scenes/'+sceneName+'.txt');
+    var sceneCoverage = coverage[sceneName];
+    for (var j = 0; j < sceneCoverage.length; j++) {
+      log(sceneName + " "+ (sceneCoverage[j] || 0) + ": " + sceneLines[j]);
+    }
   }
+  log("RANDOMTEST PASSED");
 }
-log("RANDOMTEST PASSED");

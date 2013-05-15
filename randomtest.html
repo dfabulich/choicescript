@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Randomtest</title>
+	<script src=web/scene.js></script>
+	<script src=web/navigator.js></script>
+	<script src=web/util.js></script>
+	<script src=web/mygame/mygame.js></script>
+	<script src=seedrandom.js></script>
+<script>
+
+function slurpFile(url) {
+  xhr = new XMLHttpRequest();
+  xhr.open("GET", url, false);
+  try {
+    xhr.send();
+    doneLoading();
+    return xhr.responseText;
+  } catch (x) {
+    doneLoading();
+    console.log("RANDOMTEST FAILED");
+    console.log("ERROR: couldn't open " + url);
+    if (window.location.protocol == "file:" && /Chrome/.test(navigator.userAgent)) {
+          console.log("We're sorry, Google Chrome has blocked ChoiceScript from functioning.  (\"file:\" URLs cannot "+
+            "load files in Chrome.)  ChoiceScript works just fine in Chrome, but only on a published website like "+
+            "choiceofgames.com.  For the time being, please try another browser like Mozilla Firefox.");
+    }
+    throw new Error("Couldn't open " + url);
+  }
+}
+
+function slurpFileLines(url) {
+  return slurpFile(url).split(/\r?\n/);
+}
+
+nav.setStartingStatsClone(stats);
+
+function doneLoading() {
+	var loadingDiv = document.getElementById("loading");
+	if (loadingDiv) loadingDiv.parentNode.removeChild(loadingDiv);
+}
+function changeTitle() {}
+knownScenes = [];
+
+function addFile(name) {
+  for (var i = 0; i < knownScenes.length; i++) {
+    if (knownScenes[i] == name) return;
+  }
+  knownScenes.push(name);
+}
+
+function verifyFileName(name) {
+	addFile(name);
+}
+
+var sceneName = nav.getStartupScene();
+for (var i = 0; i < nav._sceneList.length; i++) {
+	addFile(nav._sceneList[i] + ".txt");
+}
+verifyFileName("choicescript_stats.txt");
+verifyFileName("choicescript_upgrade.txt");
+
+printFooter = function() {};
+printShareLinks = function() {};
+printLink = function() {};
+printImage = function() {};
+showPassword = function() {};
+
+isRegistered = function() {return false;};
+isRegisterAllowed = function() {return false;};
+isRestorePurchasesSupported = function() {return false;};
+isFullScreenAdvertisingSupported = function() {return false;};
+areSaveSlotsSupported = function() {return false;};
+
+function initStore() { return false; }
+
+clearScreen = function clearScreen(code) {
+	code.call();
+};
+
+var oldLog = console.log;
+
+saveCookie = function(callback) { if (callback) callback.call(); };
+
+function printBody(msg, parent) {
+    if (msg === null || msg === undefined || msg === "") return;
+    if (!parent) parent = document.body;
+    if (msg == " ") {
+      // IE7 doesn't like innerHTML that's nothing but " "
+      parent.appendChild(document.createTextNode(" "));
+      return;
+    }
+    msg = (msg+"").replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/\[b\]/g, '<b>')
+      .replace(/\[\/b\]/g, '</b>')
+      .replace(/\[i\]/g, '<i>')
+      .replace(/\[\/i\]/g, '</i>');
+    var frag = document.createDocumentFragment();
+    temp = document.createElement('div');
+    temp.innerHTML = msg;
+    while (temp.firstChild) {
+        frag.appendChild(temp.firstChild);
+    }
+    parent.appendChild(frag);
+
+}
+
+function println() {}
+
+console.log = function() {
+	var msg = arguments[0];
+	printBody(msg);
+	var br = document.createElement("br");
+	document.body.appendChild(br);
+	br.scrollIntoView();
+	oldLog.apply(this, arguments);
+}
+
+args = [1, "mygame", 0];
+
+</script>
+
+</head>
+<body>
+<div id="loading">Loading...</div>
+<script src=randomtest.js></script>
+</body>
+</html>
