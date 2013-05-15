@@ -1341,6 +1341,9 @@ Scene.prototype.rand = function rand(data) {
         result = 1*minimum + random*diff;
     }
     this.setVar(variable, result);
+    if (this.randomLog) {
+      this.randomLog("*rand " + variable + " " + result);
+    }
 };
 
 // *set varname expr

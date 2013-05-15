@@ -112,6 +112,10 @@ Scene.prototype.check_purchase = function scene_checkPurchase(data) {
   this.temps.choice_purchased_everything = true;
 }
 
+Scene.prototype.randomLog = function randomLog(msg) {
+  log(this.name + " " + msg);
+}
+
 Scene.prototype.save_game = noop;
 
 Scene.prototype.restore_game = function() {
