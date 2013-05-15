@@ -212,7 +212,7 @@ Scene.prototype.input_number = function(data) {
    this.rand(data);
 }
 
-Scene.prototype.finish = Scene.prototype.autofinish = function random_finish() {
+Scene.prototype.finish = Scene.prototype.autofinish = function random_finish(buttonText) {
     var nextSceneName = this.nav && nav.nextSceneName(this.name);
     this.finished = true;
     // if there are no more scenes, then just halt
@@ -220,6 +220,9 @@ Scene.prototype.finish = Scene.prototype.autofinish = function random_finish() {
         return;
     }
     var scene = new Scene(nextSceneName, this.stats, this.nav, this.debugMode);
+    this.paragraph();
+    println("*finish " + buttonText);
+    println("");
     scene.resetPage();
 }
     
@@ -243,12 +246,10 @@ Scene.prototype.choice = function choice(data, fakeChoice) {
       };
       this.temps.fakeChoiceLines = fakeChoiceLines;
     }
-    if (!this.prevLineEmpty) {
-      println("");
-    }
+    this.paragraph();
     log(this.name + " *choice " + (choiceLine+1)+'#'+(index+1)+' (line '+item.ultimateOption.line+') #' + item.ultimateOption.name);
     var self = this;
-    timeout = function() {self.standardResolution(item.ultimateOption);}
+    timeout = function() {println("");self.standardResolution(item.ultimateOption);}
     this.finished = true;
 
     function flattenOptions(list, options, flattenedOption) {
