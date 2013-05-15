@@ -20,14 +20,22 @@
 // usage: randomtest 10000 mygame 0
 
 var isRhino = false;
-var iterations = 10, gameName = "mygame", randomSeed = 0;
+var iterations = 10, gameName = "mygame", randomSeed = 0, delay = false;
+function parseArgs(args) {
+  if (args[0]) iterations = args[0];
+  if (args[1]) gameName = args[1];
+  if (args[2]) randomSeed = args[2];
+  if (args[3]) delay = args[3];
+}
+
+if (typeof args != "undefined") {
+  parseArgs(args);
+}
 if (typeof java == "undefined" && typeof args == "undefined") {
   args = process.argv;
   args.shift();
   args.shift();
-  if (args[0]) iterations = args[0];
-  if (args[1]) gameName = args[1];
-  if (args[2]) randomSeed = args[2];
+  parseArgs(args);
   var fs = require('fs');
   var path = require('path');
   eval(fs.readFileSync("web/scene.js", "utf-8"));
@@ -41,7 +49,8 @@ if (typeof java == "undefined" && typeof args == "undefined") {
   }
 } else if (typeof args == "undefined") {
   isRhino = true;
-  args = arguments;  
+  args = arguments;
+  parseArgs(args);
   load("web/scene.js");
   load("web/navigator.js");
   load("web/util.js");
@@ -328,40 +337,105 @@ var sceneNames = [];
 nav.setStartingStatsClone(stats);
 
 var processExit = false;
-for (i = 0; i < iterations; i++) {
-  log("*****" + i);
-  timeout = null;
-  var scene = new Scene(nav.getStartupScene(), stats, nav, false);
-  try {
-    scene.execute();
-    while (timeout) {
-      var fn = timeout;
+var start;
+function randomtestAsync(i) {
+    if (i==0) start = new Date().getTime();
+    function runTimeout(fn) {
       timeout = null;
-      fn();
+      setTimeout(function() {
+        try {
+          fn();
+        } catch (e) {
+          return fail(e);
+        }
+        if (timeout) {
+          runTimeout(timeout);
+        } else {
+          if (i < iterations) {
+            randomtestAsync(i+1);
+          }
+        }
+      }, 0);
     }
-  } catch (e) {
-    print("RANDOMTEST FAILED\n");
-    print(e);
-    if (isRhino) {
-      java.lang.System.exit(1);
-    } else if (typeof process != "undefined" && process.exit) {
-      process.exit(1);
-    } else {
-      processExit = true;
-      break;
+
+    function fail(e) {
+      print("RANDOMTEST FAILED\n");
+      print(e);
+      if (isRhino) {
+        java.lang.System.exit(1);
+      } else if (typeof process != "undefined" && process.exit) {
+        process.exit(1);
+      } else {
+        processExit = true;
+      }
     }
-  }
-  nav.resetStats(stats);
+
+    if (i >= iterations && !processExit) {
+      for (i = 0; i < sceneNames.length; i++) {
+        var sceneName = sceneNames[i];
+        var sceneLines = slurpFileLines('web/'+gameName+'/scenes/'+sceneName+'.txt');
+        var sceneCoverage = coverage[sceneName];
+        for (var j = 0; j < sceneCoverage.length; j++) {
+          log(sceneName + " "+ (sceneCoverage[j] || 0) + ": " + sceneLines[j]);
+        }
+      }
+      log("RANDOMTEST PASSED");
+      var end = new Date().getTime();
+      var duration = (end - start)/1000;
+      log("Time: " + duration + "s")
+      return;
+    }
+
+    log("*****" + i);
+    timeout = null;
+    nav.resetStats(stats);
+    var scene = new Scene(nav.getStartupScene(), stats, nav, false);
+    try {
+      scene.execute();
+      if (timeout) return runTimeout(timeout);
+    } catch (e) {
+      return fail(e); 
+    }
+  
 }
 
-if (!processExit) {
-  for (i = 0; i < sceneNames.length; i++) {
-    var sceneName = sceneNames[i];
-    var sceneLines = slurpFileLines('web/'+gameName+'/scenes/'+sceneName+'.txt');
-    var sceneCoverage = coverage[sceneName];
-    for (var j = 0; j < sceneCoverage.length; j++) {
-      log(sceneName + " "+ (sceneCoverage[j] || 0) + ": " + sceneLines[j]);
+function randomtest() {
+  for (i = 0; i < iterations; i++) {
+    log("*****" + i);
+    timeout = null;
+    var scene = new Scene(nav.getStartupScene(), stats, nav, false);
+    try {
+      scene.execute();
+      while (timeout) {
+        var fn = timeout;
+        timeout = null;
+        fn();
+      }
+    } catch (e) {
+      print("RANDOMTEST FAILED\n");
+      print(e);
+      if (isRhino) {
+        java.lang.System.exit(1);
+      } else if (typeof process != "undefined" && process.exit) {
+        process.exit(1);
+      } else {
+        processExit = true;
+        break;
+      }
     }
+    nav.resetStats(stats);
   }
-  log("RANDOMTEST PASSED");
+
+  if (!processExit) {
+    for (i = 0; i < sceneNames.length; i++) {
+      var sceneName = sceneNames[i];
+      var sceneLines = slurpFileLines('web/'+gameName+'/scenes/'+sceneName+'.txt');
+      var sceneCoverage = coverage[sceneName];
+      for (var j = 0; j < sceneCoverage.length; j++) {
+        log(sceneName + " "+ (sceneCoverage[j] || 0) + ": " + sceneLines[j]);
+      }
+    }
+    log("RANDOMTEST PASSED");
+  }
 }
+if (!delay) randomtest();

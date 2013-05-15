@@ -119,13 +119,24 @@ console.log = function() {
 	oldLog.apply(this, arguments);
 }
 
-args = [1, "mygame", 0];
+args = [1, "mygame", 0, true];
 
 </script>
-
+<script src=randomtest.js></script>
 </head>
 <body>
-<div id="loading">Loading...</div>
-<script src=randomtest.js></script>
+<p>Iterations: <input type="number" id="iterations" value="10"></p>
+<p>Seed: <input type="number" id="seed" value="0"></p>
+<button id="start">Start Randomtest</button>
+<script>
+document.getElementById("start").onclick = function() {
+  iterations = document.getElementById("iterations").value;
+  Math.seedrandom(document.getElementById("seed").value);
+  document.body.innerHTML = "<div id=loading>Loading...</div>";
+  setTimeout(function() {
+    randomtestAsync(0);
+  }, 0);
+}
+</script>
 </body>
 </html>
