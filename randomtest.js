@@ -93,6 +93,7 @@ function debughelp() {
 
 function noop() {}
 Scene.prototype.page_break = noop;
+oldPrintLine = Scene.prototype.printLine;
 Scene.prototype.printLine = function randomtest_printLine(line) {
   if (!line) return null;
   line = this.replaceVariables(line);
@@ -242,8 +243,10 @@ Scene.prototype.choice = function choice(data, fakeChoice) {
       };
       this.temps.fakeChoiceLines = fakeChoiceLines;
     }
-
-    log(this.name + " " + (choiceLine+1)+'#'+(index+1)+' ('+item.ultimateOption.line+')');
+    if (!this.prevLineEmpty) {
+      println("");
+    }
+    log(this.name + " *choice " + (choiceLine+1)+'#'+(index+1)+' (line '+item.ultimateOption.line+') #' + item.ultimateOption.name);
     var self = this;
     timeout = function() {self.standardResolution(item.ultimateOption);}
     this.finished = true;
@@ -338,7 +341,7 @@ nav.setStartingStatsClone(stats);
 
 var processExit = false;
 var start;
-function randomtestAsync(i) {
+function randomtestAsync(i, showCoverage) {
     if (i==0) start = new Date().getTime();
     function runTimeout(fn) {
       timeout = null;
@@ -352,7 +355,7 @@ function randomtestAsync(i) {
           runTimeout(timeout);
         } else {
           if (i < iterations) {
-            randomtestAsync(i+1);
+            randomtestAsync(i+1, showCoverage);
           }
         }
       }, 0);
@@ -376,7 +379,7 @@ function randomtestAsync(i) {
         var sceneLines = slurpFileLines('web/'+gameName+'/scenes/'+sceneName+'.txt');
         var sceneCoverage = coverage[sceneName];
         for (var j = 0; j < sceneCoverage.length; j++) {
-          log(sceneName + " "+ (sceneCoverage[j] || 0) + ": " + sceneLines[j]);
+          if (showCoverage) log(sceneName + " "+ (sceneCoverage[j] || 0) + ": " + sceneLines[j]);
         }
       }
       log("RANDOMTEST PASSED");

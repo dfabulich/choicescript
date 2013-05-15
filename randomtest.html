@@ -108,8 +108,6 @@ function printBody(msg, parent) {
 
 }
 
-function println() {}
-
 console.log = function() {
 	var msg = arguments[0];
 	printBody(msg);
@@ -119,22 +117,39 @@ console.log = function() {
 	oldLog.apply(this, arguments);
 }
 
+var pretty = true;
+
 args = [1, "mygame", 0, true];
 
 </script>
 <script src=randomtest.js></script>
 </head>
 <body>
-<p>Iterations: <input type="number" id="iterations" value="10"></p>
+<p>Iterations: <input type="number" id="iterations" value="1"></p>
 <p>Seed: <input type="number" id="seed" value="0"></p>
+<p><input type="checkbox" id="showText" checked> Show full text during game</p>
+<p><input type="checkbox" id="showCoverage"> Show line coverage statistics after test</p>
 <button id="start">Start Randomtest</button>
 <script>
+Scene.prototype.printLine = oldPrintLine;
+
 document.getElementById("start").onclick = function() {
   iterations = document.getElementById("iterations").value;
   Math.seedrandom(document.getElementById("seed").value);
+  var showText = document.getElementById("showText").checked;
+  var showCoverage = document.getElementById("showCoverage").checked;
+  if (showText) {
+    printx = function printx(msg) {
+      printBody(msg);
+    };
+    println = function println(msg) {
+      printBody(msg);
+      document.body.appendChild(document.createElement("br"));
+    };
+  }
   document.body.innerHTML = "<div id=loading>Loading...</div>";
   setTimeout(function() {
-    randomtestAsync(0);
+    randomtestAsync(0, showCoverage);
   }, 0);
 }
 </script>
