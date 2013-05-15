@@ -115,6 +115,11 @@ XmlScene.prototype.image = function xmlImage(data) {
   writer.write("'/>\n");
 }
 
+XmlScene.prototype.title = function() {};
+XmlScene.prototype.scene_list = function xml_scene_list() {
+  this.parseSceneList();
+};
+
 XmlScene.prototype.kindle_image = XmlScene.prototype.image;
 
 XmlScene.prototype.kindle_search = function kindle_search(data) {
