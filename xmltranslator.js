@@ -1,8 +1,9 @@
+//usage: dir fileBaseName
 var isRhino;
 if (typeof java == "undefined") {
   isRhino = false;
-  if (!fs) fs = require('fs');
-  if (!path) path = require('path');
+  if (typeof fs == "undefined") fs = require('fs');
+  if (typeof path == "undefined") path = require('path');
   var args = process.argv;
   args.shift();
   args.shift();
