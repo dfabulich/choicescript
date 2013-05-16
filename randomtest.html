@@ -125,12 +125,25 @@ args = [1, "mygame", 0, true];
 <script src=randomtest.js></script>
 </head>
 <body>
-<p>Iterations: <input type="number" id="iterations" value="1"></p>
+<p>Iterations: <input type="number" id="iterations" value="10000"></p>
 <p>Seed: <input type="number" id="seed" value="0"></p>
-<p><input type="checkbox" id="showText" checked> Show full text during game</p>
+<p><input type="checkbox" id="showText"> Show full text during game</p>
 <p><input type="checkbox" id="showCoverage"> Show line coverage statistics after test</p>
 <button id="start">Start Randomtest</button>
 <script>
+var queryArgList = (""+window.location.search).substr(1).split(/&/);
+var queryArgs = {};
+for (var i = queryArgList.length - 1; i >= 0; i--) {
+  var parts = queryArgList[i].split(/=/);
+  if ("false" === parts[1]) parts[1] = false;
+  queryArgs[parts[0]] = parts[1];
+};
+debugger;
+if (queryArgs.iterations) document.getElementById("iterations").value = queryArgs.iterations;
+if (queryArgs.seed) document.getElementById("seed").value = queryArgs.seed;
+if (queryArgs.showText) document.getElementById("showText").checked = queryArgs.showText;
+if (queryArgs.showCoverage) document.getElementById("showCoverage").checked = queryArgs.showCoverage;
+
 Scene.prototype.printLine = oldPrintLine;
 
 document.getElementById("start").onclick = function() {
