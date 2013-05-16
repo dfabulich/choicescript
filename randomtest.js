@@ -450,8 +450,8 @@ function randomtestAsync(i, showCoverage) {
     }
 
     function fail(e) {
-      print("RANDOMTEST FAILED\n");
-      print(e);
+      console.log("RANDOMTEST FAILED\n");
+      console.log(e);
       if (isRhino) {
         java.lang.System.exit(1);
       } else if (typeof process != "undefined" && process.exit) {
@@ -509,8 +509,8 @@ function randomtest() {
         fn();
       }
     } catch (e) {
-      print("RANDOMTEST FAILED\n");
-      print(e);
+      console.log("RANDOMTEST FAILED\n");
+      console.log(e);
       if (isRhino) {
         java.lang.System.exit(1);
       } else if (typeof process != "undefined" && process.exit) {
