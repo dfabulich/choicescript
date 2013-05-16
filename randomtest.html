@@ -2,85 +2,36 @@
 <html>
 <head>
 	<title>Randomtest</title>
-	<script src=web/scene.js></script>
-	<script src=web/navigator.js></script>
-	<script src=web/util.js></script>
-	<script src=web/mygame/mygame.js></script>
-	<script src=seedrandom.js></script>
+</head>
+<body>
+<p>Iterations: <input type="number" id="iterations" value="10000"></p>
+<p>Seed: <input type="number" id="seed" value="0"></p>
+<p><input type="checkbox" id="showText"> Show full text during game</p>
+<p><input type="checkbox" id="showCoverage"> Show line coverage statistics after test</p>
+<p><input type="checkbox" id="autoScroll"> Automatically scroll to the bottom</p>
+<button id="start">Start Randomtest</button>
 <script>
+var worker = new Worker("randomtest.js");
+var messages = [];
+worker.onmessage = function(x) {
+  var msg = x.data.msg;
+  messages.push(msg);
+  console.log(msg);
+}
 
-function slurpFile(url) {
-  xhr = new XMLHttpRequest();
-  xhr.open("GET", url, false);
-  try {
-    xhr.send();
-    doneLoading();
-    return xhr.responseText;
-  } catch (x) {
-    doneLoading();
-    console.log("RANDOMTEST FAILED");
-    console.log("ERROR: couldn't open " + url);
-    if (window.location.protocol == "file:" && /Chrome/.test(navigator.userAgent)) {
-          console.log("We're sorry, Google Chrome has blocked ChoiceScript from functioning.  (\"file:\" URLs cannot "+
-            "load files in Chrome.)  ChoiceScript works just fine in Chrome, but only on a published website like "+
-            "choiceofgames.com.  For the time being, please try another browser like Mozilla Firefox.");
-    }
-    throw new Error("Couldn't open " + url);
+setInterval(function() {
+  if (messages.length) {
+    var frag = document.createDocumentFragment();
+    var length = messages.length;
+    for (var i = 0; i < length; i++) {
+      printBody(messages[i], frag);
+      frag.appendChild(document.createElement("br"));
+    };
+    document.body.appendChild(frag);
+    messages = [];
+    if (queryArgs.autoScroll) window.scroll(0,document.height);
   }
-}
-
-function slurpFileLines(url) {
-  return slurpFile(url).split(/\r?\n/);
-}
-
-nav.setStartingStatsClone(stats);
-
-function doneLoading() {
-	var loadingDiv = document.getElementById("loading");
-	if (loadingDiv) loadingDiv.parentNode.removeChild(loadingDiv);
-}
-function changeTitle() {}
-knownScenes = [];
-
-function addFile(name) {
-  for (var i = 0; i < knownScenes.length; i++) {
-    if (knownScenes[i] == name) return;
-  }
-  knownScenes.push(name);
-}
-
-function verifyFileName(name) {
-	addFile(name);
-}
-
-var sceneName = nav.getStartupScene();
-for (var i = 0; i < nav._sceneList.length; i++) {
-	addFile(nav._sceneList[i] + ".txt");
-}
-verifyFileName("choicescript_stats.txt");
-verifyFileName("choicescript_upgrade.txt");
-
-printFooter = function() {};
-printShareLinks = function() {};
-printLink = function() {};
-printImage = function() {};
-showPassword = function() {};
-
-isRegistered = function() {return false;};
-isRegisterAllowed = function() {return false;};
-isRestorePurchasesSupported = function() {return false;};
-isFullScreenAdvertisingSupported = function() {return false;};
-areSaveSlotsSupported = function() {return false;};
-
-function initStore() { return false; }
-
-clearScreen = function clearScreen(code) {
-	code.call();
-};
-
-var oldLog = console.log;
-
-saveCookie = function(callback) { if (callback) callback.call(); };
+}, 100);
 
 function printBody(msg, parent) {
     if (msg === null || msg === undefined || msg === "") return;
@@ -108,29 +59,6 @@ function printBody(msg, parent) {
 
 }
 
-console.log = function() {
-	var msg = arguments[0];
-	printBody(msg);
-	var br = document.createElement("br");
-	document.body.appendChild(br);
-	br.scrollIntoView();
-	oldLog.apply(this, arguments);
-}
-
-var pretty = true;
-
-args = [1, "mygame", 0, true];
-
-</script>
-<script src=randomtest.js></script>
-</head>
-<body>
-<p>Iterations: <input type="number" id="iterations" value="10000"></p>
-<p>Seed: <input type="number" id="seed" value="0"></p>
-<p><input type="checkbox" id="showText"> Show full text during game</p>
-<p><input type="checkbox" id="showCoverage"> Show line coverage statistics after test</p>
-<button id="start">Start Randomtest</button>
-<script>
 var queryArgList = (""+window.location.search).substr(1).split(/&/);
 var queryArgs = {};
 for (var i = queryArgList.length - 1; i >= 0; i--) {
@@ -138,32 +66,20 @@ for (var i = queryArgList.length - 1; i >= 0; i--) {
   if ("false" === parts[1]) parts[1] = false;
   queryArgs[parts[0]] = parts[1];
 };
-debugger;
+
 if (queryArgs.iterations) document.getElementById("iterations").value = queryArgs.iterations;
 if (queryArgs.seed) document.getElementById("seed").value = queryArgs.seed;
 if (queryArgs.showText) document.getElementById("showText").checked = queryArgs.showText;
 if (queryArgs.showCoverage) document.getElementById("showCoverage").checked = queryArgs.showCoverage;
-
-Scene.prototype.printLine = oldPrintLine;
+if (queryArgs.autoScroll) document.getElementById("autoScroll").checked = queryArgs.autoScroll;
 
 document.getElementById("start").onclick = function() {
   iterations = document.getElementById("iterations").value;
   randomSeed = document.getElementById("seed").value*1;
   var showText = document.getElementById("showText").checked;
   var showCoverage = document.getElementById("showCoverage").checked;
-  if (showText) {
-    printx = function printx(msg) {
-      printBody(msg);
-    };
-    println = function println(msg) {
-      printBody(msg);
-      document.body.appendChild(document.createElement("br"));
-    };
-  }
-  document.body.innerHTML = "<div id=loading>Loading...</div>";
-  setTimeout(function() {
-    randomtestAsync(0, showCoverage);
-  }, 0);
+  document.body.innerHTML = "";
+  worker.postMessage({iterations:iterations, randomSeed:randomSeed, showText:showText, showCoverage:showCoverage});
 }
 </script>
 </body>

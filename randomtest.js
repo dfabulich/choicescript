@@ -20,7 +20,7 @@
 // usage: randomtest 10000 mygame 0
 
 var isRhino = false;
-var iterations = 10, gameName = "mygame", randomSeed = 0, delay = false;
+var iterations = 10, gameName = "mygame", randomSeed = 0, delay = false, showCoverage = true;
 function parseArgs(args) {
   if (args[0]) iterations = args[0];
   if (args[1]) gameName = args[1];
@@ -28,10 +28,92 @@ function parseArgs(args) {
   if (args[3]) delay = args[3];
 }
 
-if (typeof args != "undefined") {
-  parseArgs(args);
-}
-if (typeof java == "undefined" && typeof args == "undefined") {
+if (typeof importScripts != "undefined") {
+  console = {
+    log: function(msg) {
+      if (typeof msg == "string") {
+        postMessage({msg:msg});
+      } else if (msg.stack) {
+        postMessage({msg:msg.stack});
+      } else {
+        postMessage({msg:JSON.stringify(msg)});
+      }
+    }
+  };
+
+  slurpFile = function slurpFile(url) {
+    xhr = new XMLHttpRequest();
+    xhr.open("GET", url, false);
+    try {
+      xhr.send();
+      doneLoading();
+      return xhr.responseText;
+    } catch (x) {
+      doneLoading();
+      console.log("RANDOMTEST FAILED");
+      console.log("ERROR: couldn't open " + url);
+      if (window.location.protocol == "file:" && /Chrome/.test(navigator.userAgent)) {
+            console.log("We're sorry, Google Chrome has blocked ChoiceScript from functioning.  (\"file:\" URLs cannot "+
+              "load files in Chrome.)  ChoiceScript works just fine in Chrome, but only on a published website like "+
+              "choiceofgames.com.  For the time being, please try another browser like Mozilla Firefox.");
+      }
+      throw new Error("Couldn't open " + url);
+    }
+  };
+
+  slurpFileLines = function slurpFileLines(url) {
+    return slurpFile(url).split(/\r?\n/);
+  };
+
+  doneLoading = function doneLoading() {};
+
+  changeTitle = function changeTitle() {};
+
+  printFooter = function() {};
+  printShareLinks = function() {};
+  printLink = function() {};
+  printImage = function() {};
+  showPassword = function() {};
+
+  isRegistered = function() {return false;};
+  isRegisterAllowed = function() {return false;};
+  isRestorePurchasesSupported = function() {return false;};
+  isFullScreenAdvertisingSupported = function() {return false;};
+  areSaveSlotsSupported = function() {return false;};
+
+  initStore = function initStore() { return false; };
+
+  clearScreen = function clearScreen(code) {
+    code.call();
+  };
+
+  saveCookie = function(callback) { if (callback) callback.call(); };
+
+  importScripts("web/scene.js", "web/navigator.js", "web/util.js", "web/mygame/mygame.js", "seedrandom.js");
+  nav.setStartingStatsClone(stats);
+  delay = true;
+  onmessage = function(event) {
+    iterations = event.data.iterations;
+    randomSeed = event.data.randomSeed;
+    showCoverage = event.data.showCoverage;
+
+    if (event.data.showText) {
+      var lineBuffer = [];
+
+      printx = function printx(msg) {
+        lineBuffer.push(msg);
+      };
+      println = function println(msg) {
+        lineBuffer.push(msg);
+        console.log(lineBuffer.join(""));
+        lineBuffer = [];
+      };
+
+      Scene.prototype.printLine = oldPrintLine;
+    }
+    randomtest();
+  };
+} else if (typeof java == "undefined" && typeof args == "undefined") {
   args = process.argv;
   args.shift();
   args.shift();
@@ -382,12 +464,14 @@ function randomtestAsync(i, showCoverage) {
     }
 
     if (i >= iterations && !processExit) {
-      for (i = 0; i < sceneNames.length; i++) {
-        var sceneName = sceneNames[i];
-        var sceneLines = slurpFileLines('web/'+gameName+'/scenes/'+sceneName+'.txt');
-        var sceneCoverage = coverage[sceneName];
-        for (var j = 0; j < sceneCoverage.length; j++) {
-          if (showCoverage) log(sceneName + " "+ (sceneCoverage[j] || 0) + ": " + sceneLines[j]);
+      if (showCoverage) {
+        for (i = 0; i < sceneNames.length; i++) {
+          var sceneName = sceneNames[i];
+          var sceneLines = slurpFileLines('web/'+gameName+'/scenes/'+sceneName+'.txt');
+          var sceneCoverage = coverage[sceneName];
+          for (var j = 0; j < sceneCoverage.length; j++) {
+            if (showCoverage) log(sceneName + " "+ (sceneCoverage[j] || 0) + ": " + sceneLines[j]);
+          }
         }
       }
       log("RANDOMTEST PASSED");
@@ -412,6 +496,7 @@ function randomtestAsync(i, showCoverage) {
 }
 
 function randomtest() {
+  var start = new Date().getTime();
   randomSeed *= 1;
   for (i = 0; i < iterations; i++) {
     log("*****Seed " + (i+randomSeed));
@@ -441,15 +526,19 @@ function randomtest() {
   }
 
   if (!processExit) {
-    for (i = 0; i < sceneNames.length; i++) {
-      var sceneName = sceneNames[i];
-      var sceneLines = slurpFileLines('web/'+gameName+'/scenes/'+sceneName+'.txt');
-      var sceneCoverage = coverage[sceneName];
-      for (var j = 0; j < sceneCoverage.length; j++) {
-        log(sceneName + " "+ (sceneCoverage[j] || 0) + ": " + sceneLines[j]);
+    if (showCoverage) {
+      for (i = 0; i < sceneNames.length; i++) {
+        var sceneName = sceneNames[i];
+        var sceneLines = slurpFileLines('web/'+gameName+'/scenes/'+sceneName+'.txt');
+        var sceneCoverage = coverage[sceneName];
+        for (var j = 0; j < sceneCoverage.length; j++) {
+          log(sceneName + " "+ (sceneCoverage[j] || 0) + ": " + sceneLines[j]);
+        }
       }
     }
     log("RANDOMTEST PASSED");
+    var duration = (new Date().getTime() - start)/1000;
+    log("Time: " + duration + "s")
   }
 }
 if (!delay) randomtest();
