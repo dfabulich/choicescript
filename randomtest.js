@@ -92,7 +92,12 @@ function debughelp() {
 }
 
 function noop() {}
-Scene.prototype.page_break = noop;
+Scene.prototype.page_break = function randomtest_page_break(buttonText) {
+  this.paragraph();
+  println("*page_break " + buttonText);
+  println("");
+}
+
 oldPrintLine = Scene.prototype.printLine;
 Scene.prototype.printLine = function randomtest_printLine(line) {
   if (!line) return null;
