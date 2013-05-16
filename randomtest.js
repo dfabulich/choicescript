@@ -41,6 +41,8 @@ if (typeof importScripts != "undefined") {
     }
   };
 
+  importScripts("web/scene.js", "web/navigator.js", "web/util.js", "web/mygame/mygame.js", "seedrandom.js");
+
   slurpFile = function slurpFile(url) {
     xhr = new XMLHttpRequest();
     xhr.open("GET", url, false);
@@ -89,7 +91,6 @@ if (typeof importScripts != "undefined") {
 
   saveCookie = function(callback) { if (callback) callback.call(); };
 
-  importScripts("web/scene.js", "web/navigator.js", "web/util.js", "web/mygame/mygame.js", "seedrandom.js");
   nav.setStartingStatsClone(stats);
   delay = true;
   onmessage = function(event) {
