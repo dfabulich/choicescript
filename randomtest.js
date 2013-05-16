@@ -59,8 +59,6 @@ if (typeof java == "undefined" && typeof args == "undefined") {
   load("web/"+gameName+"/"+"mygame.js");
 }
 
-Math.seedrandom(randomSeed);
-
 var hardCodedRandomness = null; //[1, 1, 2, 1, 3, 3, 1, 1, 2, 5, 3, 1, 1, 2, 5, 1, 3, 3, 2, 2, 1, 2, 3, 2, 3, 1, 4, 5, 2, 3, 3, 2, 1, 1, 2, 2, 1, 1, 2, 3, ];
 function randomIndex(len) {
   if (hardCodedRandomness) {
@@ -399,9 +397,10 @@ function randomtestAsync(i, showCoverage) {
       return;
     }
 
-    log("*****" + i);
+    log("*****Seed " + (i+randomSeed));
     timeout = null;
     nav.resetStats(stats);
+    Math.seedrandom(i+randomSeed);
     var scene = new Scene(nav.getStartupScene(), stats, nav, false);
     try {
       scene.execute();
@@ -413,9 +412,11 @@ function randomtestAsync(i, showCoverage) {
 }
 
 function randomtest() {
+  randomSeed *= 1;
   for (i = 0; i < iterations; i++) {
-    log("*****" + i);
+    log("*****Seed " + (i+randomSeed));
     timeout = null;
+    Math.seedrandom(i+randomSeed);
     var scene = new Scene(nav.getStartupScene(), stats, nav, false);
     try {
       scene.execute();

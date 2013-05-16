@@ -135,7 +135,7 @@ Scene.prototype.printLine = oldPrintLine;
 
 document.getElementById("start").onclick = function() {
   iterations = document.getElementById("iterations").value;
-  Math.seedrandom(document.getElementById("seed").value);
+  randomSeed = document.getElementById("seed").value*1;
   var showText = document.getElementById("showText").checked;
   var showCoverage = document.getElementById("showCoverage").checked;
   if (showText) {
