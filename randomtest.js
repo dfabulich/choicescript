@@ -33,8 +33,8 @@ if (typeof importScripts != "undefined") {
     log: function(msg) {
       if (typeof msg == "string") {
         postMessage({msg:msg});
-      } else if (msg.stack) {
-        postMessage({msg:msg.stack});
+      } else if (msg.stack && msg.message) {
+        postMessage({msg:msg.message, stack:msg.stack});
       } else {
         postMessage({msg:JSON.stringify(msg)});
       }
