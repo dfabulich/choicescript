@@ -126,9 +126,6 @@ if (typeof importScripts != "undefined") {
   eval(fs.readFileSync("headless.js", "utf-8"));
   eval(fs.readFileSync("seedrandom.js", "utf-8"));
   eval(fs.readFileSync("web/"+gameName+"/"+"mygame.js", "utf-8"));
-  function print(str) {
-    console.log(str);
-  }
 } else if (typeof args == "undefined") {
   isRhino = true;
   args = arguments;
@@ -139,6 +136,11 @@ if (typeof importScripts != "undefined") {
   load("headless.js");
   load("seedrandom.js");
   load("web/"+gameName+"/"+"mygame.js");
+  if (typeof console == "undefined") {
+    console = {
+      log: function(msg) { print(msg);}
+    };
+  }
 }
 
 var hardCodedRandomness = null; //[1, 1, 2, 1, 3, 3, 1, 1, 2, 5, 3, 1, 1, 2, 5, 1, 3, 3, 2, 2, 1, 2, 3, 2, 3, 1, 4, 5, 2, 3, 3, 2, 1, 1, 2, 2, 1, 1, 2, 3, ];
@@ -149,10 +151,6 @@ function randomIndex(len) {
     return hardCodedResult - 1;
   }
   return Math.floor(Math.random()*(len));
-}
-
-function log(msg) {
-  print(msg);
 }
 
 var printed = [];
@@ -198,7 +196,7 @@ Scene.prototype.check_purchase = function scene_checkPurchase(data) {
 }
 
 Scene.prototype.randomLog = function randomLog(msg) {
-  log(this.name + " " + msg);
+  console.log(this.name + " " + msg);
 }
 
 Scene.prototype.save_game = noop;
@@ -336,7 +334,7 @@ Scene.prototype.choice = function choice(data, fakeChoice) {
       this.temps.fakeChoiceLines = fakeChoiceLines;
     }
     this.paragraph();
-    log(this.name + " *choice " + (choiceLine+1)+'#'+(index+1)+' (line '+item.ultimateOption.line+') #' + item.ultimateOption.name);
+    console.log(this.name + " *choice " + (choiceLine+1)+'#'+(index+1)+' (line '+item.ultimateOption.line+') #' + item.ultimateOption.name);
     var self = this;
     timeout = function() {println("");self.standardResolution(item.ultimateOption);}
     this.finished = true;
@@ -470,18 +468,18 @@ function randomtestAsync(i, showCoverage) {
           var sceneLines = slurpFileLines('web/'+gameName+'/scenes/'+sceneName+'.txt');
           var sceneCoverage = coverage[sceneName];
           for (var j = 0; j < sceneCoverage.length; j++) {
-            if (showCoverage) log(sceneName + " "+ (sceneCoverage[j] || 0) + ": " + sceneLines[j]);
+            console.log(sceneName + " "+ (sceneCoverage[j] || 0) + ": " + sceneLines[j]);
           }
         }
       }
-      log("RANDOMTEST PASSED");
+      console.log("RANDOMTEST PASSED");
       var end = new Date().getTime();
       var duration = (end - start)/1000;
-      log("Time: " + duration + "s")
+      console.log("Time: " + duration + "s")
       return;
     }
 
-    log("*****Seed " + (i+randomSeed));
+    console.log("*****Seed " + (i+randomSeed));
     timeout = null;
     nav.resetStats(stats);
     Math.seedrandom(i+randomSeed);
@@ -499,7 +497,7 @@ function randomtest() {
   var start = new Date().getTime();
   randomSeed *= 1;
   for (i = 0; i < iterations; i++) {
-    log("*****Seed " + (i+randomSeed));
+    console.log("*****Seed " + (i+randomSeed));
     timeout = null;
     Math.seedrandom(i+randomSeed);
     var scene = new Scene(nav.getStartupScene(), stats, nav, false);
@@ -532,13 +530,13 @@ function randomtest() {
         var sceneLines = slurpFileLines('web/'+gameName+'/scenes/'+sceneName+'.txt');
         var sceneCoverage = coverage[sceneName];
         for (var j = 0; j < sceneCoverage.length; j++) {
-          log(sceneName + " "+ (sceneCoverage[j] || 0) + ": " + sceneLines[j]);
+          console.log(sceneName + " "+ (sceneCoverage[j] || 0) + ": " + sceneLines[j]);
         }
       }
     }
-    log("RANDOMTEST PASSED");
+    console.log("RANDOMTEST PASSED");
     var duration = (new Date().getTime() - start)/1000;
-    log("Time: " + duration + "s")
+    console.log("Time: " + duration + "s")
   }
 }
 if (!delay) randomtest();
