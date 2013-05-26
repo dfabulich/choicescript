@@ -1002,7 +1002,7 @@ Scene.prototype.parseOptions = function parseOptions(startIndent, choicesRemaini
 
 // compute *if statement during options
 Scene.prototype.parseOptionIf = function parseOptionIf(data) {
-  var parsed = /\((.*)\)\s+(#.*)/.exec(data);
+  var parsed = /^\s*\((.*)\)\s+(#.*)/.exec(data);
   if (!parsed) {
     return;
   }

@@ -475,7 +475,7 @@ XmlScene.prototype.elsif = XmlScene.prototype.elseif = function xml_elseif(data,
 
 
 XmlScene.prototype.parseOptionIf = function xmlParseOptionIf(data) {
-  var parsed = /\((.*)\)\s+(#.*)/.exec(data);
+  var parsed = /^\s*\((.*)\)\s+(#.*)/.exec(data);
   if (!parsed) {
     return;
   }
