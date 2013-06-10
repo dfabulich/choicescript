@@ -26,6 +26,8 @@ function tryIt() {
     autotester(getContent(), null, "startup");
     window.open("blankgame.html", "choicescript_testWindow");
   } catch (e) {
+    console.log(e);
+    console.log(e.stack);
     var x = e;
     if (e.message) {
       var match = e.message.match(/^line (\d+)/);
