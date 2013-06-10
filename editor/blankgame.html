@@ -44,13 +44,25 @@ either express or implied.
     } catch (e) {}
     loadLines(editor.getContent(), debug);
   };
+  Scene.prototype.oldLoadScene = Scene.prototype.loadScene;
+  Scene.prototype.loadScene = function () {
+    if (this.name == "startup") {
+      this.loadLines(window.opener.getContent());
+      if (this.executing) {
+        doneLoading();
+        this.execute();
+      }
+    } else {
+      this.oldLoadScene();
+    }
+  }
   function loadLines(lines, debug) {
     window.stats.sceneName = "startup";
     var scene = new Scene("startup", window.stats, window.nav, debug);
-    scene.loadLines(lines);
     safeCall(scene, scene.execute);
   }
   Scene.baseUrl = "../web/mygame/scenes";
+  rootDir = "../web/"
 </script>
 <link href="../web/style.css" rel="stylesheet" type="text/css">
 <link rel="icon" type="image/vnd.microsoft.icon" href="../web/favicon.ico">
