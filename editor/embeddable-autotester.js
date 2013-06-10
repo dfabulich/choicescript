@@ -378,7 +378,8 @@ function autotester(sceneText, nav, sceneName) {
   if (!nav) {
     nav = {
       repairStats: function() {},
-      resetStats: function() {}
+      resetStats: function() {},
+      startingStats: {}
     }
   }
   nav.resetStats(startingStats);
