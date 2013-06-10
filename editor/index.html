@@ -23,7 +23,7 @@ error handling
 function tryIt() {
   window.highlight.style.display = "none";
   try {
-    autotester(getContent());
+    autotester(getContent(), null, "startup");
     window.open("blankgame.html", "choicescript_testWindow");
   } catch (e) {
     var x = e;
@@ -44,6 +44,8 @@ function highlightLine(num) {
 function getContent() {
   return text.value;
 }
+
+function changeTitle() {}
 </script>
 <style>
 body {

@@ -45,8 +45,8 @@ either express or implied.
     loadLines(editor.getContent(), debug);
   };
   function loadLines(lines, debug) {
-    window.stats.sceneName = "test";
-    var scene = new Scene("test", window.stats, window.nav, debug);
+    window.stats.sceneName = "startup";
+    var scene = new Scene("startup", window.stats, window.nav, debug);
     scene.loadLines(lines);
     safeCall(scene, scene.execute);
   }
