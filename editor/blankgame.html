@@ -38,7 +38,7 @@ either express or implied.
   window.onload = function() {
     window.main = document.getElementById("main");
     var editor = window.opener;
-    var debug = false;
+    window.debug = false;
     try {
       debug = editor.document.getElementById('debug').checked;
     } catch (e) {}
@@ -48,6 +48,7 @@ either express or implied.
   Scene.prototype.loadScene = function () {
     if (this.name == "startup") {
       this.loadLines(window.opener.getContent());
+      this.debugMode = window.debug;
       if (this.executing) {
         doneLoading();
         this.execute();
