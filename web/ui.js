@@ -1211,6 +1211,39 @@ function changeTitle(title) {
   h1.appendChild(document.createTextNode(title));
 }
 
+function reportBug() {
+  var prompt = "Please explain the problem. Be sure to describe what you expect, as well as what actually happened.";
+  alertify.prompt(prompt, function(ok, body) {
+    var statMsg = "(unknown)";
+    try {
+        statMsg = toJson(window.stats, '\n');
+    } catch (ex) {}
+    body += "\n\nGame: " + window.storeName;
+    if (window.stats && window.stats.scene) {
+      body += "\nScene: " + window.stats.scene.name;
+      body += "\nLine: " + (window.stats.scene.lineNum+1);
+    }
+    body += "\nUser Agent: " + navigator.userAgent;
+    body += "\nLoad time: " + window.loadTime;
+    if (window.Persist) body += "\nPersist: " + window.Persist.type;
+    body += "\nversion=" + window.version;
+    body += "\n\n" + statMsg;
+    if (window.nav && window.nav.bugLog) body += "\n\n" + window.nav.bugLog.join("\n");
+    console.log(body);
+    if (ok) alertify.prompt("Please type your email address.", function(ok, email) {
+      if (ok) xhrAuthRequest("POST", "support-mail", function(ok, response) {
+        if (ok) {
+          alertify.log("Thank you for reporting a bug!");
+        } else {
+          alertify.alert("Bug reporting failed. Please email your bug report to support@choiceofgames.com (and be sure to mention that the bug reporter failed!)");
+        }
+      }, "email", encodeURIComponent(email),
+        "subject", encodeURIComponent("bug report " + window.storeName),
+        "text", encodeURIComponent(body));
+    });
+  });
+}
+
 window.isWebOS = /webOS/.test(navigator.userAgent);
 window.isMobile = isWebOS || /Mobile/.test(navigator.userAgent);
 window.isFile = /^file:/.test(window.location.href);

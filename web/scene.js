@@ -445,6 +445,7 @@ Scene.prototype.standardResolution = function(option) {
   self.lineNum = option.line;
   self.indent = self.getIndent(self.nextNonBlankLine(true/*includingThisOne*/));
   if (option.reuse && option.reuse != "allow") self.temps.choice_used[option.line-1] = 1;
+  this.nav.bugLog.push("#"+(option.line+1) + " " + option.name);
 
   self.finished = false;
   self.resetPage();
@@ -1207,6 +1208,7 @@ Scene.prototype.input_text = function input_text(variable) {
     var self = this;
     printInput(this.target, "text", function(value) {
       safeCall(self, function() {
+        self.nav.bugLog.push("*input_text " + variable + " " + value);
         self.setVar(variable, value);
         self.finished = false;
         self.resetPage();
@@ -1263,6 +1265,7 @@ Scene.prototype.input_number = function input_number(data) {
           asyncAlert("Please use a number less than or equal to " + maximum);
           return;
         }
+        self.nav.bugLog.push("*input_number " + variable + " " + value);
         self.setVar(variable, numValue);
         self.finished = false;
         self.resetPage();
@@ -1345,6 +1348,7 @@ Scene.prototype.rand = function rand(data) {
     if (this.randomLog) {
       this.randomLog("*rand " + variable + " " + result);
     }
+    this.nav.bugLog.push("*rand " + variable + " " + result);
 };
 
 // *set varname expr
