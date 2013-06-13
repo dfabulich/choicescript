@@ -90,9 +90,9 @@ function addFile(name) {
 var uncoveredScenes = [];
 var uncovered;
 
-var sceneFileSet;
-verifyFileName = function verifyFileName(name) {
-  var filePath = "web/"+gameName+"/scenes/"+name;
+var sceneFileSets = {};
+verifyFileName = function verifyFileName(dir, name) {
+  var filePath = "web/"+gameName+"/"+dir+"/"+name;
   if (!fileExists(filePath)) throw new Error("File does not exist: " + name);
   var canonicalName, fileName, i;
   if (isRhino) {
@@ -101,15 +101,15 @@ verifyFileName = function verifyFileName(name) {
     canonicalName = file.getCanonicalFile().getName();
     if (fileName != canonicalName) throw new Error("Incorrect capitalization/canonicalization; the file is called " + canonicalName + " but you requested " + name);
   } else {
-    if (!sceneFileSet) {
-      sceneFileSet = {};
-      var sceneFiles = fs.readdirSync("web/"+gameName+"/scenes");
+    if (!sceneFileSets[dir]) {
+      sceneFileSets[dir] = {};
+      var sceneFiles = fs.readdirSync("web/"+gameName+"/"+dir);
       for (i = sceneFiles.length - 1; i >= 0; i--) {
-        sceneFileSet[sceneFiles[i]] = 1;
+        sceneFileSets[dir][sceneFiles[i]] = 1;
       }
     }
-    if (!sceneFileSet[name]) {
-      for (var sceneFile in sceneFileSet) {
+    if (!sceneFileSets[dir][name]) {
+      for (var sceneFile in sceneFileSets[dir]) {
         if (sceneFile.toLowerCase() == name.toLowerCase()) {
           throw new Error("Incorrect capitalization/canonicalization; the file is called " + sceneFile + " but you requested " + name);
         }
@@ -117,23 +117,27 @@ verifyFileName = function verifyFileName(name) {
       throw new Error("Incorrect capitalization/canonicalization? you requested " + name + " but that file doesn't exist");
     }
   }
-  if (fullGame) {
-    addFile(name);
-  }
 };
 
-Scene.prototype.verifyFileName = function commandLineVerifyFileName(name) {
+Scene.prototype.verifySceneFile = function commandLineVerifySceneFile(sceneName) {
+  var fileName = sceneName +".txt";
   try {
-    verifyFileName(name+".txt");
+    verifyFileName("scenes", fileName);
+    if (fullGame) {
+      addFile(fileName);
+    }
   } catch (e) {
     throw new Error(this.lineMsg() + e.message);
   }
-  this.finish();
 };
 
-// In autotest, impossible combinations occur, so ignore all conflicting options
-// We'll catch these with randomtest instead
-Scene.prototype.conflictingOptions = function() {};
+Scene.prototype.verifyImage = function commandLineVerifyImage(name) {
+  try {
+    verifyFileName(".", name);
+  } catch (e) {
+    throw new Error(this.lineMsg() + e.message);
+  }
+};
 
 // test startup scene first, to run *create commands
 if (list[0] != nav.getStartupScene()+".txt") list.unshift(nav.getStartupScene()+".txt");
@@ -145,7 +149,7 @@ if (list[0] != nav.getStartupScene()+".txt") list.unshift(nav.getStartupScene()+
     try {
       var fileName = list[i];
       var sceneName = fileName.replace(/\.txt$/, "");
-      verifyFileName(fileName);
+      verifyFileName("scenes", fileName);
       var sceneText = slurpFile("web/"+gameName+"/scenes/"+fileName, true /*throwOnError*/);
       uncovered = autotester(sceneText, nav, sceneName)[1];
       debugger;

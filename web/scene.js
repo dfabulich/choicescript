@@ -1105,6 +1105,7 @@ Scene.prototype.image = function image(data) {
     alignment = alignment || "center";
     if (!/(right|left|center|none)/.test(alignment)) throw new Error(this.lineMsg()+"Invalid alignment, expected right, left, center, or none: " + data);
     printImage(source, alignment);
+    if (this.verifyImage) this.verifyImage(source);
 };
 
 // *link

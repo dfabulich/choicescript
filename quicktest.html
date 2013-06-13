@@ -25,16 +25,16 @@ function addFile(name) {
   knownScenes.push(name);
 }
 
-function verifyFileName(name) {
-  addFile(name);
-}
-
 var sceneName = nav.getStartupScene();
 for (var i = 0; i < nav._sceneList.length; i++) {
   addFile(nav._sceneList[i] + ".txt");
 }
-verifyFileName("choicescript_stats.txt");
-verifyFileName("choicescript_upgrade.txt");
+addFile("choicescript_stats.txt");
+addFile("choicescript_upgrade.txt");
+
+Scene.prototype.verifySceneFile = function webVerifySceneFile(name) {
+  addFile(name+".txt");
+}
 
 printFooter = function() {};
 printShareLinks = function() {};

@@ -17,8 +17,8 @@ function autotester(sceneText, nav, sceneName) {
     "Invalid scene_list instruction, only allowed at the top of startup.txt");
     var scenes = this.parseSceneList();
     for (var i = 0; i < scenes.length; i++) {
-      verifyFileName(scenes[i]+".txt");
-    };
+      this.verifySceneFile(scenes[i]);
+    }
   }
 
   Scene.prototype.finish = function test_finish(buttonName) {
@@ -106,17 +106,14 @@ function autotester(sceneText, nav, sceneName) {
   }
 
   Scene.prototype.goto_random_scene = function testGotoRandomScene(data) {
-    debugger;
     var parsed = this.parseGotoRandomScene(data);
-    if (this.verifyFileName) {
-      for (var i = 0; i < parsed.length; i++) {
-        var name = parsed[i].name;
-        this.verifyFileName(name);
-      }
+    for (var i = 0; i < parsed.length; i++) {
+      var name = parsed[i].name;
+      this.verifySceneFile(name);
     }
 
-    if (/\ballow_no_selection\b/.test(data)) {
-      this.finished = false;
+    if (!/\ballow_no_selection\b/.test(data)) {
+      this.finish();
     }
   }
   
@@ -309,7 +306,7 @@ function autotester(sceneText, nav, sceneName) {
   Scene.prototype.restart = Scene.prototype.finish;
   
   Scene.prototype.goto_scene = function testGotoScene(name) {
-    if (this.verifyFileName) this.verifyFileName(name);
+    this.verifySceneFile(name);
     this.finish();
   }
   
