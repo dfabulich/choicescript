@@ -104,7 +104,7 @@ function compile(){
 	patt = /^<script src\=[\w'"\=\s\.\/]*><\/script>/gim;
 	game_html=game_html.replace(patt,"");
 
-	//6. Slice the document and check for a *title
+	//6. Slice the document
 	var top = game_html.slice(0, (game_html.indexOf("</head>") - 1));
 	var bottom = game_html.slice((game_html.indexOf("</head>")),game_html.length);
 
