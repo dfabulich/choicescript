@@ -1470,12 +1470,14 @@ Scene.prototype.more_games = function more_games(now) {
 Scene.prototype.ending = function ending() {
     if (typeof window == "undefined") return;
     var groups = [""];
-    var options = [
-      {name:"Play again.", group:"choice", restart:true},
-      {name:"Play more games like this.", group:"choice", moreGames:true},
-      {name:"Share this game with friends.", group:"choice", share:true},
-      {name:"Email me when new games are available.", group:"choice", subscribe:true}
-    ];
+    options = [];
+    options.push({name:"Play again.", group:"choice", restart:true});
+    options.push({name:"Play more games like this.", group:"choice", moreGames:true});
+    if (typeof isShareConfigured != "undefined" && isShareConfigured()) {
+      options.push({name:"Share this game with friends.", group:"choice", share:true});
+    }
+    options.push({name:"Email me when new games are available.", group:"choice", subscribe:true});
+
     var self = this;
     function endingMenu() {
       self.renderOptions([""], options, function(option) {

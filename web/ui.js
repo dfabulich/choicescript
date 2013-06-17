@@ -469,6 +469,10 @@ function printShareLinks(target, now) {
   target.appendChild(msgDiv);
 }
 
+function isShareConfigured() {
+  return !!document.getElementById("share");
+}
+
 function shareAction(e) {
   clearScreen(function() {
     var target = document.getElementById('text');
