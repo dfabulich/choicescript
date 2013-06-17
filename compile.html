@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src=web/scene.js></script>
+  <script src=web/navigator.js></script>
+  <script src=web/util.js></script>
+  <script src=web/mygame/mygame.js></script>
+  <script src=editor/embeddable-autotester.js></script>
+<script>
+
+knownScenes = [];
+var scene_object = "";
+var success = true;
+var skip = false;
+var loadFailed = false;
+nav.setStartingStatsClone(stats);
+
+function getFile(url) {
+	xhr = new XMLHttpRequest();
+	try {
+		xhr.open("GET", url, false); //IE errors on xhr.open
+		xhr.send();
+	}
+	catch (x) {
+		if (window.location.protocol == "file:" && /Chrome/.test(navigator.userAgent)) {
+			doneLoading();
+			console.log("We're sorry, Google Chrome has blocked ChoiceScript from functioning.  (\"file:\" URLs cannot "+
+			  "load files in Chrome.)  ChoiceScript works just fine in Chrome, but only on a published website like "+
+			  "choiceofgames.com.  For the time being, please try another browser like Mozilla Firefox.");
+			success = false;
+		  }
+		  loadFailed = true;
+	}
+	
+	if (xhr.status && xhr.status != 200) {
+		loadFailed = true;
+	}
+	
+	if (loadFailed) {
+		doneLoading();
+		console.log("EXPORT FAILED");
+		console.log("Error: Could not open " + url);
+		success = false;
+		//only Firefox:
+		if (typeof InstallTrigger == 'undefined') {
+			console.log("Your browser may not be supported. We recommend using Mozilla Firefox with compile.html.");
+		}
+		return;
+	}
+	
+	if (success) {
+		return xhr.responseText;
+	}
+	else {
+		console.log("An unknown error occurred, please email dan at fabulich.com with details");
+		exit();
+	}
+}
+
+function compile(){
+
+	//1. Grab the game's html file
+	var url = "web/mygame/index.html";
+	var game_html = getFile(url);		
+		
+	//2. Find and extract all .js file data
+	if (loadFailed || !success) return;
+	var next_file = "";
+	var patt = /<script.*?src=["'](.*?)["']><\/script>/gim;
+	var doesMatch;
+	var jsStore = "";
+	console.log("\nExtracting js data from:");
+	while (doesMatch = patt.exec(game_html)) {
+		if (doesMatch[1] != "../version.js") {
+			console.log(doesMatch[1]);
+			next_file = getFile('web/mygame/' + doesMatch[1]);
+				if (next_file != "undefined" && next_file != null) {
+					jsStore = jsStore + next_file;
+				}
+		}
+	}
+	
+	console.log("");
+	
+	//3. Find and extract all .css file data
+	patt = /^\<link[\s][\w'"\=\s\.\/]*[\s]?href\=["']([\w\.\/]*.css)["']/gim;
+	var doesMatch;
+	var cssStore = "";
+	console.log("\nExtracting css data from:");
+	while (doesMatch = patt.exec(game_html)) {
+		// console.log(doesMatch[0]);
+		console.log(doesMatch[1]);
+		next_file = getFile('web/mygame/' + doesMatch[1]);
+		if (next_file != "undefined" && next_file != null) {
+			cssStore = cssStore + next_file;
+		}
+	}
+
+	//4. Remove css links
+	patt = /^<link[\s][\w'"\=\s\.\/]*>/gim;
+	game_html=game_html.replace(patt,"");
+
+	//5. Remove js links
+	patt = /^<script src\=[\w'"\=\s\.\/]*><\/script>/gim;
+	game_html=game_html.replace(patt,"");
+
+	//6. Slice the document and check for a *title
+	var top = game_html.slice(0, (game_html.indexOf("</head>") - 1));
+	var bottom = game_html.slice((game_html.indexOf("</head>")),game_html.length);
+
+	//7.1 Find scene files (as we can't read the dir)
+	console.log("");
+	console.log("Searching for scene files...");
+	for (var i = 0; i < nav._sceneList.length; i++) {
+		addFile(nav._sceneList[i] + ".txt");
+	}
+	verifyFileName("choicescript_stats.txt");
+	
+	//Check startup.txt for a *scene_list
+	var sceneList = false;
+	scene = new Scene("startup");
+	var scene_data = getFile('web/mygame/scenes/startup.txt');
+	scene.loadLines(scene_data);
+	patt = /^\*scene_list$/gim;
+	for (var i = 0; i < scene["lines"].length; i++) {
+		if (patt.exec(scene["lines"][i])) {
+			sceneList = true;
+			scene.lineNum = i;
+			break;
+		}
+	}		
+	//if we have a scene_list, add its contents to knownScenes
+	if (sceneList) {
+		var scenes = scene.parseSceneList();
+		for (var i = 0; i < scenes.length; i++) {
+			verifyFileName(scenes[i]+".txt");
+		};
+	}
+	
+	for (i in knownScenes) {
+		if (knownScenes[i] == 'choicescript_upgrade.txt') continue;
+		console.log(knownScenes[i]);
+	}
+		
+		//whilst we're looking at startup.txt, check for a *title
+		var csTitle = "";
+		patt = /^\*title/i;
+		for (var i = 0; i < scene["lines"].length; i++) {
+			if (patt.exec(scene["lines"][i])) {
+				csTitle = scene["lines"][i];
+			}
+		}
+		
+		//if we have a title, set the <h1> and <title> tags to it
+		if (csTitle != "") {
+			patt = /^\*title[\s]+/i
+			csTitle = csTitle.replace(patt, "");
+			patt = /<title>.*<\/title>/i;
+			if (patt.exec(top)) top = top.replace(patt, "<title>" + csTitle + "</title>");
+			patt = /<h1.*>.*<\/h1>/i;
+			if (patt.exec(bottom)) bottom = bottom.replace(patt, "<h1 class='gameTitle'>" + csTitle + "</h1>");
+			console.log("");
+			console.log("Game title set to: " + csTitle);
+		}
+	
+	//7.2 Create the allScenes object
+	console.log("");
+	console.log("Combining scene files...");
+	var scene_data = "";
+	for (var i = 0; i < knownScenes.length; i++) {
+		if (knownScenes[i] == 'choicescript_upgrade.txt') continue;
+			scene_data = getFile('web/mygame/scenes/' + knownScenes[i]);
+			var scene = new Scene();
+			scene.loadLines(scene_data);
+			var sceneName = knownScenes[i].replace(/\.txt/gi,"");
+			sceneName = sceneName.replace(/ /g, "_");
+			scene_object = scene_object + "\"" + sceneName + "\": {\"crc\":" + scene.temps.choice_crc + ", \"lines\":" + toJson(scene.lines)+ ", \"labels\":" + toJson(scene.labels) + "}";
+			if ((i + 1) != knownScenes.length) {
+				scene_object += ",";
+			}
+	}
+	scene_object = "allScenes = {" + scene_object + "}";
+		
+	//8. Reassemble the document (selfnote: allScenes object seems to cause issues if not in its own pair of script tags)
+	console.log("Assembling new html file...");
+	var new_game = top + "<script>" + scene_object + "<\/script><script>" + jsStore + "<\/script><style>" + cssStore + "</style>" + bottom;
+	var blob = new Blob([new_game], {type: "text/html"});
+	var bloburl = URL.createObjectURL(blob);
+	console.log("Export Complete!");
+	document.write("Click <a download='mygame_complete' href='" + bloburl + "'>here</a> to download your compiled game.");
+	doneLoading();
+}
+
+function printBody(msg, parent) {
+    if (msg === null || msg === undefined || msg === "") return;
+    if (!parent) parent = document.body;
+    if (msg == " ") {
+      // IE7 doesn't like innerHTML that's nothing but " "
+      parent.appendChild(document.createTextNode(" "));
+      return;
+    }
+    msg = (msg+"").replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/\[b\]/g, '<b>')
+      .replace(/\[\/b\]/g, '</b>')
+      .replace(/\[i\]/g, '<i>')
+      .replace(/\[\/i\]/g, '</i>');
+    var frag = document.createDocumentFragment();
+    temp = document.createElement('div');
+    temp.innerHTML = msg;
+    while (temp.firstChild) {
+        frag.appendChild(temp.firstChild);
+    }
+    parent.appendChild(frag);
+
+}
+
+function doneLoading() {
+  var loadingDiv = document.getElementById("loading");
+  if (loadingDiv) loadingDiv.parentNode.removeChild(loadingDiv);
+}
+
+function addFile(name) {
+  for (var i = 0; i < knownScenes.length; i++) {
+    if (knownScenes[i] == name) return;
+  }
+  knownScenes.push(name);
+}
+
+function verifyFileName(name) {
+  addFile(name);
+}
+
+var oldLog = console.log;
+console.log = function() {
+  var msg = arguments[0];
+  printBody(msg);
+  var br = document.createElement("br");
+  document.body.appendChild(br);
+  br.scrollIntoView();
+  oldLog.apply(this, arguments);
+}
+
+  </script>
+</head>
+<body>
+<div id="loading">Loading...</div>
+<script>
+compile();
+</script>
+</body>
+</html>

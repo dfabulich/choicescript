@@ -177,7 +177,10 @@ Scene.prototype.loadSceneFast = function loadSceneFast(url) {
       var result = window.cachedResult;
       window.cachedResult = null;
       return this.loadLinesFast(result.crc, result.lines, result.labels);
-    }
+    } else if (typeof allScenes != "undefined") {
+	    result = allScenes[this.name];
+		return this.loadLinesFast(result.crc, result.lines, result.labels);
+	}
     startLoading();
     if (!url) {
         url = Scene.baseUrl + "/" + this.name.replace(/ /g, "_") + ".txt.js";
@@ -315,7 +318,7 @@ Scene.prototype.loadLines = function loadLines(str) {
 Scene.prototype.execute = function execute() {
     if (!this.loaded) {
         this.executing = true;
-        if (Scene.generatedFast || (typeof generatedFast != "undefined" && generatedFast) ) {
+        if (Scene.generatedFast || (typeof generatedFast != "undefined" && generatedFast) || typeof allScenes != 'undefined') {
           this.loadSceneFast();
         } else {
           this.loadScene();
