@@ -801,6 +801,7 @@ Scene.prototype.parseOptions = function parseOptions(startIndent, choicesRemaini
     var namesEncountered = {};
     var atLeastOneSelectableOption = false;
     var prevOption, ifResult;
+    var startingLine = this.lineNum;
     function removeModifierCommand() {
       line = trim(line.replace(/^\s*\*(\w+)(.*)/, "$2"));
       parsed = /^\s*\*(\w+)(.*)/.exec(line);
@@ -834,7 +835,7 @@ Scene.prototype.parseOptions = function parseOptions(startIndent, choicesRemaini
             if (bodyExpected && !this.fakeChoice) {
                 throw new Error(this.lineMsg() + "Expected choice body");
             }
-            if (!atLeastOneSelectableOption) this.conflictingOptions(this.lineMsg() + "No selectable options");
+            if (!atLeastOneSelectableOption) this.conflictingOptions("line " + (startingLine+1) + ": No selectable options");
             if (expectedSubOptions) {
                 this.verifyOptionsMatch(expectedSubOptions, options);
             }
@@ -997,7 +998,7 @@ Scene.prototype.parseOptions = function parseOptions(startIndent, choicesRemaini
     }
     prevOption = options[options.length-1];
     if (!prevOption.endLine) prevOption.endLine = this.lineNum;
-    if (!atLeastOneSelectableOption) this.conflictingOptions(this.lineMsg() + "No selectable options");
+    if (!atLeastOneSelectableOption) this.conflictingOptions("line " + (startingLine+1) + ": No selectable options");
     return options;
 };
 
