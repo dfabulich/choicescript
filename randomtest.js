@@ -200,6 +200,8 @@ Scene.prototype.randomLog = function randomLog(msg) {
   console.log(this.name + " " + msg);
 }
 
+Scene.prototype.randomtest = true;
+
 Scene.prototype.save_game = noop;
 
 Scene.prototype.restore_game = function() {
