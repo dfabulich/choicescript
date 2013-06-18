@@ -194,7 +194,7 @@ Scene.prototype.loadSceneFast = function loadSceneFast(url) {
         if (xhr.readyState != 4) return;
         if (xhr.status != 200 && xhr.status) {
             main.innerHTML = "<p>Our apologies; there was a " + xhr.status + " error while loading game data."+
-            "  Please refresh your browser now; if that doesn't work, please email support@choiceofgames.com with details.</p>"+
+            "  Please refresh your browser now; if that doesn't work, please email "+getSupportEmail()+" with details.</p>"+
             " <p><button onclick='window.location.reload();'>Refresh Now</button></p>";
             return;
         }
@@ -255,7 +255,7 @@ Scene.prototype.loadScene = function loadScene(url) {
         if (xhr.readyState != 4) return;
         if (xhr.status != 200 && xhr.status) {
             main.innerHTML = "<p>Our apologies; there was a " + xhr.status + " error while loading game data."+
-            "  Please refresh your browser now; if that doesn't work, please email dan at fabulich.com with details.</p>"+
+            "  Please refresh your browser now; if that doesn't work, please email "+getSupportEmail()+" with details.</p>"+
             " <p><button onclick='window.location.reload();'>Refresh Now</button></p>";
             return;
         }
@@ -1603,7 +1603,7 @@ Scene.prototype.restore_game = function restore_game() {
                   } else {
                     mergeRemoteSaves(remoteSaveList, function(saveList, newRemoteSaves, dirtySaveList) {
                       if (!remoteSaveList.length) {
-                        self.printLine("No saves downloaded for email address \""+email+"\". (Is that the correct email address?) If you're having trouble, please contact support at support@choiceofgames.com.");
+                        self.printLine("No saves downloaded for email address \""+email+"\". (Is that the correct email address?) If you're having trouble, please contact support at "+getSupportEmail()+".");
                         renderRestoreMenu(saveList, dirtySaveList);
                       } else {
                         var downloadCount = remoteSaveList.length + " saved " + (remoteSaveList.length == 1 ? "game" : "games");
@@ -1679,15 +1679,7 @@ Scene.prototype.restore_password = function restore_password() {
     try {
       state = jsonParse(token);
     } catch (e) {
-      var supportEmail = "support-unknown@choiceofgames.com";
-      try {
-        supportEmail=document.getElementById("supportEmail").getAttribute("href");
-        supportEmail=supportEmail.replace(/\+/g,"%2B");
-        supportEmail=supportEmail.replace(/mailto:/, "");
-      } catch (ex) {
-        supportEmail = "support-unknown@choiceofgames.com";
-      }
-      asyncAlert("Sorry, that password was invalid. Please contact " + supportEmail + " for assistance. Be sure to include your password in the email.");
+      asyncAlert("Sorry, that password was invalid. Please contact " + getSupportEmail() + " for assistance. Be sure to include your password in the email.");
       return;
     }
 

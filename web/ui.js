@@ -1260,6 +1260,14 @@ window.isKindleFire = /Kindle Fire/.test(navigator.userAgent);
 
 window.loadTime = new Date().getTime();
 
+function getSupportEmail() {
+  try {
+    return document.getElementById("supportEmail").getAttribute("href").substring(7);
+  } catch (e) {
+    return "support-external@choiceofgames.com";
+  }
+}
+
 window.onerror=function(msg, file, line, stack) {
     if (window.console) {
       window.console.error(msg);
@@ -1288,12 +1296,12 @@ window.onerror=function(msg, file, line, stack) {
         body += "\nLoad time: " + window.loadTime;
         if (window.Persist) body += "\nPersist: " + window.Persist.type;
         body += "\n\n" + statMsg + "\n\nversion=" + window.version;
-        var supportEmail = "mailto:support-external@choiceofgames.com";
+        var supportEmailHref = "mailto:support-external@choiceofgames.com";
         try {
-          supportEmail=document.getElementById("supportEmail").getAttribute("href");
-          supportEmail=supportEmail.replace(/\+/g,"%2B");
+          supportEmailHref="mailto:"+getSupportEmail();
+          supportEmailHref=supportEmailHref.replace(/\+/g,"%2B");
         } catch (e) {}
-        window.location.href=(supportEmail + "?subject=Error Report&body=" + encodeURIComponent(body));
+        window.location.href=(supportEmailHref + "?subject=Error Report&body=" + encodeURIComponent(body));
     }
 };
 
