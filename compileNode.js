@@ -54,9 +54,10 @@ var bottom = game_html.slice((game_html.indexOf("</head>")),game_html.length);
 //7. Create the allScenes object
 var sceneList = fs.readdirSync(inputDir);
 console.log("");
-console.log("Combining scene files...");
+console.log("Extracting data scene file data...");
 var scene_data = "";
-for (var i = 0; i < sceneList.length; i++) {
+for (var i in sceneList) {
+	console.log(sceneList[i]);
 	if (sceneList[i] == 'choicescript_upgrade.txt') continue;
 		scene_data = slurpFile('web/mygame/scenes/' + sceneList[i]);
 		var scene = new Scene();
@@ -86,8 +87,7 @@ for (var i = 0; i < sceneList.length; i++) {
 				if (patt.exec(top)) top = top.replace(patt, "<title>" + csTitle + "</title>");
 				patt = /<h1.*>.*<\/h1>/i;
 				if (patt.exec(bottom)) bottom = bottom.replace(patt, "<h1 class='gameTitle'>" + csTitle + "</h1>");
-				console.log("");
-				console.log("Game title set to: " + csTitle);
+				console.log(" - Game title set to: " + csTitle + "\n");
 			}
 		}
 }
@@ -96,4 +96,4 @@ scene_object = "allScenes = {" + scene_object + "}";
 //8. Reassemble the document (selfnote: allScenes causes issues if not in its own pair of script tags)
 fs.writeFileSync("mygame_complete.html", top + "<script>" + scene_object + "</script><script>" + jsStore + "</script>" + "<style>" + cssStore + "</style>" + bottom, "utf-8");
 
-console.log("\nDone!\nmygame_complete.html exported to root cs directory.");
+console.log("\nDone!\n\nmygame_complete.html exported to root cs directory.");
