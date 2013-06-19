@@ -337,7 +337,7 @@ Scene.prototype.choice = function choice(data, fakeChoice) {
       this.temps.fakeChoiceLines = fakeChoiceLines;
     }
     this.paragraph();
-    console.log(this.name + " *choice " + (choiceLine+1)+'#'+(index+1)+' (line '+item.ultimateOption.line+') #' + item.ultimateOption.name);
+    this.randomLog("*choice " + (choiceLine+1)+'#'+(index+1)+' (line '+item.ultimateOption.line+') #' + item.ultimateOption.name);
     var self = this;
     timeout = function() {println("");self.standardResolution(item.ultimateOption);}
     this.finished = true;
