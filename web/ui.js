@@ -620,7 +620,7 @@ function checkPurchase(products, callback) {
     window.checkPurchaseCallback = callback;
     androidBilling.checkPurchase(products);
   } else {
-    var productList = products.split(/,/);
+    var productList = products.split(/ /);
     var purchases = {};
     for (var i = 0; i < productList.length; i++) {
       purchases[productList[i]] = true;
