@@ -77,6 +77,7 @@ function callIos(scheme, path) {
 }
 
 function asyncAlert(message, callback) {
+  if (!callback) callback = function(){};
   if (window.isIosApp) {
     window.alertCallback = callback;
     callIos("alert", message);
@@ -366,6 +367,10 @@ function moreGames() {
     if (window.isIosApp) {
       window.location.href = "itms-apps://itunes.com/apps/choiceofgames";
     } else if (window.isAndroidApp) {
+      if (window.isNookAndroidApp) {
+        asyncAlert("Please search the Nook App Store for \"Choice of Games\" for more games like this!");
+        return;
+      }
       if (window.isAmazonAndroidApp) {
         var androidLink = document.getElementById('androidLink');
         if (androidLink && androidLink.href) {
@@ -412,40 +417,41 @@ function printShareLinks(target, now) {
   }
 
   var mobileMesg = "";
-  if (isMobile && isFile) {
-    if (window.isAndroidApp) {
-      var androidLink = document.getElementById('androidLink');
-      var androidUrl;
-      if (androidLink) {
-        androidUrl = androidLink.href;
-        if (androidUrl) {
-          if (window.isAmazonAndroidApp) {
-            var package = /id=([\.\w]+)/.exec(androidUrl)[1];
-            androidUrl = "http://www.amazon.com/gp/mas/dl/android?p="+package+"&t=choofgam-20&ref=rate";
-            mobileMesg = "  <li><a href='"+androidUrl+"'>Rate this app</a> in the Amazon Appstore</li>\n";
-          } else {
-            mobileMesg = "  <li><a href='"+androidUrl+"'>Rate this app</a> in the Google Play Store</li>\n";
-          }
+  if (window.isAndroidApp) {
+    var androidLink = document.getElementById('androidLink');
+    var androidUrl;
+    if (window.isNookAndroidApp) {
+      androidUrl = "choiceofgamesnook://" + window.nookEan;
+      mobileMesg = "  <li><a href='"+androidUrl+"'>Rate this app</a> in the Nook App Store</li>\n";
+    } else if (androidLink) {
+      androidUrl = androidLink.href;
+      if (androidUrl) {
+        if (window.isAmazonAndroidApp) {
+          var package = /id=([\.\w]+)/.exec(androidUrl)[1];
+          androidUrl = "http://www.amazon.com/gp/mas/dl/android?p="+package+"&t=choofgam-20&ref=rate";
+          mobileMesg = "  <li><a href='"+androidUrl+"'>Rate this app</a> in the Amazon Appstore</li>\n";
+        } else {
+          mobileMesg = "  <li><a href='"+androidUrl+"'>Rate this app</a> in the Google Play Store</li>\n";
+        }
 
-        }
       }
-    } else if (/webOS/.test(navigator.userAgent)) {
-      var palmLink = document.getElementById('palmLink');
-      var palmUrl;
-      if (palmLink) {
-        palmUrl = palmLink.href;
-        if (palmUrl) {
-          mobileMesg = "  <li><a href='"+palmUrl+"'>Rate this app</a> in the Palm App Catalog</li>\n";
-        }
+    }
+  } else if (/webOS/.test(navigator.userAgent) && window.isFile) {
+    var palmLink = document.getElementById('palmLink');
+    var palmUrl;
+    if (palmLink) {
+      palmUrl = palmLink.href;
+      if (palmUrl) {
+        mobileMesg = "  <li><a href='"+palmUrl+"'>Rate this app</a> in the Palm App Catalog</li>\n";
       }
-    } else if (/iPhone/.test(navigator.userAgent)) {
-      var iphoneLink = document.getElementById('iphoneLink');
-      var iphoneUrl;
-      if (iphoneLink) {
-        iphoneUrl = iphoneLink.href;
-        if (iphoneUrl) {
-          mobileMesg = "  <li><a href='"+iphoneUrl+"'>Rate this app</a> in the App Store</li>\n";
-        }
+    }
+  } else if (window.isChromeApp) {
+    var chromeLink = document.getElementById('chromeLink');
+    var chromeUrl;
+    if (chromeLink) {
+      chromeUrl = chromeLink.href;
+      if (chromeUrl) {
+        mobileMesg = "  <li><a href='"+chromeUrl+"/reviews'>Rate this app</a> in the Chrome Web Store</li>\n";
       }
     }
   }
@@ -616,7 +622,7 @@ function checkPurchase(products, callback) {
   if (window.isIosApp) {
     window.checkPurchaseCallback = callback;
     callIos("checkpurchase", products);
-  } else if (window.isAndroidApp) {
+  } else if (window.isAndroidApp && !window.isNookAndroidApp) {
     window.checkPurchaseCallback = callback;
     androidBilling.checkPurchase(products);
   } else {
