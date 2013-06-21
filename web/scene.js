@@ -1126,6 +1126,23 @@ Scene.prototype.link = function link(data) {
     this.screenEmpty = false;
 };
 
+// *link_button
+// Display button that takes you to an URL
+Scene.prototype.link_button = function linkButton(data) {
+    if (typeof window == "undefined") return;
+    var result = /^(\S+)\s*(.*)/.exec(data);
+    if (!result) throw new Error(this.lineMsg() + "invalid line; this line should have an URL: " + data);
+    var href = result[1];
+    var anchorText = trim(result[2]) || href;
+    var target = this.target;
+    if (!target) target = document.getElementById('text');
+    printButton(anchorText, target, false, function() {
+      window.location.href = href;
+    });
+    this.prevLineEmpty = true;
+    this.screenEmpty = false;
+};
+
 // how many spaces is this line indented?
 Scene.prototype.getIndent = function getIndent(line) {
     if (line === null || line === undefined) return 0;
@@ -2991,5 +3008,5 @@ Scene.validCommands = {"comment":1, "goto":1, "gotoref":1, "label":1, "looplimit
     "check_purchase":1,"restore_purchases":1,"purchase":1,"restore_game":1,"advertisement":1,
     "save_game":1,"delay_break":1,"image":1,"link":1,"input_number":1,"goto_random_scene":1,
     "restart":1,"more_games":1,"delay_ending":1,"end_trial":1,"login":1,"achieve":1,"scene_list":1,"title":1,
-    "bug":1
+    "bug":1,"link_button":1
     };
