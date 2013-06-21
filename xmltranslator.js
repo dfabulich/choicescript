@@ -249,9 +249,28 @@ XmlScene.prototype.link = function xmlLink(data) {
   if (!result) throw new Error(this.lineMsg() + "invalid line; this line should have an URL: " + data);
   var href = result[1];
   var anchorText = trim(result[2]) || href;
+  var amazonPrefix = "http://www.amazon.com/s?rh=n%3A133140011%2Ck%3A"
+  if (href.lastIndexOf(amazonPrefix, 0) === 0) {
+    var query = href.substring(amazonPrefix.length);
+    if (/^[A-Z0-9]+$/.test(query)) {
+      writer.write("<kindle-product asin='");
+      writer.write(xmlEscape(query));
+      writer.write("'>");
+      writer.write(this.replaceLine(anchorText));
+      writer.write("</kindle-product>\n");
+    } else {
+      writer.write("<kindle-search query='");
+      writer.write(xmlEscape(decodeURIComponent(query)));
+      writer.write("'>");
+      writer.write(this.replaceLine(anchorText));
+      writer.write("</kindle-search>\n");
+    }
+  }
   closePara();
   writer.write("<link href='"+href+"'>"+anchorText+"</link>\n");
 }
+
+XmlScene.prototype.link_button = XmlScene.prototype.link;
 
 XmlScene.prototype.restore_game = function xmlRestoreGame() {
   unrestorables = this.parseRestoreGame();
