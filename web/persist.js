@@ -142,6 +142,7 @@ return r;},version:'0.2.1',enabled:false};me.enabled=alive.call(me);return me;}(
      */ 
     search_order: [
       // TODO: air
+      'macStorage',
       'iosStorage',
       'localChromeStorage',
       'androidStorage',
@@ -794,6 +795,64 @@ return r;},version:'0.2.1',enabled:false};me.enabled=alive.call(me);return me;}(
             if (fn) fn.call(scope || this, (val !== null), val);
           }
           this.callIos("storagerem://" + key + " " + nonce + " " + encodeURIComponent(val));
+        } 
+      }
+    }, 
+
+    // DGF OSX managed storage
+    macStorage: {
+      size: -1,
+
+      test: function() {
+        try {
+          return window.macStorage ? true : false;
+        } catch (e) {
+          return false;
+        }
+      },
+
+      methods: {
+        key: function(key) {
+          return esc(this.name) + esc(key);
+        },
+
+        init: function() {
+          this.store = macStorage;
+        },
+
+        get: function(key, fn, scope) {
+          // expand key
+          key = this.key(key);
+
+          if (fn)
+            fn.call(scope || this, true, this.store.objectForKey_(key));
+        },
+
+        set: function(key, val, fn, scope) {
+          // expand key
+          key = this.key(key);
+
+          // set value
+          this.store.setObject_forKey_(val, key);
+
+          if (fn)
+            fn.call(scope || this, true, val);
+        },
+
+        remove: function(key, fn, scope) {
+          var val;
+
+          // expand key
+          key = this.key(key);
+
+          // get value
+          val = this.store.objectForKey_(key)
+
+          // delete value
+          this.store.removeObjectForKey_(key);
+
+          if (fn)
+            fn.call(scope || this, (val !== null), val);
         } 
       }
     }, 
