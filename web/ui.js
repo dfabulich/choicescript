@@ -421,8 +421,9 @@ function printShareLinks(target, now) {
     var androidLink = document.getElementById('androidLink');
     var androidUrl;
     if (window.isNookAndroidApp) {
-      androidUrl = "choiceofgamesnook://" + window.nookEan;
-      mobileMesg = "  <li><a href='"+androidUrl+"'>Rate this app</a> in the Nook App Store</li>\n";
+      if (window.nookEan && nookEan != "UNKNOWN") {
+        mobileMesg = "  <li><a href='choiceofgamesnook://"+window.nookEan+"'>Rate this app</a> in the Nook App Store</li>\n";
+      }
     } else if (androidLink) {
       androidUrl = androidLink.href;
       if (androidUrl) {
