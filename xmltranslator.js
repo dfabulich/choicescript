@@ -151,6 +151,10 @@ XmlScene.prototype.page_break = function xmlPageBreak(data) {
   printNestedElement("page-break", this.replaceLine(data));
 }
 
+XmlScene.prototype.comment = function xmlComment(data) {
+  printElement("comment");
+}
+
 XmlScene.prototype.finish = function xmlFinish(data) {
   printNestedElement("finish", this.replaceLine(data));
   this.indent = this.getIndent(this.nextNonBlankLine());
