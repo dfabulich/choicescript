@@ -189,11 +189,21 @@ XmlScene.prototype.label = function xmlLabel(data) {
 }
 
 XmlScene.prototype.temp = function xmlTemp(data) {
-  printElement("temp", "variable", (""+data).toLowerCase());
+  var result = /^(\w*)(.*)/.exec(data);
+  if (!result) throw new Error(this.lineMsg()+"Invalid temp instruction, no variable specified: " + data);
+  var variable = result[1];
+  var expr = trim(result[2]);
+  debugger;
+  printElement("temp", "variable", (""+variable).toLowerCase());
+  if (expr) this.set(data);
 }
 
 XmlScene.prototype.create = function xmlCreate(data) {
-  printElement("create", "variable", (""+data).toLowerCase());
+  var result = /^(\w*)(.*)/.exec(data);
+  if (!result) throw new Error(this.lineMsg()+"Invalid create instruction, no variable specified: " + data);
+  var variable = result[1];
+  printElement("create", "variable", (""+variable).toLowerCase());
+  this.set(data);
 }
 
 
