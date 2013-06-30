@@ -410,7 +410,7 @@ XmlScene.prototype.executeSubScene = function executeSubScene(startLine, endLine
 XmlScene.prototype["if"] = function xmlIf(data, inChoice) {
   if (inChoice) return this.ifInChoice(data);
   closePara();
-  writer.write("<switch>\n");
+  writer.write("<switch line='"+(this.lineNum+1)+"'>\n");
   var ifChainData = [data];
   var oldDent = this.indent;
   while (ifChainData.length) {
@@ -585,11 +585,12 @@ XmlScene.prototype.dedent = function xmlDedent(newDent) {
 XmlScene.prototype.choice = function xmlChoice(data) {
   closePara();
   var groups = data.split(/ /);
+  var startLine = this.lineNum+1;
   var options = this.parseOptions(this.indent, groups);
 
   var endLine = this.lineNum;
   var endIndent = this.indent;
-  writer.write("<choice>\n");
+  writer.write("<choice line='"+(startLine)+"'>\n");
   if (groups.length && groups[0]) {
     writer.write("<groups>\n");
     for (var i = 0; i < groups.length; i++) {

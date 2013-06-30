@@ -11,6 +11,7 @@ function translateScene(text, expectedTranslation, format) {
   scene.execute();
   closePara();
   var output = outputBuffer.join("");
+  output = output.replace(/ line='\d+'/g, "");
   if (format) output = '"' + output.replace(/\n/g, "\\n\"+\n\"");
   equal(output, expectedTranslation, "translation");
 }
