@@ -548,6 +548,10 @@ Scene.prototype.finish = function finish(buttonName) {
         if (!/^choicescript_/.test(this.name)) this.ending();
         return;
     }
+    if (this.screenEmpty) {
+      this.goto_scene(nextSceneName);
+      return;
+    }
     if (!buttonName) buttonName = "Next Chapter";
     buttonName = this.replaceVariables(buttonName);
 
