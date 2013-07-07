@@ -593,7 +593,7 @@ function subscribe(target, now, callback) {
           }
         });
       } else {
-        if (window.location.protocol == "https:") {
+        if (isWinStoreApp || window.location.protocol == "https:") {
           var xhr = findXhr();
           xhr.open("GET", 'https://www.choiceofgames.com/mailchimp_proxy.php/subscribe/post-json?u=eba910fddc9629b2810db6182&id=e9cdee1aaa&EMAIL='+email, true);
           var done = false;
@@ -1264,6 +1264,7 @@ window.isSafari = /Safari/.test(navigator.userAgent);
 window.isIE = /MSIE/.test(navigator.userAgent);
 window.isIPad = /iPad/.test(navigator.userAgent);
 window.isKindleFire = /Kindle Fire/.test(navigator.userAgent);
+window.isWinStoreApp = "ms-appx:" == window.location.protocol;
 
 window.loadTime = new Date().getTime();
 
