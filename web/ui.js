@@ -1399,3 +1399,24 @@ if (window.isChromeApp) {
   base.setAttribute("target", "_blank");
   document.head.appendChild(base);
 }
+
+function winStoreShareLinkHandler(e) {
+    var request = e.request;
+    var canonical = document.querySelector("link[rel=canonical]");
+    var canonicalHref = canonical && canonical.getAttribute("href");
+    if (!/^https?:/.test(canonicalHref)) {
+        canonicalHref = "https://www.choiceofgames.com" + canonicalHref;
+    }
+    if (!/\/$/.test(canonicalHref)) {
+        canonicalHref += "/";
+    }
+    canonicalHref += "redirect.php?src=winshare";
+    request.data.properties.title = document.title;
+    request.data.properties.description = document.querySelector("meta[name=description]").getAttribute("content");
+    request.data.setUri(new Windows.Foundation.Uri(canonicalHref));
+}
+
+if (window.isWinStoreApp) {
+    var dataTransferManager = Windows.ApplicationModel.DataTransfer.DataTransferManager.getForCurrentView();
+    dataTransferManager.addEventListener("datarequested", winStoreShareLinkHandler);
+}
