@@ -25,7 +25,13 @@ function safeCall(obj, fn) {
     var isIE = /MSIE/.test(userAgent);
     if (isIE || isHeadless) {
         // just call through; onerror will be called and debugger will handle it
-        if (obj) {
+        if (typeof MSApp != "undefined") {
+            if (obj) {
+                MSApp.execUnsafeLocalFunction(function () { fn.call(obj); });
+            } else {
+                MSApp.execUnsafeLocalFunction(fn);
+            }
+        } else if (obj) {
             fn.call(obj);
         } else {
             fn.call();
