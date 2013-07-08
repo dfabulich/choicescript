@@ -14,8 +14,8 @@ while (i--) {
   var filePath = inputDir + '/' + list[i];
   var inputMod = fs.statSync(filePath).mtime.getTime();
   var outputMod = 0;
-  if (path.existsSync(filePath + ".js")) {
-    outputMod = fs.statSync(filePath + ".js").mtime.getTime();;
+  if (path.existsSync(filePath + ".json")) {
+    outputMod = fs.statSync(filePath + ".json").mtime.getTime();;
   }
   if (inputMod <= outputMod) {
     console.log(list[i] + " up to date");
@@ -26,7 +26,7 @@ while (i--) {
   var scene = new Scene();
   scene.loadLines(str);
   
-  var writer = fs.createWriteStream(outputDir + '/' + list[i].replace(/ /g, "_") + ".js");
+  var writer = fs.createWriteStream(outputDir + '/' + list[i].replace(/ /g, "_") + ".json");
   writer.write("{\"crc\":" + scene.temps.choice_crc + ", \"lines\":" + toJson(scene.lines)+ ", \"labels\":" + toJson(scene.labels) + "}", "utf-8");
   
   writer.end();

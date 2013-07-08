@@ -10,7 +10,7 @@ var i = list.length;
 while (i--) {
   if (!/\.txt$/.test(list[i].getName())) continue;
   var inputMod = list[i].lastModified();
-  var outputMod = new java.io.File(list[i].getAbsolutePath()+".js").lastModified();
+  var outputMod = new java.io.File(list[i].getAbsolutePath()+".json").lastModified();
   if (inputMod <= outputMod) {
     print(list[i] + " up to date");
     continue;
@@ -20,7 +20,7 @@ while (i--) {
   var scene = new Scene();
   scene.loadLines(str);
   
-  var writer = new java.io.BufferedWriter(new java.io.OutputStreamWriter(new java.io.FileOutputStream(outputDir+"/"+list[i].getName().replaceAll(" ", "_") +".js"), "UTF-8"));
+  var writer = new java.io.BufferedWriter(new java.io.OutputStreamWriter(new java.io.FileOutputStream(outputDir+"/"+list[i].getName().replaceAll(" ", "_") +".json"), "UTF-8"));
   writer.write("{\"crc\":" + scene.temps.choice_crc + ", \"lines\":" + toJson(scene.lines)+ ", \"labels\":" + toJson(scene.labels) + "}");
   
   writer.close();

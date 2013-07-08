@@ -183,7 +183,7 @@ Scene.prototype.loadSceneFast = function loadSceneFast(url) {
 	}
     startLoading();
     if (!url) {
-        url = Scene.baseUrl + "/" + this.name.replace(/ /g, "_") + ".txt.js";
+        url = Scene.baseUrl + "/" + this.name.replace(/ /g, "_") + ".txt.json";
     }
     var xhr = findXhr();
     xhr.open("GET", url, true);
