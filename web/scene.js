@@ -2904,7 +2904,7 @@ Scene.prototype.title = function scene_title(title) {
 
 Scene.prototype.bug = function scene_bug(message) {
   if (message) {
-    message = "Bug: " + message;
+    message = "Bug: " + this.replaceVariables(message);
   } else {
     message = "Bug";
   }
