@@ -1346,6 +1346,15 @@ window.onload=function() {
         loginDiv();
       }
     });
+    if (window.isWinStoreApp) {
+        var subscribeAnchor = document.getElementById("subscribeLink");
+        if (subscribeAnchor) {
+            subscribeAnchor.onclick = undefined;
+            subscribeAnchor.addEventListener("click", function () {
+                safeCall(null, subscribeLink);
+            }, false);
+        }
+    }
 };
 
 _global = this;
@@ -1419,4 +1428,21 @@ function winStoreShareLinkHandler(e) {
 if (window.isWinStoreApp) {
     var dataTransferManager = Windows.ApplicationModel.DataTransfer.DataTransferManager.getForCurrentView();
     dataTransferManager.addEventListener("datarequested", winStoreShareLinkHandler);
+
+    baseScript = document.createElement("script");
+    baseScript.src = "//Microsoft.WinJS.1.0/js/base.js";
+    baseScript.onload = function () {
+        WinJS.Application.onsettings = function (e) {
+            var privacyCmd = new Windows.UI.ApplicationSettings.SettingsCommand("privacy", "Privacy Policy", function () {
+                window.open("http://www.choiceofgames.com/privacy-policy");
+            });
+            e.detail.e.request.applicationCommands.append(privacyCmd);
+        };
+        WinJS.Application.start();
+    };
+    document.head.appendChild(baseScript);
+
+    uiScript = document.createElement("script");
+    uiScript.src = "//Microsoft.WinJS.1.0/js/ui.js";
+    document.head.appendChild(uiScript);
 }
