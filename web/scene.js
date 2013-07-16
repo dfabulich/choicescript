@@ -665,9 +665,15 @@ Scene.prototype.purchase = function purchase_button(data) {
         function() {
           safeCall(self, function() {
               restorePurchases(function() {
-                self["goto"](label);
-                self.finished = false;
-                self.resetPage();
+                checkPurchase([product], function(purchases) {
+                  if (purchases[product]) {
+                    self["goto"](label);
+                    self.finished = false;
+                    self.resetPage();
+                  } else {
+                    asyncAlert("Restore completed. This product is not yet purchased.");
+                  }
+                });
               });
           });
         }
