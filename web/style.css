@@ -230,14 +230,10 @@ h2 {
     display: none;
   }
   
-  #share {
-    font-size: smaller;
+  #headerLinks {
+    line-height: 2; /* For tapability */
   }
-  
-  #share span:first-child {
-    display: block;
-  }
-  
+
   .gameTitle {
     display: none;
   }
