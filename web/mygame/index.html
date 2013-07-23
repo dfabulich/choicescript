@@ -56,30 +56,17 @@ var rootDir = "../";
 <!--<h2 class="gameTitle">by INSERTINSERTINSERT</h2> -->
 
   <p id="headerLinks">
-      <!-- INSERT uncomment about links here
-      <a href="credits.html" id="aboutLink" class="spacedLink">About</a>
-      <a href="http://www.choiceofgames.com/category/our-games/" onclick="moreGames(); return false;" class="spacedLink">More Games</a>
-      <a href="http://www.choiceofgames.com/blog/" class="spacedLink">Blog</a>
-      <a href="javascript:subscribeLink();" id="subscribeLink" class="spacedLink">Subscribe</a>
-      -->
-      <!-- INSERT proper share links here
-      <span id="share"><span>Share on:</span>
-        <span><img height="16" width="16" src="../icons/stumbleupon.png">
-        <a href="http://www.stumbleupon.com/submit?url=http%3A%2F%2Fwww.choiceofgames.com/broadsides/&amp;title=Choice+of+Broadsides" class="spacedLink">StumbleUpon</a></span>
-        <span><img height="16" width="16" src="../icons/facebook.ico">
-        <a href="http://www.facebook.com/sharer.php?u=http://www.choiceofgames.com/broadsides/&amp;t=Multiple+Choice+Navy+Game+|+Choice+of+Broadsides"
-        onclick="if (window.isFile || window.isXul) return true; window.open(&quot;http://www.facebook.com/sharer.php?u=http://www.choiceofgames.com/broadsides/&amp;t=Multiple+Choice+Navy+Game+|+Choice+of+Broadsides&quot;,&quot;sharer&quot;,&quot;toolbar=0,status=0,width=626,height=436&quot;);return false;" class="spacedLink">Facebook</a></span>
-        <span><img height="16" width="16" src="../icons/twitter.ico">
-        <a href="https://twitter.com/intent/tweet?related=choiceofgames&amp;text=Awesome+game%3A+Choice+of+Broadsides&amp;url=http%3A%2F%2Fwww.choiceofgames.com/broadsides/&amp;via=choiceofgames" class="spacedLink">Twitter</a></span>
-      </span>
-    -->
+      <!-- <a href="credits.html" id="aboutLink" class="spacedLink">About</a> -->
     </p>
   <p><button id="statsButton" class="spacedLink" onclick="showStats()">Show Stats</button> <button id="restartButton" onclick="restartGame('prompt')">Restart</button></p>
 </div>
 <div id="main">
 <div id="text">
-<script>document.write('<div id="loading"><p>Loading...</p><p><img src=\"../loader.gif\"></p></div>');</script>
 </div>
+<script>
+window.alreadyLoaded = true;
+startLoading();
+</script>
 </div>
 <div id="mobileLinks" class="webOnly">
   <!-- INSERT fixed links
