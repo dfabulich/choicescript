@@ -543,7 +543,7 @@ function subscribe(target, now, callback) {
   if (window.isAndroidApp) mailToSupported = urlSupport.isSupported("mailto:support@choiceofgames.com");
   if (mailToSupported) {
     subscribeByMail(target, now, callback, function() {
-      window.location.href = "mailto:subscribe-"+window.storeName+"@choiceofgames.com?subject=Sign me up&body=Please notify me when the next game is ready.";
+      window.location.href = "mailto:subscribe-"+window.storeName+"-"+platformCode() + "@choiceofgames.com?subject=Sign me up&body=Please notify me when the next game is ready.";
     });
     return;
   }
@@ -577,11 +577,12 @@ function subscribe(target, now, callback) {
           });
         }
       };
+      var mailParams = "u=eba910fddc9629b2810db6182&id=e9cdee1aaa&SIGNUP="+window.storeName+"-"+platformCode()+"&EMAIL="+email;
       if (window.isChromeApp) {
         chrome.permissions.contains({origins: ["http://choiceofgames.us4.list-manage.com/"]},function(isXhrAllowed) {
           if (isXhrAllowed) {
             var xhr = new XMLHttpRequest();
-            xhr.open("GET", 'http://choiceofgames.us4.list-manage.com/subscribe/post-json?u=eba910fddc9629b2810db6182&id=e9cdee1aaa&EMAIL='+email, true);
+            xhr.open("GET", 'http://choiceofgames.us4.list-manage.com/subscribe/post-json?'+mailParams, true);
             xhr.onreadystatechange = function() {
               if (xhr.readyState != 4) return;
               if (xhr.status == 200) {
@@ -604,7 +605,7 @@ function subscribe(target, now, callback) {
             iframe.setAttribute("src", "sandbox.html");
             iframe.setAttribute("name", "sandbox");
             iframe.onload = function() {
-              iframe.contentWindow.postMessage({email:email}, "*");
+              iframe.contentWindow.postMessage({email:email, game:window.storeName, platform:platformCode()}, "*");
             };
             document.documentElement.appendChild(iframe);
             return;
@@ -613,7 +614,7 @@ function subscribe(target, now, callback) {
       } else {
         if (isWinStoreApp || window.location.protocol == "https:") {
           var xhr = findXhr();
-          xhr.open("GET", 'https://www.choiceofgames.com/mailchimp_proxy.php/subscribe/post-json?u=eba910fddc9629b2810db6182&id=e9cdee1aaa&EMAIL='+email, true);
+          xhr.open("GET", 'https://www.choiceofgames.com/mailchimp_proxy.php/subscribe/post-json?'+mailParams, true);
           var done = false;
           xhr.onreadystatechange = function() {
             if (done) return;
@@ -628,7 +629,7 @@ function subscribe(target, now, callback) {
           };
           xhr.send();
         } else {
-          script.src = 'http://choiceofgames.us4.list-manage.com/subscribe/post-json?u=eba910fddc9629b2810db6182&id=e9cdee1aaa&c=jsonp' + timestamp+"&EMAIL="+email;
+          script.src = 'http://choiceofgames.us4.list-manage.com/subscribe/post-json?'+mailParams+'&c=jsonp' + timestamp;
           head.appendChild(script);
         }
       }
@@ -1463,4 +1464,15 @@ if (window.isWinStoreApp) {
     uiScript = document.createElement("script");
     uiScript.src = "//Microsoft.WinJS.1.0/js/ui.js";
     document.head.appendChild(uiScript);
+}
+
+function platformCode() {
+  if (window.isIosApp) return "ios";
+  if (window.isAndroidApp) return "android";
+  if (window.isMacApp) return "mac";
+  if (window.isWinStoreApp) return "windows";
+  if (window.isChromeApp) return "chrome";
+  if (window.isWebOS) return "palm";
+  if (window.isWeb) return "web";
+  return "unknown";
 }
