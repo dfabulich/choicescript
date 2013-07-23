@@ -512,9 +512,14 @@ function shareAction(e) {
   });
 }
 
+function isFollowEnabled() {
+  if (!window.isWeb) return false;
+  if ("localhost" != window.location.hostname && !/\.?choiceofgames\.com$/.test(window.location.hostname)) return false;
+  return true;
+}
+
 function printFollowButtons() {
-  if (!window.isWeb) return;
-  if ("localhost" != window.location.hostname && !/\.?choiceofgames\.com$/.test(window.location.hostname)) return;
+  if (!isFollowEnabled()) return;
   // Just FB Like, for now
   var target = document.getElementById('text');
   var iframe = document.createElement('iframe');
@@ -1395,6 +1400,15 @@ window.onload=function() {
                 safeCall(null, subscribeLink);
             }, false);
         }
+    }
+    if (isFollowEnabled()) {
+      var shareElement = document.getElementById("share");
+      if (shareElement) shareElement.innerHTML = '<iframe src="//www.facebook.com/plugins/like.php?href=https%3A%2F%2Fwww.facebook.com%2Fchoiceofgames&amp;send=false'+
+      '&amp;layout=button_count&amp;width=90&amp;show_faces=true&amp;font&amp;colorscheme=light&amp;action=like&amp;height=20&amp;appId=190439350983878"'+
+      ' scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:90px; height:20px;" allowTransparency="true"></iframe>'+
+      '<iframe allowtransparency="true" frameborder="0" scrolling="no" '+
+      'src="//platform.twitter.com/widgets/follow_button.html?screen_name=choiceofgames&amp;show_screen_name=false"'+
+      ' style="width:150px; height:20px;"></iframe>';
     }
 };
 
