@@ -490,6 +490,24 @@ function shareAction(e) {
   });
 }
 
+function printFollowButtons() {
+  if (!window.isWeb) return;
+  if ("localhost" != window.location.hostname && !/\.?choiceofgames\.com$/.test(window.location.hostname)) return;
+  // Just FB Like, for now
+  var target = document.getElementById('text');
+  var iframe = document.createElement('iframe');
+  var width = 300;
+  var height = 66;
+  iframe.setAttribute("src", "//www.facebook.com/plugins/like.php?href=https%3A%2F%2Fwww.facebook.com%2Fchoiceofgames"+
+    "&amp;send=false&amp;layout=standard&amp;width="+width+"&amp;show_faces=true&amp;font&amp;colorscheme=light&amp;"+
+    "action=like&amp;height="+height+"&amp;appId=190439350983878");
+  iframe.setAttribute("scrolling", "no");
+  iframe.setAttribute("frameborder", "0");
+  iframe.setAttribute("style", "border:none; overflow:hidden; width:"+width+"px; height:"+height+"px;");
+  iframe.setAttribute("allowTransparency", "true");
+  target.appendChild(iframe);
+}
+
 function subscribeLink(e) {
   clearScreen(function() {
     subscribe(document.getElementById('text'), "now", function() {

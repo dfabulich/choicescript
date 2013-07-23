@@ -1508,6 +1508,7 @@ Scene.prototype.ending = function ending() {
 
     var self = this;
     function endingMenu() {
+      printFollowButtons();
       self.renderOptions([""], options, function(option) {
         if (option.restart) {
           self.restart();
