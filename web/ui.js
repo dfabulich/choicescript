@@ -456,16 +456,38 @@ function printShareLinks(target, now) {
       }
     }
   }
-  var shareLinkText = "";
-  var headerShareTag = document.getElementById("share");
-  if (headerShareTag) {
-    var spans = headerShareTag.getElementsByTagName("span");
-    for (var i = 1; i < spans.length; i++) {
-      shareLinkText += "<li>" + spans[i].innerHTML;
+
+  var url = window.location.href;
+  var links = document.getElementsByTagName("link");
+  for (var i = links.length - 1; i >= 0; i--) {
+    if (links[i].getAttribute("rel") == "canonical") {
+      url = links[i].getAttribute("href") || url;
+      break;
     }
-  } else {
-    shareLinkText = "<li>TODO Share Link 1, e.g. \"Rate this App in the App Store\"<li>TODO Share Link 2, e.g. StumbleUpon<li>TODO Share Link 3, e.g. Facebook<li>TODO Share Link 4, e.g. Twitter";
   }
+
+  if (/^\//.test(url)) {
+    if (window.isWeb) {
+      url = window.location.protocol + "//" + window.location.hostname + url;
+    } else {
+      url = "https://www.choiceofgames.com" + url;
+    }
+  }
+
+  url = encodeURIComponent(url);
+  var title = encodeURIComponent(document.title);
+
+  var shareLinkText = '<li><img height="16" width="16" src="../icons/stumbleupon.png">'+
+        '<a href="http://www.stumbleupon.com/submit?url='+url+'&amp;title='+title+'" class="spacedLink">StumbleUpon</a></li>'+
+
+        '<li><img height="16" width="16" src="../icons/facebook.ico">'+
+        '<a href="http://www.facebook.com/sharer.php?u='+url+'&amp;t='+title+'"'+
+        'onclick="if (window.isFile || window.isXul) return true; '+
+        'window.open(&quot;http://www.facebook.com/sharer.php?u='+url+'&amp;t='+title+
+        '&quot;,&quot;sharer&quot;,&quot;toolbar=0,status=0,width=626,height=436&quot;);return false;" class="spacedLink">Facebook</a></li>'+
+
+        '<li><img height="16" width="16" src="../icons/twitter.ico">'+
+        '<a href="https://twitter.com/intent/tweet?related=choiceofgames&amp;text=Awesome+game%3A+'+title+'&amp;url='+url+'&amp;via=choiceofgames" class="spacedLink">Twitter</a></li>';
 
   var nowMsg = "";
   if (now) nowMsg = "<p>Please support our work by sharing this game with friends!  The more people play, the more resources we'll have to work on the next game.</p>";
