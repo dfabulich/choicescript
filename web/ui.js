@@ -477,17 +477,17 @@ function printShareLinks(target, now) {
   url = encodeURIComponent(url);
   var title = encodeURIComponent(document.title);
 
-  var shareLinkText = '<li><img height="16" width="16" src="../icons/stumbleupon.png">'+
-        '<a href="http://www.stumbleupon.com/submit?url='+url+'&amp;title='+title+'" class="spacedLink">StumbleUpon</a></li>'+
+  var shareLinkText = '<li><img height="16" width="16" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAACNFBMVEUAAAD///8ASZIASpIKTI0KSIcWSX5lgZ1YcIhYbYIAUpsHTpAhVIEAWaUAWaIAVp4AU5wAVJsAVJgAUpYAUpUBWaQWU4cAYqoAXqUAW6MAXKMAWqIAXKAFXZ8IWZZihZ8AbrgAbrcAaK0AZaoDbLIFZakGZqoKbrMAb7gAbrYBc7tsm7mizecge62izuiizeYBbqgId7INh8QQdqgXg7kVeK0fgLROm8Kh0uyducgRf7QXi8MvlcRTrNdZsdlvt9qDs8l/0O2v4/aY2u7j9/2/6fP4/f7s+/32/f71/f7t/P34/v76/v77/v76/f38/v7q7Oz9/v75/vvf8eX1/vjq/fDP+9zr/fDq/e+/9Mrq/e7E+Mxm3HN24YSC3YwTwSMUtSIXuycavikfxi4izDIhyTAhyTE8ykoauiclxjEowDUsxDYPthgsxTUDyQgg2iQ08jk43z3Q9tHP9dAA0gAA0QAA0AAAzwAAwQAAvAAAuwEAtAEAswAArAAB0AEBxQIBrAEC1AICtwMDvQUF1AUJ2QkL3wwL2gsKygwKwgsMxQwO3w4T6BMZ6xko7ChH3kdDyUN623qE64R8znx1wnX+/v79/f38/Pz7+/v6+vr5+fn4+Pj39/f29vby8vLx8fHq6urp6eno6Ojl5eXj4+Pg4ODf39/W1tbMzMzGxsbFxcXDw8PCwsKvr6+urq6srKypqamoqKiUlJSSkpKQkJCKioqIiIiHh4eGhoZ+fn5xcXFwcHBUP7YxAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH1wgUDigoTpImZAAAARtJREFUGNMBEAHv/gABAQEBlZeanJ2dm5iVAQEBAAGYAZVyknGMho+RpJ+YlQEAAQGVc3CNi4WBdXSIqKGalQABlXOOh4R+dnV3d3pTrKKZAJVyb39fY2ZlZG54eVc5q6AAlpODWUtHR0pPVoJ7WC8HqACZkG2VPSclJjeVaH1VLAyvAJuJbFREQj4TLZVqfVouFLIAnIqAaV1bTDU2lWt8WDgStgCclGJhYFxRMzFJXmdSPxa3AJpQTU9PRkMVDUFITkUkCLMAmKM8NDowESMYIjI7HAW7sACVn0AqISkgKCEoFwoLCLWpAAGapSsdDxsaGQ4QBAi5rqYAAZWep64fHgIDBgm6ta2nngABAZeepqqxtLi4s7Cppp6XR0lhOIfKM38AAAAASUVORK5CYII=">'+
+        ' <a href="http://www.stumbleupon.com/submit?url='+url+'&amp;title='+title+'" class="spacedLink">StumbleUpon</a></li>'+
 
-        '<li><img height="16" width="16" src="../icons/facebook.ico">'+
-        '<a href="http://www.facebook.com/sharer.php?u='+url+'&amp;t='+title+'"'+
+        '<li><img height="16" width="16" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAsklEQVQ4EWNgoBAwgvQnVq75f+vBG5KMUlMQYZjfHsLIBNJFqmZkPSzEWKsqL8zQXebJICLIDVZuEzUTrg3sAjgPBwNZM7oSolyAzWaYQUS5AKYYG43XBUeWpaPogfGRwwCvAW/efwUbAPMCjI9sKl4DArKXgNXCbIbxkQ2gOAwoNgDsBS5ONgYNJTFkl2FlG2nLwMVv3HsFZlPHBTLifAznrj6Bm47OQI42mBwoM1EFAAAnVCliRFKHdQAAAABJRU5ErkJggg==">'+
+        ' <a href="http://www.facebook.com/sharer.php?u='+url+'&amp;t='+title+'"'+
         'onclick="if (window.isFile || window.isXul) return true; '+
         'window.open(&quot;http://www.facebook.com/sharer.php?u='+url+'&amp;t='+title+
         '&quot;,&quot;sharer&quot;,&quot;toolbar=0,status=0,width=626,height=436&quot;);return false;" class="spacedLink">Facebook</a></li>'+
 
-        '<li><img height="16" width="16" src="../icons/twitter.ico">'+
-        '<a href="https://twitter.com/intent/tweet?related=choiceofgames&amp;text=Awesome+game%3A+'+title+'&amp;url='+url+'&amp;via=choiceofgames" class="spacedLink">Twitter</a></li>';
+        '<li><img height="16" width="16" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAACXBIWXMAAAsTAAALEwEAmpwYAAAB/ElEQVQ4EYVTO24UQRB9/dmZkdfCIK0QBhMACQdwgDgMN4AEiYALcAFy7kNABkYkGzhAWMa2DHg9n+7iVfXMaAmAknp7tuvVq1dV3Q6j9SlJlzLEOXgIPPcmRjf5/7ZHdWQRaVPCOjucDYJlcHi8AFLOErz/J4kRQASXGfjYDmhIeDwAKx9xBzz8jxUCgjqSfE8CPWi5EpeTjOu+F36CVcGxrEBBMVDiaDOB5vqVBQu6WAU+dQmnwZuGwkACstxlRDckqWIhMQLPOtfXvfw0AmfA95thqwBNWGg04PktLbTYrEAlXxJTEciemtd+KdvZf7ESTjipEyaazAgyu/2lTTjP2ZpICZZQYSp7gg8kelh5PFj4Kd56ZvhE2IUSMOMVm/niZoPDOqJl0FSAYlYhoNoabSmBiI5pVNouv39w32G3l05wIwaqKRq00XErWGWYFvXz3uAbA4+51lyf+wy9h0JVRqAgfmehc8vmJt7n/CrKP6J81fzqfIPTVOOAo+S9soko+GkzhxgNocUkDfLmosPrsyvwtpTDP5KRWBz2Of4PB3vYr8o9mNuZncfLvRrPdmveJJVNDn0G8yKUMV/pO+p16MVmAn00yvnu9g7erpZ4xAbUrFtXMy42AE9YwmHNxo42lzAd6AtMQ48NgjVVOz+BVNQ9Zql4UI9P/TehBOJIi+EJIAAAAABJRU5ErkJggg==">'+
+        ' <a href="https://twitter.com/intent/tweet?related=choiceofgames&amp;text=Awesome+game%3A+'+title+'&amp;url='+url+'&amp;via=choiceofgames" class="spacedLink">Twitter</a></li>';
 
   var nowMsg = "";
   if (now) nowMsg = "<p>Please support our work by sharing this game with friends!  The more people play, the more resources we'll have to work on the next game.</p>";
