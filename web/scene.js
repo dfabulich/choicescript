@@ -194,7 +194,7 @@ Scene.prototype.loadSceneFast = function loadSceneFast(url) {
         if (xhr.readyState != 4) return;
         if (xhr.status != 200 && xhr.status) {
             main.innerHTML = "<p>Our apologies; there was a " + xhr.status + " error while loading game data."+
-            "  Please refresh your browser now; if that doesn't work, please email "+getSupportEmail()+" with details.</p>"+
+            "  Please refresh your browser now; if that doesn't work, please click the Restart button and email "+getSupportEmail()+" with details.</p>"+
             " <p><button onclick='window.location.reload();'>Refresh Now</button></p>";
             return;
         }
