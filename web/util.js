@@ -721,11 +721,20 @@ function jsonParse(str) {
       return JSON.parse(str);
     } catch (e) {
       // try to handle unquoted keys
-      var str2 = str.replace(/([,\{])\s*(\w+)\s*\:/g, '$1"$2":');
       try {
-        return JSON.parse(str2);
+        return eval('('+str+')');
       } catch (e2) {
-        // report an error as if we didn't try that hack
+        // that might have failed because eval is forbidden
+        try {
+          eval("1");
+        } catch (e3) {
+          // eval forbidden; let's try a hack to fix unquoted keys
+          var str2 = (str+"").replace(/([,\{])\s*(\w+)\s*\:/g, '$1"$2":');
+          try {
+            return JSON.parse(str2);
+          } catch (e4) {}
+        }
+        // at this point, just report a clear error
         return JSON.parse(str);
       }
     }
