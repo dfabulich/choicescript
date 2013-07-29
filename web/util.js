@@ -716,9 +716,20 @@ function simpleDateTimeFormat(date) {
 }
 
 function jsonParse(str) {
-  try {
-    return JSON.parse(str);
-  } catch (e) {
+  if (typeof JSON != "undefined") {
+    try {
+      return JSON.parse(str);
+    } catch (e) {
+      // try to handle unquoted keys
+      var str2 = str.replace(/([,\{])\s*(\w+)\s*\:/g, '$1"$2":');
+      try {
+        return JSON.parse(str2);
+      } catch (e2) {
+        // report an error as if we didn't try that hack
+        return JSON.parse(str);
+      }
+    }
+  } else {
     return eval('('+str+')');
   }
 }
