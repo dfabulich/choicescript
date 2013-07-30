@@ -102,7 +102,7 @@ function asyncConfirm(message, callback) {
       if (callback) callback(result);
     }, 0);
   } else {
-    alertify.confirm(message, function() {safeCall(null, callback);});
+    alertify.confirm(message, function(result) {safeCall(null, callback(result));});
   }
 }
 
