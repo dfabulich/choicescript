@@ -87,7 +87,7 @@ function asyncAlert(message, callback) {
       if (callback) callback();
     }, 0);
   } else {
-    alertify.alert(message, callback);
+    alertify.alert(message, function() {safeCall(null, callback);});
   }
 }
 
@@ -102,7 +102,7 @@ function asyncConfirm(message, callback) {
       if (callback) callback(result);
     }, 0);
   } else {
-    alertify.confirm(message, callback);
+    alertify.confirm(message, function() {safeCall(null, callback);});
   }
 }
 
@@ -264,7 +264,7 @@ function printOptions(groups, options, callback) {
           asyncAlert("Sorry, that combination of choices is not allowed. Please select a different " + groups[groups.length-1] + ".");
           return;
         }
-        callback(option);
+        safeCall(null, function() {callback(option);});
       });
       return false;
   };
@@ -548,14 +548,14 @@ function subscribeLink(e) {
 function subscribeByMail(target, now, callback, code) {
   if (now) {
     code();
-    setTimeout(function() {callback(now);}, 0);
+    safeTimeout(function() {callback(now);}, 0);
   } else {
     println("Click here to subscribe to our mailing list; we'll notify you when our next game is ready!");
     printButton("Subscribe", target, false, function() {
         code();
       });
     printButton("Next", target, false, function() {
-      setTimeout(function() {callback(now);}, 0);
+      safeTimeout(function() {callback(now);}, 0);
     });
   }
 }
@@ -580,7 +580,7 @@ function subscribe(target, now, callback) {
   fetchEmail(function(defaultEmail) {
     promptEmailAddress(target, defaultEmail, function(cancel, email) {
       if (cancel) {
-        return callback();
+        return safeCall(null, callback);
       }
       var head= document.getElementsByTagName('head')[0];
       var script = document.createElement('script');
@@ -601,7 +601,7 @@ function subscribe(target, now, callback) {
             println(response.msg, target);
             println("", target);
             printButton("Next", target, false, function() {
-              callback();
+              safeCall(null, callback);
             });
           });
         }
@@ -681,7 +681,7 @@ function checkPurchase(products, callback) {
       purchases[productList[i]] = true;
     }
     purchases.billingSupported = false;
-    setTimeout(function() {callback(purchases);}, 0);
+    safeTimeout(function() {callback(purchases);}, 0);
   }
 }
 
@@ -694,7 +694,7 @@ function restorePurchases(callback) {
     window.restoreCallback = callback;
     callIos("restorepurchases");
   } else {
-    setTimeout(callback, 0);
+    safeTimeout(callback, 0);
   }
 }
 // Callback expects a localized string, or "", or "free", or "guess"
@@ -704,11 +704,11 @@ function getPrice(product, callback) {
     callIos("price", product);
   } else if (window.isAndroidApp) {
       // TODO: support android price localization?
-    setTimeout(function () {
+    safeTimeout(function () {
       callback.call(this, "guess");
     }, 0);
   } else {
-    setTimeout(function () {
+    safeTimeout(function () {
       callback.call(this, "$1");
     }, 0);
   }
@@ -717,7 +717,7 @@ function getPrice(product, callback) {
 function purchase(product, callback) {
   var purchaseCallback = function() {
     window.purchaseCallback = null;
-    callback();
+    safeCall(null, callback);
   };
   if (window.isIosApp) {
     window.purchaseCallback = purchaseCallback;
@@ -726,7 +726,7 @@ function purchase(product, callback) {
     window.purchaseCallback = purchaseCallback;
     androidBilling.purchase(product);
   } else {
-    setTimeout(callback, 0);
+    safeTimeout(callback, 0);
   }
 }
 
@@ -743,12 +743,12 @@ function isFullScreenAdvertisingSupported() {
 function showFullScreenAdvertisement(callback) {
   if (window.isIosApp) {
     callIos("advertisement");
-    setTimeout(callback, 0);
+    safeTimeout(callback, 0);
   } else if (window.isAndroidApp && window.mobclixBridge) {
     mobclixBridge.displayFullScreenAdvertisement();
-    setTimeout(callback, 0);
+    safeTimeout(callback, 0);
   } else {
-    setTimeout(callback, 0);
+    safeTimeout(callback, 0);
   }
 }
 
@@ -816,7 +816,7 @@ function showTicker(target, endTimeInSeconds, finishedCallback) {
     } else {
       cleanUpTicker();
       tickerElement.innerHTML = "0s remaining";
-      if (finishedCallback) finishedCallback();
+      if (finishedCallback) safeCall(null, finishedCallback);
     }
   }
 
@@ -898,7 +898,7 @@ function printInput(target, inputType, callback, minimum, maximum, step) {
             asyncAlert("Don't just leave it blank!  Type something!");
             return;
         }
-        callback(input.value);
+        safeCall(null, function() {callback(input.value);});
         return false;
     };
 
@@ -956,7 +956,7 @@ function promptEmailAddress(target, defaultEmail, callback) {
 }
 
 function loginForm(target, optional, errorMessage, callback) {
-  if (!isRegisterAllowed()) return setTimeout(function() {
+  if (!isRegisterAllowed()) return safeTimeout(function() {
     callback(!"ok");
   }, 0);
   startLoading();
@@ -966,7 +966,7 @@ function loginForm(target, optional, errorMessage, callback) {
         if (defaultEmail) {
           doneLoading();
           loginDiv(registered, defaultEmail);
-          return setTimeout(callback, 0);
+          return safeTimeout(callback, 0);
         }
         // Cookie says I'm logged in, but we have no local record of the email address
         return getRemoteEmail(function(ok, response) {
@@ -983,7 +983,7 @@ function loginForm(target, optional, errorMessage, callback) {
             }
           } else {
             // missed an opportunity to record email locally. meh.
-            return callback();
+            return safeCall(null, callback);
           }
         });
       }
@@ -1061,7 +1061,7 @@ function loginForm(target, optional, errorMessage, callback) {
                 loginForm(document.getElementById("text"), optional, null, callback);
               });
             } else if ("no" == choice) {
-              callback(false);
+              safeCall(null, function() {callback(false);});
             } else if ("new" == choice) {
               target.innerHTML = "";
               window.scrollTo(0,0);
@@ -1092,7 +1092,7 @@ function loginForm(target, optional, errorMessage, callback) {
                   if (ok) {
                     loginDiv(ok, email);
                     recordLogin(ok);
-                    callback("ok");
+                    safeCall(null, function() {callback("ok");});
                   } else if ("incorrect password" == response.error) {
                     loginForm(target, optional, 'Sorry, the email address "'+email+'" is already in use. Please type your password below, or use a different email address.', callback);
                   } else {
@@ -1114,7 +1114,7 @@ function loginForm(target, optional, errorMessage, callback) {
                 if (ok) {
                   loginDiv(ok, email);
                   recordLogin(ok);
-                  callback("ok");
+                  safeCall(null, function() {callback("ok");});
                 } else if ("unknown email" == response.error) {
                   showMessage('Sorry, we can\'t find a record for the email address "'+email+'". Please try a different email address, or create a new account.');
                 } else if ("incorrect password" == response.error) {
@@ -1177,15 +1177,17 @@ function loginDiv(registered, email) {
 
 function isRegistered(callback) {
   if (window.isWeb) {
-    return setTimeout(function() {
+    return safeTimeout(function() {
       callback(!!getCookieByName("login"));
     }, 0);
   } else if (initStore()) {
     return window.store.get("login", function(ok, value) {
-      callback(ok && value && "false" != value);
+      safeCall(null, function() {
+        callback(ok && value && "false" != value);
+      });
     });
   } else {
-    callback(false);
+    safeCall(null, function() {callback(false);});
   }
 }
 

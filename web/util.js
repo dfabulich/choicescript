@@ -64,6 +64,18 @@ function safeCall(obj, fn) {
     }
 }
 
+function safeCallback(callback) {
+  return function() {
+    safeCall(null, callback);
+  };
+}
+
+function safeTimeout(fn, time) {
+  setTimeout(function() {
+    safeCall(null, fn);
+  }, time);
+}
+
 function isDefined(x) {
     return "undefined" !== typeof x;
 }
@@ -191,7 +203,7 @@ function xhrAuthRequest(method, endpoint, callback) {
       ok = false;
     }
     if (!ok && !response.error) response.error = "unknown error";
-    if (callback) callback(ok, response);
+    if (callback) safeCall(null, function() {callback(ok, response);});
   };
   xhr.send(params);
 }
@@ -212,9 +224,9 @@ function logout(callback) {
 
 function recordLogin(registered, callback) {
   if (initStore()) {
-    window.store.set("login", registered, callback);
+    window.store.set("login", registered, function() {safeCall(null, callback);});
   } else {
-    setTimeout(callback, 0);
+    safeTimeout(callback, 0);
   }
 }
 
@@ -244,14 +256,14 @@ function writeCookie(value, slot, callback) {
     slot = "";
   }
   if (!initStore()) {
-    if (callback) setTimeout(callback, 0);
+    if (callback) safeTimeout(callback, 0);
     return;
   }
-  window.store.set("state"+slot, value, callback);
+  window.store.set("state"+slot, value, safeCallback(callback));
 }
 
 function clearCookie(callback, slot) {
-    writeCookie('', slot, callback);
+    writeCookie('', slot, safeCallback(callback));
 }
 
 function areSaveSlotsSupported() {
@@ -260,18 +272,18 @@ function areSaveSlotsSupported() {
 
 function recordSave(slot, callback) {
   if (!areSaveSlotsSupported()) {
-    setTimeout(callback, 0);
+    safeTimeout(callback, 0);
     return;
   }
   restoreObject("save_list", [], function (saveList) {
     saveList.push(slot);
-    window.store.set("save_list", toJson(saveList), callback);
+    window.store.set("save_list", toJson(saveList), safeCallback(callback));
   });
 }
 
 function recordDirtySlots(slots, callback) {
   if (!areSaveSlotsSupported()) {
-    setTimeout(callback, 0);
+    safeTimeout(callback, 0);
     return;
   }
   restoreObject("dirty_save_list", [], function (saveList) {
@@ -282,35 +294,37 @@ function recordDirtySlots(slots, callback) {
     for (i = 0; i < slots.length; i++) {
       if (!saveSet[slots[i]]) saveList.push(slots[i]);
     }
-    window.store.set("dirty_save_list", toJson(saveList), callback);
+    window.store.set("dirty_save_list", toJson(saveList), safeCallback(callback));
   });
 }
 
 function recordEmail(email, callback) {
   if (initStore()) {
-    window.store.set("email", email, callback);
+    window.store.set("email", email, safeCallback(callback));
   } else {
-    setTimeout(callback, 0);
+    safeTimeout(callback, 0);
   }
 }
 
 function fetchEmail(callback) {
   if (!initStore()) {
-    setTimeout(function(){callback("");}, 0);
+    safeTimeout(function(){callback("");}, 0);
     return;
   }
   window.store.get("email", function(ok, value) {
-    if (ok && value) {
-      callback(value);
-    } else {
-      callback("");
-    }
+    safeCall(null, function() {
+      if (ok && value) {
+        callback(value);
+      } else {
+        callback("");
+      }
+    });
   });
 }
 
 function restoreObject(key, defaultValue, callback) {
   if (!initStore()) {
-    setTimeout(function() {callback(defaultValue);}, 0);
+    safeTimeout(function() {callback(defaultValue);}, 0);
     return;
   }
   window.store.get(key, function(ok, value) {
@@ -320,7 +334,7 @@ function restoreObject(key, defaultValue, callback) {
         result = jsonParse(value);
       } catch (e) {}
     }
-    callback(result);
+    safeCall(null, function() {callback(result);});
   });
 }
 
@@ -338,7 +352,7 @@ function getSaves(callback) {
 
 function fetchSavesFromSlotList(slotList, i, saveList, callback) {
   if (i >= slotList.length) {
-    return callback(saveList);
+    return safeCall(null, function() {callback(saveList);});
   }
   restoreObject("state"+slotList[i], null, function(saveState) {
     saveState.timestamp = slotList[i].substring(4/*"save".length*/);
@@ -362,7 +376,7 @@ webSaveDomain = "www.choiceofgames.com";
 webSaveUrl = "https://" + webSaveDomain + "/ajax_proxy.php/websave";
 
 function submitRemoteSave(slot, email, subscribe, callback) {
-  if (!isWebSavePossible()) return setTimeout(function() { callback(false); });
+  if (!isWebSavePossible()) return safeTimeout(function() { callback(false); });
   window.store.get("state"+slot, function(ok, value) {
     if (ok) {
       var timestamp = slot.substring(4/*"save".length*/);
@@ -378,10 +392,10 @@ function submitRemoteSave(slot, email, subscribe, callback) {
         done = true;
         var ok = xhr.status == 200;
         if (ok) {
-          callback(true);
+          safeCall(null, function() {callback(true);});
         } else {
           recordDirtySlots([slot], function() {
-            callback(false);
+            safeCall(null, function() {callback(false);});
           });
         }
       };
@@ -389,7 +403,7 @@ function submitRemoteSave(slot, email, subscribe, callback) {
     } else {
       recordDirtySlots([slot], function() {
         asyncAlert("There was a problem uploading the saved game. This is probably a bug; please contact support@choiceofgames.com with code 17891.", function() {
-          callback(false);
+          safeCall(null, function() {callback(false);});
         });
       });
     }
@@ -403,12 +417,12 @@ function submitDirtySaves(dirtySaveList, email, callback) {
         if (ok) {
           submitDirtySave(i+1);
         } else {
-          callback(false);
+          safeCall(null, function() {callback(false);});
         }
       });
     } else {
       window.store.remove("dirty_save_list", function() {
-        callback(true);
+        safeCall(null, function() {callback(true);});
       });
     }
   }
@@ -417,7 +431,7 @@ function submitDirtySaves(dirtySaveList, email, callback) {
 
 function getRemoteSaves(email, callback) {
   if (!isWebSavePossible()) {
-    setTimeout(function() {callback([]);}, 0);
+    safeTimeout(function() {callback([]);}, 0);
     return;
   }
   var xhr = findXhr();
@@ -429,7 +443,7 @@ function getRemoteSaves(email, callback) {
     done = true;
     if (xhr.status != 200) {
       if (window.console) console.log("Couldn't load remote saves. " + xhr.status + ": " + xhr.responseText);
-      callback(null);
+      safeCall(null, function() {callback(null);});
     } else {
       var result = xhr.responseText;
       result = jsonParse(result);
@@ -439,7 +453,7 @@ function getRemoteSaves(email, callback) {
         save.timestamp = result[i].timestamp;
         remoteSaveList.push(save);
       }
-      callback(remoteSaveList);
+      safeCall(null, function() {callback(remoteSaveList);});
     }
   };
   xhr.send();
@@ -447,7 +461,7 @@ function getRemoteSaves(email, callback) {
 
 function mergeRemoteSaves(remoteSaveList, callback) {
   if (!isWebSavePossible()) {
-    setTimeout(function() { callback([], 0, []); }, 0);
+    safeTimeout(function() { callback([], 0, []); }, 0);
     return;
   }
   restoreObject("save_list", [], function (localSlotList) {
@@ -482,10 +496,10 @@ function mergeRemoteSaves(remoteSaveList, callback) {
       window.store.set("dirty_save_list", toJson(dirtySaveList), function() {
         if (newRemoteSaves) {
           window.store.set("save_list", toJson(localSlotList), function() {
-            callback(localSaveList, newRemoteSaves, dirtySaveList);
+            safeCall(null, function() { callback(localSaveList, newRemoteSaves, dirtySaveList); });
           });
         } else {
-          callback(localSaveList, newRemoteSaves, dirtySaveList);
+          safeCall(null, function() {callback(localSaveList, newRemoteSaves, dirtySaveList);});
         }
       });
     });
@@ -495,17 +509,19 @@ function mergeRemoteSaves(remoteSaveList, callback) {
 function delayBreakStart(callback) {
   var nowInSeconds = Math.floor(new Date().getTime() / 1000);
   if (!initStore()) {
-    setTimeout(function() {callback(nowInSeconds);}, 0);
+    safeTimeout(function() {callback(nowInSeconds);}, 0);
     return;
   }
   window.store.get("delayBreakStart", function(ok, value) {
     var valueNum = value*1;
-    if (ok && value && !isNaN(valueNum)) {
-      callback(valueNum);
-    } else {
-      window.store.set("delayBreakStart", nowInSeconds);
-      callback(nowInSeconds);
-    }
+    safeCall(null, function() {
+      if (ok && value && !isNaN(valueNum)) {
+        callback(valueNum);
+      } else {
+        window.store.set("delayBreakStart", nowInSeconds);
+        callback(nowInSeconds);
+      }
+    });
   });
 }
 
