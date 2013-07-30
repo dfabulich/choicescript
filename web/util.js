@@ -18,6 +18,7 @@
  */
 
 function safeCall(obj, fn) {
+    if (!fn) return;
     var isHeadless = typeof window == "undefined";
     var debug = false || (!isHeadless && window.debug);
     var userAgent = this.window && window.navigator && window.navigator.userAgent;
