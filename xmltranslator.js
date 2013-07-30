@@ -155,6 +155,8 @@ XmlScene.prototype.comment = function xmlComment(data) {
   printElement("comment");
 }
 
+XmlScene.prototype.bug = XmlScene.prototype.comment;
+
 XmlScene.prototype.finish = function xmlFinish(data) {
   printNestedElement("finish", this.replaceLine(data));
   this.indent = this.getIndent(this.nextNonBlankLine());
