@@ -733,6 +733,16 @@ function purchase(product, callback) {
 function achieve(name, description) {
   if (window.isIosApp) {
     callIos("achieve", name+"/"+description);
+  } else {
+    var escapedDescription = description+"".replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/\[b\]/g, '<b>')
+      .replace(/\[\/b\]/g, '</b>')
+      .replace(/\[i\]/g, '<i>')
+      .replace(/\[\/i\]/g, '</i>');
+    alertify.log("<b>Achievement</b><br>" + escapedDescription);
   }
 }
 
