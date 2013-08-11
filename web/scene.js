@@ -49,7 +49,7 @@ function Scene(name, stats, nav, debugMode) {
     this.indent = 0;
 
     // Did the previous line contain text?
-    this.prevLineEmpty = true;
+    this.prevLine = "empty";
 
     // Have we ever printed any text?
     this.screenEmpty = true;
@@ -70,7 +70,7 @@ Scene.prototype.reexecute = function reexecute() {
   this.lineNum = this.stats.testEntryPoint || 0;
   this.finished = 0;
   this.indent = this.getIndent(this.lines[this.lineNum]);
-  this.prevLineEmpty = true;
+  this.prevLine = "empty";
   this.screenEmpty = true;
   this.execute();
 };
@@ -114,7 +114,7 @@ Scene.prototype.printLoop = function printLoop() {
                     throw new Error(this.lineMsg() + "It is illegal to fall out of a *choice statement; you must *goto or *finish before the end of the indented block.");
                 }
             }
-            this.prevLineEmpty = false;
+            this.prevLine = "text";
             this.screenEmpty = false;
             this.printLine(trim(line));
             printx(' ', this.target);
@@ -163,11 +163,13 @@ Scene.prototype.replaceVariables = function (line) {
 };
 
 Scene.prototype.paragraph = function paragraph() {
-    if (!this.prevLineEmpty) {
+    if (this.prevLine == "text") {
         println("", this.target);
         println("", this.target);
+    } else if (this.prevLine == "block") {
+      println("", this.target);
     }
-    this.prevLineEmpty = true;
+    this.prevLine = "empty";
 };
 
 Scene.prototype.loadSceneFast = function loadSceneFast(url) {
@@ -468,7 +470,7 @@ Scene.prototype.nextNonBlankLine = function nextNonBlankLine(includingThisOne) {
 Scene.prototype.resetPage = function resetPage() {
     var self = this;
     this.save(function() {
-      self.prevLineEmpty = true;
+      self.prevLine = "empty";
       self.screenEmpty = true;
       clearScreen(function() {self.execute();});
     }, "");
@@ -585,7 +587,7 @@ Scene.prototype.goto_scene = function gotoScene(sceneName) {
     this.skipFooter = true;
     var scene = new Scene(sceneName, this.stats, this.nav, this.debugMode);
     scene.screenEmpty = this.screenEmpty;
-    scene.prevLineEmpty = this.prevLineEmpty;
+    scene.prevLine = this.prevLine;
     scene.execute();
 };
 
@@ -606,7 +608,7 @@ Scene.prototype.restore_purchases = function scene_restorePurchases(data) {
   );
 
   setClass(button, "");
-  this.prevLineEmpty = false;
+  this.prevLine = "block";
 };
 
 Scene.prototype.check_purchase = function scene_checkPurchase(data) {
@@ -678,7 +680,7 @@ Scene.prototype.purchase = function purchase_button(data) {
           });
         }
       );
-      self.prevLineEmpty = false;
+      self.prevLine = "block";
       self.skipFooter = false;
       self.finished = false;
       self.execute();
@@ -1133,7 +1135,7 @@ Scene.prototype.link = function link(data) {
     var href = result[1];
     var anchorText = trim(result[2]) || href;
     printLink(this.target, href, anchorText);
-    this.prevLineEmpty = false;
+    this.prevLine = "text";
     this.screenEmpty = false;
 };
 
@@ -1150,7 +1152,7 @@ Scene.prototype.link_button = function linkButton(data) {
     printButton(anchorText, target, false, function() {
       window.location.href = href;
     });
-    this.prevLineEmpty = true;
+    this.prevLine = "empty";
     this.screenEmpty = false;
 };
 
@@ -1226,7 +1228,7 @@ Scene.prototype.label = function label() {};
 // print the value of the specified expression
 Scene.prototype.print = function scene_print(expr) {
     var value = this.evaluateExpr(this.tokenizeExpr(expr));
-    this.prevLineEmpty = false;
+    this.prevLine = "text";
     this.screenEmpty = false;
     this.printLine(value);
     printx(' ', this.target);
@@ -1474,7 +1476,7 @@ Scene.prototype.share_this_game = function share_links(now) {
   now = !!trim(now);
   this.paragraph();
   printShareLinks(this.target, now);
-  this.prevLineEmpty = true; // printShareLinks provides its own paragraph break
+  this.prevLine = "empty"; // printShareLinks provides its own paragraph break
 };
 
 Scene.prototype.more_games = function more_games(now) {
@@ -1493,7 +1495,7 @@ Scene.prototype.more_games = function more_games(now) {
   );
 
   setClass(button, "");
-  this.prevLineEmpty = false;
+  this.prevLine = "block";
 };
 
 Scene.prototype.ending = function ending() {
@@ -1543,7 +1545,7 @@ Scene.prototype.subscribe = function scene_subscribe(now) {
   // otherwise, we should display a Subscribe button which displays the form
   // On some platforms, "now" is impossible, so we ignore it.
   now = ("now" == now);
-  this.prevLineEmpty = false;
+  this.prevLine = "block";
   this.finished = true;
   this.skipFooter = true;
   var self = this;
@@ -1596,7 +1598,7 @@ Scene.prototype.restore_game = function restore_game() {
                 startLoading();
                 submitDirtySaves(dirtySaveList, email, function(ok) {
                   doneLoading();
-                  self.prevLineEmpty = false; // Put some space between the message and the option list
+                  self.prevLine = "text"; // Put some space between the message and the option list
                   if (!ok) {
                     self.printLine("Error uploading saves. Please try again later.");
                     renderRestoreMenu(saveList, dirtySaveList);
@@ -1624,7 +1626,7 @@ Scene.prototype.restore_game = function restore_game() {
                 startLoading();
                 getRemoteSaves(email, function (remoteSaveList) {
                   doneLoading();
-                  self.prevLineEmpty = false;
+                  self.prevLine = "text";
                   if (!remoteSaveList) {
                     self.printLine("Error downloading saves. Please try again later.");
                     renderRestoreMenu(saveList, dirtySaveList);
@@ -1688,7 +1690,7 @@ Scene.prototype.restore_password = function restore_password() {
   this.finished = true;
   this.paragraph();
   this.printLine('Please paste your password here, then press "Next" below to continue.');
-  this.prevLineEmpty = false;
+  this.prevLine = "text";
   this.paragraph();
   var self = this;
   var unrestorableScenes = this.parseRestoreGame(alreadyFinished);
@@ -1805,7 +1807,7 @@ Scene.prototype.login = function scene_login(optional) {
   loginForm(target, optional, null, function() {
     clearScreen(function() {
       self.finished = false;
-      self.prevLineEmpty = true;
+      self.prevLine = "empty";
       self.screenEmpty = true;
       self.execute();
     });
@@ -1871,7 +1873,7 @@ Scene.prototype.save_game = function save_game() {
     printButton("Cancel", target, false, function() {
       clearScreen(function() {
         self.finished = false;
-        self.prevLineEmpty = true;
+        self.prevLine = "empty";
         self.screenEmpty = true;
         self.execute();
       });
@@ -1902,13 +1904,13 @@ Scene.prototype.save_game = function save_game() {
                     if (!ok) {
                       asyncAlert("Couldn't upload your saved game to choiceofgames.com. You can try again later from the Restore menu.", function() {
                         self.finished = false;
-                        self.prevLineEmpty = true;
+                        self.prevLine = "empty";
                         self.screenEmpty = true;
                         self.execute();
                       });
                     } else {
                       self.finished = false;
-                      self.prevLineEmpty = true;
+                      self.prevLine = "empty";
                       self.screenEmpty = true;
                       self.execute();
                     }
@@ -1937,7 +1939,7 @@ Scene.prototype.show_password = function show_password() {
   var password = computeCookie(this.stats, this.temps, this.lineNum, this.indent);
   password = this.obfuscate(password);
   showPassword(this.target, password);
-  this.prevLineEmpty = false;
+  this.prevLine = "block";
 };
 
 Scene.prototype.obfuscate = function obfuscate(password) {
@@ -2163,7 +2165,7 @@ Scene.prototype.stat_chart = function stat_chart() {
   var target = this.target;
   if (!target) target = document.getElementById('text');
 
-  if (!this.prevLineEmpty) println("", target);
+  if (this.prevLine == "text") println("", target);
 
   var barWidth = 0;
   var standardFontSize = 0;
@@ -2249,8 +2251,7 @@ Scene.prototype.stat_chart = function stat_chart() {
       throw new Error("Bug! Parser accepted an unknown row type: " + type);
     }
   }
-  println("", target);
-  this.prevLineEmpty = true;
+  this.prevLine = "block";
   this.screenEmpty = false;
 };
 
@@ -2837,9 +2838,8 @@ Scene.prototype.end_trial = function endTrial() {
     preventDefault(e);
     return restartGame("prompt");
   });
-  this.prevLineEmpty = false;
+  this.prevLine = "block";
   this.screenEmpty = false;
-  this.paragraph();
   this.finished = true;
 };
 
