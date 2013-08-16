@@ -939,6 +939,9 @@ Scene.prototype.parseOptions = function parseOptions(startIndent, choicesRemaini
                 this["if"](data, true /*inChoice*/);
                 continue;
               }
+            } else if (/^(else|elseif|elsif)$/.test(command)) {
+              this[command](data, true /*inChoice*/);
+              continue;
             } else if ("selectable_if" == command) {
               ifResult = this.parseOptionIf(data, command);
               if (!ifResult) throw new Error(this.lineMsg() + "Couldn't parse the line after *selectable_if: " + data);
@@ -951,11 +954,10 @@ Scene.prototype.parseOptions = function parseOptions(startIndent, choicesRemaini
               // command was rewritten by earlier modifier
             } else {
                 if (Scene.validCommands[command]) {
-                    this[command](data, true /*inChoice*/);
+                  throw new Error(this.lineMsg() + "Invalid indent? Expected an #option here, not *"+command);
                 }  else {
                     throw new Error(this.lineMsg() + "Non-existent command '"+command+"'");
                 }
-                continue;
             }
         }
 

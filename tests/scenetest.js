@@ -533,18 +533,18 @@ test("falseNestedIf", function() {
     doh.is(([{"name":"foo","line":2,"group":"choice","endLine":3}]), (options), "options");
 })
 test("trueNestedElse", function() {
-    var text = "*choice\n  #foo\n    Foo!\n    *finish\n  *if true\n    #bar\n      Bar!\n      *finish\n    *goto end\n  *else\n    #baz\n      Baz!\n      *finish\n  *label end\nbaz\n";
+    var text = "*choice\n  #foo\n    Foo!\n    *finish\n  *if true\n    #bar\n      Bar!\n      *finish\n  *else\n    #baz\n      Baz!\n      *finish\nbaz\n";
     var scene = new Scene();
     scene.loadLines(text);
     var options = scene.parseOptions(0, []);
     doh.is([{"name":"foo","line":2,"group":"choice","endLine":4},{"name":"bar","line":6,"group":"choice","endLine":8}], options, "options");
 })
 test("falseNestedElse", function() {
-    var text = "*choice\n  #foo\n    Foo!\n    *finish\n  *if false\n    #bar\n      Bar!\n      *finish\n    *goto end\n  *else\n    #baz\n      Baz!\n      *finish\n  *label end\nbaz\n";
+    var text = "*choice\n  #foo\n    Foo!\n    *finish\n  *if false\n    #bar\n      Bar!\n      *finish\n  *else\n    #baz\n      Baz!\n      *finish\nbaz\n";
     var scene = new Scene();
     scene.loadLines(text);
     var options = scene.parseOptions(0, []);
-    doh.is([{"name":"foo","line":2,"group":"choice","endLine":4},{"name":"baz","line":11,"group":"choice","endLine":13}], options, "options");
+    doh.is([{"name":"foo","group":"choice","line":2,"endLine":4},{"name":"baz","group":"choice","line":10,"endLine":12}], options, "options");
 })
 test("twoFalseNestedElses", function() {
     var text = "*choice\n"+
@@ -603,26 +603,6 @@ test("twoFalseNestedElses", function() {
 //             scene.loadLines(text);
 //             doh.assertError(Error, scene, "parseOptions", [0, []], "misindented");
 //         })
-test("printMenu", function() {
-    var text = "*choice\n"+
-        "  *label loop\n"+
-        "  *if i < 3\n"+
-        "    *print \"#\"&{\"friend_\" & i}\n"+
-        "      *print \"You chose \" & choice_1\n"+
-        "      *finish\n"+
-        "    *set i+1\n"+
-        "    *goto loop";
-    var stats = {
-        i:0
-        ,friend_0: "Adam"
-        ,friend_1: "Dan"
-        ,friend_2: "Kevin"
-    }
-    var scene = new Scene("test", stats);
-    scene.loadLines(text);
-    var options = scene.parseOptions(0, []);
-    doh.is(([{"name":"Adam","line":4,"group":"choice","endLine":6},{"name":"Dan","line":4,"group":"choice","endLine":6},{"name":"Kevin","line":4,"group":"choice","endLine":6}]), (options), "options");
-})
 
 module("Standard Resolution");
 
