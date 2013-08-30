@@ -948,8 +948,8 @@ Scene.prototype.parseOptions = function parseOptions(startIndent, choicesRemaini
               line = ifResult.line;
               selectableIf = ifResult.condition;
               unselectable = unselectable || !ifResult.result;
-            } else if ("finish" == command) {
-                break;
+            } else if ("comment" == command) {
+                continue;
             } else if (!command) {
               // command was rewritten by earlier modifier
             } else {
