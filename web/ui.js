@@ -1381,6 +1381,9 @@ window.onload=function() {
     window.nav.setStartingStatsClone(window.stats);
     stats.sceneName = window.nav.getStartupScene();
     var map = parseQueryString(window.location.search);
+    if (!map && window.androidQueryString) {
+      map = parseQueryString(window.androidQueryString);
+    }
 
     if (map) {
       window.forcedScene = map.forcedScene;
