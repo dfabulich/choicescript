@@ -382,7 +382,8 @@ function submitRemoteSave(slot, email, subscribe, callback) {
     if (ok) {
       var timestamp = slot.substring(4/*"save".length*/);
       var xhr = findXhr();
-      var params = "email="+email+"&game="+window.storeName+"&json="+encodeURIComponent(value)+"&timestamp="+ timestamp+"&subscribe="+subscribe;
+      var gameName = window.remoteStoreName || window.storeName;
+      var params = "email="+email+"&game="+gameName+"&realGame="+window.storeName+"&json="+encodeURIComponent(value)+"&timestamp="+ timestamp+"&subscribe="+subscribe;
       xhr.open("POST", webSaveUrl,true);
       xhr.setRequestHeader("Content-type","application/x-www-form-urlencoded");
       var done = false;
@@ -436,7 +437,8 @@ function getRemoteSaves(email, callback) {
     return;
   }
   var xhr = findXhr();
-  xhr.open("GET", webSaveUrl + "?email="+email+"&game="+window.storeName, true);
+  var gameName = window.remoteStoreName || window.storeName;
+  xhr.open("GET", webSaveUrl + "?email="+email+"&game="+gameName, true);
   var done = false;
   xhr.onreadystatechange = function() {
     if (done) return;
