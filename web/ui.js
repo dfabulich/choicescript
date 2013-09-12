@@ -66,7 +66,11 @@ function showStats() {
 
 function callIos(scheme, path) {
   if (!window.isIosApp) return;
-  if (!path) path = "";
+  if (path) {
+    path = encodeURIComponent(path);
+  } else {
+    path = "";
+  }
   setTimeout(function() {
     var iframe = document.createElement("IFRAME");
     iframe.setAttribute("src", scheme + "://" + path);
