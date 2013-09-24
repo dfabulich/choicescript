@@ -970,7 +970,7 @@ function promptEmailAddress(target, defaultEmail, callback) {
 }
 
 function loginForm(target, optional, errorMessage, callback) {
-  if (!isRegisterAllowed()) return safeTimeout(function() {
+  if (!isRegisterAllowed() || !initStore()) return safeTimeout(function() {
     callback(!"ok");
   }, 0);
   startLoading();
