@@ -748,6 +748,7 @@ Scene.prototype.getVar = function getVar(variable) {
     if (variable == "false") return false;
     if (variable == "choice_subscribe_allowed") return true;
     if (variable == "choice_register_allowed") return isRegisterAllowed();
+    if (variable == "choice_registered") return typeof window != "undefined" && window.registered;
     if (variable == "choice_is_web") return typeof window != "undefined" && window.isWeb;
     if (variable == "choice_is_trial") return !!(typeof window != "undefined" && window.isTrial);
     if (variable == "choice_kindle") return false;
@@ -1791,6 +1792,17 @@ Scene.prototype.parseRestoreGame = function parseRestoreGame(alreadyFinished) {
       this.rollbackLineCoverage();
     }
     return unrestorableScenes;
+};
+
+Scene.prototype.check_registration = function scene_checkRegistration() {
+  this.finished = true;
+  this.skipFooter = true;
+  var self = this;
+  isRegistered(function() {
+    self.finished = false;
+    self.skipFooter = false;
+    self.execute();
+  });
 };
 
 Scene.prototype.login = function scene_login(optional) {
@@ -3020,5 +3032,5 @@ Scene.validCommands = {"comment":1, "goto":1, "gotoref":1, "label":1, "looplimit
     "check_purchase":1,"restore_purchases":1,"purchase":1,"restore_game":1,"advertisement":1,
     "save_game":1,"delay_break":1,"image":1,"link":1,"input_number":1,"goto_random_scene":1,
     "restart":1,"more_games":1,"delay_ending":1,"end_trial":1,"login":1,"achieve":1,"scene_list":1,"title":1,
-    "bug":1,"link_button":1
+    "bug":1,"link_button":1,"check_registration":1
     };

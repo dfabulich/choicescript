@@ -1192,16 +1192,21 @@ function loginDiv(registered, email) {
 function isRegistered(callback) {
   if (window.isWeb) {
     return safeTimeout(function() {
-      callback(!!getCookieByName("login"));
+      window.registered = !!getCookieByName("login");
+      callback(window.registered);
     }, 0);
   } else if (initStore()) {
     return window.store.get("login", function(ok, value) {
       safeCall(null, function() {
-        callback(ok && value && "false" != value);
+        window.registered = ok && value && "false" != value;
+        callback(window.registered);
       });
     });
   } else {
-    safeCall(null, function() {callback(false);});
+    safeCall(null, function() {
+      window.registered = false;
+      callback(false);
+    });
   }
 }
 
@@ -1331,6 +1336,7 @@ window.isKindleFire = /Kindle Fire/.test(navigator.userAgent);
 window.isWinStoreApp = "ms-appx:" == window.location.protocol;
 
 window.loadTime = new Date().getTime();
+window.registered = false;
 
 function getSupportEmail() {
   try {

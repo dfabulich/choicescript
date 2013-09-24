@@ -226,6 +226,7 @@ function logout(callback) {
 function recordLogin(registered, callback) {
   if (initStore()) {
     window.store.set("login", registered, function() {safeCall(null, callback);});
+    window.registered = registered;
   } else {
     safeTimeout(callback, 0);
   }
