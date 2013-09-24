@@ -619,6 +619,7 @@ function restartGame(shouldPrompt) {
   function actuallyRestart(result) {
     if (!result) return;
     submitAnyDirtySaves();
+    clearCookie(function() {}, 'temp');
     clearCookie(function() {
       window.nav.resetStats(window.stats);
       clearScreen(restoreGame);
