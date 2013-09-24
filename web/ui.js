@@ -1431,6 +1431,8 @@ window.onload=function() {
       'src="//platform.twitter.com/widgets/follow_button.html?screen_name=choiceofgames&amp;show_screen_name=false"'+
       ' style="width:150px; height:20px;"></iframe>';
     }
+
+    submitAnyDirtySaves();
 };
 
 _global = this;

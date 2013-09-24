@@ -431,6 +431,29 @@ function submitDirtySaves(dirtySaveList, email, callback) {
   submitDirtySave(0);
 }
 
+function submitAnyDirtySaves(callback) {
+  if (!callback) callback = function(ok) {};
+  try {
+    getDirtySaveList(function(dirtySaveList) {
+      if (dirtySaveList && dirtySaveList.length) {
+        try {
+          fetchEmail(function(email) {
+            if (email) {
+              submitDirtySaves(dirtySaveList, email, callback);
+            } else {
+              callback(false);
+            }
+          });
+        } catch (e) {
+          callback(false);
+        }
+      }
+    });
+  } catch (e) {
+    callback(false);
+  }
+}
+
 function getRemoteSaves(email, callback) {
   if (!isWebSavePossible()) {
     safeTimeout(function() {callback([]);}, 0);
@@ -595,6 +618,7 @@ function restartGame(shouldPrompt) {
   }
   function actuallyRestart(result) {
     if (!result) return;
+    submitAnyDirtySaves();
     clearCookie(function() {
       window.nav.resetStats(window.stats);
       clearScreen(restoreGame);
