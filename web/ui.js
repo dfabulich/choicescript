@@ -1060,11 +1060,11 @@ function loginForm(target, optional, errorMessage, callback) {
         preventDefault(event);
         var email = trim(form.email.value);
         var subscribe = form.subscribe.checked;
-        if (!/^\S+@\S+\.\S+$/.test(email)) {
+        var choice = getFormValue("choice");
+        if (!/^\S+@\S+\.\S+$/.test(email) && "no" != choice) {
           showMessage('Sorry, "'+email+'" is not an email address.  Please type your email address again.');
         } else {
           recordEmail(email, function() {
-            var choice = getFormValue("choice");
             if ("yes" == choice) {
               clearScreen(function() {
                 if (defaultEmail) {
