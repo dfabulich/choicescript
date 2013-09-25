@@ -973,6 +973,11 @@ function loginForm(target, optional, errorMessage, callback) {
   if (!isRegisterAllowed() || !initStore()) return safeTimeout(function() {
     callback(!"ok");
   }, 0);
+  var optional_start = 1;
+  var optional_returning_subscribe = 2;
+  var optional_returning_no_subscribe = 3;
+  var optional_new_subscribe = 4;
+  var optional_new_no_subscribe = 5;
   startLoading();
   fetchEmail(function(defaultEmail) {
     isRegistered(function(registered) {
@@ -1008,7 +1013,7 @@ function loginForm(target, optional, errorMessage, callback) {
 
       var escapedEmail = defaultEmail.replace(/'/g, "&apos;");
       var passwordButton;
-      if (optional == 1) {
+      if (optional == optional_start) {
         form.innerHTML = "<div id=message style='color:red; font-weight:bold'>"+errorMessage+
           "</div><div class='choice'>"+
           "<label for=yes class=firstChild><input type=radio name=choice value=yes id=yes checked> My email address is: "+
@@ -1026,8 +1031,12 @@ function loginForm(target, optional, errorMessage, callback) {
           "<label for=new class=firstChild><input type=radio name=choice value=new id=new checked> No, I'm new.</label>"+
           "<label for=passwordButton><input type=radio name=choice value=passwordButton id=passwordButton> "+
           "Yes, I have a password: <input id=password type=password name=password disabled style='font-size: 25px; width: 11em'></label>"+
-          "<label for=forgot class=lastChild><input type=radio name=choice value=forgot id=forgot> I forgot my password.</label>"+
+          "<label for=forgot><input type=radio name=choice value=forgot id=forgot> I forgot my password.</label>"+
+          (optional ? "<label for=no><input type=radio name=choice value=no id=no> I don't want to sign in right now.</label>" : "") +
           "</div><br>";
+
+        var labels = form.getElementsByTagName("label");
+        setClass(labels[labels.length-1], "lastChild");
 
         var password = form.password;
         passwordButton = form.passwordButton;
@@ -1044,8 +1053,8 @@ function loginForm(target, optional, errorMessage, callback) {
           radioButtons[i].onchange = onchange;
         }
         if (optional) {
-          form.subscribe.checked = (optional == 2 || optional == 4);
-          passwordButton.checked = (optional == 2 || optional == 3);
+          form.subscribe.checked = (optional == optional_returning_subscribe || optional == optional_new_subscribe);
+          passwordButton.checked = (optional == optional_returning_subscribe || optional == optional_returning_no_subscribe);
         }
       }
 
@@ -1068,9 +1077,9 @@ function loginForm(target, optional, errorMessage, callback) {
             if ("yes" == choice) {
               clearScreen(function() {
                 if (defaultEmail) {
-                  optional = subscribe ? 2 : 3;
+                  optional = subscribe ? optional_returning_subscribe : optional_returning_no_subscribe;
                 } else {
-                  optional = subscribe ? 4 : 5;
+                  optional = subscribe ? optional_new_subscribe : optional_new_no_subscribe;
                 }
                 loginForm(document.getElementById("text"), optional, null, callback);
               });
@@ -1118,6 +1127,11 @@ function loginForm(target, optional, errorMessage, callback) {
               target.appendChild(form);
               println("", form);
               printButton("Next", form, true);
+              if (optional) {
+                printButton("Cancel", form, false, function() {
+                  safeCall(null, function() {callback(false);});
+                });
+              }
             } else if ("passwordButton" == choice) {
               startLoading();
               target.innerHTML = "";
