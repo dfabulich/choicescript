@@ -1211,10 +1211,10 @@ function isRegistered(callback) {
     }, 0);
   } else if (initStore()) {
     return window.store.get("login", function(ok, value) {
-      safeCall(null, function() {
+      safeTimeout(function() {
         window.registered = ok && value && "false" != value;
         callback(window.registered);
-      });
+      }, 0);
     });
   } else {
     safeCall(null, function() {
