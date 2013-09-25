@@ -1192,7 +1192,7 @@ Scene.prototype.comment = function comment(line) {
 };
 
 Scene.prototype.advertisement = function advertisement() {
-  if (isFullScreenAdvertisingSupported()) {
+  if (typeof isFullScreenAdvertisingSupported != "undefined" && isFullScreenAdvertisingSupported()) {
     this.finished = true;
     this.skipFooter = true;
 
