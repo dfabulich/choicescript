@@ -1033,7 +1033,7 @@ function loginForm(target, optional, errorMessage, callback) {
           "<div class='choice'>"+
           "<label for=new class=firstChild><input type=radio name=choice value=new id=new checked> No, I'm new.</label>"+
           "<label for=passwordButton><input type=radio name=choice value=passwordButton id=passwordButton> "+
-          "Yes, I have a password: <input id=password type=password name=password disabled style='font-size: 25px; width: 11em'></label>"+
+          "Yes, I have a password: <input id=password type=password name=password disabled class=needsclick style='font-size: 25px; width: 11em'></label>"+
           "<label for=forgot><input type=radio name=choice value=forgot id=forgot> I forgot my password.</label>"+
           (optional ? "<label for=no><input type=radio name=choice value=no id=no> I don't want to sign in right now.</label>" : "") +
           "</div><br>";
