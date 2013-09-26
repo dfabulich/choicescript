@@ -555,6 +555,7 @@ function subscribeByMail(target, now, callback, code) {
     safeTimeout(function() {callback(now);}, 0);
   } else {
     println("Click here to subscribe to our mailing list; we'll notify you when our next game is ready!");
+    println("");
     printButton("Subscribe", target, false, function() {
         code();
       });
@@ -581,6 +582,7 @@ function subscribe(target, now, callback) {
     return;
   }
   println("Type your email address below; we'll notify you when our next game is ready!");
+  println("");
   fetchEmail(function(defaultEmail) {
     promptEmailAddress(target, defaultEmail, function(cancel, email) {
       if (cancel) {
