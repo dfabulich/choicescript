@@ -1795,6 +1795,7 @@ Scene.prototype.parseRestoreGame = function parseRestoreGame(alreadyFinished) {
 };
 
 Scene.prototype.check_registration = function scene_checkRegistration() {
+  if (typeof window == "undefined") return;
   this.finished = true;
   this.skipFooter = true;
   var self = this;
