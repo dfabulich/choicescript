@@ -2423,7 +2423,7 @@ Scene.prototype.delay_ending = function(data) {
       return;
     }
     var finishedWaiting = {name: "Play again after a short wait. ", unselectable: true};
-    var upgradeSkip = {name: "Upgrade to the full version for " + price + " to skip the wait."};
+    var upgradeSkip = {name: "Upgrade to the unlimited version for " + price + " to skip the wait."};
     var restorePurchasesOption = {name: "Restore purchases from another device."};
     var playMoreGames = {name: "Play more games like this."};
     var emailMe = {name: "Email me when new games are available."};
