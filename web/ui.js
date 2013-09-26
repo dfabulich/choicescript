@@ -562,6 +562,7 @@ function subscribeByMail(target, now, callback, code) {
     printButton("Next", target, false, function() {
       safeTimeout(function() {callback(now);}, 0);
     });
+    printFooter();
   }
 }
 
