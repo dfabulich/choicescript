@@ -2411,9 +2411,11 @@ Scene.prototype.delay_break = function(durationInSeconds) {
 Scene.prototype.delay_ending = function(data) {
   var args = data.split(/ /);
   var durationInSeconds = args[0];
-  var price = args[1];
+  var fullPriceGuess = args[1];
+  var singleUsePriceGuess = args[2];
   if (isNaN(durationInSeconds * 1)) throw new Error(this.lineMsg() + "invalid duration");
-  if (!/^\$/.test(price)) throw new Error(this.lineMsg() + "invalid price");
+  if (!/^\$/.test(fullPriceGuess)) throw new Error(this.lineMsg() + "invalid fullPriceGuess: \""+fullPriceGuess+"\"");
+  if (singleUsePriceGuess && !/^\$/.test(singleUsePriceGuess)) throw new Error(this.lineMsg() + "invalid singleUsePriceGuess: \""+singleUsePriceGuess+"\"");
   this.finished = true;
   this.skipFooter = true;
   var self = this;
@@ -2422,47 +2424,67 @@ Scene.prototype.delay_ending = function(data) {
       self.ending();
       return;
     }
-    var finishedWaiting = {name: "Play again after a short wait. ", unselectable: true};
-    var upgradeSkip = {name: "Upgrade to the unlimited version for " + price + " to skip the wait."};
-    var restorePurchasesOption = {name: "Restore purchases from another device."};
-    var playMoreGames = {name: "Play more games like this."};
-    var emailMe = {name: "Email me when new games are available."};
-    var options = [finishedWaiting, upgradeSkip, playMoreGames, emailMe];
-    if (isRestorePurchasesSupported()) options.push(restorePurchasesOption);
-    self.paragraph();
-    printOptions([""], options, function(option) {
-      if (option == playMoreGames) {
-        self.more_games("now");
-        setTimeout(function() {callIos("curl");}, 0);
-      } else if (option == emailMe) {
-        subscribeLink();
-      } else if (option == upgradeSkip) {
-        purchase("adfree", function() {
-          safeCall(self, function() {
-            self.restart();
-          });
-        });
-      } else if (option == restorePurchasesOption) {
-        restorePurchases(function() {
-          safeCall(self, function() {
+    getPrice("adfree", function (fullPrice) {
+      if (fullPrice == "guess") fullPrice = fullPriceGuess;
+      getPrice("skiponce", function (singleUsePrice) {
+        if (singleUsePrice == "guess") singleUsePrice = singleUsePriceGuess;
+
+        options = [];
+        var finishedWaiting = {name: "Play again after a short wait. ", unselectable: true};
+        options.push(finishedWaiting);
+        var upgradeSkip = {name: "Upgrade to the unlimited version for " + fullPrice + " to skip the wait."};
+        options.push(upgradeSkip);
+        var skipOnce = {name: "Skip the wait one time for " + singleUsePrice + "."};
+        if (singleUsePriceGuess) options.push(skipOnce);
+        var restorePurchasesOption = {name: "Restore purchases from another device."};
+        if (isRestorePurchasesSupported()) options.push(restorePurchasesOption);
+        var playMoreGames = {name: "Play more games like this."};
+        options.push(playMoreGames);
+        var emailMe = {name: "Email me when new games are available."};
+        options.push(emailMe);
+        
+        self.paragraph();
+        printOptions([""], options, function(option) {
+          if (option == playMoreGames) {
+            self.more_games("now");
             setTimeout(function() {callIos("curl");}, 0);
-          });
+          } else if (option == emailMe) {
+            subscribeLink();
+          } else if (option == upgradeSkip) {
+            purchase("adfree", function() {
+              safeCall(self, function() {
+                self.restart();
+              });
+            });
+          } else if (option == skipOnce) {
+            purchase("skiponce", function() {
+              safeCall(self, function() {
+                self.restart();
+              });
+            });
+          } else if (option == restorePurchasesOption) {
+            restorePurchases(function() {
+              safeCall(self, function() {
+                setTimeout(function() {callIos("curl");}, 0);
+              });
+            });
+          } else {
+            self.restart();
+          }
         });
-      } else {
-        self.restart();
-      }
-    });
 
-    var target = document.getElementById("0").parentElement;
+        var target = document.getElementById("0").parentElement;
 
-    delayBreakStart(function(delayStart) {
-      var endTimeInSeconds = durationInSeconds * 1 + delayStart * 1;
-      showTicker(target, endTimeInSeconds, function() {
-        clearScreen(function() {
-          self.ending();
+        delayBreakStart(function(delayStart) {
+          var endTimeInSeconds = durationInSeconds * 1 + delayStart * 1;
+          showTicker(target, endTimeInSeconds, function() {
+            clearScreen(function() {
+              self.ending();
+            });
+          });
+          printFooter();
         });
       });
-      printFooter();
     });
   });
 
