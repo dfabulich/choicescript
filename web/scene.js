@@ -2432,7 +2432,7 @@ Scene.prototype.delay_ending = function(data) {
         options = [];
         var finishedWaiting = {name: "Play again after a short wait. ", unselectable: true};
         options.push(finishedWaiting);
-        var upgradeSkip = {name: "Upgrade to the unlimited version for " + fullPrice + " to skip the wait."};
+        var upgradeSkip = {name: "Upgrade to the unlimited version for " + fullPrice + " to skip the wait forever."};
         options.push(upgradeSkip);
         var skipOnce = {name: "Skip the wait one time for " + singleUsePrice + "."};
         if (singleUsePriceGuess) options.push(skipOnce);
