@@ -1581,7 +1581,7 @@ Scene.prototype.restore_game = function restore_game() {
       if (save.temps && save.temps.choice_restore_name) name = save.temps.choice_restore_name;
       options.push({name:name + " ("+simpleDateTimeFormat(date)+")", group:"choice", state:save});
     }
-    options.push({name:"Restore using a password.", group:"choice", password:true});
+    if (false) options.push({name:"Restore using a password.", group:"choice", password:true});
     options.push({name:"Retrieve saved games online from choiceofgames.com.", group:"choice", fetch:true});
     if (dirtySaveList.length) options.push({name:"Upload saved games to choiceofgames.com.", group:"choice", upload:true});
     options.push({name:"Cancel.", group:"choice", cancel:true});
