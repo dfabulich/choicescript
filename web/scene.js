@@ -148,9 +148,10 @@ Scene.prototype.replaceVariables = function (line) {
   line = line.replace(/\$(\!?\!?)\{([a-zA-Z][_\w]*)\}/g, function (matched, capitalize, variable) {
     var value = self.getVar(variable);
     if (capitalize == "!") {
+      value = ""+value;
       value = value.charAt(0).toUpperCase() + value.slice(1);
     } else if (capitalize == "!!") {
-      value = value.toUpperCase();
+      value = (""+value).toUpperCase();
     }
     return value;
   });
