@@ -761,8 +761,8 @@ function showFullScreenAdvertisement(callback) {
   if (window.isIosApp) {
     callIos("advertisement");
     safeTimeout(callback, 0);
-  } else if (window.isAndroidApp && window.mobclixBridge) {
-    mobclixBridge.displayFullScreenAdvertisement();
+  } else if (window.isAndroidApp && window.adBridge) {
+    adBridge.displayFullScreenAdvertisement();
     safeTimeout(callback, 0);
   } else {
     safeTimeout(callback, 0);
