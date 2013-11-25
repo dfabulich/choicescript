@@ -16,6 +16,7 @@ gameDir = args[0] || "mygame";
 function parseSceneList(lines, lineNum) {
   var nextIndent = null;
   var scenes = [];
+  var purchases = {};
   var line;
   while(typeof (line = lines[++lineNum]) != "undefined") {
       if (!line.trim()) continue;
@@ -34,14 +35,21 @@ function parseSceneList(lines, lineNum) {
       }
 
       line = line.trim();
+      var purchaseMatch = /^\$(\w*)\s+(.*)/.exec(line);
+      if (purchaseMatch) {
+        debugger;
+        line = purchaseMatch[2];
+        var product = purchaseMatch[1].trim() || "adfree";
+        purchases[line] = product;
+      }
       if (!scenes.length && "startup" != line) scenes.push("startup");
       scenes.push(line);
   }
-  return {scenes:scenes, lineNum:lineNum-1};
+  return {scenes:scenes, purchases:purchases, lineNum:lineNum-1};
 }
 
 var lines = slurpFileLines("web/"+gameDir+"/scenes/startup.txt");
-var stats = {};
+var stats = {}, purchases = {};
 var scenes;
 var create = /^\*create +(\w+) +(.*)/;
 var result, variable, value;
@@ -56,6 +64,7 @@ for (var i = 0; i < lines.length; i++) {
   } else if (/^\*scene_list/.test(line)) {
     result = parseSceneList(lines, i);
     scenes = result.scenes;
+    purchases = result.purchases;
     i = result.lineNum;
   } else {
     break;
@@ -85,8 +94,17 @@ for (var stat in stats) {
   }
 }
 
+mygameBuffer.push("};\npurchases = {");
+var first = true;
+for (var purchase in purchases) {
+  if (first) {
+    first = false;
+  } else {
+    mygameBuffer.push(",\n");
+  }
+  mygameBuffer.push('"', purchase, "\":\"", purchases[purchase], "\"");
+}
 mygameBuffer.push("};\n");
-
 print(mygameBuffer.join(""));
 
 

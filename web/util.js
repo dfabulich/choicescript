@@ -172,11 +172,11 @@ function toJson(obj, standardized) {
  }
 }
 
-var loginUrlBase = "https://www.choiceofgames.com/api/";
+var loginUrlBase = "https://localhost/~dfabulich/git/cogapi/api/";
 function xhrAuthRequest(method, endpoint, callback) {
   var paramBuilder = new Array(arguments.length*3);
   for (var i = 3; i < arguments.length; i=i+2) {
-    if (i > 0) paramBuilder.push("&");
+    if (i > 3) paramBuilder.push("&");
     paramBuilder.push(arguments[i]);
     paramBuilder.push("=");
     paramBuilder.push(arguments[i+1]);
@@ -221,6 +221,7 @@ function logout(callback) {
   document.cookie = 'login=0;path=/;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
   xhrAuthRequest("GET", "logout", callback);
   recordLogin(false);
+  window.knownPurchases = null;
 }
 
 function recordLogin(registered, callback) {
@@ -366,7 +367,7 @@ function fetchSavesFromSlotList(slotList, i, saveList, callback) {
 function isWebSavePossible() {
   if (!initStore()) return false;
   if (/^http/.test(window.location.protocol)) {
-    return document.domain == window.webSaveDomain;
+    return document.domain == window.webSaveDomain || document.domain == "localhost";
   }
   // if it's a file URL with a valid store, either you're a 3rd party developer
   // who knows what you're doing, or you're a mobile app

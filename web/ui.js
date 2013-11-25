@@ -673,33 +673,91 @@ function subscribe(target, now, callback) {
   });
 }
 
+function cacheKnownPurchases(knownPurchases) {
+  var output = {billingSupported:true};
+  for (i = 0; i < knownPurchases.length; i++) {
+    var parts = knownPurchases[i].split(/\./);
+    if (parts[0] != window.storeName) continue;
+    output[parts[1]] = true;
+  }
+  window.knownPurchases = output;
+}
+
+function getKnownPurchases(callback) {
+  isRegistered(function(registered){
+    if (registered) {
+      startLoading();
+      xhrAuthRequest("GET", "get-purchases", function(ok, response) {
+        doneLoading();
+        if (ok) {
+          cacheKnownPurchases(response);
+        } else {
+          if (response.error != "not registered") {
+            alertify.error("There was an error downloading your purchases from Choiceofgames.com. "+
+              "Please refresh this page to try again, or contact support@choiceofgames.com for assistance.", 15000);
+          }
+        }
+        callback(ok, window.knownPurchases);
+      });
+    } else {
+      callback("ok", {billingSupported: true});
+    }
+  });
+}
+
 // Callback expects a map from product ids to booleans
 function checkPurchase(products, callback) {
+  var i;
   if (window.isIosApp) {
-    window.checkPurchaseCallback = callback;
+    window.checkPurchaseCallback = function(purchases) {callback("ok",purchases); };
     callIos("checkpurchase", products);
   } else if (window.isAndroidApp && !window.isNookAndroidApp) {
-    window.checkPurchaseCallback = callback;
+    window.checkPurchaseCallback = function(purchases) {callback("ok",purchases); };
     androidBilling.checkPurchase(products);
+  } else if (isWebPurchaseSupported()) {
+    if (window.knownPurchases) {
+      safeTimeout(function() { callback("ok", knownPurchases); }, 0);
+    } else {
+      getKnownPurchases(callback);
+    }
   } else {
     var productList = products.split(/ /);
     var purchases = {};
-    for (var i = 0; i < productList.length; i++) {
+    for (i = 0; i < productList.length; i++) {
       purchases[productList[i]] = true;
     }
     purchases.billingSupported = false;
-    safeTimeout(function() {callback(purchases);}, 0);
+    safeTimeout(function() {callback("ok", purchases);}, 0);
   }
 }
 
+function isWebPurchaseSupported() {
+  return window.isSecureWeb && isWebSavePossible() && window.stripeKey;
+}
+
 function isRestorePurchasesSupported() {
-  return !!window.isIosApp;
+  return !!window.isIosApp || isWebPurchaseSupported();
 }
 
 function restorePurchases(callback) {
   if (window.isIosApp) {
     window.restoreCallback = callback;
     callIos("restorepurchases");
+  } else if (isWebPurchaseSupported()) {
+    isRegistered(function(registered) {
+      if (registered) {
+        getKnownPurchases(callback);
+      } else {
+        clearScreen(function() {
+          var target = document.getElementById('text');
+          target.innerHTML="<p>Please sign in to Choiceofgames.com to restore purchases.</p>";
+          loginForm(document.getElementById('text'), /*optional*/1, /*err*/null, function(registered){
+            clearScreen(loadAndRestoreGame);
+            if (registered) callback();
+          });
+        });
+      }
+    });
   } else {
     safeTimeout(callback, 0);
   }
@@ -716,7 +774,7 @@ function getPrice(product, callback) {
     }, 0);
   } else {
     safeTimeout(function () {
-      callback.call(this, "$1");
+      callback.call(this, "guess");
     }, 0);
   }
 }
@@ -732,6 +790,76 @@ function purchase(product, callback) {
   } else if (window.isAndroidApp) {
     window.purchaseCallback = purchaseCallback;
     androidBilling.purchase(product);
+  } else if (isWebPurchaseSupported()) {
+    if (!window.StripeCheckout) return asyncAlert("Sorry, we weren't able to initiate payment. (Your "+
+      "network connection may be down.) Please refresh the page and try again, or contact "+
+      "support@choiceofgames.com for assistance.");
+    startLoading();
+    isRegistered(function(registered) {
+      doneLoading();
+      var fullProductName = window.storeName + "." + product;
+      function stripe() {
+        startLoading();
+        xhrAuthRequest("GET", "product-data", function(ok, data) {
+          doneLoading();
+          if (!ok) return asyncAlert("Sorry, we weren't able to initiate payment. (Your "+
+            "network connection may be down.) Please refresh the page and try again, or contact "+
+            "support@choiceofgames.com for assistance.");
+          data = data[fullProductName];
+          StripeCheckout.open({
+            key:         window.stripeKey,
+            address:     false,
+            amount:      data.amount,
+            name:        data.display_name,
+            description: data.description,
+            panelLabel:  'Buy',
+            token:       function(response) {
+              clearScreen(function() {
+                startLoading();
+                xhrAuthRequest("POST", "purchase", function(ok, response) {
+                  doneLoading();
+                  if (ok) {
+                    cacheKnownPurchases(response);
+                    return callback();
+                  } else if (/^card error: /.test(response.error)) {
+                    var cardError = response.error.substring("card error: ".length);
+                    asyncAlert(cardError);
+                    clearScreen(loadAndRestoreGame);
+                  } else if ("purchase already in flight" == response.error) {
+                    asyncAlert("Sorry, there was an error handling your purchase. Please wait five minutes and try again, or contact support@choiceofgames.com for assistance.");
+                    clearScreen(loadAndRestoreGame);
+                  } else {
+                    asyncAlert("Sorry, there was an error processing your card. (Your "+
+                      "network connection may be down.) Please refresh the page and try again, or contact "+
+                      "support@choiceofgames.com for assistance.");
+                    clearScreen(loadAndRestoreGame);
+                  }
+                }, "stripeToken", response.id, "product", fullProductName);
+              });
+            }
+          });
+        }, "products", fullProductName);
+      }
+      if (registered) return stripe();
+      clearScreen(function() {
+        var target = document.getElementById('text');
+        target.innerHTML="<p>Please sign in to Choiceofgames.com to purchase.</p>";
+        loginForm(document.getElementById('text'), /*optional*/1, /*err*/null, function(registered){
+          if (registered) {
+            checkPurchase(product, function(ok, response) {
+              if (ok && response[product]) {
+                callback();
+              } else {
+                clearScreen(loadAndRestoreGame);
+                stripe();
+              }
+            });
+          } else {
+            clearScreen(loadAndRestoreGame);
+          }
+        });
+      });
+    });
   } else {
     safeTimeout(callback, 0);
   }
@@ -1012,7 +1140,7 @@ function loginForm(target, optional, errorMessage, callback) {
       doneLoading();
       var form = document.createElement("form");
 
-      if (!errorMessage) errorMessage = "";
+    if (!errorMessage) errorMessage = "";
 
       var escapedEmail = defaultEmail.replace(/'/g, "&apos;");
       var passwordButton;
@@ -1024,6 +1152,11 @@ function loginForm(target, optional, errorMessage, callback) {
           "<label for=no class=lastChild><input type=radio name=choice value=no id=no > No, thanks.</label>"+
           "<p><label for=subscribe><input type=checkbox name=subscribe id=subscribe checked> "+
           "Email me when new games are available.</label></p>";
+
+        form.email.onclick = function() {
+          setTimeout(function() {form.email.focus();}, 0);
+        };
+        setTimeout(function() {form.email.focus();}, 0);
       } else {
         form.innerHTML = "<div id=message style='color:red; font-weight:bold'>"+errorMessage+
           "</div><span><span>My email address is: </span><input type=email name=email id=email value='"+
@@ -1035,13 +1168,17 @@ function loginForm(target, optional, errorMessage, callback) {
           "<label for=passwordButton><input type=radio name=choice value=passwordButton id=passwordButton> "+
           "Yes, I have a password: <input id=password type=password name=password disabled class=needsclick style='font-size: 25px; width: 11em'></label>"+
           "<label for=forgot><input type=radio name=choice value=forgot id=forgot> I forgot my password.</label>"+
-          (optional ? "<label for=no><input type=radio name=choice value=no id=no> I don't want to sign in right now.</label>" : "") +
+          (optional ? "<label for=no><input type=radio name=choice value=no id=no> Cancel.</label>" : "") +
           "</div><br>";
 
         var labels = form.getElementsByTagName("label");
         setClass(labels[labels.length-1], "lastChild");
 
         var password = form.password;
+        password.onclick = function() {
+          setTimeout(function() {password.focus();}, 0);
+        };
+
         passwordButton = form.passwordButton;
         var radioButtons = form.choice;
         var onchange = function() {
@@ -1118,6 +1255,7 @@ function loginForm(target, optional, errorMessage, callback) {
                   if (ok) {
                     loginDiv(ok, email);
                     recordLogin(ok);
+                    cacheKnownPurchases(response.purchases);
                     safeCall(null, function() {callback("ok");});
                   } else if ("incorrect password" == response.error) {
                     loginForm(target, optional, 'Sorry, the email address "'+email+'" is already in use. Please type your password below, or use a different email address.', callback);
@@ -1145,6 +1283,7 @@ function loginForm(target, optional, errorMessage, callback) {
                 if (ok) {
                   loginDiv(ok, email);
                   recordLogin(ok);
+                  cacheKnownPurchases(response.purchases);
                   safeCall(null, function() {callback("ok");});
                 } else if ("unknown email" == response.error) {
                   showMessage('Sorry, we can\'t find a record for the email address "'+email+'". Please try a different email address, or create a new account.');
@@ -1346,6 +1485,7 @@ window.isMobile = isWebOS || /Mobile/.test(navigator.userAgent);
 window.isFile = /^file:/.test(window.location.href);
 window.isXul = /^chrome:/.test(window.location.href);
 window.isWeb = /^https?:/.test(window.location.href);
+window.isSecureWeb = /^https:?$/.test(window.location.protocol);
 window.isSafari = /Safari/.test(navigator.userAgent);
 window.isIE = /MSIE/.test(navigator.userAgent);
 window.isIPad = /iPad/.test(navigator.userAgent);
@@ -1470,7 +1610,8 @@ try {style.innerHTML = 'noscript {display: none;}'; } catch (e) {}
 document.getElementsByTagName('head')[0].appendChild(style);
 
 if (window.isWeb) {
-  document.write("<style>.webOnly { display: block !important; }</style>");
+  document.write("<style>.webOnly { display: block !important; }</style>\n"+
+    "<script src='https://checkout.stripe.com/v2/checkout.js'></script>");
 }
 if (!isWeb && window.isIosApp) {
   document.write("<style>"+

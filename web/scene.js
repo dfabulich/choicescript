@@ -256,13 +256,32 @@ Scene.prototype.loadScene = function loadScene(url) {
     xhr.onreadystatechange = function() {
         if (done) return;
         if (xhr.readyState != 4) return;
+        done = true;
+        if (xhr.status == 403) {
+          try {
+            var err = JSON.parse(xhr.responseText);
+            if (err.error == "not registered") {
+              return isRegistered(function(registered) {
+                if (registered) {
+                  logout();
+                  loginDiv();
+                }
+                return clearScreen(function() {
+                  loginForm(main, 0/*optional*/,
+                    "Please sign in to access this part of the game.", function() {
+                      clearScreen(loadAndRestoreGame);
+                    });
+                });
+              });
+            }
+          } catch (e) {} // JSON parse failure? must not be a login prompt
+        }
         if (xhr.status != 200 && xhr.status) {
             main.innerHTML = "<p>Our apologies; there was a " + xhr.status + " error while loading game data."+
             "  Please refresh your browser now; if that doesn't work, please email "+getSupportEmail()+" with details.</p>"+
             " <p><button onclick='window.location.reload();'>Refresh Now</button></p>";
             return;
         }
-        done = true;
         var result = xhr.responseText;
         scene = result;
         scene = scene.replace(/\r/g, "");
@@ -618,9 +637,13 @@ Scene.prototype.check_purchase = function scene_checkPurchase(data) {
   this.finished = true;
   this.skipFooter = true;
   var self = this;
-  checkPurchase(data, function(result) {
+  checkPurchase(data, function(ok, result) {
     self.finished = false;
     self.skipFooter = false;
+    if (!ok) {
+      result = {billingSupported:true};
+      self.temps.choice_purchase_error = true;
+    }
     result = result || {};
     var products = data.split(/ /);
     var everything = true;
@@ -670,7 +693,7 @@ Scene.prototype.purchase = function purchase_button(data) {
         function() {
           safeCall(self, function() {
               restorePurchases(function() {
-                checkPurchase([product], function(purchases) {
+                checkPurchase([product], function(ok, purchases) {
                   if (purchases[product]) {
                     self["goto"](label);
                     self.finished = false;
@@ -1918,7 +1941,9 @@ Scene.prototype.save_game = function save_game() {
             clearScreen(function() {
               self.save(function() {
                 recordSave(slot, function() {
+                  startLoading();
                   submitRemoteSave(slot, email, shouldSubscribe, function(ok) {
+                    doneLoading();
                     if (!ok) {
                       asyncAlert("Couldn't upload your saved game to choiceofgames.com. You can try again later from the Restore menu.", function() {
                         self.finished = false;
@@ -2422,7 +2447,7 @@ Scene.prototype.delay_ending = function(data) {
   this.finished = true;
   this.skipFooter = true;
   var self = this;
-  checkPurchase("adfree", function(result) {
+  checkPurchase("adfree", function(ok, result) {
     if (result.adfree || !result.billingSupported) {
       self.ending();
       return;
@@ -2934,6 +2959,10 @@ Scene.prototype.parseSceneList = function parseSceneList() {
       }
 
       line = trim(line);
+      var purchaseMatch = /^\$(\w*)\s+(.*)/.exec(line);
+      if (purchaseMatch) {
+        line = purchaseMatch[2];
+      }
       if (!scenes.length && "startup" != line) scenes.push("startup");
       scenes.push(line);
   }
