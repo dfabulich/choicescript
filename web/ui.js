@@ -798,7 +798,7 @@ function purchase(product, callback) {
     isRegistered(function(registered) {
       doneLoading();
       var fullProductName = window.storeName + "." + product;
-      function stripe() {
+      function stripe(email) {
         startLoading();
         xhrAuthRequest("GET", "product-data", function(ok, data) {
           doneLoading();
@@ -811,7 +811,7 @@ function purchase(product, callback) {
             address:     false,
             amount:      data.amount,
             name:        data.display_name,
-            description: null, /*data.description,*/
+            email:       email,
             panelLabel:  'Buy',
             token:       function(response) {
               clearScreen(function() {
@@ -840,7 +840,7 @@ function purchase(product, callback) {
           });
         }, "products", fullProductName);
       }
-      if (registered) return stripe();
+      if (registered) return fetchEmail(stripe);
       clearScreen(function() {
         var target = document.getElementById('text');
         target.innerHTML="<p>Please sign in to Choiceofgames.com to purchase.</p>";
@@ -851,7 +851,7 @@ function purchase(product, callback) {
                 callback();
               } else {
                 clearScreen(loadAndRestoreGame);
-                stripe();
+                return fetchEmail(stripe);
               }
             });
           } else {
