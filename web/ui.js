@@ -811,7 +811,7 @@ function purchase(product, callback) {
             address:     false,
             amount:      data.amount,
             name:        data.display_name,
-            description: data.description,
+            description: null, /*data.description,*/
             panelLabel:  'Buy',
             token:       function(response) {
               clearScreen(function() {
