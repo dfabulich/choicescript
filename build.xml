@@ -118,11 +118,15 @@ either express or implied.
     <property name="num" value="10000" />
     <property name="game" value="${game.dir}" />
     <property name="output" value="randomtest-output.txt" />
+    <property name="trial" value="0" />
     <echo>Executing randomtest, writing to ${output}</echo>
     <rhino output="${output}">
       <arg value="randomtest.js" />
       <arg value="${num}" />
       <arg value="${game}" />
+      <arg value="0" /> <!--seed-->
+      <arg value="false" /> <!--delay-->
+      <arg value="${trial}" />
     </rhino>
   </target>
   

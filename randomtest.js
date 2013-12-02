@@ -17,15 +17,17 @@
  * either express or implied.
  */
 
-// usage: randomtest 10000 mygame 0
+// usage: randomtest iterations gameName randomSeed delay trial
+// e.g.   randomtest 10000 mygame 0 false false
 
 var isRhino = false;
-var iterations = 10, gameName = "mygame", randomSeed = 0, delay = false, showCoverage = true;
+var iterations = 10, gameName = "mygame", randomSeed = 0, delay = false, showCoverage = true, isTrial = false;
 function parseArgs(args) {
   if (args[0]) iterations = args[0];
   if (args[1]) gameName = args[1];
   if (args[2]) randomSeed = args[2];
-  if (args[3]) delay = args[3];
+  if (args[3]) delay = args[3] && args[3] !== "false";
+  if (args[4]) isTrial = args[4] && args[4] !== "false";
 }
 
 if (typeof importScripts != "undefined") {
@@ -190,10 +192,10 @@ Scene.prototype.stat_chart = function() {
 Scene.prototype.check_purchase = function scene_checkPurchase(data) {
   var products = data.split(/ /);
   for (var i = 0; i < products.length; i++) {
-    this.temps["choice_purchased_"+products[i]] = true;
+    this.temps["choice_purchased_"+products[i]] = !isTrial;
   }
-  this.temps.choice_purchase_supported = false;
-  this.temps.choice_purchased_everything = true;
+  this.temps.choice_purchase_supported = isTrial;
+  this.temps.choice_purchased_everything = !isTrial;
 }
 
 Scene.prototype.randomLog = function randomLog(msg) {
@@ -304,6 +306,9 @@ Scene.prototype.input_number = function(data) {
 
 Scene.prototype.finish = Scene.prototype.autofinish = function random_finish(buttonText) {
     var nextSceneName = this.nav && nav.nextSceneName(this.name);
+    if (isTrial && typeof purchases != "undefined" && purchases[nextSceneName]) {
+      throw new Error(this.lineMsg() + "Trying to go to scene " + nextSceneName + " but that scene requires purchase");
+    }
     this.finished = true;
     // if there are no more scenes, then just halt
     if (!nextSceneName) {
@@ -315,7 +320,16 @@ Scene.prototype.finish = Scene.prototype.autofinish = function random_finish(but
     println("");
     scene.resetPage();
 }
-    
+
+Scene.prototype.oldGotoScene = Scene.prototype.goto_scene;
+Scene.prototype.goto_scene = function random_goto_scene(name) {
+  if (isTrial && typeof purchases != "undefined" && purchases[name]) {
+    throw new Error(this.lineMsg() + "Trying to go to scene " + name + " but that scene requires purchase");
+  }
+  this.oldGotoScene.apply(this, arguments);
+}
+
+Scene.prototype.purchase = noop;
 
 Scene.prototype.choice = function choice(data, fakeChoice) {
     var groups = ["choice"];
