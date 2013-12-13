@@ -1548,8 +1548,12 @@ window.onload=function() {
     window.nav.setStartingStatsClone(window.stats);
     stats.sceneName = window.nav.getStartupScene();
     var map = parseQueryString(window.location.search);
-    if (!map && window.androidQueryString) {
-      map = parseQueryString(window.androidQueryString);
+    if (!map) {
+      if (window.androidQueryString) {
+        map = parseQueryString(window.androidQueryString);
+      } else if (window.forcedScreenshots) {
+        map = {forcedScene:"screenshots"};
+      }
     }
 
     if (map) {
