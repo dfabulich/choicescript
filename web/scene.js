@@ -1875,6 +1875,7 @@ Scene.prototype.save_game = function save_game() {
     var saveName = document.createElement("input");
     saveName.type="text";
     saveName.name="saveName";
+    saveName.setAttribute("placeholder", "Type a name for your saved game");
     saveName.setAttribute("style", "font-size: 25px; width: 90%;");
     form.appendChild(saveName);
 
@@ -1887,6 +1888,7 @@ Scene.prototype.save_game = function save_game() {
     try { emailInput.type="email"; } catch (e) {}
     emailInput.name="email";
     emailInput.value=defaultEmail;
+    emailInput.setAttribute("placeholder", "you@example.com");
     emailInput.setAttribute("style", "font-size: 25px; width: 90%;");
     form.appendChild(emailInput);
 
