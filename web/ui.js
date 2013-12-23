@@ -624,6 +624,8 @@ function subscribe(target, now, callback) {
               if (xhr.status == 200) {
                 var response = JSON.parse(xhr.responseText);
                 window["jsonp"+timestamp](response);
+              } else if (xhr.status === 0) {
+                window["jsonp"+timestamp]({result:"error", msg:"There was a network error submitting your registration. Please try again later, or email subscribe@choiceofgames.com instead."});
               } else {
                 window["jsonp"+timestamp]({result:"error", msg:"Sorry, our mail server had an error. It's our fault. Please try again later, or email subscribe@choiceofgames.com instead."});
               }
@@ -659,6 +661,8 @@ function subscribe(target, now, callback) {
             if (xhr.status == 200) {
               var response = JSON.parse(xhr.responseText);
               window["jsonp"+timestamp](response);
+            } else if (xhr.status === 0) {
+                window["jsonp"+timestamp]({result:"error", msg:"There was a network error submitting your registration. Please try again later, or email subscribe@choiceofgames.com instead."});
             } else {
               window["jsonp"+timestamp]({result:"error", msg:"Sorry, our mail server had an error. It's our fault. Please try again later, or email subscribe@choiceofgames.com instead."});
             }

@@ -195,7 +195,13 @@ Scene.prototype.loadSceneFast = function loadSceneFast(url) {
     xhr.onreadystatechange = function() {
         if (done) return;
         if (xhr.readyState != 4) return;
-        if (xhr.status != 200 && xhr.status) {
+        if (xhr.status === 0) {
+          main.innerHTML = "<p>There was a network error while loading game data."+
+            "  Please refresh your browser now; if that doesn't work, please click the Restart button and email "+getSupportEmail()+" with details.</p>"+
+            " <p><button onclick='window.location.reload();'>Refresh Now</button></p>";
+            return;
+        }
+        if (xhr.status != 200) {
             main.innerHTML = "<p>Our apologies; there was a " + xhr.status + " error while loading game data."+
             "  Please refresh your browser now; if that doesn't work, please click the Restart button and email "+getSupportEmail()+" with details.</p>"+
             " <p><button onclick='window.location.reload();'>Refresh Now</button></p>";
@@ -275,6 +281,12 @@ Scene.prototype.loadScene = function loadScene(url) {
               });
             }
           } catch (e) {} // JSON parse failure? must not be a login prompt
+        }
+        if (xhr.status === 0) {
+          main.innerHTML = "<p>There was a network error while loading game data."+
+            "  Please refresh your browser now; if that doesn't work, please click the Restart button and email "+getSupportEmail()+" with details.</p>"+
+            " <p><button onclick='window.location.reload();'>Refresh Now</button></p>";
+            return;
         }
         if (xhr.status != 200 && xhr.status) {
             main.innerHTML = "<p>Our apologies; there was a " + xhr.status + " error while loading game data."+
