@@ -1254,19 +1254,21 @@ function loginForm(target, optional, errorMessage, callback) {
                   return;
                 }
                 startLoading();
-                target.innerHTML = "";
+                form.style.display = "none";
                 window.scrollTo(0,0);
                 login(email, form.password.value, /*register*/true, subscribe, function(ok, response) {
                   doneLoading();
                   if (ok) {
+                    target.innerHTML = "";
                     loginDiv(ok, email);
                     recordLogin(ok);
                     cacheKnownPurchases(response.purchases);
                     safeCall(null, function() {callback("ok");});
                   } else if ("incorrect password" == response.error) {
+                    target.innerHTML = "";
                     loginForm(target, optional, 'Sorry, the email address "'+email+'" is already in use. Please type your password below, or use a different email address.', callback);
                   } else {
-                    target.appendChild(form);
+                    form.style.display = "";
                     showMessage("Sorry, we weren't able to sign you in. (Your network connection may be down.) Please try again later, or contact support@choiceofgames.com for assistance.");
                   }
                 });
@@ -1281,12 +1283,13 @@ function loginForm(target, optional, errorMessage, callback) {
               }
             } else if ("passwordButton" == choice) {
               startLoading();
-              target.innerHTML = "";
+              form.style.display = "none";
               window.scrollTo(0,0);
               login(email, form.password.value, /*register*/false, form.subscribe.checked, function(ok, response) {
                 doneLoading();
-                target.appendChild(form);
+                form.style.display = "";
                 if (ok) {
+                  target.innerHTML = "";
                   loginDiv(ok, email);
                   recordLogin(ok);
                   cacheKnownPurchases(response.purchases);
@@ -1301,11 +1304,11 @@ function loginForm(target, optional, errorMessage, callback) {
               });
             } else if ("forgot" == choice) {
               startLoading();
-              target.innerHTML = "";
+              form.style.display = "none";
               window.scrollTo(0,0);
               forgotPassword(email, function(ok, response) {
                 doneLoading();
-                target.appendChild(form);
+                form.style.display = "";
                 if (ok) {
                   showMessage("We've emailed you a link to reset your password. Please check your email and click on the link, then return here to sign in.");
                   document.getElementById('passwordButton').checked = true;
