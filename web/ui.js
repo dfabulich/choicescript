@@ -1179,11 +1179,13 @@ function loginForm(target, optional, errorMessage, callback) {
         setClass(labels[labels.length-1], "lastChild");
 
         var password = form.password;
-        password.onclick = function() {
-          setTimeout(function() {password.focus();}, 0);
+        passwordButton = form.passwordButton;
+
+        passwordButton.parentNode.onclick = function() {
+          passwordButton.checked = true;
+          passwordButton.onchange();
         };
 
-        passwordButton = form.passwordButton;
         var radioButtons = form.choice;
         var onchange = function() {
           var enabled = passwordButton.checked;
