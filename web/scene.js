@@ -202,6 +202,8 @@ Scene.prototype.loadSceneFast = function loadSceneFast(url) {
           "  Please refresh your browser now; if that doesn't work, please click the Restart button and email "+getSupportEmail()+" with details.</p>"+
           " <p><button onclick='window.location.reload();'>Refresh Now</button></p>";
           return;
+        } else if (!xhr.status && !xhr.responseText) {
+          throw new Error("Couldn't load " + url);
         }
         done = true;
         var result = xhr.responseText;
@@ -284,6 +286,8 @@ Scene.prototype.loadScene = function loadScene(url) {
             "  Please refresh your browser now; if that doesn't work, please email "+getSupportEmail()+" with details.</p>"+
             " <p><button onclick='window.location.reload();'>Refresh Now</button></p>";
             return;
+        } else if (!xhr.status && !xhr.responseText) {
+          throw new Error("Couldn't load " + url);
         }
         var result = xhr.responseText;
         scene = result;
