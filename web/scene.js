@@ -176,13 +176,14 @@ Scene.prototype.paragraph = function paragraph() {
 Scene.prototype.loadSceneFast = function loadSceneFast(url) {
     if (this.loading) return;
     this.loading = true;
+    var result;
     if (window.cachedResult) {
-      var result = window.cachedResult;
+      result = window.cachedResult;
       window.cachedResult = null;
       return this.loadLinesFast(result.crc, result.lines, result.labels);
     } else if (typeof allScenes != "undefined") {
-	    result = allScenes[this.name];
-		return this.loadLinesFast(result.crc, result.lines, result.labels);
+      result = allScenes[this.name];
+      return this.loadLinesFast(result.crc, result.lines, result.labels);
 	}
     startLoading();
     if (!url) {
