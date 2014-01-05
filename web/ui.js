@@ -885,6 +885,10 @@ function achieve(name, description) {
   }
 }
 
+function isAdvertisingSupported() {
+  return typeof window != "undefined" && (window.isIosApp || window.isAndroidApp);
+}
+
 function isFullScreenAdvertisingSupported() {
   return window.isIosApp || window.isAndroidApp;
 }
