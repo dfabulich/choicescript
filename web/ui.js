@@ -53,13 +53,11 @@ function println(msg, parent) {
 
 function showStats() {
     if (window.stats.sceneName == "choicescript_stats") {
-      window.stats.scene = window.stats.scene.originalScene;
       clearScreen(loadAndRestoreGame);
       return;
     }
     var currentScene = window.stats.scene;
     var scene = new Scene("choicescript_stats", window.stats, this.nav);
-    scene.originalScene = currentScene;
     main.innerHTML = "<div id='text'></div>";
     scene.execute();
 }
