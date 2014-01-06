@@ -565,11 +565,13 @@ Scene.prototype.finish = function finish(buttonName) {
     this.finished = true;
     var self = this;
     if (this.name == "choicescript_stats") {
-      printButton(buttonName || "Next", main, false,
-        function() {
-          clearScreen(loadAndRestoreGame);
-        }
-      );
+      if (typeof window == "undefined" || window.forcedScene != "choicescript_stats") {
+        printButton(buttonName || "Next", main, false,
+          function() {
+            clearScreen(loadAndRestoreGame);
+          }
+        );
+      }
       return;
     }
     var nextSceneName = this.nav && nav.nextSceneName(this.name);
