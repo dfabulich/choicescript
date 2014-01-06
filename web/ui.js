@@ -52,6 +52,7 @@ function println(msg, parent) {
 
 
 function showStats() {
+    if (document.getElementById('loading')) return;
     if (window.stats.sceneName == "choicescript_stats") {
       clearScreen(loadAndRestoreGame);
       return;
