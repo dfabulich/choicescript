@@ -44,6 +44,7 @@ isRegistered = function() {return false;};
 isRegisterAllowed = function() {return false;};
 isRestorePurchasesSupported = function() {return false;};
 areSaveSlotsSupported = function() {return false;};
+isAdvertisingSupported = function() {return false;};
 
 function fileExists(filePath) {
     if (isRhino) {
