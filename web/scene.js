@@ -1305,7 +1305,7 @@ Scene.prototype.input_number = function input_number(data) {
     maximum = this.evaluateValueExpr(args[2]);
     if (isNaN(maximum*1)) throw new Error(this.lineMsg() + "Invalid maximum, not numeric: " + maximum);
 
-    if (minimum > maximum) throw new Error(this.lineMsg() + "Minimum " + minimum+ " should not be greater than maximum " + maximum);
+    if (parseFloat(minimum) > parseFloat(maximum)) throw new Error(this.lineMsg() + "Minimum " + minimum+ " should not be greater than maximum " + maximum);
 
     function isInt(x) {
        var y=parseInt(x,10);
