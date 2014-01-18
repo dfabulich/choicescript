@@ -30,6 +30,7 @@ function printx(msg, parent) {
       .replace(/</g, '&lt;')
       .replace(/>/g, '&gt;')
       .replace(/"/g, '&quot;')
+      .replace(/\[n\/\]/g, '<br>')
       .replace(/\[b\]/g, '<b>')
       .replace(/\[\/b\]/g, '</b>')
       .replace(/\[i\]/g, '<i>')
@@ -1029,13 +1030,18 @@ function printInput(target, inputType, callback, minimum, maximum, step) {
     form.action="#";
 
 
-    var input = document.createElement("input");
-    input.setAttribute("type", inputType);
-    if (inputType == "number") {
-      input.setAttribute("min", minimum);
-      input.setAttribute("max", maximum);
-      step = step || "any";
-      input.setAttribute("step", step);
+    if (inputType == "textarea") {
+      var input = document.createElement("textarea");
+      input.setAttribute("rows", 4);
+    } else {
+      var input = document.createElement("input");
+      input.setAttribute("type", inputType);
+      if (inputType == "number") {
+        input.setAttribute("min", minimum);
+        input.setAttribute("max", maximum);
+        step = step || "any";
+        input.setAttribute("step", step);
+      }
     }
 
     input.name="text";

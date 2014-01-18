@@ -1275,12 +1275,20 @@ Scene.prototype.print = function scene_print(expr) {
 // *input_text var
 // record text typed by the user and store it in the specified variable
 Scene.prototype.input_text = function input_text(variable) {
+    var inputType = "text";
+    var longMatch = /^\S+(\s+long)/.exec(variable);
+    if (longMatch) {
+      variable = variable.substring(0, variable.length-longMatch[1].length);
+      inputType = "textarea";
+    }
     this.validateVariable(variable);
     this.finished = true;
     this.paragraph();
     var self = this;
-    printInput(this.target, "text", function(value) {
+    printInput(this.target, inputType, function(value) {
       safeCall(self, function() {
+        value = ""+value || "";
+        value = value.replace(/\n/g, "[n/]");
         if (self.nav) self.nav.bugLog.push("*input_text " + variable + " " + value);
         self.setVar(variable, value);
         self.finished = false;
