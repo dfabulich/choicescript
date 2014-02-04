@@ -21,13 +21,15 @@
 // e.g.   randomtest 10000 mygame 0 false false
 
 var isRhino = false;
-var iterations = 10, gameName = "mygame", randomSeed = 0, delay = false, showCoverage = true, isTrial = false;
+var iterations = 10, gameName = "mygame", randomSeed = 0, delay = false, showCoverage = true, isTrial = false, showText = false;
 function parseArgs(args) {
   if (args[0]) iterations = args[0];
   if (args[1]) gameName = args[1];
   if (args[2]) randomSeed = args[2];
   if (args[3]) delay = args[3] && args[3] !== "false";
   if (args[4]) isTrial = args[4] && args[4] !== "false";
+  if (args[5]) showText = args[5] && args[5] !== "false";
+  if (showText) showCoverage = false;
 }
 
 if (typeof importScripts != "undefined") {
@@ -99,6 +101,7 @@ if (typeof importScripts != "undefined") {
     iterations = event.data.iterations;
     randomSeed = event.data.randomSeed;
     showCoverage = event.data.showCoverage;
+    showText = event.data.showText;
 
     if (event.data.showText) {
       var lineBuffer = [];
@@ -179,11 +182,25 @@ Scene.prototype.page_break = function randomtest_page_break(buttonText) {
   println("");
 }
 
-oldPrintLine = Scene.prototype.printLine;
-Scene.prototype.printLine = function randomtest_printLine(line) {
-  if (!line) return null;
-  line = this.replaceVariables(line);
+if (showText) {
+  var lineBuffer = [];
+
+  printx = function printx(msg) {
+    lineBuffer.push(msg);
+  };
+  println = function println(msg) {
+    lineBuffer.push(msg);
+    console.log(lineBuffer.join(""));
+    lineBuffer = [];
+  };
+} else {
+  oldPrintLine = Scene.prototype.printLine;
+  Scene.prototype.printLine = function randomtest_printLine(line) {
+    if (!line) return null;
+    line = this.replaceVariables(line);
+  }
 }
+
 Scene.prototype.subscribe = noop;
 Scene.prototype.save = function(callback) { if (callback) callback.call(); };
 Scene.prototype.stat_chart = function() {
