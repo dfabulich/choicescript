@@ -369,6 +369,18 @@ function printImage(source, alignment) {
   document.getElementById("text").appendChild(img);
 }
 
+function playSound(source) {
+  for (var existingAudios = document.getElementsByTagName("audio"); existingAudios.length;) {
+    existingAudios[0].parentNode.removeChild(existingAudios[0]);
+  }
+  var audio = document.createElement("audio");
+  if (audio.play) {
+    audio.setAttribute("src", source);
+    document.body.appendChild(audio);
+    audio.play();
+  }
+}
+
 function moreGames() {
     if (window.isIosApp) {
       window.location.href = "itms-apps://itunes.com/apps/choiceofgames";

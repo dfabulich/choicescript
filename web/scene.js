@@ -1165,6 +1165,13 @@ Scene.prototype.image = function image(data) {
     if (this.verifyImage) this.verifyImage(source);
 };
 
+// *sound
+// play named sound file
+Scene.prototype.sound = function sound(source) {
+    if (typeof playSound == "function") playSound(source);
+    if (this.verifyImage) this.verifyImage(source);
+};
+
 // *link
 // Display URL with anchor text
 Scene.prototype.link = function link(data) {
@@ -3106,5 +3113,5 @@ Scene.validCommands = {"comment":1, "goto":1, "gotoref":1, "label":1, "looplimit
     "check_purchase":1,"restore_purchases":1,"purchase":1,"restore_game":1,"advertisement":1,
     "save_game":1,"delay_break":1,"image":1,"link":1,"input_number":1,"goto_random_scene":1,
     "restart":1,"more_games":1,"delay_ending":1,"end_trial":1,"login":1,"achieve":1,"scene_list":1,"title":1,
-    "bug":1,"link_button":1,"check_registration":1
+    "bug":1,"link_button":1,"check_registration":1,"sound":1
     };
