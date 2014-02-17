@@ -850,7 +850,7 @@ function purchase(product, callback) {
                       "support@choiceofgames.com for assistance.");
                     clearScreen(loadAndRestoreGame);
                   }
-                }, "stripeToken", response.id, "product", fullProductName);
+                }, "stripeToken", response.id, "product", fullProductName, "key", window.stripeKey);
               });
             }
           });
