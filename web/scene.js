@@ -196,6 +196,25 @@ Scene.prototype.loadSceneFast = function loadSceneFast(url) {
     xhr.onreadystatechange = function() {
         if (done) return;
         if (xhr.readyState != 4) return;
+        if (xhr.status == 403) {
+          try {
+            var err = JSON.parse(xhr.responseText);
+            if (err.error == "not registered") {
+              return isRegistered(function(registered) {
+                if (registered) {
+                  logout();
+                  loginDiv();
+                }
+                return clearScreen(function() {
+                  loginForm(main, 0/*optional*/,
+                    "Please sign in to access this part of the game.", function() {
+                      clearScreen(loadAndRestoreGame);
+                    });
+                });
+              });
+            }
+          } catch (e) {} // JSON parse failure? must not be a login prompt
+        }
         if (window.isWeb && xhr.status != 200) {
           var status = xhr.status || "network";
           main.innerHTML = "<p>Our apologies; there was a " + status + " error while loading game data."+
