@@ -1573,6 +1573,7 @@ Scene.prototype.more_games = function more_games(now) {
 
 Scene.prototype.ending = function ending() {
     if (typeof window == "undefined") return;
+    this.paragraph();
     var groups = [""];
     options = [];
     options.push({name:"Play again.", group:"choice", restart:true});
