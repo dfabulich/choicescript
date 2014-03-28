@@ -16,6 +16,7 @@
 *comment either express or implied.
 
 *title My First ChoiceScript Game
+*author Anonymous
 *scene_list
   startup
   animal

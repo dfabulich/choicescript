@@ -1477,6 +1477,13 @@ function changeTitle(title) {
   h1.appendChild(document.createTextNode(title));
 }
 
+function changeAuthor(author) {
+  var authorTag = document.getElementById("author");
+  authorTag.innerHTML = "";
+  authorTag.appendChild(document.createTextNode("by " + author));
+}
+
+
 function reportBug() {
   var prompt = "Please explain the problem. Be sure to describe what you expect, as well as what actually happened.";
   alertify.prompt(prompt, function(ok, body) {
