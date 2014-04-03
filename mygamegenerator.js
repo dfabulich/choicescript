@@ -56,7 +56,7 @@ var result, variable, value;
 for (var i = 0; i < lines.length; i++) {
   var line = (""+lines[i]).replace(/^\s*/, "").replace(/\s*$/, "");
   if (!line) { continue; }
-  else if (/^\*(comment|title)/.test(line)) { continue; }
+  else if (/^\*(comment|title|author)/.test(line)) { continue; }
   else if (!!(result = create.exec(line))) {
     variable = result[1];
     value = eval(result[2]);
