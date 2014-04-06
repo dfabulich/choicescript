@@ -142,6 +142,7 @@ return r;},version:'0.2.1',enabled:false};me.enabled=alive.call(me);return me;}(
      */ 
     search_order: [
       // TODO: air
+      'winOldStorage',
       'winStoreStorage',
       'macStorage',
       'iosStorage',
@@ -858,13 +859,71 @@ return r;},version:'0.2.1',enabled:false};me.enabled=alive.call(me);return me;}(
       }
     }, 
 
-      // DGF OSX managed storage
+    // DGF Old win app managed storage
+    winOldStorage: {
+      size: -1,
+
+      test: function() {
+        try {
+          return !!window.external && !!window.external.GetValue;
+        } catch (e) {
+          return false;
+        }
+      },
+
+      methods: {
+        key: function(key) {
+          return esc(this.name) + esc(key);
+        },
+
+        init: function() {
+          this.store = window.external;
+        },
+
+        get: function(key, fn, scope) {
+          // expand key
+          key = this.key(key);
+
+          if (fn)
+            fn.call(scope || this, true, this.store.GetValue(key));
+        },
+
+        set: function(key, val, fn, scope) {
+          // expand key
+          key = this.key(key);
+
+          // set value
+          this.store.SetValue(key, value);
+
+          if (fn)
+            fn.call(scope || this, true, val);
+        },
+
+        remove: function(key, fn, scope) {
+          var val;
+
+          // expand key
+          key = this.key(key);
+
+          // get value
+          val = this.store.GetValue(key)
+
+          // delete value
+          this.store.DeleteValue(key);
+
+          if (fn)
+            fn.call(scope || this, (val !== null), val);
+        } 
+      }
+    }, 
+
+      // DGF WinStore managed storage
     winStoreStorage: {
         size: -1,
 
         test: function () {
             try {
-                return Windows.Storage.ApplicationData.current.roamingSettings;
+                return Windows.Storage.ApplicationData.current.roamingFolder;
             } catch (e) {
                 return false;
             }
@@ -876,10 +935,44 @@ return r;},version:'0.2.1',enabled:false};me.enabled=alive.call(me);return me;}(
             },
 
             init: function () {
-                this.store = Windows.Storage.ApplicationData.current.roamingSettings.values;
+                var self = this;
+                function doneLoadingWinStore() {
+                  self.loaded = true;
+                  for (var i = self.loadListeners.length - 1; i >= 0; i--) {
+                    setTimeout(self.loadListeners[i], 0);
+                  }
+                }
+                this.loaded = false;
+                this.loadListeners = [];
+
+                Windows.Storage.ApplicationData.current.roamingFolder
+                  .createFileAsync("data.txt", Windows.Storage.CreationCollisionOption.openIfExists)
+                  .then(function (file) {
+                    self.file = file;
+                    return Windows.Storage.FileIO.readTextAsync(file);
+                  }).done(function (data) {
+                    self.store = {};
+                    if (data && typeof data == "string") {
+                      var rows = data.split("\n");
+                      for (var i = rows.length - 1; i >= 0; i--) {
+                        var row = rows[i].split("\t");
+                        self.store[row[0]] = decodeURIComponent(row[1]);
+                      }
+                    }
+                    doneLoadingWinStore();
+                  },
+                  function(){
+                    self.store = {};
+                    doneLoadingWinStore();
+                  });
             },
 
             get: function (key, fn, scope) {
+                if (!this.loaded) {
+                  var self = this;
+                  this.loadListeners.push(function() {self.get(key, fn, scope)});
+                  return;
+                }
                 // expand key
                 key = this.key(key);
 
@@ -888,17 +981,28 @@ return r;},version:'0.2.1',enabled:false};me.enabled=alive.call(me);return me;}(
             },
 
             set: function (key, val, fn, scope) {
+                if (!this.loaded) {
+                  var self = this;
+                  this.loadListeners.push(function() {self.set(key, val, fn, scope)});
+                  return;
+                }
                 // expand key
                 key = this.key(key);
 
                 // set value
                 this.store[key] = val;
+                this.writeAsync();
 
                 if (fn)
                     fn.call(scope || this, true, val);
             },
 
             remove: function (key, fn, scope) {
+                if (!this.loaded) {
+                  var self = this;
+                  this.loadListeners.push(function() {self.remove(key, fn, scope)});
+                  return;
+                }
                 var val;
 
                 // expand key
@@ -908,10 +1012,19 @@ return r;},version:'0.2.1',enabled:false};me.enabled=alive.call(me);return me;}(
                 val = this.store[key];
 
                 // delete value
-                this.store.remove(key);
+                delete this.store[key];
+                this.writeAsync();
 
                 if (fn)
                     fn.call(scope || this, (val !== null), val);
+            },
+
+            writeAsync: function() {
+              var output = [];
+              for (var key in this.store) {
+                output.push(key, '\t', encodeURIComponent(this.store[key]), '\n');
+              }
+              Windows.Storage.FileIO.writeTextAsync(this.file, output.join(''));
             }
         }
     },
