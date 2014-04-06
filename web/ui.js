@@ -1,4 +1,4 @@
-/*
+﻿﻿/*
  * Copyright 2010 by Dan Fabulich.
  *
  * Dan Fabulich licenses this file to you under the
@@ -1523,7 +1523,11 @@ window.isWebOS = /webOS/.test(navigator.userAgent);
 window.isMobile = isWebOS || /Mobile/.test(navigator.userAgent);
 window.isFile = /^file:/.test(window.location.href);
 window.isXul = /^chrome:/.test(window.location.href);
-window.isWeb = /^https?:/.test(window.location.href);
+window.isWinOldApp = false;
+try {
+  isWinOldApp = window.external.IsWinOldApp();
+} catch (ignored) {}
+window.isWeb = !isWinOldApp && /^https?:/.test(window.location.href);
 window.isSecureWeb = /^https:?$/.test(window.location.protocol);
 window.isSafari = /Safari/.test(navigator.userAgent);
 window.isIE = /MSIE/.test(navigator.userAgent);
@@ -1619,7 +1623,7 @@ window.onload=function() {
         loginDiv();
       }
     });
-    if (window.isWinStoreApp) {
+    if (window.isWinStoreApp || window.isWinOldApp) {
         var subscribeAnchor = document.getElementById("subscribeLink");
         if (subscribeAnchor) {
             subscribeAnchor.onclick = undefined;
@@ -1730,6 +1734,11 @@ if (window.isWinStoreApp) {
     uiScript = document.createElement("script");
     uiScript.src = "//Microsoft.WinJS.1.0/js/ui.js";
     document.head.appendChild(uiScript);
+} else if (isWinOldApp) {
+    console = {
+        log: function (message) { window.external.ConsoleLog(message); },
+        error: function (message) { window.external.ConsoleError(message); }
+    };
 }
 
 function platformCode() {
