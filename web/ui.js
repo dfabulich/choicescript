@@ -926,9 +926,11 @@ function showTicker(target, endTimeInSeconds, finishedCallback) {
   div.appendChild(timerDisplay);
   var timer;
 
-  var defaultStatsButtonDisplay = document.getElementById("statsButton").style.display;
-  document.getElementById("statsButton").style.display = "none";
-
+  var statsButton = document.getElementById("statsButton");
+  if (statsButton) {
+    var defaultStatsButtonDisplay = statsButton.style.display;
+    statsButton.style.display = "none";
+  }
 
   if (endTimeInSeconds > Math.floor(new Date().getTime() / 1000)) {
     if (window.isAndroidApp) {
@@ -946,7 +948,7 @@ function showTicker(target, endTimeInSeconds, finishedCallback) {
       callIos("cancelnotifications");
     }
     clearInterval(timer);
-    document.getElementById("statsButton").style.display = defaultStatsButtonDisplay;
+    if (statsButton) statsButton.style.display = defaultStatsButtonDisplay;
   }
 
   function formatSecondsRemaining(secondsRemaining, forceMinutes) {
