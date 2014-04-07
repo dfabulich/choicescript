@@ -1626,10 +1626,7 @@ window.onload=function() {
     if (window.isWinStoreApp || window.isWinOldApp) {
         var subscribeAnchor = document.getElementById("subscribeLink");
         if (subscribeAnchor) {
-            subscribeAnchor.onclick = undefined;
-            subscribeAnchor.addEventListener("click", function () {
-                safeCall(null, subscribeLink);
-            }, false);
+            subscribeAnchor.onclick = function() {safeCall(null, subscribeLink);};
         }
     }
     if (isFollowEnabled()) {
@@ -1746,6 +1743,7 @@ function platformCode() {
   if (window.isAndroidApp) return "android";
   if (window.isMacApp) return "mac";
   if (window.isWinStoreApp) return "windows";
+  if (window.isWinOldApp) return "csharp";
   if (window.isChromeApp) return "chrome";
   if (window.isWebOS) return "palm";
   if (window.isWeb) return "web";
