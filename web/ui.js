@@ -1546,6 +1546,39 @@ function getSupportEmail() {
   }
 }
 
+function absolutizeAboutLink() {
+  var aboutAnchor = document.getElementById("aboutLink");
+  if (aboutLink) {
+    var aboutHref = aboutLink.getAttribute("href");
+    if (/^https?:/.test(aboutHref)) return;
+
+    var linkTags = document.getElementsByTagName("link");
+    var canonical;
+    for (var i = 0; i < linkTags.length; i++) {
+      if (linkTags[i].getAttribute("rel") == "canonical") {
+        canonical = linkTags[i].getAttribute("href");
+        break;
+      }
+    }
+
+    if (!canonical) return;
+
+    var absoluteCanonical;
+    if (/^https?:/.test(canonical)) {
+      absoluteCanonical = canonical;
+    } else if (/^\//.test(canonical)) {
+      absoluteCanonical = "https://www.choiceofgames.com" + canonical;
+    } else {
+      absoluteCanonical = "https://www.choiceofgames.com/" + canonical;
+    }
+    if (!/\/$/.test(canonical)) {
+      absoluteCanonical += "/";
+    }
+
+    aboutLink.setAttribute("href", absoluteCanonical + aboutHref);
+  }
+}
+
 window.onerror=function(msg, file, line, stack) {
     if (window.console) {
       window.console.error(msg);
@@ -1628,6 +1661,9 @@ window.onload=function() {
         if (subscribeAnchor) {
             subscribeAnchor.onclick = function() {safeCall(null, subscribeLink);};
         }
+    }
+    if (window.isWinOldApp) {
+        absolutizeAboutLink();
     }
     if (isFollowEnabled()) {
       var shareElement = document.getElementById("share");
