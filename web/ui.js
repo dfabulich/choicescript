@@ -1477,6 +1477,9 @@ function changeTitle(title) {
   if (h1) h1 = h1[0];
   h1.innerHTML = "";
   h1.appendChild(document.createTextNode(title));
+  if (window.isWinOldApp) {
+    window.external.SetTitle(title);
+  }
 }
 
 function changeAuthor(author) {
