@@ -90,6 +90,11 @@ function asyncAlert(message, callback) {
       alert(message);
       if (callback) callback();
     }, 0);
+  } else if (window.isWinOldApp) {
+    setTimeout(function() {
+      window.external.Alert(message);
+      if (callback) callback();
+    }, 0);
   } else {
     alertify.alert(message, function() {safeCall(null, callback);});
   }
@@ -103,6 +108,11 @@ function asyncConfirm(message, callback) {
   } else if (window.isAndroidApp) {
     setTimeout(function() {
       var result = confirm(message);
+      if (callback) callback(result);
+    }, 0);
+  } else if (window.isWinOldApp) {
+    setTimeout(function() {
+      var result = window.external.Confirm(message);
       if (callback) callback(result);
     }, 0);
   } else {
