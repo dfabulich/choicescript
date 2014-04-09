@@ -1672,7 +1672,10 @@ window.onload=function() {
     if (window.isWinStoreApp || window.isWinOldApp) {
         var subscribeAnchor = document.getElementById("subscribeLink");
         if (subscribeAnchor) {
-            subscribeAnchor.onclick = function() {safeCall(null, subscribeLink);};
+            subscribeAnchor.onclick = function() {
+              safeCall(null, subscribeLink);
+              return false;
+            };
         }
     }
     if (window.isWinOldApp) {
