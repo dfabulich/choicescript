@@ -3027,7 +3027,7 @@ Scene.prototype.title = function scene_title(title) {
 Scene.prototype.author = function scene_author(author) {
   if ("startup" != this.name || !this.screenEmpty || !this.initialCommands) throw new Error(this.lineMsg() +
     "Invalid author instruction, only allowed at the top of startup.txt");
-  if (typeof window != "undefined") {
+  if (typeof changeAuthor != "undefined") {
     changeAuthor(author);
   }
 };
