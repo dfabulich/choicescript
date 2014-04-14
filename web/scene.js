@@ -3011,6 +3011,8 @@ Scene.prototype.achieve = function scene_achieve(data) {
   if (index == -1) throw new Error(this.lineMsg() + "missing achievement description: " + data);
   var name = data.substr(0, index);
   var description = data.substr(index+1);
+  if (!this.nav.achievements[name]) throw new Error(this.lineMsg() + "the achievement name "+name+" was not declared as an *achievement in startup");
+  this.nav.achieved[name] = true;
   if (typeof window != "undefined" && typeof achieve != "undefined") {
     achieve(name, description);
   }
@@ -3079,6 +3081,70 @@ Scene.prototype.author = function scene_author(author) {
   if (typeof changeAuthor != "undefined") {
     changeAuthor(author);
   }
+};
+
+Scene.prototype.achievement = function scene_achievement(data) {
+  var parsed = /(\S+)\s+(\S+)\s+(\S+)\s+(.*)/.exec(data);
+  var achievementName = parsed[1];
+  if (!/[a-z]+/.test(achievementName)) throw new Error(this.lineMsg()+"Invalid achievement name: " +achievementName);
+  var visibility = parsed[2];
+  if (visibility != "hidden" && visibility != "visible") {
+    throw new Error(this.lineMsg()+"Invalid *achievement, the second word should be either 'hidden' or 'visible': " +visibility);
+  }
+  var visible = (visibility != "hidden");
+  var pointString = parsed[3];
+  if (!/[1-9][0-9]*/.test(pointString)) {
+    throw new Error(this.lineMsg()+"Invalid *achievement, the third word should be an integer number of points: " + pointString);
+  }
+  var points = parseInt(pointString, 10);
+  if (points > 100) throw new Error(this.lineMsg()+"Invalid *achievement, no achievement may be worth more than 100 points: " + points);
+  if (!this.achievementTotal) this.achievementTotal = 0;
+  this.achievementTotal += points;
+  if (this.achievementTotal > 1000) {
+    throw new Error(this.lineMsg()+"Invalid achievements. Adding " + points + " would add up to more than 1,000 points: " + this.achievementTotal);
+  }
+  var title = parsed[4];
+  if (/(\$\{)/.test(title)) throw new Error(this.lineMsg()+"Invalid *achievement. ${} not permitted in achievement title: " + title);
+  if (/(\[)/.test(title)) throw new Error(this.lineMsg()+"Invalid *achievement. [] not permitted in achievement title: " + title);
+
+  // Get the description from the next indented line
+  var line = this.lines[++this.lineNum];
+  var indent = this.getIndent(line);
+  if (!indent) {
+    throw new Error(this.lineMsg()+"Invalid *achievement. An indented description is required.");
+  }
+  var earnedDescription = trim(line);
+  if (/(\$\{)/.test(earnedDescription)) throw new Error(this.lineMsg()+"Invalid *achievement. ${} not permitted in achievement description: " + earnedDescription);
+  if (/(\[)/.test(earnedDescription)) throw new Error(this.lineMsg()+"Invalid *achievement. [] not permitted in achievement description: " + earnedDescription);
+
+
+  // If it's a visible achievement, optionally get a pre-earned description from the next line
+  var preEarnedDescription = null;
+  if (visible) {
+    while(isDefined(line = this.lines[++this.lineNum])) {
+      if (trim(line)) break;
+      this.rollbackLineCoverage();
+    }
+    indent = this.getIndent(line);
+    if (indent) {
+      preEarnedDescription = trim(line);
+      if (/(\$\{)/.test(preEarnedDescription)) throw new Error(this.lineMsg()+"Invalid *achievement. ${} not permitted in achievement description: " + preEarnedDescription);
+      if (/(\[)/.test(preEarnedDescription)) throw new Error(this.lineMsg()+"Invalid *achievement. [] not permitted in achievement description: " + preEarnedDescription);
+    } else {
+      // No indent means the next line is not a pre-earned description
+      this.rollbackLineCoverage();
+      this.lineNum--;
+      this.rollbackLineCoverage();
+    }
+  }
+
+  this.nav.achievements[achievementName] = {
+    visible: visible,
+    points: points,
+    title: title,
+    earnedDescription: earnedDescription,
+    preEarnedDescription: preEarnedDescription
+  };
 };
 
 
@@ -3192,5 +3258,5 @@ Scene.validCommands = {"comment":1, "goto":1, "gotoref":1, "label":1, "looplimit
     "check_purchase":1,"restore_purchases":1,"purchase":1,"restore_game":1,"advertisement":1,
     "save_game":1,"delay_break":1,"image":1,"link":1,"input_number":1,"goto_random_scene":1,
     "restart":1,"more_games":1,"delay_ending":1,"end_trial":1,"login":1,"achieve":1,"scene_list":1,"title":1,
-    "bug":1,"link_button":1,"check_registration":1,"sound":1,"author":1,"gosub_scene":1
+    "bug":1,"link_button":1,"check_registration":1,"sound":1,"author":1,"gosub_scene":1,"achievement":1
     };

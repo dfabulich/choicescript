@@ -70,3 +70,5 @@ SceneNavigator.prototype.repairStats = function repairStats(stats) {
 };
 
 SceneNavigator.prototype.bugLog = [];
+SceneNavigator.prototype.achievements = {};
+SceneNavigator.prototype.achieved = {};
