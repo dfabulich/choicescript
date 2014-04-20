@@ -803,7 +803,7 @@ Scene.prototype.getVar = function getVar(variable) {
     if (variable == "choice_register_allowed") return isRegisterAllowed();
     if (variable == "choice_registered") return typeof window != "undefined" && !!window.registered;
     if (variable == "choice_is_web") return typeof window != "undefined" && window.isWeb;
-    if (variable == "choice_is_advertising_supported") return !!isAdvertisingSupported();
+    if (variable == "choice_is_advertising_supported") return typeof isAdvertisingSupported != "undefined" && !!isAdvertisingSupported();
     if (variable == "choice_is_trial") return !!(typeof isTrial != "undefined" && isTrial);
     if (variable == "choice_kindle") return false;
     if (variable == "choice_randomtest") return !!this.randomtest;
@@ -1866,7 +1866,7 @@ Scene.prototype.parseRestoreGame = function parseRestoreGame(alreadyFinished) {
 };
 
 Scene.prototype.check_registration = function scene_checkRegistration() {
-  if (typeof window == "undefined") return;
+  if (typeof window == "undefined" || typeof isRegistered == "undefined") return;
   this.finished = true;
   this.skipFooter = true;
   var self = this;
@@ -1878,7 +1878,7 @@ Scene.prototype.check_registration = function scene_checkRegistration() {
 };
 
 Scene.prototype.login = function scene_login(optional) {
-  if (typeof window == "undefined") return;
+  if (typeof window == "undefined" || typeof loginForm == "undefined") return;
   optional = trim(optional);
   if (optional) {
     if (optional != "optional") throw new Error(this.lineMsg() + "invalid *login option: " + optional);
@@ -2962,7 +2962,7 @@ Scene.prototype.achieve = function scene_achieve(data) {
   if (index == -1) throw new Error(this.lineMsg() + "missing achievement description: " + data);
   var name = data.substr(0, index);
   var description = data.substr(index+1);
-  if (typeof window != "undefined") {
+  if (typeof window != "undefined" && typeof achieve != "undefined") {
     achieve(name, description);
   }
 };
@@ -3019,7 +3019,7 @@ Scene.prototype.parseSceneList = function parseSceneList() {
 Scene.prototype.title = function scene_title(title) {
   if ("startup" != this.name || !this.screenEmpty || !this.initialCommands) throw new Error(this.lineMsg() +
     "Invalid title instruction, only allowed at the top of startup.txt");
-  if (typeof window != "undefined") {
+  if (typeof changeTitle != "undefined") {
     changeTitle(title);
   }
 };
