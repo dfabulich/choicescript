@@ -18,6 +18,7 @@
  */
 printed = [];
 headless = true;
+_global = this;
 debughelp = function debughelp() {
   debugger;
 };
