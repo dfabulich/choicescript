@@ -32,11 +32,23 @@ function parseArgs(args) {
   if (showText) showCoverage = false;
 }
 
+var wordCount = 0;
+
+if (typeof console != "undefined") {
+  var oldLog = console.log;
+  console.log = function(msg) {
+    oldLog(msg);
+    wordCount += msg.split(/\s+/).length;
+  };
+}
+
+
 if (typeof importScripts != "undefined") {
   console = {
     log: function(msg) {
       if (typeof msg == "string") {
         postMessage({msg:msg});
+        wordCount += msg.split(/\s+/).length;
       } else if (msg.stack && msg.message) {
         postMessage({msg:msg.message, stack:msg.stack});
       } else {
@@ -192,7 +204,8 @@ if (showText) {
   };
   println = function println(msg) {
     lineBuffer.push(msg);
-    console.log(lineBuffer.join(""));
+    var logMsg = lineBuffer.join("");
+    console.log(logMsg);
     lineBuffer = [];
   };
 } else {
@@ -573,6 +586,7 @@ function randomtest() {
     console.log("RANDOMTEST PASSED");
     var duration = (new Date().getTime() - start)/1000;
     console.log("Time: " + duration + "s")
+    console.log("Word count: " + wordCount);
   }
 }
 if (!delay) randomtest();
