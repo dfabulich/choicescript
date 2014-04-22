@@ -581,6 +581,7 @@ function randomtest() {
   }
 
   if (!processExit) {
+    if (showText) console.log("Word count: " + wordCount);
     if (showCoverage) {
       for (i = 0; i < sceneNames.length; i++) {
         var sceneName = sceneNames[i];
@@ -594,7 +595,6 @@ function randomtest() {
     console.log("RANDOMTEST PASSED");
     var duration = (new Date().getTime() - start)/1000;
     console.log("Time: " + duration + "s")
-    console.log("Word count: " + wordCount);
   }
 }
 if (!delay) randomtest();
