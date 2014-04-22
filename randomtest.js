@@ -34,11 +34,19 @@ function parseArgs(args) {
 
 var wordCount = 0;
 
+function countWords(msg) {
+  if (!msg.split) msg = ""+msg;
+  var words = msg.split(/\s+/);
+  for (var i = 0; i < words.length; i++) {
+    if (words[i].trim()) wordCount++;
+  }
+}
+
 if (typeof console != "undefined") {
   var oldLog = console.log;
   console.log = function(msg) {
     oldLog(msg);
-    wordCount += msg.split(/\s+/).length;
+    countWords(msg);
   };
 }
 
@@ -48,7 +56,7 @@ if (typeof importScripts != "undefined") {
     log: function(msg) {
       if (typeof msg == "string") {
         postMessage({msg:msg});
-        wordCount += msg.split(/\s+/).length;
+        countWords(msg);
       } else if (msg.stack && msg.message) {
         postMessage({msg:msg.message, stack:msg.stack});
       } else {
