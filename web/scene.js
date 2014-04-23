@@ -2273,7 +2273,7 @@ Scene.prototype.stat_chart = function stat_chart() {
     if (!barWidth) barWidth = span1.parentNode.offsetWidth;
     var spanMaxWidth, biggestSpanWidth;
     if (span2) {
-      spanMaxWidth = barWidth / 2;
+      spanMaxWidth = barWidth / 2 - 1; /* minus one as a fudge factor; why is this needed? */
       biggestSpanWidth = Math.max(span1.offsetWidth, span2.offsetWidth);
     } else {
       spanMaxWidth = barWidth;
@@ -2281,7 +2281,7 @@ Scene.prototype.stat_chart = function stat_chart() {
     }
 
     if (biggestSpanWidth > spanMaxWidth) {
-      span1.parentNode.style.fontSize = (standardFontSize * spanMaxWidth / biggestSpanWidth) + "px";
+      span1.parentNode.style.fontSize = Math.floor(standardFontSize * spanMaxWidth / biggestSpanWidth) + "px";
     }
 
   }
