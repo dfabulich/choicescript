@@ -375,7 +375,15 @@ Scene.prototype.execute = function execute() {
     }
     if (this.nav) this.nav.repairStats(stats);
     doneLoading();
-    if (typeof this.targetLabel != "undefined") this["goto"](this.targetLabel);
+    if (typeof this.targetLabel != "undefined") {
+      var label = this.targetLabel.label.toLowerCase();
+      if (typeof(this.labels[label]) != "undefined") {
+          this.lineNum = this.labels[label];
+          this.indent = this.getIndent(this.lines[this.lineNum]);
+      } else {
+          throw new Error(this.targetLabel.origin + " line " + (this.targetLabel.originLine+1) + ": "+this.name+" doesn't contain label " + label);
+      }
+    }
     this.printLoop();
 };
 
@@ -670,7 +678,7 @@ Scene.prototype.goto_scene = function gotoScene(data) {
     var scene = new Scene(sceneName, this.stats, this.nav, this.debugMode);
     scene.screenEmpty = this.screenEmpty;
     scene.prevLine = this.prevLine;
-    scene.targetLabel = label;
+    scene.targetLabel = {label:label, origin:this.name, originLine:this.lineNum};
     scene.execute();
 };
 
@@ -3077,7 +3085,7 @@ Scene.prototype.bug = function scene_bug(message) {
 };
 
 Scene.prototype.lineMsg = function lineMsg() {
-    return "line " + (this.lineNum+1) + ": ";
+    return this.name + " line " + (this.lineNum+1) + ": ";
 };
 
 Scene.prototype.rollbackLineCoverage = function() {};
