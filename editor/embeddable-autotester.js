@@ -305,13 +305,13 @@ function autotester(sceneText, nav, sceneName) {
   Scene.prototype.ending = Scene.prototype.finish;
   Scene.prototype.restart = Scene.prototype.finish;
   
-  Scene.prototype.goto_scene = function testGotoScene(name) {
-    this.verifySceneFile(name);
+  Scene.prototype.goto_scene = function testGotoScene(data) {
+    this.verifySceneFile(data.split(/ /)[0]);
     this.finish();
   }
 
-  Scene.prototype.gosub_scene = function testGosubScene(name) {
-    this.verifySceneFile(name);
+  Scene.prototype.gosub_scene = function testGosubScene(data) {
+    this.verifySceneFile(data.split(/ /)[0]);
   }
 
   Scene.prototype["return"] = function scene_return() {
