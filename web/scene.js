@@ -375,6 +375,7 @@ Scene.prototype.execute = function execute() {
     }
     if (this.nav) this.nav.repairStats(stats);
     doneLoading();
+    if (typeof this.targetLabel != "undefined") this["goto"](this.targetLabel);
     this.printLoop();
 };
 
@@ -393,6 +394,7 @@ Scene.prototype.parseLabels = function parseLabels() {
         var data = trim(result[3]);
         if ("label" == command) {
             data = data.toLowerCase();
+            if (/\s/.test(data)) throw new Error(this.lineMsg() + "label '"+data+"' is not allowed to contain spaces");
             if (this.labels.hasOwnProperty(data)) {
               throw new Error(this.lineMsg() + "label '"+data+"' already defined on line " + (this.labels[data]*1+1));
             }
@@ -631,12 +633,21 @@ Scene.prototype.reset = function reset() {
 
 // *goto_scene foo
 //
-Scene.prototype.goto_scene = function gotoScene(sceneName) {
+Scene.prototype.goto_scene = function gotoScene(data) {
+    var args = trim(data).split(/ /);
+    var sceneName, label;
+    if (args.length == 1) {
+      sceneName = data;
+    } else {
+      sceneName = args[0];
+      label = args[1];
+    }
     this.finished = true;
     this.skipFooter = true;
     var scene = new Scene(sceneName, this.stats, this.nav, this.debugMode);
     scene.screenEmpty = this.screenEmpty;
     scene.prevLine = this.prevLine;
+    scene.targetLabel = label;
     scene.execute();
 };
 
