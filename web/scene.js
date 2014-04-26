@@ -678,7 +678,7 @@ Scene.prototype.goto_scene = function gotoScene(data) {
     var scene = new Scene(sceneName, this.stats, this.nav, this.debugMode);
     scene.screenEmpty = this.screenEmpty;
     scene.prevLine = this.prevLine;
-    scene.targetLabel = {label:label, origin:this.name, originLine:this.lineNum};
+    if (typeof label != "undefined") scene.targetLabel = {label:label, origin:this.name, originLine:this.lineNum};
     scene.execute();
 };
 

@@ -309,6 +309,23 @@ function autotester(sceneText, nav, sceneName) {
     this.verifySceneFile(name);
     this.finish();
   }
+
+  Scene.prototype.gosub_scene = function testGosubScene(name) {
+    this.verifySceneFile(name);
+  }
+
+  Scene.prototype["return"] = function scene_return() {
+    var stackFrame;
+    if (this.temps.choice_substack && this.temps.choice_substack.length) {
+      stackFrame = this.temps.choice_substack.pop();
+      this.lineNum = stackFrame.lineNum;
+      this.indent = stackFrame.indent;
+    } else {
+      // testing the scenes in isolation, there's no way to know if a given *return is truly invalid
+      this.finish();
+    }
+    
+};
   
   if (!Scene.prototype.oldElse) Scene.prototype.oldElse = Scene.prototype["else"];
   Scene.prototype["else"] = function test_else(data, inChoice) {
