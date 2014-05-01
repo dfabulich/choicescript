@@ -112,10 +112,12 @@ if (typeof importScripts != "undefined") {
   initStore = function initStore() { return false; };
 
   clearScreen = function clearScreen(code) {
-    code.call();
+    timeout = code;
   };
 
-  saveCookie = function(callback) { if (callback) callback.call(); };
+  saveCookie = function(callback) {
+    if (callback) timeout = callback;
+  };
 
   nav.setStartingStatsClone(stats);
   delay = true;
@@ -225,7 +227,7 @@ if (showText) {
 }
 
 Scene.prototype.subscribe = noop;
-Scene.prototype.save = function(callback) { if (callback) callback.call(); };
+Scene.prototype.save = function(callback) { if (callback) timeout = callback; };
 Scene.prototype.stat_chart = function() {
   this.parseStatChart();
 }
