@@ -111,14 +111,6 @@ if (typeof importScripts != "undefined") {
 
   initStore = function initStore() { return false; };
 
-  clearScreen = function clearScreen(code) {
-    timeout = code;
-  };
-
-  saveCookie = function(callback) {
-    if (callback) timeout = callback;
-  };
-
   nav.setStartingStatsClone(stats);
   delay = true;
   onmessage = function(event) {
@@ -172,6 +164,15 @@ if (typeof importScripts != "undefined") {
     };
   }
 }
+
+clearScreen = function clearScreen(code) {
+  timeout = code;
+};
+
+saveCookie = function(callback) {
+  if (callback) timeout = callback;
+};
+
 
 var hardCodedRandomness = null; //[1, 1, 2, 1, 3, 3, 1, 1, 2, 5, 3, 1, 1, 2, 5, 1, 3, 3, 2, 2, 1, 2, 3, 2, 3, 1, 4, 5, 2, 3, 3, 2, 1, 1, 2, 2, 1, 1, 2, 3, ];
 function randomIndex(len) {
