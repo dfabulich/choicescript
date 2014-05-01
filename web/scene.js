@@ -380,6 +380,7 @@ Scene.prototype.execute = function execute() {
       if (typeof(this.labels[label]) != "undefined") {
           this.lineNum = this.labels[label];
           this.indent = this.getIndent(this.lines[this.lineNum]);
+          delete this.targetLabel;
       } else {
           throw new Error(this.targetLabel.origin + " line " + (this.targetLabel.originLine+1) + ": "+this.name+" doesn't contain label " + label);
       }
