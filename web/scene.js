@@ -1943,7 +1943,8 @@ Scene.prototype.login = function scene_login(optional) {
   });
 };
 
-Scene.prototype.save_game = function save_game() {
+Scene.prototype.save_game = function save_game(destinationSceneName) {
+  if (!destinationSceneName) throw new Error("*save_game requires a destination file name, e.g. *save_game Episode2");
   if (this.temps.choice_user_restored) return;
   var self = this;
   this.finished = true;
@@ -2027,9 +2028,15 @@ Scene.prototype.save_game = function save_game() {
         } else {
           recordEmail(email, function() {
             var slot = "save" + new Date().getTime();
-            self.temps.choice_restore_name = saveName.value;
+            
+            // create a fake stats object whose scene name is the destination scene
+            var SaveStatsClone = function() {};
+            SaveStatsClone.prototype = self.stats;
+            var saveStats = new SaveStatsClone();
+            saveStats.scene = {name:destinationSceneName};
+
             clearScreen(function() {
-              self.save(function() {
+              saveCookie(function() {
                 recordSave(slot, function() {
                   startLoading();
                   submitRemoteSave(slot, email, shouldSubscribe, function(ok) {
@@ -2049,8 +2056,7 @@ Scene.prototype.save_game = function save_game() {
                     }
                   });
                 });
-              }, slot);
-              delete self.temps.choice_restore_name;
+              }, slot, saveStats, {choice_reuse:"allow", choice_user_restored:true, choice_restore_name:saveName.value}, 0, 0, false, self.nav);
             });
           });
         }

@@ -117,7 +117,9 @@ function autotester(sceneText, nav, sceneName) {
     }
   }
   
-  Scene.prototype.save_game = function() {}
+  Scene.prototype.save_game = function(destinationSceneName) {
+    this.verifySceneFile(destinationSceneName);
+  }
   
   Scene.prototype.restore_game = function() {
     this.parseRestoreGame(false/*alreadyFinished*/);
