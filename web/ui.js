@@ -64,6 +64,58 @@ function showStats() {
     scene.execute();
 }
 
+function showAchievements() {
+  clearScreen(function() {
+    checkAchievements(function() {
+      var buffer = [];
+      var achievedCount = 0, score = 0, totalScore = 0;
+      var first = true;
+      for (var i = 0; i < nav.achievementList.length; i++) {
+        var name = nav.achievementList[i];
+        var achievement = nav.achievements[name];
+        var points = achievement.points;
+        totalScore += points;
+
+        var show = achievement.visible;
+        var description = achievement.earnedDescription;
+
+        if (nav.achieved[name]) {
+          achievedCount++;
+          score += points;
+          show = true;
+        } else if (achievement.preEarnedDescription) {
+          description = achievement.preEarnedDescription;
+        }
+
+        if (show) {
+          if (first) {
+            first = false;
+          } else {
+            buffer.push("<br>");
+          }
+          buffer.push("<b>");
+          buffer.push(achievement.title.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'));
+          buffer.push(":");
+          buffer.push("</b> ");
+          buffer.push(description.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
+            .replace(/\[b\]/g, '<b>')
+            .replace(/\[\/b\]/g, '</b>')
+            .replace(/\[i\]/g, '<i>')
+            .replace(/\[\/i\]/g, '</i>')
+          );
+          buffer.push(" (");
+          buffer.push(points);
+          buffer.push(" points)");
+        }
+      }
+
+      buffer.unshift("You have unlocked "+achievedCount+" out of "+nav.achievementList.length+" possible achievements, earning you a score of "+score+" out of a possible "+totalScore+" points.<p>");
+      if (score == totalScore) buffer.unshift("Congratulations! ");
+      document.getElementById("text").innerHTML = buffer.join("");
+    });
+  });
+}
+
 function callIos(scheme, path) {
   if (!window.isIosApp) return;
   if (path) {
