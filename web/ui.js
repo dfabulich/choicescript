@@ -67,53 +67,121 @@ function showStats() {
 function showAchievements() {
   clearScreen(function() {
     checkAchievements(function() {
-      var buffer = [];
-      var achievedCount = 0, score = 0, totalScore = 0;
-      var first = true;
-      for (var i = 0; i < nav.achievementList.length; i++) {
-        var name = nav.achievementList[i];
-        var achievement = nav.achievements[name];
-        var points = achievement.points;
-        totalScore += points;
-
-        var show = achievement.visible;
-        var description = achievement.earnedDescription;
-
-        if (nav.achieved[name]) {
-          achievedCount++;
-          score += points;
-          show = true;
-        } else if (achievement.preEarnedDescription) {
-          description = achievement.preEarnedDescription;
-        }
-
-        if (show) {
-          if (first) {
-            first = false;
-          } else {
-            buffer.push("<br>");
-          }
-          buffer.push("<b>");
-          buffer.push(achievement.title.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'));
-          buffer.push(":");
-          buffer.push("</b> ");
-          buffer.push(description.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
-            .replace(/\[b\]/g, '<b>')
-            .replace(/\[\/b\]/g, '</b>')
-            .replace(/\[i\]/g, '<i>')
-            .replace(/\[\/i\]/g, '</i>')
-          );
-          buffer.push(" (");
-          buffer.push(points);
-          buffer.push(" points)");
-        }
-      }
-
-      buffer.unshift("You have unlocked "+achievedCount+" out of "+nav.achievementList.length+" possible achievements, earning you a score of "+score+" out of a possible "+totalScore+" points.<p>");
-      if (score == totalScore) buffer.unshift("Congratulations! ");
-      document.getElementById("text").innerHTML = buffer.join("");
+      printAchievements(document.getElementById("text"));
     });
   });
+}
+
+function spell(num) {
+  if (num > 99) return num;
+  var smallNumbers = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen"];
+  var tens = ["zero", "ten", "twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety"];
+  if (num < 20) {
+    return smallNumbers[num];
+  }
+  var onesDigit = num % 10;
+  if (onesDigit === 0) {
+    return tens[num / 10];
+  }
+  var tensDigit = (num - onesDigit) / 10;
+  return tens[tensDigit]+"-"+smallNumbers[onesDigit];
+}
+
+function printAchievements(target) {
+  var unlockedBuffer = [];
+  var lockedBuffer = [];
+  var achievedCount = 0, hiddenCount = 0, score = 0, totalScore = 0;
+  var totalAchievements = nav.achievementList.length;
+  var buffer;
+  for (var i = 0; i < totalAchievements; i++) {
+    var name = nav.achievementList[i];
+    var achievement = nav.achievements[name];
+    var points = achievement.points;
+    totalScore += points;
+
+    var description = achievement.earnedDescription;
+
+    if (nav.achieved[name]) {
+      achievedCount++;
+      score += points;
+      buffer = unlockedBuffer;
+    } else {
+      if (achievement.visible) {
+        buffer = lockedBuffer;
+        if (achievement.preEarnedDescription) {
+          description = achievement.preEarnedDescription;
+        }
+      } else {
+        hiddenCount++;
+        continue;
+      }
+    }
+
+    if (buffer.length) buffer.push("<br>");
+    buffer.push("<b>");
+    buffer.push(achievement.title.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'));
+    buffer.push(":");
+    buffer.push("</b> ");
+    buffer.push(description.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
+      .replace(/\[b\]/g, '<b>')
+      .replace(/\[\/b\]/g, '</b>')
+      .replace(/\[i\]/g, '<i>')
+      .replace(/\[\/i\]/g, '</i>')
+    );
+    buffer.push(" (");
+    buffer.push(points);
+    buffer.push(" points)");
+  }
+
+  // What if there's exactly one achievement worth exactly one point?
+  if (achievedCount === 0) {
+    if (hiddenCount === 0) {
+      buffer = ["You haven't unlocked any achievements yet. There are "+spell(totalAchievements)+" possible achievements, worth a total of "+totalScore+" points.<p>"];
+    } else if (hiddenCount == 1) {
+      buffer = ["You haven't unlocked any achievements yet. There are "+spell(totalAchievements)+" possible achievements (including one hidden achievement), worth a total of "+totalScore+" points.<p>"];
+    } else if (hiddenCount == totalAchievements) {
+      buffer = ["You haven't unlocked any achievements yet. There are "+spell(totalAchievements)+" hidden achievements, worth a total of "+totalScore+" points.<p>"];
+    } else {
+      buffer = ["You haven't unlocked any achievements yet. There are "+spell(totalAchievements)+" possible achievements (including "+spell(hiddenCount)+" hidden achievements), worth a total of "+totalScore+" points.<p>"];
+    }
+    if (lockedBuffer.length) {
+      buffer.push.apply(buffer, lockedBuffer);
+      buffer.push("<p>");
+    }
+  } else if (score == totalScore) {
+    if (totalAchievements == 2) {
+      buffer = ["Congratulations! You have unlocked both achievements, earning a total of "+score+" points, a perfect score.<p>"];
+    } else {
+      buffer = ["Congratulations! You have unlocked all "+spell(totalAchievements)+" achievements, earning a total of "+score+" points, a perfect score.<p>"];
+    }
+    buffer.push.apply(buffer, unlockedBuffer);
+    buffer.push("<p>");
+  } else {
+    buffer = ["You have unlocked "+spell(achievedCount)+" out of "+spell(totalAchievements)+" possible achievements, earning you a score of "+score+" out of a possible "+totalScore+" points.<p>"];
+    buffer.push.apply(buffer, unlockedBuffer);
+    var remaining = totalAchievements-achievedCount;
+    if (remaining == hiddenCount) {
+      if (remaining == 1) {
+        buffer.push("<p>There is still one hidden achievement remaining.<p>");
+      } else {
+        buffer.push("<p>There are still " + spell(remaining) + " hidden achievements remaining.<p>");
+      }
+    } else if (hiddenCount > 1) {
+      buffer.push("<p>There are still "+spell(remaining)+" achievements remaining, including "+spell(hiddenCount)+" hidden achievements.<p>");
+    } else if (hiddenCount == 1) {
+      buffer.push("<p>There are still "+spell(remaining)+" achievements remaining, including one hidden achievement.<p>");
+    } else if (remaining == 1) {
+      buffer.push("<p>There is still one achievement remaining.<p>");
+    } else {
+      buffer.push("<p>There are still "+spell(remaining)+" achievements remaining.<p>");
+    }
+    if (lockedBuffer.length) {
+      buffer.push.apply(buffer, lockedBuffer);
+      buffer.push("<p>");
+    }
+  }
+
+  target.innerHTML = buffer.join("");
 }
 
 function callIos(scheme, path) {
@@ -1781,10 +1849,12 @@ if ( document.addEventListener ) {
   document.addEventListener( "DOMContentLoaded", window.onload, false );
 }
 
-var style = document.createElement('style');
-style.type = 'text/css';
-try {style.innerHTML = 'noscript {display: none;}'; } catch (e) {}
-document.getElementsByTagName('head')[0].appendChild(style);
+try {
+  var style = document.createElement('style');
+  style.type = 'text/css';
+  try {style.innerHTML = 'noscript {display: none;}'; } catch (e) {}
+  document.getElementsByTagName('head')[0].appendChild(style);
+} catch (e) {}
 
 if (window.isWeb) {
   document.write("<style>.webOnly { display: block !important; }</style>\n"+

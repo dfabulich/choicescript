@@ -111,8 +111,18 @@ either express or implied.
       <arg file="${test.dir}/xmltranslatortest.js" />
     </rhino>
   </target>
+
+  <target name="unittest-achievetest" depends="rhino">
+    <rhino>
+      <arg file="${test.dir}/suite.js" />
+      <arg file="${test.dir}/qunit.js" />
+      <arg file="${test.dir}/uisetup.js" />
+      <arg file="${basedir}/web/ui.js" />
+      <arg file="${test.dir}/achievetest.js" />
+    </rhino>
+  </target>
   
-  <target name="unittest" depends="unittest-core, unittest-util, unittest-autotest, unittest-xmltranslator" />
+  <target name="unittest" depends="unittest-core, unittest-util, unittest-autotest, unittest-xmltranslator, unittest-achievetest" />
 
   <target name="randomtest" depends="rhino">
     <property name="num" value="10000" />
