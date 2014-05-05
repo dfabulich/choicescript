@@ -421,7 +421,13 @@ Scene.prototype.runCommand = function runCommand(line) {
     var command = result[1].toLowerCase();
     var data = trim(result[2]);
     if (Scene.validCommands[command]) {
-        if (!/^create|scene_list|title|author|comment$/.test(command)) this.initialCommands = false;
+        if (Scene.initialCommands[command]) {
+          if ("startup" != this.name || !this.screenEmpty || !this.initialCommands) {
+            throw new Error(this.lineMsg() + "Invalid "+command+" instruction, only allowed at the top of startup.txt");
+          }
+        } else {
+          this.initialCommands = false;
+        }
         this[command](data);
     } else {
         throw new Error(this.lineMsg() + "Non-existent command '"+command+"'");
@@ -791,12 +797,6 @@ Scene.prototype.abort = Scene.prototype.finish;
 // *create
 // create a new permanent stat
 Scene.prototype.create = function create(line) {
-    if ((this.name && "startup" != this.name) ||
-      !this.screenEmpty ||
-      !this.initialCommands) {
-      throw new Error(this.lineMsg() + "Invalid create instruction, only allowed at the top of startup.txt");
-    }
-
     var result = /^(\w*)(.*)/.exec(line);
     if (!result) throw new Error(this.lineMsg()+"Invalid create instruction, no variable specified: " + line);
     var variable = result[1];
@@ -3019,8 +3019,6 @@ Scene.prototype.achieve = function scene_achieve(data) {
 };
 
 Scene.prototype.scene_list = function scene_list() {
-  if ("startup" != this.name || !this.screenEmpty || !this.initialCommands) throw new Error(this.lineMsg() +
-    "Invalid scene_list instruction, only allowed at the top of startup.txt");
   var scenes = this.parseSceneList();
   this.nav.setSceneList(scenes);
 };
@@ -3068,21 +3066,20 @@ Scene.prototype.parseSceneList = function parseSceneList() {
 };
 
 Scene.prototype.title = function scene_title(title) {
-  if ("startup" != this.name || !this.screenEmpty || !this.initialCommands) throw new Error(this.lineMsg() +
-    "Invalid title instruction, only allowed at the top of startup.txt");
   if (typeof changeTitle != "undefined") {
     changeTitle(title);
   }
 };
 
 Scene.prototype.author = function scene_author(author) {
-  if ("startup" != this.name || !this.screenEmpty || !this.initialCommands) throw new Error(this.lineMsg() +
-    "Invalid author instruction, only allowed at the top of startup.txt");
   if (typeof changeAuthor != "undefined") {
     changeAuthor(author);
   }
 };
 
+// *achievement name hidden|visible 100 Achievement Title
+//     Earned description
+//     Pre-earned description
 Scene.prototype.achievement = function scene_achievement(data) {
   var parsed = /(\S+)\s+(\S+)\s+(\S+)\s+(.*)/.exec(data);
   var achievementName = parsed[1];
@@ -3249,6 +3246,8 @@ Scene.operators = {
         return bool(v1,line) || bool(v2,line);
     }
 };
+
+Scene.initialCommands = {"create":1,"scene_list":1,"title":1,"author":1,"comment":1,"achievement":1};
 
 Scene.validCommands = {"comment":1, "goto":1, "gotoref":1, "label":1, "looplimit":1, "finish":1, "abort":1,
     "choice":1, "create":1, "temp":1, "delete":1, "set":1, "setref":1, "print":1, "if":1, "rand":1,
