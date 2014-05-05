@@ -3004,17 +3004,12 @@ Scene.prototype.end_trial = function endTrial() {
   this.finished = true;
 };
 
-Scene.prototype.achieve = function scene_achieve(data) {
-  data = trim(data);
-  if (!data) throw new Error(this.lineMsg() + "missing achievement name and description");
-  var index = data.indexOf(' ');
-  if (index == -1) throw new Error(this.lineMsg() + "missing achievement description: " + data);
-  var name = data.substr(0, index);
-  var description = data.substr(index+1);
-  if (!this.nav.achievements[name]) throw new Error(this.lineMsg() + "the achievement name "+name+" was not declared as an *achievement in startup");
+Scene.prototype.achieve = function scene_achieve(name) {
+  var achievement = this.nav.achievements[name];
+  if (!achievement) throw new Error(this.lineMsg() + "the achievement name "+name+" was not declared as an *achievement in startup");
   this.nav.achieved[name] = true;
   if (typeof window != "undefined" && typeof achieve != "undefined") {
-    achieve(name, description);
+    achieve(name, achievement.title, achievement.earnedDescription);
   }
 };
 

@@ -891,10 +891,14 @@ function purchase(product, callback) {
   }
 }
 
-function achieve(name, description) {
+function achieve(name, title, description) {
   if (window.isIosApp) {
-    callIos("achieve", name+"/"+description);
+    callIos("achieve", name);
   } else {
+    var escapedTitle = title+"".replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
     var escapedDescription = description+"".replace(/&/g, '&amp;')
       .replace(/</g, '&lt;')
       .replace(/>/g, '&gt;')
@@ -903,7 +907,7 @@ function achieve(name, description) {
       .replace(/\[\/b\]/g, '</b>')
       .replace(/\[i\]/g, '<i>')
       .replace(/\[\/i\]/g, '</i>');
-    alertify.log("<b>Achievement</b><br>" + escapedDescription);
+    alertify.log("<b>Achievement: "+escapedTitle+"</b><br>" + escapedDescription);
   }
 }
 
