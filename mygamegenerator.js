@@ -37,7 +37,6 @@ function parseSceneList(lines, lineNum) {
       line = line.trim();
       var purchaseMatch = /^\$(\w*)\s+(.*)/.exec(line);
       if (purchaseMatch) {
-        debugger;
         line = purchaseMatch[2];
         var product = purchaseMatch[1].trim() || "adfree";
         purchases[line] = product;
@@ -48,24 +47,66 @@ function parseSceneList(lines, lineNum) {
   return {scenes:scenes, purchases:purchases, lineNum:lineNum-1};
 }
 
+function parseAchievement(data, lines, lineNum) {
+  var nextIndent = null;
+  var parsed = /(\S+)\s+(\S+)\s+(\S+)\s+(.*)/.exec(data);
+  var achievementName = parsed[1];
+  var visibility = parsed[2];
+  var visible = (visibility != "hidden");
+  parsed[2] = visible;
+  var pointString = parsed[3];
+  var title = parsed[4];
+  var line = lines[++lineNum];
+  var earnedDescription = line.trim();
+  parsed[5] = earnedDescription;
+
+  var preEarnedDescription = null;
+  if (visible) {
+    while(typeof(line = lines[++lineNum]) != "undefined") {
+      if (line.trim()) break;
+    }
+    if (/^\s/.test(line)) {
+      preEarnedDescription = line.trim();
+    } else {
+      // No indent means the next line is not a pre-earned description
+      this.lineNum--;
+    }
+  }
+  parsed[6] = preEarnedDescription;
+  parsed.shift();
+  achievements.push(parsed);
+  return lineNum;
+}
+
 var lines = slurpFileLines("web/"+gameDir+"/scenes/startup.txt");
 var stats = {}, purchases = {};
 var scenes;
 var create = /^\*create +(\w+) +(.*)/;
 var result, variable, value;
+var achievements = [];
+
+var ignoredInitialCommands = {"comment":1, "title":1, "author":1};
+
 for (var i = 0; i < lines.length; i++) {
-  var line = (""+lines[i]).replace(/^\s*/, "").replace(/\s*$/, "");
+  var line = (""+lines[i]).trim();
   if (!line) { continue; }
-  else if (/^\*(comment|title|author)/.test(line)) { continue; }
-  else if (!!(result = create.exec(line))) {
+  var result = /^\s*\*(\w+)(.*)/.exec(line);
+  if (!result) break;
+  var command = result[1].toLowerCase();
+  var data = result[2].trim();
+  if (ignoredInitialCommands[command]) { continue; }
+  else if (command == "create") {
+    var result = /^(\w*)(.*)/.exec(data);
     variable = result[1];
     value = eval(result[2]);
     stats[variable.toLowerCase()] = value;
-  } else if (/^\*scene_list/.test(line)) {
+  } else if (command == "scene_list") {
     result = parseSceneList(lines, i);
     scenes = result.scenes;
     purchases = result.purchases;
     i = result.lineNum;
+  } else if (command == "achievement") {
+    i = parseAchievement(data, lines, i);
   } else {
     break;
   }
@@ -104,7 +145,33 @@ for (var purchase in purchases) {
   }
   mygameBuffer.push('"', purchase, "\":\"", purchases[purchase], "\"");
 }
-mygameBuffer.push("};\n");
+mygameBuffer.push("};\nachievements = [");
+for (i = 0; i < achievements.length; i++) {
+  var achievement = achievements[i];
+  if (i) {
+    mygameBuffer.push(",");
+  }
+  mygameBuffer.push("\n  ['");
+  mygameBuffer.push(achievement[0]);
+  mygameBuffer.push("',");
+  mygameBuffer.push(achievement[1]);
+  mygameBuffer.push(",");
+  mygameBuffer.push(achievement[2]);
+  mygameBuffer.push(",'");
+  mygameBuffer.push(achievement[3]);
+  mygameBuffer.push("','");
+  mygameBuffer.push(achievement[4]);
+  mygameBuffer.push("',");
+  if (achievement[5] === null) {
+    mygameBuffer.push("null");
+  } else {
+    mygameBuffer.push("'");
+    mygameBuffer.push(achievement[5]);
+    mygameBuffer.push("'");
+  }
+  mygameBuffer.push("]");
+}
+mygameBuffer.push("];");
 print(mygameBuffer.join(""));
 
 

@@ -1635,6 +1635,7 @@ window.onload=function() {
     window.main = document.getElementById("main");
     var head = document.getElementsByTagName("head")[0];
     window.nav.setStartingStatsClone(window.stats);
+    nav.loadAchievements(window.achievements);
     stats.sceneName = window.nav.getStartupScene();
     var map = parseQueryString(window.location.search);
     if (!map) {

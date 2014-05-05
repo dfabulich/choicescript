@@ -72,3 +72,23 @@ SceneNavigator.prototype.repairStats = function repairStats(stats) {
 SceneNavigator.prototype.bugLog = [];
 SceneNavigator.prototype.achievements = {};
 SceneNavigator.prototype.achieved = {};
+
+SceneNavigator.prototype.loadAchievements = function(achievementArray) {
+  if (!achievementArray) return;
+  for (var i = 0; i < achievementArray; i++) {
+    var achievement = achievementArray[i];
+    var achievementName = achievement[0];
+    var visible = achievement[1];
+    var points = achievement[2];
+    var title = achievement[3];
+    var earnedDescription = achievement[4];
+    var preEarnedDescription = achievement[5];
+    this.achievements[achievementName] = {
+      visible: visible,
+      points: points,
+      title: title,
+      earnedDescription: earnedDescription,
+      preEarnedDescription: preEarnedDescription,
+    };
+  }
+};

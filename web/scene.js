@@ -3084,7 +3084,9 @@ Scene.prototype.achievement = function scene_achievement(data) {
   var parsed = /(\S+)\s+(\S+)\s+(\S+)\s+(.*)/.exec(data);
   var achievementName = parsed[1];
   if (!/[a-z]+/.test(achievementName)) throw new Error(this.lineMsg()+"Invalid achievement name: " +achievementName);
-  if (this.nav.achievements[achievementName]) throw new Error(this.lineMsg()+"Achievement "+achievementName+" already defined on line " + this.nav.achievements[achievementName].lineNumber);
+  if (this.nav.achievements[achievementName] && this.nav.achievements[achievementName].lineNumber) {
+    throw new Error(this.lineMsg()+"Achievement "+achievementName+" already defined on line " + this.nav.achievements[achievementName].lineNumber);
+  }
   var lineNumber = this.lineNum+1;
   var visibility = parsed[2];
   if (visibility != "hidden" && visibility != "visible") {
