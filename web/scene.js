@@ -3005,6 +3005,7 @@ Scene.prototype.end_trial = function endTrial() {
 };
 
 Scene.prototype.achieve = function scene_achieve(name) {
+  name = name.toLowerCase();
   var achievement = this.nav.achievements[name];
   if (!achievement) throw new Error(this.lineMsg() + "the achievement name "+name+" was not declared as an *achievement in startup");
   this.nav.achieved[name] = true;
@@ -3077,7 +3078,7 @@ Scene.prototype.author = function scene_author(author) {
 //     Pre-earned description
 Scene.prototype.achievement = function scene_achievement(data) {
   var parsed = /(\S+)\s+(\S+)\s+(\S+)\s+(.*)/.exec(data);
-  var achievementName = parsed[1];
+  var achievementName = parsed[1].toLowerCase();
   if (!/[a-z]+/.test(achievementName)) throw new Error(this.lineMsg()+"Invalid achievement name: " +achievementName);
   if (this.nav.achievements[achievementName] && this.nav.achievements[achievementName].lineNumber) {
     throw new Error(this.lineMsg()+"Achievement "+achievementName+" already defined on line " + this.nav.achievements[achievementName].lineNumber);
