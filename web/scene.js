@@ -3081,7 +3081,13 @@ Scene.prototype.achievement = function scene_achievement(data) {
   var parsed = /(\S+)\s+(\S+)\s+(\S+)\s+(.*)/.exec(data);
   var achievementName = parsed[1].toLowerCase();
   if (!/[a-z]+/.test(achievementName)) throw new Error(this.lineMsg()+"Invalid achievement name: " +achievementName);
-  if (this.nav.achievements[achievementName] && this.nav.achievements[achievementName].lineNumber) {
+
+  // don't allow redefining achievements
+  if (this.nav.achievements[achievementName] &&
+    // but it's OK to redefine mygame.js achievements (which have no line number)
+    this.nav.achievements[achievementName].lineNumber &&
+    // and randomtest will naturally re-run *achievements, and that's fine
+    this.nav.achievements[achievementName].lineNumber != (this.lineNum+1)) {
     throw new Error(this.lineMsg()+"Achievement "+achievementName+" already defined on line " + this.nav.achievements[achievementName].lineNumber);
   }
   var lineNumber = this.lineNum+1;
