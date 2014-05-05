@@ -908,7 +908,31 @@ function achieve(name, title, description) {
       .replace(/\[i\]/g, '<i>')
       .replace(/\[\/i\]/g, '</i>');
     alertify.log("<b>Achievement: "+escapedTitle+"</b><br>" + escapedDescription);
+    if (initStore()) window.store.set("achieved", toJson(nav.achieved));
   }
+}
+
+function checkAchievements(callback) {
+  if (!initStore()) return safeTimeout(callback, 0);
+  window.store.get("achieved", function(ok, value){
+    if (ok) {
+      var achievementRecord = jsonParse(value);
+      for (var achieved in achievementRecord) {
+        if (achievementRecord[achieved]) nav.achieved[achieved] = true;
+      }
+    }
+    if (window.isIosApp) {
+      window.checkAchievementCallback = function(achieved) {
+        for (var i = 0; i < achieved.length; i++) {
+          nav.achieved[achieved[i]] = true;
+        }
+        callback();
+      };
+      callIos("checkachievements");
+    } else {
+      callback();
+    }
+  });
 }
 
 function isAdvertisingSupported() {
