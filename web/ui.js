@@ -54,6 +54,7 @@ function println(msg, parent) {
 
 function showStats() {
     if (document.getElementById('loading')) return;
+    manageAchievementsButton();
     if (window.stats.sceneName == "choicescript_stats") {
       clearScreen(loadAndRestoreGame);
       return;
@@ -65,11 +66,33 @@ function showStats() {
 }
 
 function showAchievements() {
+  if (document.getElementById('loading')) return;
+  var button = document.getElementById("achievementsButton");
+  if (button && button.innerHTML == "Return to the Game") {
+    manageAchievementsButton();
+    return clearScreen(loadAndRestoreGame);
+  }
+  button.innerHTML = "Return to the Game";
   clearScreen(function() {
     checkAchievements(function() {
       printAchievements(document.getElementById("text"));
+      printButton("Next", main, false, function() {
+        manageAchievementsButton();
+        clearScreen(loadAndRestoreGame);
+      });
     });
   });
+}
+
+function manageAchievementsButton() {
+  var button = document.getElementById("achievementsButton");
+  if (!button) return;
+  if (nav.achievementList.length) {
+    button.style.display = "";
+    button.innerHTML = "Achievements";
+  } else {
+    button.style.display = "none";
+  }
 }
 
 function spell(num) {
@@ -1783,7 +1806,10 @@ window.onload=function() {
     window.main = document.getElementById("main");
     var head = document.getElementsByTagName("head")[0];
     window.nav.setStartingStatsClone(window.stats);
-    nav.loadAchievements(window.achievements);
+    if (window.achievements && window.achievements.length) {
+      nav.loadAchievements(window.achievements);
+      manageAchievementsButton();
+    }
     stats.sceneName = window.nav.getStartupScene();
     var map = parseQueryString(window.location.search);
     if (!map) {

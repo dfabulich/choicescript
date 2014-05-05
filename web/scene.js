@@ -3179,7 +3179,8 @@ Scene.prototype.achievement = function scene_achievement(data) {
     preEarnedDescription: preEarnedDescription,
     lineNumber: lineNumber
   };
-  
+
+  if (typeof manageAchievementsButton != "undefined") manageAchievementsButton();
 };
 
 
