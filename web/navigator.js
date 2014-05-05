@@ -76,7 +76,7 @@ SceneNavigator.prototype.achieved = {};
 
 SceneNavigator.prototype.loadAchievements = function(achievementArray) {
   if (!achievementArray) return;
-  for (var i = 0; i < achievementArray; i++) {
+  for (var i = 0; i < achievementArray.length; i++) {
     var achievement = achievementArray[i];
     var achievementName = achievement[0];
     var visible = achievement[1];
