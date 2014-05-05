@@ -3104,14 +3104,20 @@ Scene.prototype.achievement = function scene_achievement(data) {
   var achievementName = parsed[1].toLowerCase();
   if (!/[a-z]+/.test(achievementName)) throw new Error(this.lineMsg()+"Invalid achievement name: " +achievementName);
 
-  // don't allow redefining achievements
-  if (this.nav.achievements[achievementName] &&
-    // but it's OK to redefine mygame.js achievements (which have no line number)
-    this.nav.achievements[achievementName].lineNumber &&
-    // and randomtest will naturally re-run *achievements, and that's fine
-    this.nav.achievements[achievementName].lineNumber != (this.lineNum+1)) {
-    throw new Error(this.lineMsg()+"Achievement "+achievementName+" already defined on line " + this.nav.achievements[achievementName].lineNumber);
+  
+  if (this.nav.achievements[achievementName]) {
+    // this achievement already exists...
+    if (!this.nav.achievements[achievementName].lineNumber) {
+      // blow away pre-existing mygame.js achievements
+      this.nav.achievements = {};
+      this.nav.achievementList = [];
+    } else if (this.nav.achievements[achievementName].lineNumber != (this.lineNum+1)) {
+      // don't allow redefining achievements
+      // restarting/randomtest will naturally re-run *achievements; ignore those
+      throw new Error(this.lineMsg()+"Achievement "+achievementName+" already defined on line " + this.nav.achievements[achievementName].lineNumber);
+    }
   }
+
   var lineNumber = this.lineNum+1;
   var visibility = parsed[2];
   if (visibility != "hidden" && visibility != "visible") {
@@ -3164,6 +3170,7 @@ Scene.prototype.achievement = function scene_achievement(data) {
     }
   }
 
+  if (!this.nav.achievements[achievementName]) this.nav.achievementList.push(achievementName);
   this.nav.achievements[achievementName] = {
     visible: visible,
     points: points,
@@ -3172,6 +3179,7 @@ Scene.prototype.achievement = function scene_achievement(data) {
     preEarnedDescription: preEarnedDescription,
     lineNumber: lineNumber
   };
+  
 };
 
 

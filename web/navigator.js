@@ -71,6 +71,7 @@ SceneNavigator.prototype.repairStats = function repairStats(stats) {
 
 SceneNavigator.prototype.bugLog = [];
 SceneNavigator.prototype.achievements = {};
+SceneNavigator.prototype.achievementList = [];
 SceneNavigator.prototype.achieved = {};
 
 SceneNavigator.prototype.loadAchievements = function(achievementArray) {
@@ -90,5 +91,6 @@ SceneNavigator.prototype.loadAchievements = function(achievementArray) {
       earnedDescription: earnedDescription,
       preEarnedDescription: preEarnedDescription,
     };
+    this.achievementList.push(achievementName);
   }
 };
