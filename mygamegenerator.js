@@ -158,9 +158,9 @@ for (i = 0; i < achievements.length; i++) {
   mygameBuffer.push(",");
   mygameBuffer.push(achievement[2]);
   mygameBuffer.push(",'");
-  mygameBuffer.push(achievement[3]);
+  mygameBuffer.push(achievement[3].replace(/'/g, "\\'"));
   mygameBuffer.push("','");
-  mygameBuffer.push(achievement[4]);
+  mygameBuffer.push(achievement[4].replace(/'/g, "\\'"));
   mygameBuffer.push("',");
   if (achievement[5] === null) {
     mygameBuffer.push("null");
