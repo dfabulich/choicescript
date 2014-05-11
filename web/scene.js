@@ -3007,8 +3007,10 @@ Scene.prototype.end_trial = function endTrial() {
 
 Scene.prototype.achieve = function scene_achieve(name) {
   name = name.toLowerCase();
+  if (!this.nav.achievements.hasOwnProperty(name)) {
+    throw new Error(this.lineMsg() + "the achievement name "+name+" was not declared as an *achievement in startup");
+  }
   var achievement = this.nav.achievements[name];
-  if (!achievement) throw new Error(this.lineMsg() + "the achievement name "+name+" was not declared as an *achievement in startup");
   this.nav.achieved[name] = true;
   if (typeof window != "undefined" && typeof achieve != "undefined") {
     achieve(name, achievement.title, achievement.earnedDescription);
@@ -3020,7 +3022,7 @@ Scene.prototype.check_achievements = function scene_checkAchievements() {
   function callback(immediately) {
     for (var achievement in nav.achievements) {
 
-      self.temps["choice_achieved_"+achievement] = !!nav.achieved[achievement];
+      self.temps["choice_achieved_"+achievement] = nav.achieved.hasOwnProperty(achievement);
     }
     if (!immediately) {
       self.finished = false;
@@ -3105,7 +3107,7 @@ Scene.prototype.achievement = function scene_achievement(data) {
   if (!/[a-z]+/.test(achievementName)) throw new Error(this.lineMsg()+"Invalid achievement name: " +achievementName);
 
   
-  if (this.nav.achievements[achievementName]) {
+  if (this.nav.achievements.hasOwnProperty(achievementName)) {
     // this achievement already exists...
     if (!this.nav.achievements[achievementName].lineNumber) {
       // blow away pre-existing mygame.js achievements
@@ -3170,7 +3172,7 @@ Scene.prototype.achievement = function scene_achievement(data) {
     }
   }
 
-  if (!this.nav.achievements[achievementName]) {
+  if (!this.nav.achievements.hasOwnProperty(achievementName)) {
     this.nav.achievementList.push(achievementName);
     if (this.nav.achievementList.length > 100) {
       throw new Error(this.lineMsg()+"Too many *achievements. Each game can have up to 100 achievements.");
