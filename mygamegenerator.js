@@ -158,15 +158,15 @@ for (i = 0; i < achievements.length; i++) {
   mygameBuffer.push(",");
   mygameBuffer.push(achievement[2]);
   mygameBuffer.push(",'");
-  mygameBuffer.push(achievement[3].replace(/'/g, "\\'"));
+  mygameBuffer.push(achievement[3].replace(/([\\'])/g, "\\$1"));
   mygameBuffer.push("','");
-  mygameBuffer.push(achievement[4].replace(/'/g, "\\'"));
+  mygameBuffer.push(achievement[4].replace(/([\\'])/g, "\\$1"));
   mygameBuffer.push("',");
   if (achievement[5] === null) {
     mygameBuffer.push("null");
   } else {
     mygameBuffer.push("'");
-    mygameBuffer.push(achievement[5]);
+    mygameBuffer.push(achievement[5].replace(/([\\'])/g, "\\$1"));
     mygameBuffer.push("'");
   }
   mygameBuffer.push("]");
