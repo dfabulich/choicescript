@@ -2591,9 +2591,7 @@ Scene.prototype.delay_ending = function(data) {
             });
           } else if (option == restorePurchasesOption) {
             restorePurchases(function() {
-              safeCall(self, function() {
-                setTimeout(function() {callIos("curl");}, 0);
-              });
+              clearScreen(loadAndRestoreGame);
             });
           } else {
             self.restart();
