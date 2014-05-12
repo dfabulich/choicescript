@@ -920,10 +920,7 @@ function restorePurchases(callback) {
         clearScreen(function() {
           var target = document.getElementById('text');
           target.innerHTML="<p>Please sign in to Choiceofgames.com to restore purchases.</p>";
-          loginForm(document.getElementById('text'), /*optional*/1, /*err*/null, function(registered){
-            clearScreen(loadAndRestoreGame);
-            if (registered) callback();
-          });
+          loginForm(document.getElementById('text'), /*optional*/1, /*err*/null, callback);
         });
       }
     });
