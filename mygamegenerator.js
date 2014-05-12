@@ -98,7 +98,7 @@ for (var i = 0; i < lines.length; i++) {
   else if (command == "create") {
     var result = /^(\w*)(.*)/.exec(data);
     variable = result[1];
-    value = eval(result[2]);
+    value = JSON.parse(result[2]);
     stats[variable.toLowerCase()] = value;
   } else if (command == "scene_list") {
     result = parseSceneList(lines, i);
