@@ -69,7 +69,7 @@ function parseAchievement(data, lines, lineNum) {
       preEarnedDescription = line.trim();
     } else {
       // No indent means the next line is not a pre-earned description
-      this.lineNum--;
+      lineNum--;
     }
   }
   parsed[6] = preEarnedDescription;
