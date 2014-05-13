@@ -222,6 +222,7 @@ function logout(callback) {
   xhrAuthRequest("GET", "logout", callback);
   recordLogin(false);
   window.knownPurchases = null;
+  if (typeof FB != "undefined" && FB.logout) FB.logout();
 }
 
 function recordLogin(registered, callback) {

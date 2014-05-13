@@ -51,6 +51,7 @@ function println(msg, parent) {
     parent.appendChild(br);
 }
 
+
 function showStats() {
     if (document.getElementById('loading')) return;
     setButtonTitles();
@@ -1496,6 +1497,7 @@ function loginForm(target, optional, errorMessage, callback) {
           "</div><div class='choice'>"+
           "<label for=yes class=firstChild><input type=radio name=choice value=yes id=yes checked> My email address is: "+
           "<input type=email name=email id=email value='"+escapedEmail+"' style='font-size: 25px; width: 11em'></label>"+
+          "<label for=facebook><input type=radio name=choice value=facebook id=facebook > Sign in with Facebook.</label>"+
           "<label for=no class=lastChild><input type=radio name=choice value=no id=no > No, thanks.</label>"+
           "<p><label class=noBorder for=subscribe><input type=checkbox name=subscribe id=subscribe checked> "+
           "Email me when new games are available.</label></p>";
@@ -1515,6 +1517,7 @@ function loginForm(target, optional, errorMessage, callback) {
           "<label for=passwordButton><input type=radio name=choice value=passwordButton id=passwordButton> "+
           "Yes, I have a password: <input id=password type=password name=password disabled class=needsclick style='font-size: 25px; width: 11em'></label>"+
           "<label for=forgot><input type=radio name=choice value=forgot id=forgot> I forgot my password.</label>"+
+          "<label for=facebook><input type=radio name=choice value=facebook id=facebook> Sign in with Facebook.</label>"+
           (optional ? "<label for=no><input type=radio name=choice value=no id=no> Cancel.</label>" : "") +
           "</div><br>";
 
@@ -1559,6 +1562,20 @@ function loginForm(target, optional, errorMessage, callback) {
         var email = trim(form.email.value);
         var subscribe = form.subscribe.checked;
         var choice = getFormValue("choice");
+        if ("facebook" == choice) {
+          return FB.login(function(response){
+            if ("connected" == response.status) xhrAuthRequest("GET", "facebook-login", function(ok, response){
+              if (ok) {
+                loginDiv(ok, response.email);
+                recordLogin(ok);
+                cacheKnownPurchases(response.purchases);
+                safeCall(null, function() {callback("ok");});
+              } else {
+                asyncAlert("Sorry, we weren't able to sign you in. (Your network connection may be down.) Please try again later, or contact support@choiceofgames.com for assistance.");
+              }
+            });
+          },{scope:'email'});
+        }
         if (!/^\S+@\S+\.\S+$/.test(email) && "no" != choice) {
           showMessage('Sorry, "'+email+'" is not an email address.  Please type your email address again.');
         } else {
@@ -1747,6 +1764,19 @@ function getPassword(target, code) {
   printButton("Cancel", target, false, function() {
     code(true);
   });
+}
+
+function facebookStatusChangeCallback(response) {
+  if (response.status == "connected") {
+    isRegistered(function(registered) {
+      if (!registered) xhrAuthRequest("GET", "facebook-login", function(ok, response){
+        loginDiv(ok, response.email);
+        recordLogin(ok);
+        cacheKnownPurchases(response.purchases);
+        clearScreen(loadAndRestoreGame);
+      });
+    });
+  }
 }
 
 function showPassword(target, password) {
@@ -2052,6 +2082,41 @@ try {
 if (window.isWeb) {
   document.write("<style>.webOnly { display: block !important; }</style>\n"+
     "<scr"+"ipt src='https://checkout.stripe.com/v2/checkout.js'></scr"+"ipt>");
+
+  var metas = document.getElementsByTagName("meta");
+  var facebookAppId;
+  for (var i = 0; i < metas.length; i++) {
+    var meta = metas[i];
+    if ("fb:app_id" == meta.getAttribute("property")) {
+      facebookAppId = meta.getAttribute("content");
+      break;
+    }
+  }
+
+  if (facebookAppId) {
+    window.fbAsyncInit = function() {
+      FB.init({
+        appId      : facebookAppId,
+        cookie     : true,  // enable cookies to allow the server to access 
+                            // the session
+        xfbml      : true,  // parse social plugins on this page
+        version    : 'v2.0' // use version 2.0
+      });
+
+      FB.getLoginStatus(function(response) {
+        facebookStatusChangeCallback(response);
+      });
+    };
+
+    (function(d, s, id){
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) return;
+        js = d.createElement(s); js.id = id;
+        js.src ="//connect.facebook.net/en_US/sdk.js";
+        fjs.parentNode.insertBefore(js, fjs);
+    }(document,'script','facebook-jssdk'));
+  }
+  
 }
 if (!isWeb && window.isIosApp) {
   document.write("<style>"+
