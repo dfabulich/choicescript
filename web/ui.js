@@ -1564,18 +1564,36 @@ function loginForm(target, optional, errorMessage, callback) {
         var choice = getFormValue("choice");
         if ("facebook" == choice) {
           if (!window.FB) return asyncAlert("Sorry, we weren't able to sign you in with Facebook. (Your network connection may be down.) Please try again later, or contact support@choiceofgames.com for assistance.");
+          var loginParams = {scope:'email',return_scopes:true};
+          if (window.facebookReRequest) loginParams.auth_type = "rerequest";
           return FB.login(function(response){
-            if ("connected" == response.status) xhrAuthRequest("GET", "facebook-login", function(ok, response){
-              if (ok) {
-                loginDiv(ok, response.email);
-                recordLogin(ok);
-                cacheKnownPurchases(response.purchases);
-                safeCall(null, function() {callback("ok");});
-              } else {
-                asyncAlert("Sorry, we weren't able to sign you in with Facebook. (Your network connection may be down.) Please try again later, or contact support@choiceofgames.com for assistance.");
+            if ("connected" == response.status) {
+              var grantedScopes = [];
+              try { grantedScopes = response.authResponse.grantedScopes.split(","); } catch (e) {}
+              var grantedEmail = false;
+              for (var i = 0; i < grantedScopes.length; i++) {
+                if ("email" == grantedScopes[i]) {
+                  grantedEmail = true;
+                  break;
+                }
               }
-            });
-          },{scope:'email'});
+              if (grantedEmail) {
+                xhrAuthRequest("GET", "facebook-login", function(ok, response){
+                  if (ok) {
+                    loginDiv(ok, response.email);
+                    recordLogin(ok);
+                    cacheKnownPurchases(response.purchases);
+                    safeCall(null, function() {callback("ok");});
+                  } else {
+                    asyncAlert("Sorry, we weren't able to sign you in with Facebook. (Your network connection may be down.) Please try again later, or contact support@choiceofgames.com for assistance.");
+                  }
+                });
+              } else {
+                showMessage("Sorry, we require an email address to sign you in. Please grant access to your email address, or type your email address below.");
+                window.facebookReRequest = true;
+              }
+            }
+          },loginParams);
         }
         if (!/^\S+@\S+\.\S+$/.test(email) && "no" != choice) {
           showMessage('Sorry, "'+email+'" is not an email address.  Please type your email address again.');
