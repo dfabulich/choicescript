@@ -1497,7 +1497,7 @@ function loginForm(target, optional, errorMessage, callback) {
           "</div><div class='choice'>"+
           "<label for=yes class=firstChild><input type=radio name=choice value=yes id=yes checked> My email address is: "+
           "<input type=email name=email id=email value='"+escapedEmail+"' style='font-size: 25px; width: 11em'></label>"+
-          "<label for=facebook><input type=radio name=choice value=facebook id=facebook > Sign in with Facebook.</label>"+
+          ((isWeb && window.facebookAppId)?"<label for=facebook><input type=radio name=choice value=facebook id=facebook > Sign in with Facebook.</label>":"")+
           "<label for=no class=lastChild><input type=radio name=choice value=no id=no > No, thanks.</label>"+
           "<p><label class=noBorder for=subscribe><input type=checkbox name=subscribe id=subscribe checked> "+
           "Email me when new games are available.</label></p>";
@@ -1517,7 +1517,7 @@ function loginForm(target, optional, errorMessage, callback) {
           "<label for=passwordButton><input type=radio name=choice value=passwordButton id=passwordButton> "+
           "Yes, I have a password: <input id=password type=password name=password disabled class=needsclick style='font-size: 25px; width: 11em'></label>"+
           "<label for=forgot><input type=radio name=choice value=forgot id=forgot> I forgot my password.</label>"+
-          "<label for=facebook><input type=radio name=choice value=facebook id=facebook> Sign in with Facebook.</label>"+
+          ((isWeb && window.facebookAppId)?"<label for=facebook><input type=radio name=choice value=facebook id=facebook> Sign in with Facebook.</label>":"")+
           (optional ? "<label for=no><input type=radio name=choice value=no id=no> Cancel.</label>" : "") +
           "</div><br>";
 
@@ -1563,6 +1563,7 @@ function loginForm(target, optional, errorMessage, callback) {
         var subscribe = form.subscribe.checked;
         var choice = getFormValue("choice");
         if ("facebook" == choice) {
+          if (!window.FB) return asyncAlert("Sorry, we weren't able to sign you in with Facebook. (Your network connection may be down.) Please try again later, or contact support@choiceofgames.com for assistance.");
           return FB.login(function(response){
             if ("connected" == response.status) xhrAuthRequest("GET", "facebook-login", function(ok, response){
               if (ok) {
@@ -1571,7 +1572,7 @@ function loginForm(target, optional, errorMessage, callback) {
                 cacheKnownPurchases(response.purchases);
                 safeCall(null, function() {callback("ok");});
               } else {
-                asyncAlert("Sorry, we weren't able to sign you in. (Your network connection may be down.) Please try again later, or contact support@choiceofgames.com for assistance.");
+                asyncAlert("Sorry, we weren't able to sign you in with Facebook. (Your network connection may be down.) Please try again later, or contact support@choiceofgames.com for assistance.");
               }
             });
           },{scope:'email'});
