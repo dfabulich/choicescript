@@ -1,4 +1,4 @@
-﻿﻿/*
+﻿/*
  * Copyright 2010 by Dan Fabulich.
  *
  * Dan Fabulich licenses this file to you under the
