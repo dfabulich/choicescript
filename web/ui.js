@@ -1760,6 +1760,10 @@ function absolutizeAboutLink() {
   }
 }
 
+function aboutClick() {
+    window.location.href = document.getElementById("aboutLink").href;
+}
+
 window.onerror=function(msg, file, line, stack) {
     if (window.console) {
       window.console.error(msg);
