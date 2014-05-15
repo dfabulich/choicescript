@@ -1908,7 +1908,7 @@ if (!isWeb && window.isIosApp) {
     }, false);
 }
 if (window.isWebOS) document.write("<style>body {font-family: Prelude; font-size: 14pt}\n#header {font-size: 13pt}</style>");
-if (window.isMacApp) {
+if (window.isMacApp || window.isWinOldApp) {
   document.write("<style>"+
     "#headerLinks { display: none; }"+
     ""+
