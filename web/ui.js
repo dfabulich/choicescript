@@ -1055,34 +1055,36 @@ function achieve(name, title, description) {
 }
 
 function checkAchievements(callback) {
-  if (!initStore()) return safeTimeout(callback, 0);
-  window.store.get("achieved", function(ok, value){
-    if (ok) {
-      var achievementRecord = jsonParse(value);
-      for (var achieved in achievementRecord) {
-        if (achievementRecord[achieved]) nav.achieved[achieved] = true;
+  safeTimeout(function() {
+    if (!initStore()) return callback();
+    window.store.get("achieved", function(ok, value){
+      if (ok) {
+        var achievementRecord = jsonParse(value);
+        for (var achieved in achievementRecord) {
+          if (achievementRecord[achieved]) nav.achieved[achieved] = true;
+        }
       }
-    }
-    if (window.isIosApp) {
-      window.checkAchievementCallback = function(achieved) {
-        for (var i = 0; i < achieved.length; i++) {
-          nav.achieved[achieved[i]] = true;
-        }
+      if (window.isIosApp) {
+        window.checkAchievementCallback = function(achieved) {
+          for (var i = 0; i < achieved.length; i++) {
+            nav.achieved[achieved[i]] = true;
+          }
+          callback();
+        };
+        callIos("checkachievements");
+      } else if (window.isMacApp && window.macAchievements) {
+        window.checkAchievementCallback = function(achieved) {
+          for (var i = 0; i < achieved.length; i++) {
+            nav.achieved[achieved[i]] = true;
+          }
+          callback();
+        };
+        macAchievements.checkAchievements();
+      } else {
         callback();
-      };
-      callIos("checkachievements");
-    } else if (window.isMacApp && window.macAchievements) {
-      window.checkAchievementCallback = function(achieved) {
-        for (var i = 0; i < achieved.length; i++) {
-          nav.achieved[achieved[i]] = true;
-        }
-        callback();
-      };
-      safeTimeout(function() {macAchievements.checkAchievements();}, 0);;
-    } else {
-      callback();
-    }
-  });
+      }
+    });
+  },0);
 }
 
 function isAdvertisingSupported() {
