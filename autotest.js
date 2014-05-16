@@ -152,7 +152,6 @@ if (list[0] != nav.getStartupScene()+".txt") list.unshift(nav.getStartupScene()+
       verifyFileName("scenes", fileName);
       var sceneText = slurpFile("web/"+gameName+"/scenes/"+fileName, true /*throwOnError*/);
       uncovered = autotester(sceneText, nav, sceneName)[1];
-      debugger;
     } catch (e) {
       print("QUICKTEST FAILED\n");
       print(e);
@@ -176,6 +175,17 @@ for (var i = 0; i < uncoveredScenes.length; i++) {
   uncoveredScene.lines.push("");
   print(uncoveredScene.lines.join(" UNTESTED " + uncoveredScene.name + "\n"));
 }
+(function() {
+  if (nav.achievementList && nav.achievementList.length) {
+    for (var i = 0; i < nav.achievementList.length; i++) {
+      var name = nav.achievementList[i];
+      if (!nav.achieved[name]) {
+        print("UNUSED achievement: " + name);
+      }
+    }
+  }
+})();
+
 
 if (!allLinesTested) print("SOME LINES UNTESTED");
 print("QUICKTEST PASSED");
