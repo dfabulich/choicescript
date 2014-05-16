@@ -1226,6 +1226,16 @@ function printLink(target, href, anchorText, onclick) {
   target.appendChild(document.createTextNode(" "));
 }
 
+function kindleButton(target, query, buttonName) {
+  printButton(buttonName, main, false,
+    function() {
+      try {
+        window.location.href="http://www.amazon.com/s?rh=n%3A133140011%2Ck%3A" + encodeURIComponent(query);
+      } catch (e) {} // xulrunner will intercept this link and throw an exception, opening it in the external browser
+    }
+  );
+}
+
 function printInput(target, inputType, callback, minimum, maximum, step) {
     if (!target) target = document.getElementById('text');
     var form = document.createElement("form");
