@@ -1034,6 +1034,8 @@ function purchase(product, callback) {
 function achieve(name, title, description) {
   if (window.isIosApp) {
     callIos("achieve", name+"/");
+  } else if (window.isMacApp && window.macAchievements) {
+    macAchievements.achieve_(name);
   } else {
     var escapedTitle = title+"".replace(/&/g, '&amp;')
       .replace(/</g, '&lt;')
@@ -1069,6 +1071,14 @@ function checkAchievements(callback) {
         callback();
       };
       callIos("checkachievements");
+    } else if (window.isMacApp && window.macAchievements) {
+      window.checkAchievementCallback = function(achieved) {
+        for (var i = 0; i < achieved.length; i++) {
+          nav.achieved[achieved[i]] = true;
+        }
+        callback();
+      };
+      safeTimeout(function() {macAchievements.checkAchievements();}, 0);;
     } else {
       callback();
     }
