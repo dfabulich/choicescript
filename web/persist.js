@@ -865,7 +865,7 @@ return r;},version:'0.2.1',enabled:false};me.enabled=alive.call(me);return me;}(
 
       test: function() {
         try {
-          return !!window.external && !!window.external.GetValue;
+          return window.external.IsWinOldApp();
         } catch (e) {
           return false;
         }
@@ -893,7 +893,7 @@ return r;},version:'0.2.1',enabled:false};me.enabled=alive.call(me);return me;}(
           key = this.key(key);
 
           // set value
-          this.store.SetValue(key, value);
+          this.store.SetValue(key, val);
 
           if (fn)
             fn.call(scope || this, true, val);
