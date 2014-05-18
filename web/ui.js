@@ -1036,6 +1036,8 @@ function achieve(name, title, description) {
     callIos("achieve", name+"/");
   } else if (window.isMacApp && window.macAchievements) {
     macAchievements.achieve_(name);
+  } else if (window.isWinOldApp) {
+    window.external.Achieve(name);
   } else {
     var escapedTitle = title+"".replace(/&/g, '&amp;')
       .replace(/</g, '&lt;')
@@ -1080,6 +1082,19 @@ function checkAchievements(callback) {
           callback();
         };
         macAchievements.checkAchievements();
+      } else if (window.isWinOldApp) {
+        var checkWinAchievements = function () {
+          var achieved = eval(window.external.GetAchieved());
+          if (achieved) {
+            for (var i = 0; i < achieved.length; i++) {
+              nav.achieved[achieved[i]] = true;
+            }
+            callback();
+          } else {
+            safeTimeout(checkWinAchievements, 100);
+          }
+        };
+        checkWinAchievements();
       } else {
         callback();
       }
