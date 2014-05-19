@@ -1893,6 +1893,8 @@ window.onload=function() {
     }
     if (window.isWinOldApp) {
         absolutizeAboutLink();
+        var h1s = document.getElementsByTagName("h1");
+        if (h1s.length) window.external.SetTitle(document.getElementsByTagName("h1")[0].innerText);
     }
     if (isFollowEnabled()) {
       var shareElement = document.getElementById("share");
