@@ -1971,38 +1971,41 @@ Scene.prototype.save_game = function save_game(destinationSceneName) {
     saveName.setAttribute("style", "font-size: 25px; width: 90%;");
     form.appendChild(saveName);
 
+    if ("automaticCloudStorage" in _global && automaticCloudStorage) {
+      println("", form);
+    } else {
+      println("", form);
+      println("", form);
+      println("Please login to the choiceofgames.com save system with your email address below.", form);
+
+      var emailInput = document.createElement("input");
+      // This can fail on IE
+      try { emailInput.type="email"; } catch (e) {}
+      emailInput.name="email";
+      emailInput.value=defaultEmail;
+      emailInput.setAttribute("placeholder", "you@example.com");
+      emailInput.setAttribute("style", "font-size: 25px; width: 90%;");
+      form.appendChild(emailInput);
+
+      println("", form);
+      println("", form);
+
+      var subscribeLabel = document.createElement("label");
+      subscribeLabel.setAttribute("for", "subscribeBox");
+      var subscribeBox = document.createElement("input");
+      subscribeBox.type = "checkbox";
+      subscribeBox.name = "subscribe";
+      subscribeBox.setAttribute("id", "subscribeBox");
+      subscribeBox.setAttribute("checked", true);
+      subscribeLabel.appendChild(subscribeBox);
+      subscribeLabel.appendChild(document.createTextNode("Email me when new games are available."));
+      form.appendChild(subscribeLabel);
+    }
+
     println("", form);
-    println("", form);
-    println("Please login to the choiceofgames.com save system with your email address below.", form);
-
-    var emailInput = document.createElement("input");
-    // This can fail on IE
-    try { emailInput.type="email"; } catch (e) {}
-    emailInput.name="email";
-    emailInput.value=defaultEmail;
-    emailInput.setAttribute("placeholder", "you@example.com");
-    emailInput.setAttribute("style", "font-size: 25px; width: 90%;");
-    form.appendChild(emailInput);
-
-    println("", form);
-    println("", form);
-
-    var subscribeLabel = document.createElement("label");
-    subscribeLabel.setAttribute("for", "subscribeBox");
-    var subscribeBox = document.createElement("input");
-    subscribeBox.type = "checkbox";
-    subscribeBox.name = "subscribe";
-    subscribeBox.setAttribute("id", "subscribeBox");
-    subscribeBox.setAttribute("checked", true);
-    subscribeLabel.appendChild(subscribeBox);
-    subscribeLabel.appendChild(document.createTextNode("Email me when new games are available."));
-    form.appendChild(subscribeLabel);
-
-
     var target = this.target;
     if (!target) target = document.getElementById('text');
     target.appendChild(form);
-    println("", form);
     printButton("Next", form, true);
 
     printButton("Cancel", target, false, function() {
