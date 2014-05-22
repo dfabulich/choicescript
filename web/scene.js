@@ -1971,7 +1971,7 @@ Scene.prototype.save_game = function save_game(destinationSceneName) {
     saveName.setAttribute("style", "font-size: 25px; width: 90%;");
     form.appendChild(saveName);
 
-    if ("automaticCloudStorage" in _global && automaticCloudStorage) {
+    if (_global.automaticCloudStorage) {
       println("", form);
     } else {
       println("", form);
@@ -2020,52 +2020,69 @@ Scene.prototype.save_game = function save_game(destinationSceneName) {
     form.onsubmit = function(e) {
       preventDefault(e);
       safeCall(this, function() {
+        var messageText;
+        if (!trim(saveName.value)) {
+          messageText = document.createTextNode("Please type a name for your saved game.");
+          message.innerHTML = "";
+          message.appendChild(messageText);
+          return;
+        }
+
+        var slot = "save" + new Date().getTime();
+        // create a fake stats object whose scene name is the destination scene
+        var SaveStatsClone = function() {};
+        SaveStatsClone.prototype = self.stats;
+        var saveStats = new SaveStatsClone();
+        saveStats.scene = {name:destinationSceneName};
+
+        if (_global.automaticCloudStorage) {
+          clearScreen(function() {
+            saveCookie(function() {
+              recordSave(slot, function() {
+                self.finished = false;
+                self.prevLine = "empty";
+                self.screenEmpty = true;
+                self.execute();
+              });
+            }, slot, saveStats, {choice_reuse:"allow", choice_user_restored:true, choice_restore_name:saveName.value}, 0, 0, false, self.nav);
+          });
+          return;
+        }
+
         var shouldSubscribe = subscribeBox.checked;
         var email = trim(emailInput.value);
-        var messageText;
         if (!/^\S+@\S+\.\S+$/.test(email)) {
           messageText = document.createTextNode("Sorry, \""+email+"\" is not an email address.  Please type your email address again.");
           message.innerHTML = "";
           message.appendChild(messageText);
-        } else if (!trim(saveName.value)) {
-          messageText = document.createTextNode("Please type a name for your saved game.");
-          message.innerHTML = "";
-          message.appendChild(messageText);
-        } else {
-          recordEmail(email, function() {
-            var slot = "save" + new Date().getTime();
-            
-            // create a fake stats object whose scene name is the destination scene
-            var SaveStatsClone = function() {};
-            SaveStatsClone.prototype = self.stats;
-            var saveStats = new SaveStatsClone();
-            saveStats.scene = {name:destinationSceneName};
-
-            clearScreen(function() {
-              saveCookie(function() {
-                recordSave(slot, function() {
-                  startLoading();
-                  submitRemoteSave(slot, email, shouldSubscribe, function(ok) {
-                    doneLoading();
-                    if (!ok) {
-                      asyncAlert("Couldn't upload your saved game to choiceofgames.com. You can try again later from the Restore menu.", function() {
-                        self.finished = false;
-                        self.prevLine = "empty";
-                        self.screenEmpty = true;
-                        self.execute();
-                      });
-                    } else {
+          return;
+        }
+        
+        recordEmail(email, function() {
+          clearScreen(function() {
+            saveCookie(function() {
+              recordSave(slot, function() {
+                startLoading();
+                submitRemoteSave(slot, email, shouldSubscribe, function(ok) {
+                  doneLoading();
+                  if (!ok) {
+                    asyncAlert("Couldn't upload your saved game to choiceofgames.com. You can try again later from the Restore menu.", function() {
                       self.finished = false;
                       self.prevLine = "empty";
                       self.screenEmpty = true;
                       self.execute();
-                    }
-                  });
+                    });
+                  } else {
+                    self.finished = false;
+                    self.prevLine = "empty";
+                    self.screenEmpty = true;
+                    self.execute();
+                  }
                 });
-              }, slot, saveStats, {choice_reuse:"allow", choice_user_restored:true, choice_restore_name:saveName.value}, 0, 0, false, self.nav);
-            });
+              });
+            }, slot, saveStats, {choice_reuse:"allow", choice_user_restored:true, choice_restore_name:saveName.value}, 0, 0, false, self.nav);
           });
-        }
+        });
       });
     };
 
