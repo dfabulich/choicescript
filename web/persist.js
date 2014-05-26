@@ -142,6 +142,7 @@ return r;},version:'0.2.1',enabled:false};me.enabled=alive.call(me);return me;}(
      */ 
     search_order: [
       // TODO: air
+      'cefStorage',
       'winOldStorage',
       'winStoreStorage',
       'macStorage',
@@ -329,6 +330,64 @@ return r;},version:'0.2.1',enabled:false};me.enabled=alive.call(me);return me;}(
         } 
       }
     }, 
+
+    cefStorage: {
+      size:   -1,
+
+      test: function() {
+        return !!window.cefQuery;
+      },
+
+      methods: {
+
+        init: function() {
+
+        },
+
+        query: function(method, paramString, callback) {
+          cefQuery({request:method+" "+paramString,
+            onSuccess: function(response) {
+              callback(true, response);
+            },
+            onFailure: function(error_code, error_message) {
+              console.error(method, error_message);
+              callback(false);
+            }
+          });
+        },
+
+        get: function(key, fn, scope) {
+
+          // if callback isn't defined, then return
+          if (!fn)
+            return;
+
+          // get callback scope
+          scope = scope || this;
+
+          this.query("StorageGet", key, function(ok, results) {
+            fn.call(scope, ok, results);
+          });
+        },
+
+        set: function(key, val, fn, scope) {
+          scope = scope || this;
+          this.query("StorageSet", key + " " + val, function(ok){
+            if (fn) fn.call(scope, ok, val);
+          });
+          return val;
+        },
+
+        // begin remove transaction
+        remove: function(key, fn, scope) {
+          scope = scope || this;
+          this.query("StorageRemove", key, function(ok) {
+            // return original value? meh
+            if (fn) fn.call(scope, ok);
+          });
+        }
+      }
+    },
 
     // whatwg db backend (webkit, Safari 3.1+)
     // (src: whatwg and http://webkit.org/misc/DatabaseExample.html)
