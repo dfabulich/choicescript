@@ -350,7 +350,7 @@ return r;},version:'0.2.1',enabled:false};me.enabled=alive.call(me);return me;}(
               callback(true, response);
             },
             onFailure: function(error_code, error_message) {
-              console.error(method, error_message);
+              console.error(method + " error: " + error_message);
               callback(false);
             }
           });
