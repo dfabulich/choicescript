@@ -1988,7 +1988,7 @@ if (!isWeb && window.isIosApp) {
     }, false);
 }
 if (window.isWebOS) document.write("<style>body {font-family: Prelude; font-size: 14pt}\n#header {font-size: 13pt}</style>");
-if (window.isMacApp || window.isWinOldApp) {
+if (window.isMacApp || window.isWinOldApp || window.isCef) {
   document.write("<style>"+
     "#headerLinks { display: none; }"+
     ""+
@@ -2003,6 +2003,25 @@ if (window.isChromeApp) {
   var base = document.createElement('base');
   base.setAttribute("target", "_blank");
   document.head.appendChild(base);
+}
+if (window.isCef) {
+  var pollPurchases = function() {
+    cefQuery({
+      request:"PollPurchases",
+      onSuccess:function(response){
+        //console.log("PollPurchases: '"+response+"'");
+        if (response) {
+          window.location.reload();
+        } else {
+          safeTimeout(pollPurchases, 100);
+        }
+      },
+      onFailure:function(error_code, error_message) {
+        console.error("PollPurchases error: " + error_message);
+      }
+    });
+  };
+  pollPurchases();
 }
 
 function winStoreShareLinkHandler(e) {
