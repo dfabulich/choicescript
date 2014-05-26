@@ -1038,6 +1038,8 @@ function achieve(name, title, description) {
     macAchievements.achieve_(name);
   } else if (window.isWinOldApp) {
     window.external.Achieve(name);
+  } else if (window.isCef) {
+    cefQuerySimple("Achieve " + name);
   } else {
     var escapedTitle = title+"".replace(/&/g, '&amp;')
       .replace(/</g, '&lt;')
@@ -1095,6 +1097,29 @@ function checkAchievements(callback) {
           }
         };
         checkWinAchievements();
+      } else if (window.isCef) {
+        var checkCefAchievements = function() {
+          cefQuery({
+            request:"GetAchieved ",
+            onSuccess: function(response) {
+              //console.log("GetAchieved " + response);
+              var achieved = eval(response);
+              for (var i = 0; i < achieved.length; i++) {
+                nav.achieved[achieved[i]] = true;
+              }
+              callback();
+            },
+            onFailure: function(error_code, error_message) {
+              //console.error("GetAchieved error " + error_message);
+              if (error_code == 1) {
+                safeTimeout(checkCefAchievements, 100);
+              } else {
+                callback();
+              }
+            }
+          });
+        };
+        checkCefAchievements();
       } else {
         callback();
       }
@@ -1752,6 +1777,7 @@ window.isIE = /MSIE/.test(navigator.userAgent);
 window.isIPad = /iPad/.test(navigator.userAgent);
 window.isKindleFire = /Kindle Fire/.test(navigator.userAgent);
 window.isWinStoreApp = "ms-appx:" == window.location.protocol;
+window.isCef = !!window.cefQuery;
 
 window.loadTime = new Date().getTime();
 window.registered = false;
@@ -2015,6 +2041,7 @@ function platformCode() {
   if (window.isWinOldApp) return "csharp";
   if (window.isChromeApp) return "chrome";
   if (window.isWebOS) return "palm";
+  if (window.isCef) return "cef";
   if (window.isWeb) return "web";
   return "unknown";
 }

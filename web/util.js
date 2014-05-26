@@ -788,3 +788,11 @@ function jsonParse(str) {
     return eval('('+str+')');
   }
 }
+
+function cefQuerySimple(method) {
+  cefQuery({
+    request:method,
+    onSuccess: function(response) {console.log(method + " success");},
+    onFailure: function(error_code, error_message) {console.error(method + " error: " + error_message);}
+  });
+}
