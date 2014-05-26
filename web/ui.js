@@ -2012,9 +2012,8 @@ if (window.isCef) {
         //console.log("PollPurchases: '"+response+"'");
         if (response) {
           clearScreen(loadAndRestoreGame);
-        } else {
-          safeTimeout(pollPurchases, 100);
         }
+        safeTimeout(pollPurchases, 100);
       },
       onFailure:function(error_code, error_message) {
         console.error("PollPurchases error: " + error_message);
