@@ -2011,7 +2011,7 @@ if (window.isCef) {
       onSuccess:function(response){
         //console.log("PollPurchases: '"+response+"'");
         if (response) {
-          window.location.reload();
+          clearScreen(loadAndRestoreGame);
         } else {
           safeTimeout(pollPurchases, 100);
         }
