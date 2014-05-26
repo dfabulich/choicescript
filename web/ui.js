@@ -883,6 +883,18 @@ function checkPurchase(products, callback) {
   } else if (window.isAndroidApp && !window.isNookAndroidApp) {
     window.checkPurchaseCallback = function(purchases) {callback("ok",purchases); };
     androidBilling.checkPurchase(products);
+  } else if (window.isCef) {
+    cefQuery({
+      request:"CheckPurchases " + products,
+      onSuccess: function(response) {
+        console.log("cp response " + response);
+        callback("ok",JSON.parse(response));
+      },
+      onFailure: function(error_code, error_message) {
+        console.error("CheckPurchases error: " + error_message);
+        callback(!"ok");
+      }
+    });
   } else if (isWebPurchaseSupported()) {
     if (window.knownPurchases) {
       safeTimeout(function() { callback("ok", knownPurchases); }, 0);
@@ -956,6 +968,9 @@ function purchase(product, callback) {
   } else if (window.isAndroidApp) {
     window.purchaseCallback = purchaseCallback;
     androidBilling.purchase(product);
+  } else if (window.isCef) {
+    cefQuerySimple("Purchase " + product);
+    // no callback; we'll refresh on purchase
   } else if (isWebPurchaseSupported()) {
     if (!window.StripeCheckout) return asyncAlert("Sorry, we weren't able to initiate payment. (Your "+
       "network connection may be down.) Please refresh the page and try again, or contact "+
