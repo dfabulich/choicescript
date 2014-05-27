@@ -883,6 +883,16 @@ function checkPurchase(products, callback) {
   } else if (window.isAndroidApp && !window.isNookAndroidApp) {
     window.checkPurchaseCallback = function(purchases) {callback("ok",purchases); };
     androidBilling.checkPurchase(products);
+  } else if (window.isWinOldApp) {
+    safeTimeout(function() {
+      var purchases = eval(window.external.CheckPurchase(products));
+      callback("ok",purchases);
+    }, 0);
+  } else if (window.isMacApp && window.macPurchase) {
+    safeTimeout(function() {
+      var purchases = JSON.parse(macPurchase.checkPurchases_(products));
+      callback("ok",purchases);
+    }, 0);
   } else if (window.isCef) {
     cefQuery({
       request:"CheckPurchases " + products,
@@ -968,6 +978,10 @@ function purchase(product, callback) {
   } else if (window.isAndroidApp) {
     window.purchaseCallback = purchaseCallback;
     androidBilling.purchase(product);
+  } else if (window.isWinOldApp) {
+    window.external.Purchase(product);
+  } else if (window.isMacApp && window.macPurchase) {
+    macPurchase.purchase_(product);
   } else if (window.isCef) {
     cefQuerySimple("Purchase " + product);
     // no callback; we'll refresh on purchase
