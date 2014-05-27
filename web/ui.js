@@ -1047,6 +1047,7 @@ function purchase(product, callback) {
 }
 
 function achieve(name, title, description) {
+  if (initStore()) window.store.set("achieved", toJson(nav.achieved));
   if (window.isIosApp) {
     callIos("achieve", name+"/");
   } else if (window.isMacApp && window.macAchievements) {
@@ -1069,7 +1070,6 @@ function achieve(name, title, description) {
       .replace(/\[i\]/g, '<i>')
       .replace(/\[\/i\]/g, '</i>');
     alertify.log("<b>Achievement: "+escapedTitle+"</b><br>" + escapedDescription);
-    if (initStore()) window.store.set("achieved", toJson(nav.achieved));
   }
 }
 
