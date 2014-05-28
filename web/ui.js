@@ -1063,28 +1063,27 @@ function purchase(product, callback) {
 function achieve(name, title, description) {
   if (initStore()) window.store.set("achieved", toJson(nav.achieved));
   if (window.isIosApp) {
-    callIos("achieve", name+"/");
+    return callIos("achieve", name+"/");
   } else if (window.isMacApp && window.macAchievements) {
     macAchievements.achieve_(name);
   } else if (window.isWinOldApp) {
     window.external.Achieve(name);
   } else if (window.isCef) {
     cefQuerySimple("Achieve " + name);
-  } else {
-    var escapedTitle = title+"".replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;');
-    var escapedDescription = description+"".replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/\[b\]/g, '<b>')
-      .replace(/\[\/b\]/g, '</b>')
-      .replace(/\[i\]/g, '<i>')
-      .replace(/\[\/i\]/g, '</i>');
-    alertify.log("<b>Achievement: "+escapedTitle+"</b><br>" + escapedDescription);
   }
+  var escapedTitle = title+"".replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+  var escapedDescription = description+"".replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/\[b\]/g, '<b>')
+    .replace(/\[\/b\]/g, '</b>')
+    .replace(/\[i\]/g, '<i>')
+    .replace(/\[\/i\]/g, '</i>');
+  alertify.log("<b>Achievement: "+escapedTitle+"</b><br>" + escapedDescription);
 }
 
 function checkAchievements(callback) {
