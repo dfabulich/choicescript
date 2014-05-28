@@ -339,6 +339,9 @@ return r;},version:'0.2.1',enabled:false};me.enabled=alive.call(me);return me;}(
       },
 
       methods: {
+        key: function(key) {
+          return esc(this.name) + esc(key);
+        },
 
         init: function() {
 
@@ -357,6 +360,7 @@ return r;},version:'0.2.1',enabled:false};me.enabled=alive.call(me);return me;}(
         },
 
         get: function(key, fn, scope) {
+          key = this.key(key);
 
           // if callback isn't defined, then return
           if (!fn)
@@ -371,6 +375,7 @@ return r;},version:'0.2.1',enabled:false};me.enabled=alive.call(me);return me;}(
         },
 
         set: function(key, val, fn, scope) {
+          key = this.key(key);
           scope = scope || this;
           this.query("StorageSet", key + " " + val, function(ok){
             if (fn) fn.call(scope, ok, val);
@@ -380,6 +385,7 @@ return r;},version:'0.2.1',enabled:false};me.enabled=alive.call(me);return me;}(
 
         // begin remove transaction
         remove: function(key, fn, scope) {
+          key = this.key(key);
           scope = scope || this;
           this.query("StorageRemove", key, function(ok) {
             // return original value? meh
