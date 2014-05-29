@@ -1060,10 +1060,10 @@ function purchase(product, callback) {
   }
 }
 
-function achieve(name, title, description) {
-  if (initStore()) window.store.set("achieved", toJson(nav.achieved));
+function registerNativeAchievement(name) {
+  if (window.blockNativeAchievements) return;
   if (window.isIosApp) {
-    return callIos("achieve", name+"/");
+    callIos("achieve", name+"/");
   } else if (window.isMacApp && window.macAchievements) {
     macAchievements.achieve_(name);
   } else if (window.isWinOldApp) {
@@ -1071,6 +1071,13 @@ function achieve(name, title, description) {
   } else if (window.isCef) {
     cefQuerySimple("Achieve " + name);
   }
+}
+
+function achieve(name, title, description) {
+  if (initStore()) window.store.set("achieved", toJson(nav.achieved));
+  registerNativeAchievement(name);
+  // iOS shows a prominent banner; no need to show our own
+  if (window.isIosApp) return;
   var escapedTitle = title+"".replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
@@ -1090,6 +1097,19 @@ function checkAchievements(callback) {
   safeTimeout(function() {
     if (!initStore()) return callback();
     window.store.get("achieved", function(ok, value){
+      function mergeNativeAchievements(achieved) {
+        var nativeRegistered = {};
+        for (var i = 0; i < achieved.length; i++) {
+          nav.achieved[achieved[i]] = true;
+          nativeRegistered[achieved[i]] = true;
+        }
+        for (var achievement in nav.achieved) {
+          if (nav.achieved[achievement] && !nativeRegistered[achievement]) {
+            registerNativeAchievement(achievement);
+          }
+        }
+        callback();
+      }
       if (ok) {
         var achievementRecord = jsonParse(value);
         for (var achieved in achievementRecord) {
@@ -1097,29 +1117,16 @@ function checkAchievements(callback) {
         }
       }
       if (window.isIosApp) {
-        window.checkAchievementCallback = function(achieved) {
-          for (var i = 0; i < achieved.length; i++) {
-            nav.achieved[achieved[i]] = true;
-          }
-          callback();
-        };
+        window.checkAchievementCallback = mergeNativeAchievements;
         callIos("checkachievements");
       } else if (window.isMacApp && window.macAchievements) {
-        window.checkAchievementCallback = function(achieved) {
-          for (var i = 0; i < achieved.length; i++) {
-            nav.achieved[achieved[i]] = true;
-          }
-          callback();
-        };
+        window.checkAchievementCallback = mergeNativeAchievements;
         macAchievements.checkAchievements();
       } else if (window.isWinOldApp) {
         var checkWinAchievements = function () {
           var achieved = eval(window.external.GetAchieved());
           if (achieved) {
-            for (var i = 0; i < achieved.length; i++) {
-              nav.achieved[achieved[i]] = true;
-            }
-            callback();
+            mergeNativeAchievements(achieved);
           } else {
             safeTimeout(checkWinAchievements, 100);
           }
@@ -1132,10 +1139,7 @@ function checkAchievements(callback) {
             onSuccess: function(response) {
               //console.log("GetAchieved " + response);
               var achieved = eval(response);
-              for (var i = 0; i < achieved.length; i++) {
-                nav.achieved[achieved[i]] = true;
-              }
-              callback();
+              mergeNativeAchievements(achieved);
             },
             onFailure: function(error_code, error_message) {
               //console.error("GetAchieved error " + error_message);
@@ -1900,6 +1904,7 @@ window.onload=function() {
     window.nav.setStartingStatsClone(window.stats);
     if (window.achievements && window.achievements.length) {
       nav.loadAchievements(window.achievements);
+      checkAchievements(function() {});
       manageAchievementsButton();
     }
     stats.sceneName = window.nav.getStartupScene();
