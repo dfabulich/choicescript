@@ -2029,10 +2029,12 @@ Scene.prototype.save_game = function save_game(destinationSceneName) {
         }
 
         var slot = "save" + new Date().getTime();
-        // create a fake stats object whose scene name is the destination scene
-        var SaveStatsClone = function() {};
-        SaveStatsClone.prototype = self.stats;
-        var saveStats = new SaveStatsClone();
+        // create a clone stats object whose scene name is the destination scene
+        var saveStats = {};
+        for (var stat in self.stats) {
+          if ("scene" == stat) continue;
+          saveStats[stat] = self.stats[stat];
+        }
         saveStats.scene = {name:destinationSceneName};
 
         if (_global.automaticCloudStorage) {
