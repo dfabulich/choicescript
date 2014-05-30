@@ -1751,7 +1751,7 @@ Scene.prototype.restore_game = function restore_game() {
                     self.printLine("Error downloading saves. Please try again later.");
                     renderRestoreMenu(saveList, dirtySaveList);
                   } else {
-                    mergeRemoteSaves(remoteSaveList, function(saveList, newRemoteSaves, dirtySaveList) {
+                    mergeRemoteSaves(remoteSaveList, "recordDirty", function(saveList, newRemoteSaves, dirtySaveList) {
                       if (!remoteSaveList.length) {
                         self.printLine("No saves downloaded for email address \""+email+"\". (Is that the correct email address?) If you're having trouble, please contact support at "+getSupportEmail()+".");
                         renderRestoreMenu(saveList, dirtySaveList);

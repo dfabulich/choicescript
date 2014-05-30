@@ -278,7 +278,7 @@ function recordSave(slot, callback) {
     safeTimeout(callback, 0);
     return;
   }
-  restoreObject("save_list", [], function (saveList) {
+  restoreObject(initStore(), "save_list", [], function (saveList) {
     saveList.push(slot);
     window.store.set("save_list", toJson(saveList), safeCallback(callback));
   });
@@ -289,7 +289,7 @@ function recordDirtySlots(slots, callback) {
     safeTimeout(callback, 0);
     return;
   }
-  restoreObject("dirty_save_list", [], function (saveList) {
+  restoreObject(initStore(), "dirty_save_list", [], function (saveList) {
     saveSet = {};
     for (var i = 0; i < saveList.length; i++) {
       saveSet[saveList[i]] = 1;
@@ -325,12 +325,12 @@ function fetchEmail(callback) {
   });
 }
 
-function restoreObject(key, defaultValue, callback) {
-  if (!initStore()) {
+function restoreObject(store, key, defaultValue, callback) {
+  if (!store) {
     safeTimeout(function() {callback(defaultValue);}, 0);
     return;
   }
-  window.store.get(key, function(ok, value) {
+  store.get(key, function(ok, value) {
     var result = defaultValue;
     if (ok && value) {
       try{
@@ -342,25 +342,34 @@ function restoreObject(key, defaultValue, callback) {
 }
 
 function getDirtySaveList(callback) {
-  restoreObject("dirty_save_list", [], function (slotList) {
+  restoreObject(initStore(), "dirty_save_list", [], function (slotList) {
     callback(slotList);
   });
 }
 
 function getSaves(callback) {
-  restoreObject("save_list", [], function (slotList) {
-    fetchSavesFromSlotList(slotList, 0, [], callback);
-  });
+  if (window.remoteStoreName && window.storeName != window.remoteStoreName) {
+    var remoteStore = new Persist.Store(window.remoteStoreName);
+    restoreObject(remoteStore, "save_list", [], function (remoteSlotList) {
+      fetchSavesFromSlotList(remoteStore, remoteSlotList, 0, [], function(remoteSaveList) {
+        mergeRemoteSaves(remoteSaveList, 0/*recordDirty*/, callback);
+      });
+    });
+  } else {
+    restoreObject(initStore(), "save_list", [], function (localSlotList) {
+      fetchSavesFromSlotList(initStore(), localSlotList, 0, [], callback);
+    });
+  }
 }
 
-function fetchSavesFromSlotList(slotList, i, saveList, callback) {
+function fetchSavesFromSlotList(store, slotList, i, saveList, callback) {
   if (i >= slotList.length) {
     return safeCall(null, function() {callback(saveList);});
   }
-  restoreObject("state"+slotList[i], null, function(saveState) {
+  restoreObject(store, "state"+slotList[i], null, function(saveState) {
     saveState.timestamp = slotList[i].substring(4/*"save".length*/);
     saveList.push(saveState);
-    fetchSavesFromSlotList(slotList, i+1, saveList, callback);
+    fetchSavesFromSlotList(store, slotList, i+1, saveList, callback);
   });
 }
 
@@ -487,13 +496,13 @@ function getRemoteSaves(email, callback) {
   xhr.send();
 }
 
-function mergeRemoteSaves(remoteSaveList, callback) {
+function mergeRemoteSaves(remoteSaveList, recordDirty, callback) {
   if (!isWebSavePossible()) {
     safeTimeout(function() { callback([], 0, []); }, 0);
     return;
   }
-  restoreObject("save_list", [], function (localSlotList) {
-    fetchSavesFromSlotList(localSlotList, 0, [], function(localSaveList) {
+  restoreObject(initStore(), "save_list", [], function (localSlotList) {
+    fetchSavesFromSlotList(initStore(), localSlotList, 0, [], function(localSaveList) {
       var localSlotMap = {};
       for (var i = 0; i < localSlotList.length; i++) {
         localSlotMap[localSlotList[i]] = 1;
@@ -521,7 +530,13 @@ function mergeRemoteSaves(remoteSaveList, callback) {
         }
       }
 
-      window.store.set("dirty_save_list", toJson(dirtySaveList), function() {
+      if (recordDirty) {
+        window.store.set("dirty_save_list", toJson(dirtySaveList), finale);
+      } else {
+        finale();
+      }
+
+      function finale() {
         if (newRemoteSaves) {
           window.store.set("save_list", toJson(localSlotList), function() {
             safeCall(null, function() { callback(localSaveList, newRemoteSaves, dirtySaveList); });
@@ -529,7 +544,7 @@ function mergeRemoteSaves(remoteSaveList, callback) {
         } else {
           safeCall(null, function() {callback(localSaveList, newRemoteSaves, dirtySaveList);});
         }
-      });
+      }
     });
   });
 }
