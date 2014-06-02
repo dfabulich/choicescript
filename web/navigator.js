@@ -89,7 +89,7 @@ SceneNavigator.prototype.loadAchievements = function(achievementArray) {
       points: points,
       title: title,
       earnedDescription: earnedDescription,
-      preEarnedDescription: preEarnedDescription,
+      preEarnedDescription: preEarnedDescription
     };
     this.achievementList.push(achievementName);
   }
