@@ -1,5 +1,6 @@
 body {
   max-width: 680px;
+  _width:expression(this.scrollWidth > 680 ? "680px" : "auto");
   font-family: Georgia,"Times New Roman",serif;
   font-size: 16px; /* reset, specified in px so IE currentStyle works */
   background-color: #F7F4F1;
