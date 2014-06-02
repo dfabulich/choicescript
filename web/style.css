@@ -57,7 +57,7 @@ table {
   /* width will be determined at runtime, 0-100% */
 }
 
-.choice>label{
+.choice label{
     line-height:20px;
     padding: 11px 8px 12px;
     display:block;
@@ -66,7 +66,7 @@ table {
     border-width: 1px 1px 0px 1px
 }
 
-.choice>.firstChild{
+.choice .firstChild{
     border-top-width:1px;
     -webkit-border-top-right-radius:8px;
     -webkit-border-top-left-radius:8px;
@@ -74,7 +74,7 @@ table {
     border-top-left-radius:8px;
 }
 /* IE doesn't support label:last-child */
-.choice>.lastChild{
+.choice .lastChild{
     border-bottom-width:1px;
     -webkit-border-bottom-right-radius:8px;
     -webkit-border-bottom-left-radius:8px;
@@ -82,7 +82,7 @@ table {
     border-bottom-right-radius:8px;
     border-bottom-left-radius:8px;
 }
-.choice>.onlyChild{
+.choice .onlyChild{
     border-width:1px;
     -webkit-border-radius:8px;
     -moz-border-radius:8px;
