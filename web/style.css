@@ -33,6 +33,7 @@ a {
   width: 300px;
   color: #f7f4f1;
   position: relative; /* to allow absolute positioned value */
+  z-index: 0;
 }
 .opposed {
   background-color: #6D6DFC;
@@ -54,6 +55,7 @@ table {
   top: 0;
   left: 0;
   height: 100%;
+  z-index: -1;
   /* width will be determined at runtime, 0-100% */
 }
 
