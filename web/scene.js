@@ -2374,7 +2374,7 @@ Scene.prototype.stat_chart = function stat_chart() {
       setClass(div, "statLine");
       span = document.createElement("span");
       if (trim(label) || trim(value)) {
-        printx(label + ": " + value, span);
+        printx("\u00a0\u00a0"+label + ": " + value, span);
       } else {
         // unofficial line_break
         printx(" ", span);
@@ -2385,7 +2385,7 @@ Scene.prototype.stat_chart = function stat_chart() {
       div = document.createElement("div");
       setClass(div, "statBar statLine");
       span = document.createElement("span");
-      printx(label+": "+value+"%", span);
+      printx("\u00a0\u00a0"+label+": "+value+"%", span);
       div.appendChild(span);
       statValue = document.createElement("div");
       setClass(statValue, "statValue");
@@ -2398,11 +2398,11 @@ Scene.prototype.stat_chart = function stat_chart() {
       div = document.createElement("div");
       setClass(div, "statBar statLine opposed");
       span0 = document.createElement("span");
-      printx(label+": "+value+"% ", span0);
+      printx("\u00a0\u00a0"+label+": "+value+"% ", span0);
       div.appendChild(span0);
       span = document.createElement("span");
       span.setAttribute("style", "float: right");
-      printx(row.opposed_label+": "+(100-value)+"%", span);
+      printx(row.opposed_label+": "+(100-value)+"%\u00a0\u00a0", span);
       div.appendChild(span);
       statValue = document.createElement("div");
       setClass(statValue, "statValue");

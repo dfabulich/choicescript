@@ -46,7 +46,6 @@ table {
 .statBar > span, .statLine > span {
   position: relative;
   z-index: 1; /* visible over stat value */
-  padding: 0 0.5em;
   white-space: nowrap; /* remain on single line so we can resize font based on width */
 }
 .statValue {
