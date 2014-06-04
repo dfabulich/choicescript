@@ -500,18 +500,26 @@ function printOptionRadioButton(div, name, option, localChoiceNumber, globalChoi
       setClass(label, "disabled");
     }
     label.setAttribute("accesskey", globalChoiceNumber);
-    if (window.Touch && !unselectable) { // Make labels clickable on iPhone
-        label.onclick = function labelClick(evt) {
-            var target = evt.target;
-            if (!target) return;
-            var isLabel = /label/i.test(target.tagName);
-            if (!isLabel) return;
-            var id = target.getAttribute("for");
-            if (!id) return;
-            var button = document.getElementById(id);
-            if (!button) return;
+    if (!unselectable) {
+      if (window.Touch) { // Make labels clickable on iPhone
+          label.onclick = function labelClick(evt) {
+              try {
+                var target = evt.target;
+                if (!/label/i.test(target.tagName)) return;
+                var button = document.getElementById(target.getAttribute("for"));
+                button.checked = true;
+              } catch (e) {}
+          };
+      } else if (/MSIE 6/.test(navigator.userAgent)) {
+        label.onclick = function labelClick() {
+          try {
+            var target = window.event.srcElement;
+            if (!/label/i.test(target.tagName)) return;
+            var button = document.getElementById(target.getAttribute("for"));
             button.checked = true;
+          } catch (e) {}
         };
+      }
     }
     printx(line, label);
     
