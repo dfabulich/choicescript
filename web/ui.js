@@ -1092,7 +1092,18 @@ function achieve(name, title, description) {
     .replace(/\[\/b\]/g, '</b>')
     .replace(/\[i\]/g, '<i>')
     .replace(/\[\/i\]/g, '</i>');
-  alertify.log("<b>Achievement: "+escapedTitle+"</b><br>" + escapedDescription);
+  var html = "<b>Achievement: "+escapedTitle+"</b><br>" + escapedDescription;
+  if (/MSIE 6/.test(navigator.userAgent)) {
+    var fakeAlertify = document.createElement("div");
+    setClass(fakeAlertify, "fakeAlertify");
+    fakeAlertify.innerHTML = html;
+    document.body.appendChild(fakeAlertify);
+    setTimeout(function() {
+      document.body.removeChild(fakeAlertify);
+    }, 5000);
+  } else {
+    alertify.log(html);
+  }
 }
 
 function checkAchievements(callback) {

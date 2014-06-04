@@ -183,6 +183,17 @@ h2 {
   opacity: 0.5;
 }
 
+.fakeAlertify {
+  font-family: Helvetica, Arial, "sans-serif";
+  background-color: black;
+  color: white;
+  position: absolute;
+  padding: 1em;
+  right: 1em;
+  bottom: 1em;
+  width: 300px;
+}
+
 #greybackground {
     position: fixed;
     width:100%;
