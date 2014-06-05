@@ -51,6 +51,11 @@ isRestorePurchasesSupported = function() {return false;};
 isFullScreenAdvertisingSupported = function() {return false;};
 areSaveSlotsSupported = function() {return false;};
 
+function safeCall(obj, fn) {
+  if (obj) return fn.call(obj);
+  return fn.call();
+}
+
 function initStore() { return false; }
 
 clearScreen = function clearScreen(code) {
