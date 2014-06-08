@@ -1112,6 +1112,7 @@ function checkAchievements(callback) {
     if (!initStore()) return callback();
     window.store.get("achieved", function(ok, value){
       function mergeNativeAchievements(achieved) {
+        window.checkAchievementCallback = null;
         var nativeRegistered = {};
         for (var i = 0; i < achieved.length; i++) {
           nav.achieved[achieved[i]] = true;
@@ -1124,6 +1125,7 @@ function checkAchievements(callback) {
         }
         callback();
       }
+      var alreadyLoadingAchievements = false;
       if (ok) {
         var achievementRecord = jsonParse(value);
         for (var achieved in achievementRecord) {
@@ -1131,11 +1133,13 @@ function checkAchievements(callback) {
         }
       }
       if (window.isIosApp) {
+        alreadyLoadingAchievements = !!window.checkAchievementCallback;
         window.checkAchievementCallback = mergeNativeAchievements;
-        callIos("checkachievements");
+        if (!alreadyLoadingAchievements) callIos("checkachievements");
       } else if (window.isMacApp && window.macAchievements) {
+        alreadyLoadingAchievements = !!window.checkAchievementCallback;
         window.checkAchievementCallback = mergeNativeAchievements;
-        macAchievements.checkAchievements();
+        if (!alreadyLoadingAchievements) macAchievements.checkAchievements();
       } else if (window.isWinOldApp) {
         var checkWinAchievements = function () {
           var achieved = eval(window.external.GetAchieved());
