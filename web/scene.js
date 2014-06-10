@@ -3169,29 +3169,35 @@ Scene.prototype.achievement = function scene_achievement(data) {
   if (!indent) {
     throw new Error(this.lineMsg()+"Invalid *achievement. An indented description is required.");
   }
-  var earnedDescription = trim(line);
-  if (/(\$\{)/.test(earnedDescription)) throw new Error(this.lineMsg()+"Invalid *achievement. ${} not permitted in achievement description: " + earnedDescription);
-  if (/(\[)/.test(earnedDescription)) throw new Error(this.lineMsg()+"Invalid *achievement. [] not permitted in achievement description: " + earnedDescription);
+  var preEarnedDescription = trim(line);
+  if (/(\$\{)/.test(preEarnedDescription)) throw new Error(this.lineMsg()+"Invalid *achievement. ${} not permitted in achievement description: " + preEarnedDescription);
+  if (/(\[)/.test(preEarnedDescription)) throw new Error(this.lineMsg()+"Invalid *achievement. [] not permitted in achievement description: " + preEarnedDescription);
 
+  if (!visible) {
+    if (preEarnedDescription.toLowerCase() != "hidden") throw new Error(this.lineMsg()+"Invalid *achievement. Hidden achievements must set their pre-earned description to 'hidden'.");
+  }
 
-  // If it's a visible achievement, optionally get a pre-earned description from the next line
-  var preEarnedDescription = null;
-  if (visible) {
-    while(isDefined(line = this.lines[++this.lineNum])) {
-      if (trim(line)) break;
-      this.rollbackLineCoverage();
-    }
-    indent = this.getIndent(line);
-    if (indent) {
-      preEarnedDescription = trim(line);
-      if (/(\$\{)/.test(preEarnedDescription)) throw new Error(this.lineMsg()+"Invalid *achievement. ${} not permitted in achievement description: " + preEarnedDescription);
-      if (/(\[)/.test(preEarnedDescription)) throw new Error(this.lineMsg()+"Invalid *achievement. [] not permitted in achievement description: " + preEarnedDescription);
-    } else {
-      // No indent means the next line is not a pre-earned description
-      this.rollbackLineCoverage();
-      this.lineNum--;
-      this.rollbackLineCoverage();
-    }
+  // Optionally get a post-earned description from the next line
+  var postEarnedDescription = null;
+  while(isDefined(line = this.lines[++this.lineNum])) {
+    if (trim(line)) break;
+    this.rollbackLineCoverage();
+  }
+  indent = this.getIndent(line);
+  if (indent) {
+    postEarnedDescription = trim(line);
+    if (/(\$\{)/.test(postEarnedDescription)) throw new Error(this.lineMsg()+"Invalid *achievement. ${} not permitted in achievement description: " + postEarnedDescription);
+    if (/(\[)/.test(postEarnedDescription)) throw new Error(this.lineMsg()+"Invalid *achievement. [] not permitted in achievement description: " + postEarnedDescription);
+  } else {
+    // No indent means the next line is not a post-earned description
+    this.rollbackLineCoverage();
+    this.lineNum--;
+    this.rollbackLineCoverage();
+  }
+
+  if (!postEarnedDescription) {
+    if (!visible) throw new Error(this.lineMsg()+"Invalid *achievement. Hidden achievements must set a post-earned description.");
+    postEarnedDescription = preEarnedDescription;
   }
 
   if (!this.nav.achievements.hasOwnProperty(achievementName)) {
@@ -3204,7 +3210,7 @@ Scene.prototype.achievement = function scene_achievement(data) {
     visible: visible,
     points: points,
     title: title,
-    earnedDescription: earnedDescription,
+    earnedDescription: postEarnedDescription,
     preEarnedDescription: preEarnedDescription,
     lineNumber: lineNumber
   };

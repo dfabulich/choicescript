@@ -122,18 +122,17 @@ function printAchievements(target) {
     var points = achievement.points;
     totalScore += points;
 
-    var description = achievement.earnedDescription;
+    var description;
 
     if (nav.achieved[name]) {
       achievedCount++;
       score += points;
       buffer = unlockedBuffer;
+      description = achievement.earnedDescription;
     } else {
       if (achievement.visible) {
         buffer = lockedBuffer;
-        if (achievement.preEarnedDescription) {
-          description = achievement.preEarnedDescription;
-        }
+        description = achievement.preEarnedDescription;
       } else {
         hiddenCount++;
         continue;

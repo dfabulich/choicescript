@@ -57,22 +57,21 @@ function parseAchievement(data, lines, lineNum) {
   var pointString = parsed[3];
   var title = parsed[4];
   var line = lines[++lineNum];
-  var earnedDescription = line.trim();
-  parsed[5] = earnedDescription;
-
-  var preEarnedDescription = null;
-  if (visible) {
-    while(typeof(line = lines[++lineNum]) != "undefined") {
-      if (line.trim()) break;
-    }
-    if (/^\s/.test(line)) {
-      preEarnedDescription = line.trim();
-    } else {
-      // No indent means the next line is not a pre-earned description
-      lineNum--;
-    }
-  }
+  var preEarnedDescription = line.trim();
   parsed[6] = preEarnedDescription;
+
+  var postEarnedDescription = null;
+  while(typeof(line = lines[++lineNum]) != "undefined") {
+    if (line.trim()) break;
+  }
+  if (/^\s/.test(line)) {
+    postEarnedDescription = line.trim();
+  } else {
+    // No indent means the next line is not a post-earned description
+    lineNum--;
+  }
+  if (postEarnedDescription === null) postEarnedDescription = preEarnedDescription;
+  parsed[5] = postEarnedDescription;
   parsed.shift();
   achievements.push(parsed);
   return lineNum;
