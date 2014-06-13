@@ -2871,6 +2871,9 @@ Scene.prototype.functions = {
   round: function(value) {
     if (isNaN(value*1)) throw new Error(this.lineMsg()+"round() value is not a number: " + value);
     return Math.round(value);
+  },
+  timestamp: function(value) {
+    return Date.parse(value)/1000;
   }
 };
 
@@ -3246,7 +3249,7 @@ Scene.tokens = [
     {name:"CLOSE_PARENTHESIS", test:function(str){ return Scene.regexpMatch(str,/^\)/); } },
     {name:"OPEN_CURLY", test:function(str){ return Scene.regexpMatch(str,/^\{/); } },
     {name:"CLOSE_CURLY", test:function(str){ return Scene.regexpMatch(str,/^\}/); } },
-    {name:"FUNCTION", test:function(str){ return Scene.regexpMatch(str,/^(not|round)\s*\(/); } },
+    {name:"FUNCTION", test:function(str){ return Scene.regexpMatch(str,/^(not|round|timestamp)\s*\(/); } },
     {name:"NUMBER", test:function(str){ return Scene.regexpMatch(str,/^\d+(\.\d+)?/); } },
     {name:"STRING", test:function(str, line) {
             var i;
