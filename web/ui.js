@@ -2099,6 +2099,7 @@ if (window.isWinStoreApp) {
         log: function (message) { window.external.ConsoleLog(message); },
         error: function (message) { window.external.ConsoleError(message); }
     };
+    document.oncontextmenu = function() {return false;};
 }
 
 function platformCode() {
