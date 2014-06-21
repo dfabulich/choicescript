@@ -1822,7 +1822,7 @@ try {
 window.isWeb = !isWinOldApp && /^https?:/.test(window.location.href);
 window.isSecureWeb = /^https:?$/.test(window.location.protocol);
 window.isSafari = /Safari/.test(navigator.userAgent);
-window.isIE = /MSIE/.test(navigator.userAgent);
+window.isIE = /(MSIE|Trident)/.test(navigator.userAgent);
 window.isIPad = /iPad/.test(navigator.userAgent);
 window.isKindleFire = /Kindle Fire/.test(navigator.userAgent);
 window.isWinStoreApp = "ms-appx:" == window.location.protocol;
