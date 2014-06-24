@@ -2000,7 +2000,7 @@ try {
 
 if (window.isWeb) {
   document.write("<style>.webOnly { display: block !important; }</style>\n"+
-    "<script src='https://checkout.stripe.com/v2/checkout.js'></script>");
+    "<scr"+"ipt src='https://checkout.stripe.com/v2/checkout.js'></scr"+"ipt>");
 }
 if (!isWeb && window.isIosApp) {
   document.write("<style>"+
