@@ -1947,7 +1947,7 @@ Scene.prototype.login = function scene_login(optional) {
 };
 
 Scene.prototype.save_game = function save_game(destinationSceneName) {
-  if (!destinationSceneName) throw new Error("*save_game requires a destination file name, e.g. *save_game Episode2");
+  if (!destinationSceneName) throw new Error(this.lineMsg()+"*save_game requires a destination file name, e.g. *save_game Episode2");
   if (this.temps.choice_user_restored) return;
   var self = this;
   this.finished = true;
