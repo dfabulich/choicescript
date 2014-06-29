@@ -118,7 +118,7 @@ function autotester(sceneText, nav, sceneName) {
   }
   
   Scene.prototype.save_game = function(destinationSceneName) {
-    if (!destinationSceneName) throw new Error("*save_game requires a destination file name, e.g. *save_game Episode2");
+    if (!destinationSceneName) throw new Error(this.lineMsg()+"*save_game requires a destination file name, e.g. *save_game Episode2");
     this.verifySceneFile(destinationSceneName);
   }
   
