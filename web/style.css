@@ -98,7 +98,7 @@ input[type="radio"], input[type="checkbox"] {
   display:block;
 }
 
-.choice>.disabled {
+.choice .disabled {
   color: gray;
 }
 
