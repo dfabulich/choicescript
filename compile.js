@@ -30,7 +30,7 @@ function compile(){
     
   //2. Find and extract all .js file data
   var next_file = "";
-  var patt = /<script.*?src=["'](.*?)["']><\/script>/gim;
+  var patt = /<script.*?src=["'](.*?)["'][^>]*><\/script>/gim;
   var doesMatch;
   var jsStore = "";
   console.log("\nExtracting js data from:");
@@ -64,7 +64,7 @@ function compile(){
   game_html=game_html.replace(patt,"");
 
   //5. Remove js links
-  patt = /^<script src\=[\w'"\=\s\.\/]*><\/script>/gim;
+  patt = /^<script src\=[^>]*><\/script>/gim;
   game_html=game_html.replace(patt,"");
 
   //6. Slice the document and check for a *title
