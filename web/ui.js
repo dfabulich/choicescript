@@ -108,13 +108,14 @@ function showMenu() {
         setButtonTitles();
         return clearScreen(loadAndRestoreGame);
       } else if (option.credits) {
+        absolutizeAboutLink();
         aboutClick();
       } else if (option.moreGames) {
-        self.more_games("now");
+        moreGames();
         setTimeout(function() {callIos("curl");}, 0);
       } else if (option.share) {
         clearScreen(function() {
-          self.share_this_game("now");
+          printShareLinks(document.getElementById("text"), "now");
           menu();
         });
       } else if (option.subscribe) {
