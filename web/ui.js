@@ -51,10 +51,9 @@ function println(msg, parent) {
     parent.appendChild(br);
 }
 
-
 function showStats() {
     if (document.getElementById('loading')) return;
-    manageAchievementsButton();
+    setButtonTitles();
     if (window.stats.sceneName == "choicescript_stats") {
       clearScreen(loadAndRestoreGame);
       return;
@@ -68,32 +67,87 @@ function showStats() {
 function showAchievements() {
   if (document.getElementById('loading')) return;
   var button = document.getElementById("achievementsButton");
-  if (button && button.innerHTML == "Return to the Game") {
-    manageAchievementsButton();
+  if (!button) return;
+  if (button.innerHTML == "Return to the Game") {
+    setButtonTitles();
     return clearScreen(loadAndRestoreGame);
   }
+  setButtonTitles();
   button.innerHTML = "Return to the Game";
   clearScreen(function() {
     checkAchievements(function() {
       printAchievements(document.getElementById("text"));
       printButton("Next", main, false, function() {
-        manageAchievementsButton();
+        setButtonTitles();
         clearScreen(loadAndRestoreGame);
       });
     });
   });
 }
 
-function manageAchievementsButton() {
-  var button = document.getElementById("achievementsButton");
+function showMenu() {
+  if (document.getElementById('loading')) return;
+  var button = document.getElementById("menuButton");
   if (!button) return;
-  if (nav.achievementList.length) {
-    button.style.display = "";
-    button.innerHTML = "Achievements";
-  } else {
-    button.style.display = "none";
+  if (button.innerHTML == "Return to the Game") {
+    button.innerHTML = "Menu";
+    return clearScreen(loadAndRestoreGame);
   }
+  setButtonTitles();
+  button.innerHTML = "Return to the Game";
+  function menu() {
+    options = [
+      {name:"Return to the game.", group:"choice", resume:true},
+      {name:"View the credits.", group:"choice", credits:true},
+      {name:"Play more games like this.", group:"choice", moreGames:true},
+      {name:"Share this game with friends.", group:"choice", share:true},
+      {name:"Email me when new games are available.", group:"choice", subscribe:true},
+    ];
+    printOptions([""], options, function(option) {
+      if (option.resume) {
+        setButtonTitles();
+        return clearScreen(loadAndRestoreGame);
+      } else if (option.credits) {
+        aboutClick();
+      } else if (option.moreGames) {
+        self.more_games("now");
+        setTimeout(function() {callIos("curl");}, 0);
+      } else if (option.share) {
+        clearScreen(function() {
+          self.share_this_game("now");
+          menu();
+        });
+      } else if (option.subscribe) {
+        setButtonTitles();
+        subscribeLink();
+      }
+    });
+  }
+  clearScreen(menu);
 }
+
+function setButtonTitles() {
+  var button;
+  button = document.getElementById("menuButton");
+  if (button) {
+    button.innerHTML = "Menu";
+  }
+  button = document.getElementById("statsButton");
+  if (button) {
+    button.innerHTML = "Show Stats";
+  }
+  button = document.getElementById("achievementsButton");
+  if (button) {
+    if (nav.achievementList.length) {
+      button.style.display = "";
+      button.innerHTML = "Achievements";
+    } else {
+      button.style.display = "none";
+    }
+  }
+
+}
+
 
 function spell(num) {
   if (num > 99) return num;
@@ -1922,7 +1976,7 @@ window.onload=function() {
     if (window.achievements && window.achievements.length) {
       nav.loadAchievements(window.achievements);
       checkAchievements(function() {});
-      manageAchievementsButton();
+      setButtonTitles();
     }
     stats.sceneName = window.nav.getStartupScene();
     var map = parseQueryString(window.location.search);
@@ -1966,6 +2020,16 @@ window.onload=function() {
               return false;
             };
         }
+    }
+    if (window.isCef) {
+      var buttons = document.getElementById("buttons");
+      buttons.appendChild(document.createTextNode(" "));
+      var menuButton = document.createElement("button");
+      menuButton.id = "menuButton";
+      setClass(menuButton, "spacedLink");
+      menuButton.onclick = showMenu;
+      menuButton.innerHTML = "Menu";
+      buttons.appendChild(menuButton);
     }
     if (window.isWinOldApp) {
         absolutizeAboutLink();

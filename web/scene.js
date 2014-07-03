@@ -3219,7 +3219,7 @@ Scene.prototype.achievement = function scene_achievement(data) {
     lineNumber: lineNumber
   };
 
-  if (typeof manageAchievementsButton != "undefined") manageAchievementsButton();
+  if (typeof setButtonTitles != "undefined") setButtonTitles();
 };
 
 
