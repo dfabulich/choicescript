@@ -842,7 +842,7 @@ Scene.prototype.temp = function temp(line) {
 // retrieve the value of the variable, preferring temp scope
 Scene.prototype.getVar = function getVar(variable) {
     var value;
-    variable = variable.toLowerCase();
+    variable = String(variable).toLowerCase();
     if (variable == "true") return true;
     if (variable == "false") return false;
     if (variable == "choice_subscribe_allowed") return true;
