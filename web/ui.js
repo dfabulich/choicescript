@@ -1180,7 +1180,7 @@ function checkAchievements(callback) {
         callback();
       }
       var alreadyLoadingAchievements = false;
-      if (ok) {
+      if (ok && value) {
         var achievementRecord = jsonParse(value);
         for (var achieved in achievementRecord) {
           if (achievementRecord[achieved]) nav.achieved[achieved] = true;
