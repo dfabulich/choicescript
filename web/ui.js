@@ -2103,6 +2103,63 @@ if (window.isChromeApp) {
   var base = document.createElement('base');
   base.setAttribute("target", "_blank");
   document.head.appendChild(base);
+
+  document.addEventListener( "DOMContentLoaded", function() {
+    var aboutLink = document.getElementById("aboutLink");
+    aboutLink.addEventListener("click", function() {
+      if (chrome.app.window) {
+        event.preventDefault();
+        chrome.app.window.create("credits.html", {}, function(w) {
+          w.contentWindow.addEventListener( "DOMContentLoaded", function() {
+            var win = this;
+            var back = win.document.getElementById("back");
+            back.addEventListener("click", function(event) {
+              event.preventDefault();
+              win.close();
+            }, false);
+            var base = win.document.createElement('base');
+            base.setAttribute("target", "_blank");
+            win.document.head.appendChild(base);
+            win.document.documentElement.style.overflowY = "scroll";
+          }, false);
+        });
+      }
+    }, false);
+
+    var statsButton = document.getElementById("statsButton");
+    if (statsButton) {
+      statsButton.onclick = undefined;
+      statsButton.addEventListener("click", function() {
+        showStats();
+      }, false);
+    }
+
+    var achievementsButton = document.getElementById("achievementsButton");
+    if (achievementsButton) {
+      achievementsButton.onclick = undefined;
+      achievementsButton.addEventListener("click", function() {
+        showAchievements();
+      }, false);
+    }
+
+    var restartButton = document.getElementById("restartButton");
+    restartButton.onclick = undefined;
+    restartButton.addEventListener("click", function() {
+      restartGame("prompt");
+    }, false);
+
+    var subscribeAnchor = document.getElementById("subscribeLink");
+    subscribeAnchor.onclick = undefined;
+    subscribeAnchor.addEventListener("click", function() {
+      subscribeLink();
+    }, false);
+
+    var supportAnchor = document.getElementById("supportEmail");
+    supportAnchor.addEventListener("click", function(event) {
+      event.preventDefault();
+    }, false);
+
+  }, false );
 }
 if (window.isCef) {
   var pollPurchases = function() {
