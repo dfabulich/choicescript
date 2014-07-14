@@ -64,7 +64,7 @@ function showStats() {
     scene.execute();
 }
 
-function showAchievements() {
+function showAchievements(hideNextButton) {
   if (document.getElementById('loading')) return;
   var button = document.getElementById("achievementsButton");
   if (!button) return;
@@ -77,7 +77,7 @@ function showAchievements() {
   clearScreen(function() {
     checkAchievements(function() {
       printAchievements(document.getElementById("text"));
-      printButton("Next", main, false, function() {
+      if (!hideNextButton) printButton("Next", main, false, function() {
         setButtonTitles();
         clearScreen(loadAndRestoreGame);
       });
@@ -1995,6 +1995,9 @@ window.onload=function() {
       window.debug = map.debug;
       if (map.restart) {
         restoreGame(null, forcedScene);
+      } else if (map.achievements) {
+        doneLoading();
+        showAchievements("hideNextButton");
       } else {
         safeCall(null, function() {loadAndRestoreGame(window.slot, window.forcedScene);});
       }
