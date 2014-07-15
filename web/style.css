@@ -118,6 +118,7 @@ input[type=email],input[type=password] {
     width:100%;
     font-size:25px;
     font-weight:bolder;
+    font-family: sans-serif; /* reset, for Android */
     margin-bottom: 16px; /* reset button margin */
     -webkit-appearance: none; /* Safari, don't override my CSS styles */
     color: #f7f4f1; /* Match background color */ 
