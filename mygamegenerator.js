@@ -111,7 +111,7 @@ for (var i = 0; i < lines.length; i++) {
   }
 }
 
-var mygameBuffer = ["nav = new SceneNavigator(["];
+var mygameBuffer = ["\ufeffnav = new SceneNavigator(["];
 
 for (var i = 0; i < scenes.length; i++) {
   if (i > 0) mygameBuffer.push(',\n');
