@@ -12,5 +12,5 @@ iphone/www
 .DS_Store
 *.svn
 randomtest-output.txt
-xml
+xmloutput
 deploy

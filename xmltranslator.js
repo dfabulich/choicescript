@@ -838,7 +838,7 @@ if (typeof xmlTranslatorTestOverride != "undefined") {
     if (!/\.txt$/.test(fileName)) continue;
     var inputMod = fileLastMod(filePath);
     if (inputMod < translatorLastModified) inputMod = translatorLastModified;
-    var outputDir = "./xml/";
+    var outputDir = "./xmloutput/";
     mkdirs(dir);
     var outputFilePath = outputDir + fileName + ".xml";
     var outputMod = fileLastMod(outputFilePath);
