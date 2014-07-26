@@ -90,6 +90,10 @@ table {
     border-radius:8px;
 }
 
+.choice .noBorder {
+  border-width: 0;
+}
+
 input[type="radio"], input[type="checkbox"] {
   margin-right: 8px;
 }

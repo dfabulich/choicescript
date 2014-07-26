@@ -1521,7 +1521,7 @@ function loginForm(target, optional, errorMessage, callback) {
           "<label for=yes class=firstChild><input type=radio name=choice value=yes id=yes checked> My email address is: "+
           "<input type=email name=email id=email value='"+escapedEmail+"' style='font-size: 25px; width: 11em'></label>"+
           "<label for=no class=lastChild><input type=radio name=choice value=no id=no > No, thanks.</label>"+
-          "<p><label for=subscribe><input type=checkbox name=subscribe id=subscribe checked> "+
+          "<p><label class=noBorder for=subscribe><input type=checkbox name=subscribe id=subscribe checked> "+
           "Email me when new games are available.</label></p>";
 
         form.email.onclick = function() {
@@ -1531,7 +1531,7 @@ function loginForm(target, optional, errorMessage, callback) {
       } else {
         form.innerHTML = "<div id=message style='color:red; font-weight:bold'>"+errorMessage+
           "</div><span><span>My email address is: </span><input type=email name=email id=email value='"+
-          escapedEmail+"' style='font-size: 25px; width: 12em'></span><p><label id=subscribeLabel for=subscribe>"+
+          escapedEmail+"' style='font-size: 25px; width: 12em'></span><p><label class=noBorder id=subscribeLabel for=subscribe>"+
           "<input type=checkbox name=subscribe id=subscribe checked> "+
           "Email me when new games are available.</label></p><p>Do you have a Choiceofgames.com password?</p>"+
           "<div class='choice'>"+
