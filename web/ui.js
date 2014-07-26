@@ -395,6 +395,9 @@ function printFooter() {
       statsButton.innerHTML = "Return to the Game";
     } else {
       statsButton.innerHTML = "Show Stats";
+      if (window.isAndroidApp && window.statsMode.get()) {
+        showStats();
+      }
     }
   }
   setTimeout(function() {callIos("curl");}, 0);
@@ -2089,9 +2092,17 @@ if (!isWeb && window.isIosApp) {
       document.body.appendChild(dummy);
       window.setTimeout(function() {document.body.removeChild(dummy);}, 10);
     }, false);
+} else if (window.isAndroidApp) {
+  document.write("<style>"+
+  "#header { display: none; }"+
+  ""+
+  "#emailUs { display: none; }"+
+  ""+
+  "#main { padding-top: 1em; }"+
+  "</style>");
 }
 if (window.isWebOS) document.write("<style>body {font-family: Prelude; font-size: 14pt}\n#header {font-size: 13pt}</style>");
-if (window.isMacApp || window.isWinOldApp || window.isCef) {
+if (window.isMacApp || window.isWinOldApp || window.isCef || window.isAndroidApp) {
   document.write("<style>"+
     "#headerLinks { display: none; }"+
     ""+
