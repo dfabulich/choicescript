@@ -1341,6 +1341,7 @@ function printButton(name, parent, isSubmit, code) {
     printx(name, button);
   }
   setClass(button, "next");
+  button.setAttribute("accesskey", "n");
   if (code) button.onclick = function(event) {
     if (window.isIosApp) {
       window.freezeCallback = function() {
