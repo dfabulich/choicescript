@@ -36,6 +36,20 @@ Scene.prototype.verifySceneFile = function webVerifySceneFile(name) {
   addFile(name+".txt");
 }
 
+Scene.prototype.verifyImage = function webVerifyImage(fileName) {
+  var xhr = new XMLHttpRequest();
+  var url = "web/mygame/" + fileName;
+  xhr.open("GET", url, false);
+  try {
+    xhr.send();
+  } catch (e) {
+    throw new Error(this.lineMsg() + "File does not exist: " + fileName);
+  }
+  if (xhr.status && xhr.status != 200) {
+    throw new Error(this.lineMsg() + "File does not exist: " + fileName);
+  }
+}
+
 printFooter = function() {};
 printShareLinks = function() {};
 printLink = function() {};
