@@ -100,6 +100,7 @@ function showMenu() {
       {name:"Return to the game.", group:"choice", resume:true},
       {name:"View the credits.", group:"choice", credits:true},
       {name:"Play more games like this.", group:"choice", moreGames:true},
+      {name:"Email us at " + getSupportEmail() + ".", group:"choice", contactUs:true},
       {name:"Share this game with friends.", group:"choice", share:true},
       {name:"Email me when new games are available.", group:"choice", subscribe:true},
     ];
@@ -121,6 +122,8 @@ function showMenu() {
       } else if (option.subscribe) {
         setButtonTitles();
         subscribeLink();
+      } else if (option.contactUs) {
+        window.location.href="mailto:"+getSupportEmail();
       }
     });
   }
@@ -1891,6 +1894,9 @@ window.loadTime = new Date().getTime();
 window.registered = false;
 
 function getSupportEmail() {
+  if (window.storeName) {
+    return "support-" + storeName + "-" + platformCode() + "@choiceofgames.com";
+  }
   try {
     return document.getElementById("supportEmail").getAttribute("href").substring(7);
   } catch (e) {
@@ -2052,6 +2058,10 @@ window.onload=function() {
       '<iframe allowtransparency="true" frameborder="0" scrolling="no" '+
       'src="//platform.twitter.com/widgets/follow_button.html?screen_name=choiceofgames&amp;show_screen_name=false"'+
       ' style="width:150px; height:20px;"></iframe>';
+    }
+    var supportEmailLink = document.getElementById("supportEmail");
+    if (window.storeName && supportEmailLink) {
+      supportEmailLink.href = "mailto:" + getSupportEmail();
     }
 
     submitAnyDirtySaves();
