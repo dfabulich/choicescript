@@ -753,6 +753,7 @@ Scene.prototype.purchase = function purchase_button(data) {
       if (price == "guess") price = priceGuess;
       var target = self.target;
       if (!target) target = document.getElementById('text');
+      self.paragraph();
       var button = printButton("Buy It Now for " + price, target, false,
         function() {
           safeCall(self, function() {
