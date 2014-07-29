@@ -132,6 +132,7 @@ function testForInvalidCharacters(text) {
 }
 
 var success = true;
+var titleIncluded, authorIncluded;
 function testScene(sceneNum) {
   var fileName = knownScenes[sceneNum];
   var sceneName = fileName.replace(/.txt$/, "");
@@ -181,6 +182,10 @@ function testScene(sceneNum) {
       if (uncovered) {
         uncoveredScenes.push({name:sceneName, lines:uncovered});
       }
+      if (sceneNum === 0) {
+        titleIncluded = /\*title /m.test(xhr.responseText);
+        authorIncluded = /^\*author /m.test(xhr.responseText);
+      }
     } catch (x) {
       console.log("QUICKTEST FAILED");
         console.log(x);
@@ -202,6 +207,8 @@ function testScene(sceneNum) {
       };
     }
     if (!allLinesTested) console.log("SOME LINES UNTESTED");
+    if (!titleIncluded) console.log("MISSING *TITLE COMMAND");
+    if (!authorIncluded) console.log("MISSING *AUTHOR COMMAND");
     console.log("QUICKTEST PASSED");
   }
 }

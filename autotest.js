@@ -142,6 +142,8 @@ Scene.prototype.verifyImage = function commandLineVerifyImage(name) {
 // test startup scene first, to run *create commands
 if (list[0] != nav.getStartupScene()+".txt") list.unshift(nav.getStartupScene()+".txt");
 
+var titleIncluded, authorIncluded;
+
 (function(){
   for (var i = 0; i < list.length; i++) {
     print(list[i]);
@@ -151,6 +153,10 @@ if (list[0] != nav.getStartupScene()+".txt") list.unshift(nav.getStartupScene()+
       var sceneName = fileName.replace(/\.txt$/, "");
       verifyFileName("scenes", fileName);
       var sceneText = slurpFile("web/"+gameName+"/scenes/"+fileName, true /*throwOnError*/);
+      if (i === 0) {
+        titleIncluded = /\*title /m.test(sceneText);
+        authorIncluded = /^\*author /m.test(sceneText);
+      }
       uncovered = autotester(sceneText, nav, sceneName)[1];
     } catch (e) {
       print("QUICKTEST FAILED\n");
@@ -188,4 +194,6 @@ for (var i = 0; i < uncoveredScenes.length; i++) {
 
 
 if (!allLinesTested) print("SOME LINES UNTESTED");
+if (!titleIncluded) print("MISSING *TITLE COMMAND");
+if (!authorIncluded) print("MISSING *AUTHOR COMMAND");
 print("QUICKTEST PASSED");
