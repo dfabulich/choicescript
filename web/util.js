@@ -347,8 +347,26 @@ function getDirtySaveList(callback) {
   });
 }
 
+function remoteSaveMerger(i, callback) {
+  var remoteStore = new Persist.Store(window.remoteStoreNames[i]);
+  restoreObject(remoteStore, "save_list", [], function (remoteSlotList) {
+    fetchSavesFromSlotList(remoteStore, remoteSlotList, 0, [], function(remoteSaveList) {
+      mergeRemoteSaves(remoteSaveList, 0/*recordDirty*/, function() {
+        i++;
+        if (i < window.remoteStoreNames.length) {
+          remoteSaveMerger(i, callback);
+        } else {
+          callback.apply(null, arguments);
+        }
+      });
+    });
+  });
+}
+
 function getSaves(callback) {
-  if (window.remoteStoreName && window.storeName != window.remoteStoreName) {
+  if (window.remoteStoreNames && window.remoteStoreNames.length) {
+    remoteSaveMerger(0, callback);
+  } else if (window.remoteStoreName && window.storeName != window.remoteStoreName) {
     var remoteStore = new Persist.Store(window.remoteStoreName);
     restoreObject(remoteStore, "save_list", [], function (remoteSlotList) {
       fetchSavesFromSlotList(remoteStore, remoteSlotList, 0, [], function(remoteSaveList) {
@@ -693,7 +711,7 @@ function getCookieByName(cookieName, ck) {
 function parseQueryString(str) {
   if (!str) return null;
   var map = {};
-  var pairs = str.substring(1).split("&");
+  var pairs = String(str).substring(1).split("&");
   var i = pairs.length;
   while (i--) {
     var pair = pairs[i];
