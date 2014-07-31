@@ -16,7 +16,7 @@
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied.
  */
-function Scene(name, stats, nav, debugMode) {
+function Scene(name, stats, nav, options) {
     if (!name) name = "";
     if (!stats) stats = {};
     // the name of the scene
@@ -29,8 +29,13 @@ function Scene(name, stats, nav, debugMode) {
     // the navigator determines which scene comes next
     this.nav = nav;
 
+    options = options || {};
+
     // should we print debugging information?
-    this.debugMode = debugMode || false;
+    this.debugMode = options.debugMode || false;
+
+    // used for stats screen, and maybe other secondary views someday
+    this.secondaryMode = options.secondaryMode;
 
     // the array of lines in the scene file
     this.lines = [];
@@ -543,7 +548,8 @@ Scene.prototype.resetPage = function resetPage() {
 };
 
 Scene.prototype.save = function save(callback, slot) {
-    if (/^choicescript_/.test(this.name)) {
+    // don't save on secondary screens
+    if (this.secondaryMode) {
       if (callback) callback.call(this);
     } else {
       saveCookie(callback, slot, this.stats, this.temps, this.lineNum, this.indent, this.debugMode, this.nav);
@@ -588,7 +594,7 @@ Scene.prototype["return"] = function scene_return() {
       stackFrame = this.stats.choice_subscene_stack.pop();
       this.finished = true;
       this.skipFooter = true;
-      var scene = new Scene(stackFrame.name, this.stats, this.nav, this.debugMode);
+      var scene = new Scene(stackFrame.name, this.stats, this.nav, {debugMode:this.debugMode, secondaryMode:this.secondaryMode});
       scene.temps = stackFrame.temps;
       scene.screenEmpty = this.screenEmpty;
       scene.prevLine = this.prevLine;
@@ -624,7 +630,7 @@ Scene.prototype.finish = function finish(buttonName) {
     this.paragraph();
     this.finished = true;
     var self = this;
-    if (this.name == "choicescript_stats") {
+    if (this.secondaryMode == "stats") {
       if (typeof window == "undefined" || window.forcedScene != "choicescript_stats") {
         printButton(buttonName || "Next", main, false,
           function() {
@@ -637,7 +643,7 @@ Scene.prototype.finish = function finish(buttonName) {
     var nextSceneName = this.nav && nav.nextSceneName(this.name);
     // if there are no more scenes, then just halt
     if (!nextSceneName) {
-        if (!/^choicescript_/.test(this.name)) this.ending();
+        if (!this.secondaryMode) this.ending();
         return;
     }
     if (this.screenEmpty) {
@@ -651,7 +657,7 @@ Scene.prototype.finish = function finish(buttonName) {
     printButton(buttonName, main, false,
       function() {
         safeCall(self, function() {
-            var scene = new Scene(nextSceneName, self.stats, self.nav, self.debugMode);
+            var scene = new Scene(nextSceneName, self.stats, self.nav, {debugMode:self.debugMode, secondaryMode:self.secondaryMode});
             scene.resetPage();
         });
       }
@@ -683,7 +689,7 @@ Scene.prototype.goto_scene = function gotoScene(data) {
     }
     this.finished = true;
     this.skipFooter = true;
-    var scene = new Scene(sceneName, this.stats, this.nav, this.debugMode);
+    var scene = new Scene(sceneName, this.stats, this.nav, {debugMode:this.debugMode, secondaryMode:this.secondaryMode});
     scene.screenEmpty = this.screenEmpty;
     scene.prevLine = this.prevLine;
     if (typeof label != "undefined") scene.targetLabel = {label:label, origin:this.name, originLine:this.lineNum};
@@ -1653,11 +1659,12 @@ Scene.prototype.ending = function ending() {
 };
 
 Scene.prototype.restart = function restart() {
+  if (this.secondaryMode) throw new Error(this.lineMsg() + "Cannot *restart in " + this.secondaryMode + " mode");
   this.finished = true;
   this.reset();
   delayBreakEnd();
   var startupScene = this.nav.getStartupScene();
-  var scene = new Scene(startupScene, this.stats, this.nav, this.debugMode);
+  var scene = new Scene(startupScene, this.stats, this.nav, {debugMode:this.debugMode, secondaryMode:false});
   scene.resetPage();
 };
 

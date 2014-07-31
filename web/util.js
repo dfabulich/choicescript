@@ -651,15 +651,18 @@ function restartGame(shouldPrompt) {
 
 function restoreGame(state, forcedScene, userRestored) {
     var scene;
+    var secondaryMode = null;
+    if (forcedScene == "choicescript_stats") secondaryMode = "stats";
+    if (forcedScene == "choicescript_upgrade") secondaryMode = "upgrade";
     if (!isStateValid(state)) {
         var startupScene = forcedScene ? forcedScene : window.nav.getStartupScene();
-        scene = new Scene(startupScene, window.stats, window.nav, window.debug);
+        scene = new Scene(startupScene, window.stats, window.nav, {debugMode:window.debug, secondaryMode:secondaryMode});
         safeCall(scene, scene.execute);
     } else {
       if (forcedScene) state.stats.sceneName = forcedScene;
       window.stats = state.stats;
       // Someday, inflate the navigator using the state object
-      scene = new Scene(state.stats.sceneName, state.stats, window.nav, state.debug || window.debug);
+      scene = new Scene(state.stats.sceneName, state.stats, window.nav, {debugMode:state.debug || window.debug, secondaryMode:secondaryMode});
       if (!forcedScene) {
         scene.temps = state.temps;
         scene.lineNum = state.lineNum;

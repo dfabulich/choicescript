@@ -54,12 +54,12 @@ function println(msg, parent) {
 function showStats() {
     if (document.getElementById('loading')) return;
     setButtonTitles();
-    if (window.stats.sceneName == "choicescript_stats") {
+    if (window.stats.scene.secondaryMode == "stats") {
       clearScreen(loadAndRestoreGame);
       return;
     }
     var currentScene = window.stats.scene;
-    var scene = new Scene("choicescript_stats", window.stats, this.nav);
+    var scene = new Scene("choicescript_stats", window.stats, this.nav, {secondaryMode:"stats"});
     main.innerHTML = "<div id='text'></div>";
     scene.execute();
 }
@@ -394,7 +394,7 @@ function printFooter() {
   // We could put anything we want in the footer here, but perhaps we should avoid it.
   var statsButton = document.getElementById("statsButton");
   if (statsButton) {
-    if (window.stats.sceneName == "choicescript_stats") {
+    if (window.stats.scene.secondaryMode == "stats") {
       statsButton.innerHTML = "Return to the Game";
     } else {
       statsButton.innerHTML = "Show Stats";
@@ -404,37 +404,6 @@ function printFooter() {
     }
   }
   setTimeout(function() {callIos("curl");}, 0);
-}
-
-function fastRefresh() {
-  function fastRestore(state) {
-    window.stats = state.stats;
-    var scene = new Scene(state.stats.sceneName, state.stats, window.nav, state.debug || window.debug);
-    scene.loadSceneFast();
-    clearScreen(function() {scene.execute();});
-  }
-  function valueLoaded(ok, value) {
-    safeCall(null, function() {
-      var state = null;
-      if (ok && value && ""+value) {
-        state = jsonParse(value);
-        state.stats.sceneName = forcedScene;
-        fastRestore(state);
-      }
-    });
-  }
-  if (window.forcedScene && window.stats && window.stats.scene && window.stats.scene.name == window.forcedScene) {
-    var scene = window.stats.scene;
-    window.cachedResult = {crc:scene.temps.choice_crc, lines:scene.lines, labels:scene.labels};
-    if (!slot) slot = "";
-    if (initStore()) {
-      window.store.get("state"+slot, valueLoaded);
-    } else {
-      fastRestore({stats:{sceneName:forcedScene}});
-    }
-    return;
-  }
-  clearScreen(function() {loadAndRestoreGame(window.slot, window.forcedScene);});
 }
 
 // retrieve value of HTML form
