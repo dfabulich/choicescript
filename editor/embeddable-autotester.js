@@ -436,6 +436,9 @@ function autotester(sceneText, nav, sceneName) {
         startRange = null;
       }
   }
+  if (startRange) {
+    uncovered.push(startRange + "-" + (i-1));
+  }
   
   if (uncovered.length) {
       log("UNCOVERED:");
