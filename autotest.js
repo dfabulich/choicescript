@@ -143,6 +143,49 @@ Scene.prototype.verifyImage = function commandLineVerifyImage(name) {
 if (list[0] != nav.getStartupScene()+".txt") list.unshift(nav.getStartupScene()+".txt");
 
 var titleIncluded, authorIncluded;
+var gotoSceneLabels = {};
+
+// enumerate scenes; gather visited labels
+
+if (fullGame) {
+  (function(){
+    for (var i = 0; i < list.length; i++) {
+      try {
+        var fileName = list[i];
+        var sceneName = fileName.replace(/\.txt$/, "");
+        verifyFileName("scenes", fileName);
+        var sceneText = slurpFile("web/"+gameName+"/scenes/"+fileName, true /*throwOnError*/);
+        var sceneLines = sceneText.split("\n");
+        for (var j = 0; j < sceneLines.length; j++) {
+          var line = sceneLines[j];
+          var words;
+          var result = /^\s*\*(\w+)(.*)/.exec(line);
+          if (!result) continue;
+          var command = result[1].toLowerCase();
+          var data = trim(result[2]);
+          if (command == "goto_scene" || command == "gosub_scene") {
+            if (data === null) data = "";
+            words = data.split(/ /);
+            if (words[0] !== "") {
+              addFile(words[0]+".txt");
+            }
+            if (words.length > 1) {
+              if (!gotoSceneLabels[words[0]]) gotoSceneLabels[words[0]] = [];
+              gotoSceneLabels[words[0]].push({origin:sceneName, originLine:j, label:words[1]});
+            }
+          } else if (command == "save_game") {
+            if (data !== null) addFile(data+".txt");
+          }
+        }
+      } catch (e) {
+        print("Error parsing "+sceneName+" line "+(j+1)+ "; we'll flag the error in detail later\n");
+        print(e);
+      }
+    }
+  }());
+}
+
+
 
 (function(){
   for (var i = 0; i < list.length; i++) {
@@ -157,7 +200,7 @@ var titleIncluded, authorIncluded;
         titleIncluded = /\*title /m.test(sceneText);
         authorIncluded = /^\*author /m.test(sceneText);
       }
-      uncovered = autotester(sceneText, nav, sceneName)[1];
+      uncovered = autotester(sceneText, nav, sceneName, gotoSceneLabels[sceneName])[1];
     } catch (e) {
       print("QUICKTEST FAILED\n");
       print(e);

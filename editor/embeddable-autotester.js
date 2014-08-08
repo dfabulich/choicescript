@@ -1,4 +1,4 @@
-function autotester(sceneText, nav, sceneName) {
+function autotester(sceneText, nav, sceneName, extraLabels) {
   function log(msg) {
     if (typeof(console) != "undefined") console.log(msg)
   }
@@ -411,6 +411,17 @@ function autotester(sceneText, nav, sceneName) {
   log("executing");
   scene.execute();
   
+  if (extraLabels) {
+    for (var i = 0; i < extraLabels.length; i++) {
+      var extraLabel = extraLabels[i];
+      scene = new Scene(sceneName, startingStats, nav);
+      scene.loadLines(sceneText);
+      scene.targetLabel = extraLabel;
+      scene.testPath = [sceneName,",","goto " + extraLabel.label];
+      scene.execute();
+    }
+  }
+
   while(scene = sceneList.shift()) {
       log (scene.testPath.join(''));
       //log(sceneList.length);
