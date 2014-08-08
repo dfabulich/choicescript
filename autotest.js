@@ -149,6 +149,41 @@ var gotoSceneLabels = {};
 
 if (fullGame) {
   (function(){
+    function parseSceneList(lines, lineNum) {
+      var nextIndent = null;
+      var scenes = [];
+      var purchases = {};
+      var line;
+      while(typeof (line = lines[++lineNum]) != "undefined") {
+          if (!line.trim()) continue;
+
+          var indent = /^(\s*)/.exec(line)[1].length;
+          if (nextIndent === null || nextIndent === undefined) {
+              // initialize nextIndent with whatever indentation the line turns out to be
+              // ...unless it's not indented at all
+              if (indent === 0) throw new Error("invalid scene_list indent, expected at least one row");
+              this.indent = nextIndent = indent;
+          }
+          if (indent === 0) break;
+          if (indent != this.indent) {
+              // all scenes are supposed to be at the same indentation level
+              throw new Error("invalid scene_list indent, expected "+this.indent+", was " + indent);
+          }
+
+          line = line.trim();
+          var purchaseMatch = /^\$(\w*)\s+(.*)/.exec(line);
+          if (purchaseMatch) {
+            line = purchaseMatch[2];
+            var product = purchaseMatch[1].trim() || "adfree";
+            purchases[line] = product;
+          }
+          if (!scenes.length && "startup" != line) scenes.push("startup");
+          scenes.push(line);
+      }
+      return {scenes:scenes, purchases:purchases, lineNum:lineNum-1};
+    }
+
+
     for (var i = 0; i < list.length; i++) {
       try {
         var fileName = list[i];
@@ -175,6 +210,12 @@ if (fullGame) {
             }
           } else if (command == "save_game") {
             if (data !== null) addFile(data+".txt");
+          } else if (command == "scene_list" && i === 0) {
+            var sceneList = parseSceneList(sceneLines, j);
+            j = sceneList.lineNum;
+            for (var k = 0; k < sceneList.scenes.length; k++) {
+              addFile(sceneList.scenes[k]+".txt");
+            }
           }
         }
       } catch (e) {
