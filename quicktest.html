@@ -133,6 +133,126 @@ function testForInvalidCharacters(text) {
 
 var success = true;
 var titleIncluded, authorIncluded;
+var gotoSceneLabels = {};
+
+function loadScenes(sceneNum) {
+  var fileName = knownScenes[sceneNum];
+  var sceneName = fileName.replace(/.txt$/, "");
+  var url = "web/mygame/scenes/" + fileName;
+  xhr = new XMLHttpRequest();
+  xhr.open("GET", url, false);
+  var skip = false;
+  var loadFailed = false;
+  try {
+    xhr.send();
+  } catch (x) {
+    if (/^choicescript_(stats|upgrade)$/.test(sceneName)) {
+      skip = true;
+    } else {
+      if (window.location.protocol == "file:" && /Chrome/.test(navigator.userAgent)) {
+        doneLoading();
+        console.log("We're sorry, Google Chrome has blocked ChoiceScript from functioning.  (\"file:\" URLs cannot "+
+          "load files in Chrome.)  ChoiceScript works just fine in Chrome, but only on a published website like "+
+          "choiceofgames.com.  For the time being, please try another browser like Mozilla Firefox.");
+        success = false;
+        return;
+      }
+      loadFailed = true;
+    }
+  }
+
+  if (xhr.status && xhr.status != 200) {
+    loadFailed = true;
+  }
+
+  if (loadFailed) {
+    if (/^choicescript_(stats|upgrade)$/.test(sceneName)) {
+      skip = true;
+    } else {
+      doneLoading();
+      console.log("QUICKTEST FAILED");
+      console.log("ERROR: couldn't open " + url);
+      success = false;
+      return;
+    }
+  }
+  if (!skip) {
+    function parseSceneList(lines, lineNum) {
+      var nextIndent = null;
+      var scenes = [];
+      var purchases = {};
+      var line;
+      while(typeof (line = lines[++lineNum]) != "undefined") {
+          if (!line.trim()) continue;
+
+          var indent = /^(\s*)/.exec(line)[1].length;
+          if (nextIndent === null || nextIndent === undefined) {
+              // initialize nextIndent with whatever indentation the line turns out to be
+              // ...unless it's not indented at all
+              if (indent === 0) throw new Error("invalid scene_list indent, expected at least one row");
+              this.indent = nextIndent = indent;
+          }
+          if (indent === 0) break;
+          if (indent != this.indent) {
+              // all scenes are supposed to be at the same indentation level
+              throw new Error("invalid scene_list indent, expected "+this.indent+", was " + indent);
+          }
+
+          line = line.trim();
+          var purchaseMatch = /^\$(\w*)\s+(.*)/.exec(line);
+          if (purchaseMatch) {
+            line = purchaseMatch[2];
+            var product = purchaseMatch[1].trim() || "adfree";
+            purchases[line] = product;
+          }
+          if (!scenes.length && "startup" != line) scenes.push("startup");
+          scenes.push(line);
+      }
+      return {scenes:scenes, purchases:purchases, lineNum:lineNum-1};
+    }
+
+
+    try {
+      var sceneLines = xhr.responseText.split("\n");
+      for (var j = 0; j < sceneLines.length; j++) {
+        var line = sceneLines[j];
+        var words;
+        var result = /^\s*\*(\w+)(.*)/.exec(line);
+        if (!result) continue;
+        var command = result[1].toLowerCase();
+        var data = trim(result[2]);
+        if (command == "goto_scene" || command == "gosub_scene") {
+          if (data === null) data = "";
+          words = data.split(/ /);
+          if (words[0] !== "") {
+            addFile(words[0]+".txt");
+          }
+          if (words.length > 1) {
+            if (!gotoSceneLabels[words[0]]) gotoSceneLabels[words[0]] = [];
+            gotoSceneLabels[words[0]].push({origin:sceneName, originLine:j, label:words[1]});
+          }
+        } else if (command == "save_game") {
+          if (data !== null) addFile(data+".txt");
+        } else if (command == "scene_list" && sceneNum === 0) {
+          var sceneList = parseSceneList(sceneLines, j);
+          j = sceneList.lineNum;
+          for (var k = 0; k < sceneList.scenes.length; k++) {
+            addFile(sceneList.scenes[k]+".txt");
+          }
+        }
+      }
+    } catch (e) {
+      console.log("Error parsing "+sceneName+" line "+(j+1)+ "; we'll flag the error in detail later\n");
+      console.log(e);
+    }
+  }
+  
+  if (++sceneNum < knownScenes.length) return setTimeout(function(){loadScenes(sceneNum)}, 0);
+
+  testScene(0);
+}
+
+
 function testScene(sceneNum) {
   var fileName = knownScenes[sceneNum];
   var sceneName = fileName.replace(/.txt$/, "");
@@ -178,7 +298,7 @@ function testScene(sceneNum) {
     console.log(sceneName);
     try {
       testForInvalidCharacters(xhr.responseText);
-      var uncovered = autotester(xhr.responseText, nav, sceneName)[1];
+      var uncovered = autotester(xhr.responseText, nav, sceneName, gotoSceneLabels[sceneName])[1];
       if (uncovered) {
         uncoveredScenes.push({name:sceneName, lines:uncovered});
       }
@@ -218,7 +338,7 @@ function testScene(sceneNum) {
 <body>
 <div id="loading">Loading...</div>
 <script>
-testScene(0);
+loadScenes(0);
 </script>
 </body>
 </html>
