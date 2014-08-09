@@ -223,6 +223,7 @@ function logout(callback) {
   recordLogin(false);
   window.knownPurchases = null;
   if (typeof FB != "undefined" && FB.logout) FB.logout();
+  if (typeof gapi != "undefined" && gapi.auth && gapi.auth.signOut) gapi.auth.signOut();
 }
 
 function recordLogin(registered, email, callback) {

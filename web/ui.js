@@ -1498,6 +1498,7 @@ function loginForm(target, optional, errorMessage, callback) {
           "<label for=yes class=firstChild><input type=radio name=choice value=yes id=yes checked> My email address is: "+
           "<input type=email name=email id=email value='"+escapedEmail+"' style='font-size: 25px; width: 11em'></label>"+
           ((isWeb && window.facebookAppId)?"<label for=facebook><input type=radio name=choice value=facebook id=facebook > Sign in with Facebook.</label>":"")+
+          ((isWeb && window.googleAppId)?"<label for=google><input type=radio name=choice value=google id=google > Sign in with Google.</label>":"")+
           "<label for=no class=lastChild><input type=radio name=choice value=no id=no > No, thanks.</label>"+
           "<p><label class=noBorder for=subscribe><input type=checkbox name=subscribe id=subscribe checked> "+
           "Email me when new games are available.</label></p>";
@@ -1517,7 +1518,7 @@ function loginForm(target, optional, errorMessage, callback) {
           "<label for=passwordButton><input type=radio name=choice value=passwordButton id=passwordButton> "+
           "Yes, I have a password: <input id=password type=password name=password disabled class=needsclick style='font-size: 25px; width: 11em'></label>"+
           "<label for=forgot><input type=radio name=choice value=forgot id=forgot> I forgot my password.</label>"+
-          ((isWeb && window.facebookAppId)?"<label for=facebook><input type=radio name=choice value=facebook id=facebook> Sign in with Facebook.</label>":"")+
+          ((isWeb && window.googleAppId)?"<label for=google><input type=radio name=choice value=google id=google> Sign in with Google.</label>":"")+
           (optional ? "<label for=no><input type=radio name=choice value=no id=no> Cancel.</label>" : "") +
           "</div><br>";
 
@@ -1594,6 +1595,17 @@ function loginForm(target, optional, errorMessage, callback) {
               }
             }
           },loginParams);
+        }
+        if ("google" == choice) {
+          if (!window.gapi) return asyncAlert("Sorry, we weren't able to sign you in with Google. (Your network connection may be down.) Please try again later, or contact support@choiceofgames.com for assistance.");
+          googleLoginCallbackCallback = function(ok) {
+            if (ok) {
+              return safeCall(null, function() {callback("ok")});
+            } else {
+              asyncAlert("Sorry, we weren't able to sign you in with Google. Please try again later, or contact support@choiceofgames.com for assistance.");
+            }
+          }
+          return gapi.auth.signIn();
         }
         if (!/^\S+@\S+\.\S+$/.test(email) && "no" != choice) {
           showMessage('Sorry, "'+email+'" is not an email address.  Please type your email address again.');
@@ -2103,12 +2115,15 @@ if (window.isWeb) {
     "<scr"+"ipt src='https://checkout.stripe.com/v2/checkout.js'></scr"+"ipt>");
 
   var metas = document.getElementsByTagName("meta");
-  var facebookAppId;
+  var facebookAppId, googleAppId;
+  var googleLoginCallbackCallback;
   for (var i = 0; i < metas.length; i++) {
     var meta = metas[i];
     if ("fb:app_id" == meta.getAttribute("property")) {
       facebookAppId = meta.getAttribute("content");
       break;
+    } else if ("google-signin-clientid" == meta.getAttribute("name")) {
+      googleAppId = meta.getAttribute("content");
     }
   }
 
@@ -2322,14 +2337,19 @@ function platformCode() {
 }
 
 function googleLoginCallback(authResult) {
+  var callback = googleLoginCallbackCallback;
+  googleLoginCallbackCallback = null;
+  if (!callback) callback = function(ok) { if (ok) clearScreen(loadAndRestoreGame); };
   if (authResult['status']['signed_in']) {
     isRegistered(function(registered) {
       if (!registered) xhrAuthRequest("POST", "google-login", function(ok, response){
         loginDiv(ok, response.email);
         recordLogin(ok, response.email);
         cacheKnownPurchases(response.purchases);
-        clearScreen(loadAndRestoreGame);
+        callback("ok");
       }, "code", authResult['code']);
     });
+  } else {
+    callback(!"ok");
   }
 }
