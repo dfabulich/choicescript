@@ -1581,7 +1581,7 @@ function loginForm(target, optional, errorMessage, callback) {
                 xhrAuthRequest("GET", "facebook-login", function(ok, response){
                   if (ok) {
                     loginDiv(ok, response.email);
-                    recordLogin(ok);
+                    recordLogin(ok, response.email);
                     cacheKnownPurchases(response.purchases);
                     safeCall(null, function() {callback("ok");});
                   } else {
@@ -1640,7 +1640,7 @@ function loginForm(target, optional, errorMessage, callback) {
                   if (ok) {
                     target.innerHTML = "";
                     loginDiv(ok, email);
-                    recordLogin(ok);
+                    recordLogin(ok, email);
                     cacheKnownPurchases(response.purchases);
                     safeCall(null, function() {callback("ok");});
                   } else if ("incorrect password" == response.error) {
@@ -1670,7 +1670,7 @@ function loginForm(target, optional, errorMessage, callback) {
                 if (ok) {
                   target.innerHTML = "";
                   loginDiv(ok, email);
-                  recordLogin(ok);
+                  recordLogin(ok, email);
                   cacheKnownPurchases(response.purchases);
                   safeCall(null, function() {callback("ok");});
                 } else if ("unknown email" == response.error) {
@@ -1790,7 +1790,7 @@ function facebookStatusChangeCallback(response) {
     isRegistered(function(registered) {
       if (!registered) xhrAuthRequest("GET", "facebook-login", function(ok, response){
         loginDiv(ok, response.email);
-        recordLogin(ok);
+        recordLogin(ok, reponse.email);
         cacheKnownPurchases(response.purchases);
         clearScreen(loadAndRestoreGame);
       });
@@ -2326,7 +2326,7 @@ function googleLoginCallback(authResult) {
     isRegistered(function(registered) {
       if (!registered) xhrAuthRequest("POST", "google-login", function(ok, response){
         loginDiv(ok, response.email);
-        recordLogin(ok);
+        recordLogin(ok, response.email);
         cacheKnownPurchases(response.purchases);
         clearScreen(loadAndRestoreGame);
       }, "code", authResult['code']);

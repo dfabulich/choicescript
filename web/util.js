@@ -225,8 +225,9 @@ function logout(callback) {
   if (typeof FB != "undefined" && FB.logout) FB.logout();
 }
 
-function recordLogin(registered, callback) {
+function recordLogin(registered, email, callback) {
   if (initStore()) {
+    if (registered) recordEmail(email);
     window.store.set("login", registered, function() {safeCall(null, callback);});
     window.registered = registered;
   } else {
