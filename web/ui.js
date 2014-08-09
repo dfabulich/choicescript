@@ -2135,6 +2135,12 @@ if (window.isWeb) {
         fjs.parentNode.insertBefore(js, fjs);
     }(document,'script','facebook-jssdk'));
   }
+
+  (function() {
+    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+    po.src = 'https://apis.google.com/js/client:plusone.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+  })();
   
 }
 if (!isWeb && window.isIosApp) {
@@ -2313,4 +2319,17 @@ function platformCode() {
   if (window.isCef) return "cef";
   if (window.isWeb) return "web";
   return "unknown";
+}
+
+function googleLoginCallback(authResult) {
+  if (authResult['status']['signed_in']) {
+    isRegistered(function(registered) {
+      if (!registered) xhrAuthRequest("POST", "google-login", function(ok, response){
+        loginDiv(ok, response.email);
+        recordLogin(ok);
+        cacheKnownPurchases(response.purchases);
+        clearScreen(loadAndRestoreGame);
+      }, "code", authResult['code']);
+    });
+  }
 }
