@@ -1582,7 +1582,7 @@ function loginForm(target, optional, errorMessage, callback) {
                 }
               }
               if (grantedEmail) {
-                xhrAuthRequest("GET", "facebook-login", function(ok, response){
+                xhrAuthRequest("POST", "facebook-login", function(ok, response){
                   if (ok) {
                     loginDiv(ok, response.email);
                     recordLogin(ok, response.email);
@@ -1591,7 +1591,7 @@ function loginForm(target, optional, errorMessage, callback) {
                   } else {
                     asyncAlert("Sorry, we weren't able to sign you in with Facebook. (Your network connection may be down.) Please try again later, or contact support@choiceofgames.com for assistance.");
                   }
-                });
+                }, "app_id", facebookAppId);
               } else {
                 showMessage("Sorry, we require an email address to sign you in. Please grant access to your email address, or type your email address below.");
                 window.facebookReRequest = true;
@@ -1803,12 +1803,12 @@ function getPassword(target, code) {
 function facebookStatusChangeCallback(response) {
   if (response.status == "connected") {
     isRegistered(function(registered) {
-      if (!registered) xhrAuthRequest("GET", "facebook-login", function(ok, response){
+      if (!registered) xhrAuthRequest("POST", "facebook-login", function(ok, response){
         loginDiv(ok, response.email);
-        recordLogin(ok, reponse.email);
         cacheKnownPurchases(response.purchases);
+        recordLogin(ok, response.email);
         clearScreen(loadAndRestoreGame);
-      });
+      }, "app_id", facebookAppId);
     });
   }
 }
