@@ -1748,7 +1748,7 @@ function loginDiv(registered, email) {
 function isRegistered(callback) {
   if (window.isWeb) {
     return safeTimeout(function() {
-      window.registered = !!getCookieByName("login");
+      if (!window.registered) window.registered = !!getCookieByName("login");
       callback(window.registered);
     }, 0);
   } else if (initStore()) {
