@@ -1809,7 +1809,7 @@ function facebookStatusChangeCallback(response) {
         loginDiv(ok, response.email);
         cacheKnownPurchases(response.purchases);
         recordLogin(ok, response.email);
-        clearScreen(loadAndRestoreGame);
+        if (ok) clearScreen(loadAndRestoreGame);
       }, "app_id", facebookAppId);
     });
   }
