@@ -2347,7 +2347,7 @@ function googleLoginCallback(authResult) {
         recordLogin(ok, response.email);
         cacheKnownPurchases(response.purchases);
         callback("ok");
-      }, "code", authResult['code']);
+      }, "code", authResult['code'], "client_id", googleAppId);
     });
   } else {
     callback(!"ok");
