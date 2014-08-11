@@ -949,11 +949,14 @@ function checkPurchase(products, callback) {
       }
     });
   } else if (isWebPurchaseSupported()) {
-    if (window.knownPurchases) {
-      safeTimeout(function() { callback("ok", knownPurchases); }, 0);
-    } else {
-      getKnownPurchases(callback);
-    }
+    isRegistered(function (registered) {
+      if (!registered) return callback("ok", {billingSupported: true});
+      if (window.knownPurchases) {
+        safeTimeout(function() { callback("ok", knownPurchases); }, 0);
+      } else {
+        getKnownPurchases(callback);
+      }
+    });
   } else {
     var productList = products.split(/ /);
     var purchases = {};
