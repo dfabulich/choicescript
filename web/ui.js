@@ -886,6 +886,7 @@ function subscribe(target, now, callback) {
 }
 
 function cacheKnownPurchases(knownPurchases) {
+  if (!knownPurchases) return;
   var output = {billingSupported:true};
   for (i = 0; i < knownPurchases.length; i++) {
     var parts = knownPurchases[i].split(/\./);
