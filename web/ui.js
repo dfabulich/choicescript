@@ -1522,6 +1522,7 @@ function loginForm(target, optional, errorMessage, callback) {
           "<label for=passwordButton><input type=radio name=choice value=passwordButton id=passwordButton> "+
           "Yes, I have a password: <input id=password type=password name=password disabled class=needsclick style='font-size: 25px; width: 11em'></label>"+
           "<label for=forgot><input type=radio name=choice value=forgot id=forgot> I forgot my password.</label>"+
+          ((isWeb && window.facebookAppId)?"<label for=facebook><input type=radio name=choice value=facebook id=facebook> Sign in with Facebook.</label>":"")+
           ((isWeb && window.googleAppId)?"<label for=google><input type=radio name=choice value=google id=google> Sign in with Google.</label>":"")+
           (optional ? "<label for=no><input type=radio name=choice value=no id=no> Cancel.</label>" : "") +
           "</div><br>";
