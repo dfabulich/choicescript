@@ -2883,6 +2883,10 @@ Scene.prototype.functions = {
   },
   timestamp: function(value) {
     return Date.parse(value)/1000;
+  },
+  log: function(value) {
+    if (isNaN(value*1)) throw new Error(this.lineMsg()+"log() value is not a number: " + value);
+    return Math.log(value)/Math.log(10);
   }
 };
 
@@ -3259,7 +3263,7 @@ Scene.tokens = [
     {name:"CLOSE_PARENTHESIS", test:function(str){ return Scene.regexpMatch(str,/^\)/); } },
     {name:"OPEN_CURLY", test:function(str){ return Scene.regexpMatch(str,/^\{/); } },
     {name:"CLOSE_CURLY", test:function(str){ return Scene.regexpMatch(str,/^\}/); } },
-    {name:"FUNCTION", test:function(str){ return Scene.regexpMatch(str,/^(not|round|timestamp)\s*\(/); } },
+    {name:"FUNCTION", test:function(str){ return Scene.regexpMatch(str,/^(not|round|timestamp|log)\s*\(/); } },
     {name:"NUMBER", test:function(str){ return Scene.regexpMatch(str,/^\d+(\.\d+)?/); } },
     {name:"STRING", test:function(str, line) {
             var i;
@@ -3279,7 +3283,7 @@ Scene.tokens = [
     {name:"BOOLEAN_OPERATOR", test:function(str){ return Scene.regexpMatch(str,/^(and|or)\b/); } },
     {name:"VAR", test:function(str){ return Scene.regexpMatch(str,/^[a-zA-Z]\w*/); } },
     {name:"FAIRMATH", test:function(str){ return Scene.regexpMatch(str,/^%[\+\-]/); } },
-    {name:"OPERATOR", test:function(str){ return Scene.regexpMatch(str,/^[\+\-\*\/\&\%]/); } },
+    {name:"OPERATOR", test:function(str){ return Scene.regexpMatch(str,/^[\+\-\*\/\&\%\^]/); } },
     {name:"INEQUALITY", test:function(str){ return Scene.regexpMatch(str,/^[\!<>]\=?/); } },
     {name:"EQUALITY", test:function(str){ return Scene.regexpMatch(str,/^=/); } }
     //
@@ -3290,6 +3294,7 @@ Scene.operators = {
     "*": function multiply(v1,v2,line) { return num(v1,line) * num(v2,line); },
     "/": function divide(v1,v2,line) { return num(v1,line) / num(v2,line); },
     "%": function modulo(v1,v2,line) { return num(v1,line) % num(v2,line); },
+    "^": function exponent(v1,v2,line) { return Math.pow(num(v1,line), num(v2,line)); },
     "&": function concatenate(v1,v2) { return [v1,v2].join(""); },
     "%+": function fairAdd(v1, v2, line) {
         v1 = num(v1,line);
