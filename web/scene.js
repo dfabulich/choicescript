@@ -774,26 +774,30 @@ Scene.prototype.purchase = function purchase_button(data) {
           });
         }
       );
-      if (isRestorePurchasesSupported()) printLink(target, "#", "Restore Purchases",
-        function() {
-          safeCall(self, function() {
-              restorePurchases(function() {
-                checkPurchase([product], function(ok, purchases) {
-                  if (purchases[product]) {
-                    self["goto"](label);
-                    self.finished = false;
-                    self.resetPage();
-                  } else {
-                    asyncAlert("Restore completed. This product is not yet purchased.");
-                    // refresh, in case we're on web showing a full-screen login. Not necessary on mobile? But, meh.
-                    clearScreen(loadAndRestoreGame);
-                  }
-                });
-              });
-          });
-        }
-      );
       self.prevLine = "block";
+      if (isRestorePurchasesSupported()) {
+        self.prevLine = "text";
+        printLink(target, "#", "Restore Purchases",
+          function() {
+            safeCall(self, function() {
+                restorePurchases(function() {
+                  checkPurchase([product], function(ok, purchases) {
+                    if (purchases[product]) {
+                      self["goto"](label);
+                      self.finished = false;
+                      self.resetPage();
+                    } else {
+                      asyncAlert("Restore completed. This product is not yet purchased.");
+                      // refresh, in case we're on web showing a full-screen login. Not necessary on mobile? But, meh.
+                      clearScreen(loadAndRestoreGame);
+                    }
+                  });
+                });
+            });
+          }
+        );
+      }
+      
       self.skipFooter = false;
       self.finished = false;
       self.execute();
