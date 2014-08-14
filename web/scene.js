@@ -2555,7 +2555,10 @@ Scene.prototype.delay_break = function(durationInSeconds) {
   this.finished = true;
   this.skipFooter = true;
   var target = this.target;
-  if (!target) target = document.getElementById('text');
+  if (!target) {
+    target = document.createElement("p");
+    document.getElementById('text').appendChild(target);
+  }
   var self = this;
   delayBreakStart(function(delayStart) {
     var endTimeInSeconds = durationInSeconds * 1 + delayStart * 1;
