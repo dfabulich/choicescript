@@ -599,9 +599,9 @@ function moreGames() {
     } else {
       try {
         if (window.isChromeApp) {
-          window.open("http://www.choiceofgames.com/category/our-games/");
+          window.open("https://www.choiceofgames.com/category/our-games/");
         } else {
-          window.location.href = "http://www.choiceofgames.com/category/our-games/";
+          window.location.href = "https://www.choiceofgames.com/category/our-games/";
         }
       } catch (e) {
         // in xulrunner, this will be blocked, but it will trigger opening the external browser
@@ -2309,7 +2309,7 @@ if (window.isWinStoreApp) {
     baseScript.onload = function () {
         WinJS.Application.onsettings = function (e) {
             var privacyCmd = new Windows.UI.ApplicationSettings.SettingsCommand("privacy", "Privacy Policy", function () {
-                window.open("http://www.choiceofgames.com/privacy-policy");
+                window.open("https://www.choiceofgames.com/privacy-policy");
             });
             e.detail.e.request.applicationCommands.append(privacyCmd);
         };
