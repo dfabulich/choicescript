@@ -821,7 +821,7 @@ function subscribe(target, now, callback) {
           });
         }
       };
-      var mailParams = "u=eba910fddc9629b2810db6182&id=e9cdee1aaa&SIGNUP="+window.storeName+"-"+platformCode()+"&EMAIL="+email;
+      var mailParams = "u=eba910fddc9629b2810db6182&id=e9cdee1aaa&SIGNUP="+window.storeName+"-"+platformCode()+"&EMAIL="+encodeURIComponent(email);
       if (window.isChromeApp) {
         chrome.permissions.contains({origins: ["http://choiceofgames.us4.list-manage.com/"]},function(isXhrAllowed) {
           if (isXhrAllowed) {
