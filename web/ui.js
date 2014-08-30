@@ -60,7 +60,7 @@ function showStats() {
       return;
     }
     var currentScene = window.stats.scene;
-    var scene = new Scene("choicescript_stats", window.stats, this.nav, {secondaryMode:"stats"});
+    var scene = new Scene("choicescript_stats", window.stats, this.nav, {secondaryMode:"stats", saveSlot:"temp"});
     main.innerHTML = "<div id='text'></div>";
     scene.execute();
 }

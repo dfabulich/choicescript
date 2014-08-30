@@ -37,6 +37,8 @@ function Scene(name, stats, nav, options) {
     // used for stats screen, and maybe other secondary views someday
     this.secondaryMode = options.secondaryMode;
 
+    this.saveSlot = options.saveSlot || "";
+
     // the array of lines in the scene file
     this.lines = [];
 
@@ -129,7 +131,7 @@ Scene.prototype.printLoop = function printLoop() {
     if (!this.finished) {
         this.autofinish();
     }
-	this.save(null, "temp");
+    this.save(null, "temp");
     if (this.skipFooter) {
         this.skipFooter = false;
     } else {
@@ -547,12 +549,55 @@ Scene.prototype.resetPage = function resetPage() {
     }, "");
 };
 
+/* The function needs some explaining.
+We want the game to be "refreshable," e.g. on the web.
+So we only make a "real" autosave as you click "Next"
+But if we do it that way, when we visit the stat screen, it's out of date
+So we make a "temp" autosave slot, right as the page finishes redrawing,
+and the stat screen uses the "temp" autosave to display your current data.
+When you refresh the page, the "temp" autosave is rewritten.
+
+If you save stats on the stat screen, they're written into the "temp" autosave
+In addition, setVar will mark a special choice_dirty_stats variable, to indicate
+that there's something important in the "temp" autosave slot.
+
+Back in the main game, we load the temp save slot when saving the either the
+main autosave slot or the temp save slot.
+
+If the main game is about to rewrite the temp
+slot, but the temp slot has dirty stats (written by the stat screen), then
+skip saving temp. Otherwise, save the temp slot normally.
+
+If the main game is about to write the main slot, clear the old temp slot,
+and save the temp stats as the "real" autosave slot.
+
+Thus, stat changes on the stat screen will only be permanently saved when
+the player clicks "Next" in the main game, ensuring that the game is still
+refreshable.
+*/
 Scene.prototype.save = function save(callback, slot) {
-    // don't save on secondary screens
-    if (this.secondaryMode) {
-      if (callback) callback.call(this);
+    if (!slot) slot = this.saveSlot;
+    var self = this;
+    if (this.saveSlot) {
+      saveCookie(callback, slot, self.stats, self.temps, self.lineNum, self.indent, self.debugMode, self.nav);
     } else {
-      saveCookie(callback, slot, this.stats, this.temps, this.lineNum, this.indent, this.debugMode, this.nav);
+      loadTempStats(this.stats, function(stats) {
+        if (slot == "temp") {
+          if (stats.choice_dirty_stats) {
+            safeTimeout(callback, 0);
+          } else {
+            saveCookie(callback, "temp", stats, self.temps, self.lineNum, self.indent, self.debugMode, self.nav);
+          }
+        } else {
+          clearTemp();
+          delete stats.choice_dirty_stats;
+          stats.sceneName = self.name;
+          stats.scene = self;
+          self.stats = stats;
+          window.stats = stats;
+          saveCookie(callback, slot, stats, self.temps, self.lineNum, self.indent, self.debugMode, self.nav);
+        }
+      });
     }
 };
 
@@ -896,6 +941,7 @@ Scene.prototype.setVar = function setVar(variable, value) {
             throw new Error(this.lineMsg() + "Non-existent variable '"+variable+"'");
         }
         this.stats[variable] = value;
+        if (this.saveSlot == "temp") this.stats.choice_dirty_stats = true;
     } else {
         this.temps[variable] = value;
     }

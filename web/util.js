@@ -673,17 +673,23 @@ function restartGame(shouldPrompt) {
 function restoreGame(state, forcedScene, userRestored) {
     var scene;
     var secondaryMode = null;
-    if (forcedScene == "choicescript_stats") secondaryMode = "stats";
-    if (forcedScene == "choicescript_upgrade") secondaryMode = "upgrade";
+    var saveSlot = "";
+    if (forcedScene == "choicescript_stats") {
+      secondaryMode = "stats";
+      saveSlot = "temp";
+    } else if (forcedScene == "choicescript_upgrade") {
+      secondaryMode = "upgrade";
+      saveSlot = "temp";
+    }
     if (!isStateValid(state)) {
         var startupScene = forcedScene ? forcedScene : window.nav.getStartupScene();
-        scene = new Scene(startupScene, window.stats, window.nav, {debugMode:window.debug, secondaryMode:secondaryMode});
+        scene = new Scene(startupScene, window.stats, window.nav, {debugMode:window.debug, secondaryMode:secondaryMode, saveSlot:saveSlot});
         safeCall(scene, scene.execute);
     } else {
       if (forcedScene) state.stats.sceneName = forcedScene;
       window.stats = state.stats;
       // Someday, inflate the navigator using the state object
-      scene = new Scene(state.stats.sceneName, state.stats, window.nav, {debugMode:state.debug || window.debug, secondaryMode:secondaryMode});
+      scene = new Scene(state.stats.sceneName, state.stats, window.nav, {debugMode:state.debug || window.debug, secondaryMode:secondaryMode, saveSlot:saveSlot});
       if (!forcedScene) {
         scene.temps = state.temps;
         scene.lineNum = state.lineNum;
@@ -694,6 +700,28 @@ function restoreGame(state, forcedScene, userRestored) {
       }
       safeCall(scene, scene.execute);
     }
+}
+
+function loadTempStats(defaultValue, callback) {
+  if (!initStore()) return safeTimeout(function() {callback(defaultValue);}, 0);
+  window.store.get("statetemp", function(ok, value) {
+    var state = {};
+    if (ok && value && String(value)) {
+      try {
+        state = jsonParse(value);
+      } catch (e) {}
+    }
+    if (state && state.stats) {
+      callback(state.stats);
+    } else {
+      callback(defaultValue);
+    }
+  });
+}
+
+function clearTemp(callback) {
+  if (!initStore()) return safeTimeout(callback, 0);
+  window.store.remove("statetemp", callback);
 }
 
 function getCookieByName(cookieName, ck) {
