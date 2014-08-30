@@ -756,7 +756,7 @@ Scene.prototype.redirect_scene = function redirectScene(data) {
   this.finished = true;
   this.skipFooter = true;
   var self = this;
-  redirectFromStats(sceneName, label, function() {
+  redirectFromStats(sceneName, label, this.lineNum, function() {
     delete self.secondaryMode;
     self.goto_scene(data);
   });
