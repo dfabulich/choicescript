@@ -65,6 +65,14 @@ function showStats() {
     scene.execute();
 }
 
+function redirectFromStats(scene, label, callback) {
+  if (window.isIosApp) {
+    callIos("redirectFromStats", scene, label);
+  } else {
+    safeTimeout(callback, 0);
+  }
+}
+
 function showAchievements(hideNextButton) {
   if (document.getElementById('loading')) return;
   var button = document.getElementById("achievementsButton");

@@ -742,6 +742,26 @@ Scene.prototype.goto_scene = function gotoScene(data) {
     scene.execute();
 };
 
+// *redirect_scene foo
+Scene.prototype.redirect_scene = function redirectScene(data) {
+  if (this.secondaryMode != "stats") throw new Error(this.lineMsg() + "The *redirect_scene command can only be used from the stats screen.");
+  var args = trim(data).split(/ /);
+  var sceneName, label;
+  if (args.length == 1) {
+    sceneName = data;
+  } else {
+    sceneName = args[0];
+    label = args[1];
+  }
+  this.finished = true;
+  this.skipFooter = true;
+  var self = this;
+  redirectFromStats(sceneName, label, function() {
+    delete self.secondaryMode;
+    self.goto_scene(data);
+  });
+};
+
 Scene.prototype.restore_purchases = function scene_restorePurchases(data) {
   var self = this;
   var target = this.target;
@@ -3403,5 +3423,5 @@ Scene.validCommands = {"comment":1, "goto":1, "gotoref":1, "label":1, "looplimit
     "save_game":1,"delay_break":1,"image":1,"link":1,"input_number":1,"goto_random_scene":1,
     "restart":1,"more_games":1,"delay_ending":1,"end_trial":1,"login":1,"achieve":1,"scene_list":1,"title":1,
     "bug":1,"link_button":1,"check_registration":1,"sound":1,"author":1,"gosub_scene":1,"achievement":1,
-    "check_achievements":1
+    "check_achievements":1,"redirect_scene":1
     };
