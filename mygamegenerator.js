@@ -79,7 +79,7 @@ function parseAchievement(data, lines, lineNum) {
 
 var lines = slurpFileLines("web/"+gameDir+"/scenes/startup.txt");
 var stats = {}, purchases = {};
-var scenes;
+var scenes = ["startup"];
 var create = /^\*create +(\w+) +(.*)/;
 var result, variable, value;
 var achievements = [];
