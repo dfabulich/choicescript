@@ -68,7 +68,9 @@ function showStats() {
 function redirectFromStats(scene, label, originLine, callback) {
   if (window.isIosApp) {
     if (!label) label = "";
-    callIos("redirectFromStats", scene + " " +label  + " " + originLine);
+    callIos("redirectfromstats", scene + " " +label  + " " + originLine);
+  } else if (window.isAndroidApp) {
+    statsMode.redirectFromStats(scene, label || "", originLine);
   } else {
     safeTimeout(callback, 0);
   }
