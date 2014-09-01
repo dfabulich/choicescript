@@ -257,10 +257,11 @@ function computeCookie(stats, temps, lineNum, indent) {
 }
 
 function writeCookie(value, slot, callback) {
+  if (!window.pseudoSave) window.pseudoSave = {};
   if (!slot) {
-    window.cachedValue = value;
     slot = "";
   }
+  window.pseudoSave[slot] = value;
   if (!initStore()) {
     if (callback) safeTimeout(callback, 0);
     return;
@@ -614,7 +615,7 @@ function loadAndRestoreGame(slot, forcedScene) {
     });
   }
   if (!slot) slot = "";
-  if (window.cachedValue) return valueLoaded(true, window.cachedValue);
+  if (window.pseudoSave && pseudoSave[""]) return valueLoaded(true, pseudoSave[""]);
   if (!initStore()) return restoreGame(null, forcedScene);
   window.store.get("state"+slot, valueLoaded);
 }
@@ -709,8 +710,7 @@ function redirectScene(sceneName, label, originLine) {
 }
 
 function loadTempStats(defaultValue, callback) {
-  if (!initStore()) return safeTimeout(function() {callback(defaultValue);}, 0);
-  window.store.get("statetemp", function(ok, value) {
+  function valueLoaded(ok, value) {
     var state = {};
     if (ok && value && String(value)) {
       try {
@@ -722,7 +722,16 @@ function loadTempStats(defaultValue, callback) {
     } else {
       callback(defaultValue);
     }
-  });
+  }
+  if (window.pseudoSave && window.pseudoSave["temp"]) {
+    return safeTimeout(function() {
+      valueLoaded("ok", pseudoSave["temp"]);
+    }, 0);
+  } else if (!initStore()) {
+    return safeTimeout(function() {callback(defaultValue);}, 0);
+  } else {
+    window.store.get("statetemp", valueLoaded);
+  }
 }
 
 function clearTemp(callback) {
