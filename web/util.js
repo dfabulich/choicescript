@@ -723,12 +723,14 @@ function loadTempStats(defaultValue, callback) {
       callback(defaultValue);
     }
   }
-  if (window.pseudoSave && window.pseudoSave["temp"]) {
-    return safeTimeout(function() {
-      valueLoaded("ok", pseudoSave["temp"]);
-    }, 0);
-  } else if (!initStore()) {
-    return safeTimeout(function() {callback(defaultValue);}, 0);
+  if (!initStore()) {
+    if (window.pseudoSave && window.pseudoSave["temp"]) {
+      return safeTimeout(function() {
+        valueLoaded("ok", pseudoSave["temp"]);
+      }, 0);
+    } else {
+      return safeTimeout(function() {callback(defaultValue);}, 0);
+    }
   } else {
     window.store.get("statetemp", valueLoaded);
   }
