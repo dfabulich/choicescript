@@ -586,7 +586,7 @@ Scene.prototype.save = function save(callback, slot) {
           if (stats.choice_dirty_stats) {
             safeTimeout(callback, 0);
           } else {
-            saveCookie(callback, "temp", stats, self.temps, self.lineNum, self.indent, self.debugMode, self.nav);
+            saveCookie(callback, "temp", self.stats, self.temps, self.lineNum, self.indent, self.debugMode, self.nav);
           }
         } else {
           clearTemp();
@@ -1443,7 +1443,7 @@ Scene.prototype.input_text = function input_text(variable) {
         if (self.nav) self.nav.bugLog.push("*input_text " + variable + " " + value);
         self.setVar(variable, value);
         self.finished = false;
-        self.resetPage();
+        self.save(function() {self.resetPage();}, "temp");
       });
     });
     if (this.debugMode) println(toJson(this.stats));
