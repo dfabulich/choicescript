@@ -33,6 +33,7 @@ function autotester(sceneText, nav, sceneName, extraLabels) {
 
   Scene.prototype.page_break = function() {};
   Scene.prototype.subscribe = function() {};
+  Scene.prototype.save = function(callback) { if (callback) callback.call(); };
   Scene.prototype.restore_game = function() {};
   Scene.prototype.restore_purchases = function() {};
   Scene.prototype.purchase = function(data) {
