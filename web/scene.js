@@ -594,7 +594,7 @@ Scene.prototype.save = function save(callback, slot) {
           stats.sceneName = self.name;
           stats.scene = self;
           self.stats = stats;
-          window.stats = stats;
+          if (typeof window != "undefined") window.stats = stats;
           saveCookie(callback, slot, stats, self.temps, self.lineNum, self.indent, self.debugMode, self.nav);
         }
       });

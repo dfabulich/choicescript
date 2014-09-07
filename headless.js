@@ -34,6 +34,8 @@ isRhino = typeof(java) != "undefined";
 
 clearScreen = function clearScreen(code) {code.call();};
 saveCookie = function(callback) { if (callback) callback.call(); };
+loadTempStats = function (stats, callback) { if (callback) callback.call(null, stats); };
+clearTemp = function() {};
 doneLoading = function() {};
 printFooter = function() {};
 printShareLinks = function() {};

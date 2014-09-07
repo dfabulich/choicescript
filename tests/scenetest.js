@@ -424,7 +424,6 @@ test("errorNoExpression", function() {
     doh.assertError(Error, scene, "execute", null, "No expression");
 })
 test("setRef", function() {
-    debugger;
     var scene = new Scene();
     scene.loadLines("*temp foo 0\n*temp bar 0\n*set foo \"bar\"\n*setref foo 2");
     scene.execute();
