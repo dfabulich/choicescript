@@ -1014,10 +1014,8 @@ function getPrice(product, callback) {
     window.priceCallback = callback;
     callIos("price", product);
   } else if (window.isAndroidApp) {
-      // TODO: support android price localization?
-    safeTimeout(function () {
-      callback.call(this, "guess");
-    }, 0);
+    window.priceCallback = callback;
+    androidBilling.getPrice(product);
   } else {
     safeTimeout(function () {
       callback.call(this, "guess");
