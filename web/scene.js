@@ -430,7 +430,7 @@ Scene.prototype.runCommand = function runCommand(line) {
     if (Scene.validCommands[command]) {
         if ("comment" == command) return true;
         if (Scene.initialCommands[command]) {
-          if ("startup" != this.name || !this.screenEmpty || !this.initialCommands) {
+          if ("startup" != this.name || !this.initialCommands) {
             throw new Error(this.lineMsg() + "Invalid "+command+" instruction, only allowed at the top of startup.txt");
           }
         } else {
