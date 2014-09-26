@@ -24,6 +24,14 @@ if (typeof process != "undefined") {
 
 function compile(){
 
+  function safeSlurpFile(file) {
+    try {
+      return slurpFile(file);
+    } catch (e) {
+      return null;
+    }
+  }
+
   //1. Grab the game's html file
   var url = "web/mygame/index.html";
   var game_html = slurpFile(url);
@@ -36,7 +44,7 @@ function compile(){
   console.log("\nExtracting js data from:");
   while (doesMatch = patt.exec(game_html)) {
     console.log(doesMatch[1]);
-    next_file = slurpFile('web/mygame/' + doesMatch[1]);
+    next_file = safeSlurpFile('web/mygame/' + doesMatch[1]);
     if (next_file != "undefined" && next_file !== null) {
       jsStore = jsStore + next_file;
     }
@@ -76,6 +84,7 @@ function compile(){
     addFile(nav._sceneList[i] + ".txt");
   }
   verifyFileName("choicescript_stats.txt");
+  verifyFileName("choicescript_upgrade.txt");
   
   //Check startup.txt for a *scene_list
   var sceneList = false;
@@ -99,7 +108,6 @@ function compile(){
   }
   
   for (i in knownScenes) {
-    if (knownScenes[i] == 'choicescript_upgrade.txt') continue;
     console.log(knownScenes[i]);
   }
     
@@ -129,8 +137,11 @@ function compile(){
   console.log("Combining scene files...");
   var scene_data = "";
   for (var i = 0; i < knownScenes.length; i++) {
-    if (knownScenes[i] == 'choicescript_upgrade.txt') continue;
-      scene_data = slurpFile('web/mygame/scenes/' + knownScenes[i]);
+      scene_data = safeSlurpFile('web/mygame/scenes/' + knownScenes[i]);
+      if (scene_data === null) {
+        if ("choicescript_upgrade.txt" === knownScenes[i]) continue;
+        throw new Error("Couldn't find file " + 'web/mygame/scenes/' + knownScenes[i]);
+      }
       var scene = new Scene();
       scene.loadLines(scene_data);
       var sceneName = knownScenes[i].replace(/\.txt/gi,"");
