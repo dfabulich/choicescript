@@ -354,6 +354,7 @@ function clearScreen(code) {
           document.body.firstElementChild.scrollIntoView();
         } else {
           window.scrollTo(0,0);
+          text.focus();
         }
       }, 0);
       safeCall(null, code);
