@@ -35,12 +35,10 @@ function compile(){
   var jsStore = "";
   console.log("\nExtracting js data from:");
   while (doesMatch = patt.exec(game_html)) {
-    if (doesMatch[1] != "../version.js") {
-      console.log(doesMatch[1]);
-      next_file = slurpFile('web/mygame/' + doesMatch[1]);
-        if (next_file != "undefined" && next_file !== null) {
-          jsStore = jsStore + next_file;
-        }
+    console.log(doesMatch[1]);
+    next_file = slurpFile('web/mygame/' + doesMatch[1]);
+    if (next_file != "undefined" && next_file !== null) {
+      jsStore = jsStore + next_file;
     }
   }
   
