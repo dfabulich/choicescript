@@ -1038,7 +1038,8 @@ function purchase(product, callback) {
     callIos("purchase", product);
   } else if (window.isAndroidApp) {
     window.purchaseCallback = purchaseCallback;
-    androidBilling.purchase(product);
+    var androidStackTrace = androidBilling.purchase(product);
+    if (androidStackTrace) throw new Error(androidStackTrace);
   } else if (window.isWinOldApp) {
     window.external.Purchase(product);
   } else if (window.isMacApp && window.macPurchase) {
