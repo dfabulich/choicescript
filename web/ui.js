@@ -354,7 +354,11 @@ function clearScreen(code) {
           document.body.firstElementChild.scrollIntoView();
         } else {
           window.scrollTo(0,0);
-          text.focus();
+          if (window.isIosApp || (window.isSafari && window.isMobile)) {
+            // focus on text for iOS Voiceover
+            text.setAttribute("tabindex", "-1");
+            text.focus();
+          }
         }
       }, 0);
       safeCall(null, code);
