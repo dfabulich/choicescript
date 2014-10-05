@@ -354,7 +354,7 @@ function clearScreen(code) {
           document.body.firstElementChild.scrollIntoView();
         } else {
           window.scrollTo(0,0);
-          if (window.isIosApp || (window.isSafari && window.isMobile)) {
+          if (window.isIosApp || (window.isSafari && window.isMobile && !window.isAndroid)) {
             // focus on text for iOS Voiceover
             text.setAttribute("tabindex", "-1");
             text.focus();
@@ -1932,6 +1932,7 @@ try {
   isWinOldApp = window.external.IsWinOldApp();
 } catch (ignored) {}
 window.isWeb = !isWinOldApp && /^https?:/.test(window.location.href);
+window.isAndroid = /Android/.test(navigator.userAgent);
 window.isSecureWeb = /^https:?$/.test(window.location.protocol);
 window.isSafari = /Safari/.test(navigator.userAgent);
 window.isIE = /(MSIE|Trident)/.test(navigator.userAgent);
