@@ -2,13 +2,13 @@ if (typeof load == "undefined") {
   fs = require("fs");
   vm = require("vm");
   vm.runInThisContext(fs.readFileSync("headless.js"), "headless.js");
-  print = console.log;
   args = process.argv;
   args.shift();
   args.shift();
 } else {
   load("headless.js");
   args = arguments;
+  console = {log: print};
 }
 
 gameDir = args[0] || "mygame";
@@ -111,66 +111,29 @@ for (var i = 0; i < lines.length; i++) {
   }
 }
 
-var mygameBuffer = ["\ufeffnav = new SceneNavigator(["];
+console.log("\ufeffnav = new SceneNavigator(");
 
-for (var i = 0; i < scenes.length; i++) {
-  if (i > 0) mygameBuffer.push(',\n');
-  mygameBuffer.push('"', scenes[i], '"');
-}
-
-mygameBuffer.push("]);\nstats = {");
-var first = true;
-for (var stat in stats) {
-  if (first) {
-    first = false;
-  } else {
-    mygameBuffer.push(",\n");
-  }
-  mygameBuffer.push('"', stat, "\":");
-  if (typeof stats[stat] == "string") {
-    mygameBuffer.push('"', stats[stat], '"');
-  } else {
-    mygameBuffer.push(stats[stat]);
-  }
+function logJson(x) {
+  var json = JSON.stringify(x, null, " ");
+  json = json.replace(/[\u007f-\uffff]/g, function(c) {
+    return '\\u'+('0000'+c.charCodeAt(0).toString(16)).slice(-4);
+  });
+  console.log(json);
 }
 
-mygameBuffer.push("};\npurchases = {");
-var first = true;
-for (var purchase in purchases) {
-  if (first) {
-    first = false;
-  } else {
-    mygameBuffer.push(",\n");
-  }
-  mygameBuffer.push('"', purchase, "\":\"", purchases[purchase], "\"");
-}
-mygameBuffer.push("};\nachievements = [");
-for (i = 0; i < achievements.length; i++) {
-  var achievement = achievements[i];
-  if (i) {
-    mygameBuffer.push(",");
-  }
-  mygameBuffer.push("\n  ['");
-  mygameBuffer.push(achievement[0]);
-  mygameBuffer.push("',");
-  mygameBuffer.push(achievement[1]);
-  mygameBuffer.push(",");
-  mygameBuffer.push(achievement[2]);
-  mygameBuffer.push(",'");
-  mygameBuffer.push(achievement[3].replace(/([\\'])/g, "\\$1"));
-  mygameBuffer.push("','");
-  mygameBuffer.push(achievement[4].replace(/([\\'])/g, "\\$1"));
-  mygameBuffer.push("',");
-  if (achievement[5] === null) {
-    mygameBuffer.push("null");
-  } else {
-    mygameBuffer.push("'");
-    mygameBuffer.push(achievement[5].replace(/([\\'])/g, "\\$1"));
-    mygameBuffer.push("'");
-  }
-  mygameBuffer.push("]");
-}
-mygameBuffer.push("];");
-print(mygameBuffer.join(""));
+logJson(scenes);
+
+console.log(");\nstats = ");
+
+logJson(stats);
+
+console.log(";\npurchases = ");
+
+logJson(purchases);
+
+console.log(";\nachievements = ");
+logJson(achievements);
+console.log(";");
+
 
 
