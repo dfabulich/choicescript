@@ -55,6 +55,7 @@ function parseAchievement(data, lines, lineNum) {
   var visible = (visibility != "hidden");
   parsed[2] = visible;
   var pointString = parsed[3];
+  parsed[3] = pointString*1;
   var title = parsed[4];
   var line = lines[++lineNum];
   var preEarnedDescription = line.trim();
