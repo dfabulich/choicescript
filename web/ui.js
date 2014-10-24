@@ -125,7 +125,7 @@ function showMenu() {
         aboutClick();
       } else if (option.moreGames) {
         moreGames();
-        setTimeout(function() {callIos("curl");}, 0);
+        curl();
       } else if (option.share) {
         clearScreen(function() {
           printShareLinks(document.getElementById("text"), "now");
@@ -292,6 +292,19 @@ function callIos(scheme, path) {
   }, 0);
 }
 
+// in the iOS app, display a page curl animation
+function curl() {
+  if (!window.isIosApp) return;
+  // force a reflow before curling the page
+  var body = document.body;
+  body.appendChild(document.createElement("style"));
+  body.display = "none";
+  var forceReflow = body.offsetHeight;
+  body.display = "";
+  
+  setTimeout(function() {callIos("curl", document.body.offsetHeight);}, 0);
+}
+
 function asyncAlert(message, callback) {
   if (!callback) callback = function(){};
   if (window.isIosApp) {
@@ -420,7 +433,7 @@ function printFooter() {
       }
     }
   }
-  setTimeout(function() {callIos("curl");}, 0);
+  curl();
 }
 
 // retrieve value of HTML form
@@ -1464,7 +1477,7 @@ function promptEmailAddress(target, defaultEmail, callback) {
     });
   };
 
-  setTimeout(function() {callIos("curl");}, 0);
+  curl();
 }
 
 function loginForm(target, optional, errorMessage, callback) {

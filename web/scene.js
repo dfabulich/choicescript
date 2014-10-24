@@ -1714,7 +1714,7 @@ Scene.prototype.ending = function ending() {
           return;
         } else if (option.moreGames) {
           self.more_games("now");
-          setTimeout(function() {callIos("curl");}, 0);
+          if (typeof curl != "undefined") curl();
         } else if (option.share) {
           clearScreen(function() {
             self.share_this_game("now");
@@ -2678,7 +2678,7 @@ Scene.prototype.delay_ending = function(data) {
         printOptions([""], options, function(option) {
           if (option == playMoreGames) {
             self.more_games("now");
-            setTimeout(function() {callIos("curl");}, 0);
+            if (typeof curl != "undefined") curl();
           } else if (option == emailMe) {
             subscribeLink();
           } else if (option == upgradeSkip) {
