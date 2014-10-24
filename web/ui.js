@@ -302,7 +302,7 @@ function curl() {
   var forceReflow = body.offsetHeight;
   body.display = "";
   
-  setTimeout(function() {callIos("curl", document.body.offsetHeight);}, 0);
+  setTimeout(function() {callIos("curl", document.body.offsetHeight);}, 10);
 }
 
 function asyncAlert(message, callback) {
