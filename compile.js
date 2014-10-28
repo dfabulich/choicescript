@@ -7,17 +7,20 @@ var loadFailed = false;
 if (typeof process != "undefined") {
   var outputFile = process.argv[2];
   if (!outputFile) throw new Error("Specify an output file on the command line");
+  var rootDir = process.argv[3];
+  if (!rootDir) rootDir = "web";
+  rootDir += "/";
   fs = require('fs');
   path = require('path');
   vm = require('vm');
   load = function(file) {
     vm.runInThisContext(fs.readFileSync(file), file);
   };
-  load("web/scene.js");
-  load("web/navigator.js");
-  load("web/util.js");
+  load(rootDir+ "scene.js");
+  load(rootDir+"navigator.js");
+  load(rootDir+"util.js");
   load("headless.js");
-  load("web/mygame/mygame.js");
+  load(rootDir+"mygame/mygame.js");
   fs.writeFileSync(outputFile, compile(), "utf8");
 }
 
@@ -33,7 +36,7 @@ function compile(){
   }
 
   //1. Grab the game's html file
-  var url = "web/mygame/index.html";
+  var url = rootDir+"mygame/index.html";
   var game_html = slurpFile(url);
     
   //2. Find and extract all .js file data
@@ -44,7 +47,7 @@ function compile(){
   console.log("\nExtracting js data from:");
   while (doesMatch = patt.exec(game_html)) {
     console.log(doesMatch[1]);
-    next_file = safeSlurpFile('web/mygame/' + doesMatch[1]);
+    next_file = safeSlurpFile(rootDir+'mygame/' + doesMatch[1]);
     if (next_file != "undefined" && next_file !== null) {
       jsStore = jsStore + next_file;
     }
@@ -59,7 +62,7 @@ function compile(){
   while (doesMatch = patt.exec(game_html)) {
     // console.log(doesMatch[0]);
     console.log(doesMatch[1]);
-    next_file = slurpFile('web/mygame/' + doesMatch[1]);
+    next_file = slurpFile(rootDir+'mygame/' + doesMatch[1]);
     if (next_file != "undefined" && next_file !== null) {
       cssStore = cssStore + next_file;
     }
@@ -89,7 +92,7 @@ function compile(){
   //Check startup.txt for a *scene_list
   var sceneList = false;
   scene = new Scene("startup");
-  var scene_data = slurpFile('web/mygame/scenes/startup.txt');
+  var scene_data = slurpFile(rootDir+'mygame/scenes/startup.txt');
   scene.loadLines(scene_data);
   patt = /^\*scene_list$/gim;
   for (i = 0; i < scene["lines"].length; i++) {
@@ -137,10 +140,10 @@ function compile(){
   console.log("Combining scene files...");
   var scene_data = "";
   for (var i = 0; i < knownScenes.length; i++) {
-      scene_data = safeSlurpFile('web/mygame/scenes/' + knownScenes[i]);
+      scene_data = safeSlurpFile(rootDir+'mygame/scenes/' + knownScenes[i]);
       if (scene_data === null) {
         if ("choicescript_upgrade.txt" === knownScenes[i]) continue;
-        throw new Error("Couldn't find file " + 'web/mygame/scenes/' + knownScenes[i]);
+        throw new Error("Couldn't find file " + 'mygame/scenes/' + knownScenes[i]);
       }
       var scene = new Scene();
       scene.loadLines(scene_data);
