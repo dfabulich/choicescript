@@ -369,8 +369,8 @@ function clearScreen(code) {
           window.scrollTo(0,0);
           if (window.isIosApp || (window.isSafari && window.isMobile && !window.isAndroid)) {
             // focus on text for iOS Voiceover
-            text.setAttribute("tabindex", "-1");
-            text.focus();
+            main.setAttribute("tabindex", "-1");
+            main.focus();
           }
         }
       }, 0);
