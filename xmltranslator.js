@@ -19,9 +19,13 @@ if (typeof xmlTranslatorTestOverride == "undefined") {
     load("web/util.js");
     load("headless.js");
   } else {
-    eval(fs.readFileSync("web/scene.js", "utf-8"));
-    eval(fs.readFileSync("web/util.js", "utf-8"));
-    eval(fs.readFileSync("headless.js", "utf-8"));
+    vm = require('vm');
+    load = function(file) {
+      vm.runInThisContext(fs.readFileSync(file), file);
+    };
+    load("web/scene.js");
+    load("web/util.js");
+    load("headless.js");
   }
 }
 
