@@ -853,6 +853,7 @@ if (typeof xmlTranslatorTestOverride != "undefined") {
     print(list[i]);
     var str = slurpFile(filePath);
     var scene = new XmlScene();
+    scene.name = fileName.replace(/\.txt$/i, "");
     scene.loadLines(str);
     var writer;
     if (isRhino) {
