@@ -618,6 +618,8 @@ function moreGames() {
       } else {
         window.location.href = "market://search?q=pub:%22Choice+of+Games+LLC";
       }
+    } else if (window.isSteamApp) {
+      window.location.href = "https://www.choiceofgames.com/steam-curation.php";
     } else {
       try {
         if (window.isChromeApp) {
