@@ -294,15 +294,8 @@ function callIos(scheme, path) {
 
 // in the iOS app, display a page curl animation
 function curl() {
-  if (!window.isIosApp) return;
-  // force a reflow before curling the page
-  var body = document.body;
-  body.appendChild(document.createElement("style"));
-  body.display = "none";
-  var forceReflow = body.offsetHeight;
-  body.display = "";
-  
-  setTimeout(function() {callIos("curl", document.body.offsetHeight);}, 10);
+  // TODO force a reflow before curling the page
+  callIos("curl");
 }
 
 function asyncAlert(message, callback) {
