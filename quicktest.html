@@ -326,6 +326,16 @@ function testScene(sceneNum) {
         console.log("UNTESTED " + uncoveredScene.name + " " + uncoveredScene.lines[j]);
       };
     }
+    (function() {
+      if (nav.achievementList && nav.achievementList.length) {
+        for (var i = 0; i < nav.achievementList.length; i++) {
+          var name = nav.achievementList[i];
+          if (!nav.achieved[name]) {
+            console.log("UNUSED achievement: " + name);
+          }
+        }
+      }
+    })();
     if (!allLinesTested) console.log("SOME LINES UNTESTED");
     if (!titleIncluded) console.log("MISSING *TITLE COMMAND");
     if (!authorIncluded) console.log("MISSING *AUTHOR COMMAND");
