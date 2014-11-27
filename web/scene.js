@@ -3372,7 +3372,7 @@ Scene.operators = {
     "%+": function fairAdd(v1, v2, line) {
         v1 = num(v1,line);
         v2 = num(v2,line);
-        var validValue = (v1 > 0 && v1 < 100);
+        var validValue = (v1 >= 0 && v1 <= 100);
         if (!validValue) {
             throw new Error("line "+line+": Can't fairAdd to non-percentile value: " + v1);
         }
@@ -3386,7 +3386,7 @@ Scene.operators = {
     "%-": function fairSubtract(v1, v2, line) {
         v1 = num(v1,line);
         v2 = num(v2,line);
-        var validValue = (v1 > 0 && v1 < 100);
+        var validValue = (v1 >= 0 && v1 <= 100);
         if (!validValue) {
             throw new Error("line "+line+": Can't fairAdd to non-percentile value: " + v1);
         }
