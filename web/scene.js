@@ -1500,7 +1500,7 @@ Scene.prototype.input_number = function input_number(data) {
         if (self.nav) self.nav.bugLog.push("*input_number " + variable + " " + value);
         self.setVar(variable, numValue);
         self.finished = false;
-        self.resetPage();
+        self.save(function() {self.resetPage();}, "temp");
       });
     }, minimum, maximum, intRequired);
     if (this.debugMode) println(toJson(this.stats));
