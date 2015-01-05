@@ -286,6 +286,7 @@ function callIos(scheme, path) {
   setTimeout(function() {
     var iframe = document.createElement("IFRAME");
     iframe.setAttribute("src", scheme + "://" + path);
+    iframe.setAttribute("style", "display:none");
     document.documentElement.appendChild(iframe);
     iframe.parentNode.removeChild(iframe);
     iframe = null;
