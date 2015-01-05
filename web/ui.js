@@ -2064,7 +2064,7 @@ window.onload=function() {
       window.slot = map.slot;
       window.debug = map.debug;
       if (map.restart) {
-        restoreGame(null, forcedScene);
+        restartGame();
       } else if (map.achievements) {
         doneLoading();
         showAchievements("hideNextButton");
