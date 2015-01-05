@@ -566,7 +566,8 @@ main autosave slot or the temp save slot.
 
 If the main game is about to rewrite the temp
 slot, but the temp slot has dirty stats (written by the stat screen), then
-skip saving temp. Otherwise, save the temp slot normally.
+we must be returning from the stats screen, so skip saving temp.
+Otherwise, save the temp slot normally.
 
 If the main game is about to write the main slot, clear the old temp slot,
 and save the temp stats as the "real" autosave slot.
