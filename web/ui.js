@@ -1419,7 +1419,15 @@ function printInput(target, inputType, callback, minimum, maximum, step) {
             asyncAlert("Don't just leave it blank!  Type something!");
             return;
         }
-        safeCall(null, function() {callback(input.value);});
+        if (window.isIosApp) {
+          window.freezeCallback = function() {
+            window.freezeCallback = null;
+            safeCall(null, function() {callback(input.value);});
+          };
+          callIos("freeze");
+        } else {
+          safeCall(null, function() {callback(input.value);});
+        }
         return false;
     };
 
