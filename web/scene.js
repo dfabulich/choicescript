@@ -872,8 +872,11 @@ Scene.prototype.purchase = function purchase_button(data) {
 };
 
 // *abort
-// halt the scene in error(?)
-Scene.prototype.abort = Scene.prototype.finish;
+// halt the scene without showing a button
+Scene.prototype.abort = function() {
+  this.paragraph();
+  this.finished = true;
+};
 
 // *create
 // create a new permanent stat
