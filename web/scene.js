@@ -1441,9 +1441,11 @@ Scene.prototype.input_text = function input_text(variable) {
         value = ""+value || "";
         value = value.replace(/\n/g, "[n/]");
         if (self.nav) self.nav.bugLog.push("*input_text " + variable + " " + value);
-        self.setVar(variable, value);
         self.finished = false;
-        self.save(function() {self.resetPage();}, "temp");
+        self.save(function() {
+          self.setVar(variable, value);
+          self.resetPage();
+        }, "");
       });
     });
     if (this.debugMode) println(toJson(this.stats));
@@ -1498,9 +1500,11 @@ Scene.prototype.input_number = function input_number(data) {
           return;
         }
         if (self.nav) self.nav.bugLog.push("*input_number " + variable + " " + value);
-        self.setVar(variable, numValue);
         self.finished = false;
-        self.save(function() {self.resetPage();}, "temp");
+        self.save(function() {
+          self.setVar(variable, numValue);
+          self.resetPage();
+        }, "");
       });
     }, minimum, maximum, intRequired);
     if (this.debugMode) println(toJson(this.stats));
