@@ -1008,13 +1008,14 @@ function restorePurchases(callback) {
     callIos("restorepurchases");
   } else if (isWebPurchaseSupported()) {
     isRegistered(function(registered) {
+      var restoreCallback = function() {callback();};
       if (registered) {
-        getKnownPurchases(callback);
+        getKnownPurchases(restoreCallback);
       } else {
         clearScreen(function() {
           var target = document.getElementById('text');
           target.innerHTML="<p>Please sign in to Choiceofgames.com to restore purchases.</p>";
-          loginForm(document.getElementById('text'), /*optional*/1, /*err*/null, callback);
+          loginForm(document.getElementById('text'), /*optional*/1, /*err*/null, restoreCallback);
         });
       }
     });

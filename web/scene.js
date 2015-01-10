@@ -846,14 +846,18 @@ Scene.prototype.purchase = function purchase_button(data) {
         printLink(target, "#", "Restore Purchases",
           function() {
             safeCall(self, function() {
-                restorePurchases(function() {
+                restorePurchases(function(error) {
                   checkPurchase([product], function(ok, purchases) {
                     if (purchases[product]) {
                       self["goto"](label);
                       self.finished = false;
                       self.resetPage();
                     } else {
-                      asyncAlert("Restore completed. This product is not yet purchased.");
+                      if (error) {
+                        asyncAlert("Restore failed. Please try again.");
+                      } else {
+                        asyncAlert("Restore completed. This product is not yet purchased.");
+                      }
                       // refresh, in case we're on web showing a full-screen login. Not necessary on mobile? But, meh.
                       if (!self.secondaryMode) clearScreen(loadAndRestoreGame);
                     }
