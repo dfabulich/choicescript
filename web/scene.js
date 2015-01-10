@@ -855,7 +855,7 @@ Scene.prototype.purchase = function purchase_button(data) {
                     } else {
                       asyncAlert("Restore completed. This product is not yet purchased.");
                       // refresh, in case we're on web showing a full-screen login. Not necessary on mobile? But, meh.
-                      clearScreen(loadAndRestoreGame);
+                      if (!self.secondaryMode) clearScreen(loadAndRestoreGame);
                     }
                   });
                 });
