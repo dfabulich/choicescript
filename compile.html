@@ -43,8 +43,9 @@ function printBody(msg, parent) {
 }
 
 
-function slurpFile(url) {
+function slurpFile(url, throwOnError) {
 	xhr = new XMLHttpRequest();
+  var loadFailed = false;
 	try {
 		xhr.open("GET", url, false); //IE errors on xhr.open
 		xhr.send();
@@ -64,7 +65,7 @@ function slurpFile(url) {
 		loadFailed = true;
 	}
 	
-	if (loadFailed) {
+	if (loadFailed && throwOnError) {
 		doneLoading();
 		console.log("EXPORT FAILED");
 		console.log("Error: Could not open " + url);
@@ -73,7 +74,7 @@ function slurpFile(url) {
 		if (typeof InstallTrigger == 'undefined') {
 			console.log("Your browser may not be supported. We recommend using Mozilla Firefox with compile.html.");
 		}
-		return;
+		throw new Error("Error: Could not open " + url);
 	}
 	
 	if (success) {
@@ -84,6 +85,13 @@ function slurpFile(url) {
 		exit();
 	}
 }
+
+function doneLoading() {
+    var loading = document.getElementById('loading');
+    if (loading) loading.parentNode.removeChild(loading);
+    // TODO update header?
+}
+
 </script>
 <script src=compile.js></script>
 </head>

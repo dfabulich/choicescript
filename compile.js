@@ -4,11 +4,12 @@ var success = true;
 var skip = false;
 var loadFailed = false;
 
+var rootDir;
+
 if (typeof process != "undefined") {
   var outputFile = process.argv[2];
   if (!outputFile) throw new Error("Specify an output file on the command line");
-  var rootDir = process.argv[3];
-  if (!rootDir) rootDir = "web";
+  rootDir = process.argv[3];
   rootDir += "/";
   fs = require('fs');
   path = require('path');
@@ -24,12 +25,13 @@ if (typeof process != "undefined") {
   fs.writeFileSync(outputFile, compile(), "utf8");
 }
 
+if (!rootDir) rootDir = "web/";
 
 function compile(){
 
   function safeSlurpFile(file) {
     try {
-      return slurpFile(file);
+      return slurpFile(file, false);
     } catch (e) {
       return null;
     }
@@ -37,7 +39,7 @@ function compile(){
 
   //1. Grab the game's html file
   var url = rootDir+"mygame/index.html";
-  var game_html = slurpFile(url);
+  var game_html = slurpFile(url, true);
     
   //2. Find and extract all .js file data
   var next_file = "";
@@ -62,7 +64,7 @@ function compile(){
   while (doesMatch = patt.exec(game_html)) {
     // console.log(doesMatch[0]);
     console.log(doesMatch[1]);
-    next_file = slurpFile(rootDir+'mygame/' + doesMatch[1]);
+    next_file = slurpFile(rootDir+'mygame/' + doesMatch[1], true);
     if (next_file != "undefined" && next_file !== null) {
       cssStore = cssStore + next_file;
     }
@@ -92,7 +94,7 @@ function compile(){
   //Check startup.txt for a *scene_list
   var sceneList = false;
   scene = new Scene("startup");
-  var scene_data = slurpFile(rootDir+'mygame/scenes/startup.txt');
+  var scene_data = slurpFile(rootDir+'mygame/scenes/startup.txt', true);
   scene.loadLines(scene_data);
   patt = /^\*scene_list$/gim;
   for (i = 0; i < scene["lines"].length; i++) {
