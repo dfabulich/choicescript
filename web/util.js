@@ -737,7 +737,12 @@ function loadTempStats(defaultValue, callback) {
 }
 
 function clearTemp(callback) {
-  if (!initStore()) return safeTimeout(callback, 0);
+  if (!initStore()) {
+    if (window.pseudoSave) {
+      delete window.pseudoSave.temp;
+    }
+    return safeTimeout(callback, 0);
+  }
   window.store.remove("statetemp", callback);
 }
 
