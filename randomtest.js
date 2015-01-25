@@ -570,6 +570,7 @@ function randomtest() {
         timeout = null;
         fn();
       }
+      println(); // flush buffer
     } catch (e) {
       console.log("RANDOMTEST FAILED\n");
       console.log(e);
