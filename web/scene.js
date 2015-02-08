@@ -221,18 +221,23 @@ Scene.prototype.loadSceneFast = function loadSceneFast(url) {
             }
           } catch (e) {} // JSON parse failure? must not be a login prompt
         }
-        if (window.isWeb && xhr.status != 200) {
-          var status = xhr.status || "network";
+        done = true;
+
+        var result;
+        try {
+          result = jsonParse(xhr.responseText);
+        } catch (e) {
+          if (window.console) console.error(e, e.stack);
+        }
+        if (window.isWeb && (xhr.status != 200 || !result)) {
+          var status = xhr.status;
+          if (status == 200 || !status) status = "network";
           main.innerHTML = "<p>Our apologies; there was a " + status + " error while loading game data."+
           "  Please refresh your browser now; if that doesn't work, please click the Restart button and email "+getSupportEmail()+" with details.</p>"+
           " <p><button onclick='window.location.reload();'>Refresh Now</button></p>";
           return;
-        } else if (!xhr.status && !xhr.responseText) {
-          throw new Error("Couldn't load " + url);
         }
-        done = true;
-        var result = xhr.responseText;
-        result = jsonParse(result);
+        
         if (!window.cachedResults) window.cachedResults = {};
         cachedResults[self.name] = result;
         self.loadLinesFast(result.crc, result.lines, result.labels);
