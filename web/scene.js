@@ -184,14 +184,13 @@ Scene.prototype.loadSceneFast = function loadSceneFast(url) {
     if (this.loading) return;
     this.loading = true;
     var result;
-    if (window.cachedResult) {
-      result = window.cachedResult;
-      window.cachedResult = null;
+    if (window.cachedResults && window.cachedResults[this.name]) {
+      result = window.cachedResults[this.name];
       return this.loadLinesFast(result.crc, result.lines, result.labels);
     } else if (typeof allScenes != "undefined") {
       result = allScenes[this.name];
       return this.loadLinesFast(result.crc, result.lines, result.labels);
-	}
+    }
     startLoading();
     if (!url) {
         url = Scene.baseUrl + "/" + this.name.replace(/ /g, "_") + ".txt.json";
@@ -234,6 +233,8 @@ Scene.prototype.loadSceneFast = function loadSceneFast(url) {
         done = true;
         var result = xhr.responseText;
         result = jsonParse(result);
+        if (!window.cachedResults) window.cachedResults = {};
+        cachedResults[this.name] = result;
         self.loadLinesFast(result.crc, result.lines, result.labels);
     };
     if (isIE) {
