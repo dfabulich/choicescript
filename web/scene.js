@@ -234,7 +234,7 @@ Scene.prototype.loadSceneFast = function loadSceneFast(url) {
         var result = xhr.responseText;
         result = jsonParse(result);
         if (!window.cachedResults) window.cachedResults = {};
-        cachedResults[this.name] = result;
+        cachedResults[self.name] = result;
         self.loadLinesFast(result.crc, result.lines, result.labels);
     };
     if (isIE) {
