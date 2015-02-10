@@ -318,8 +318,8 @@ Scene.prototype.loadScene = function loadScene(url) {
             "  Please refresh your browser now; if that doesn't work, please email "+getSupportEmail()+" with details.</p>"+
             " <p><button onclick='window.location.reload();'>Refresh Now</button></p>";
             return;
-        } else if (!xhr.status && !xhr.responseText) {
-          throw new Error("Couldn't load " + url);
+        } else if (xhr.responseText === "") {
+          throw new Error("Couldn't load " + url + "\nThe file is probably missing or empty.");
         }
         var result = xhr.responseText;
         scene = result;
@@ -345,6 +345,9 @@ Scene.prototype.loadScene = function loadScene(url) {
             window.onerror("We're sorry, Google Chrome has blocked ChoiceScript from functioning.  (\"file:\" URLs cannot "+
             "load files in Chrome.)  ChoiceScript works just fine in Chrome, but only on a published website like "+
             "choiceofgames.com.  For the time being, please try another browser like Mozilla Firefox.");
+            return;
+          } else if (e.code === 1012 /*NS_ERROR_DOM_BAD_URI*/) {
+            window.onerror("Couldn't load scene file: " + url + "\nThe file is probably missing.");
             return;
           }
         }
