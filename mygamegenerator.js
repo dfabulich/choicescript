@@ -50,7 +50,7 @@ function parseSceneList(lines, lineNum) {
 function parseAchievement(data, lines, lineNum) {
   var nextIndent = null;
   var parsed = /(\S+)\s+(\S+)\s+(\S+)\s+(.*)/.exec(data);
-  var achievementName = parsed[1].toLowerCase();
+  var achievementName = parsed[1] = parsed[1].toLowerCase();
   var visibility = parsed[2];
   var visible = (visibility != "hidden");
   parsed[2] = visible;
