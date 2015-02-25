@@ -236,6 +236,8 @@ Scene.prototype.loadSceneFast = function loadSceneFast(url) {
           "  Please refresh your browser now; if that doesn't work, please click the Restart button and email "+getSupportEmail()+" with details.</p>"+
           " <p><button onclick='window.location.reload();'>Refresh Now</button></p>";
           return;
+        } else if (xhr.responseText === "") {
+          throw new Error("Couldn't load " + url + "\nThe file is probably missing or empty.");
         }
         
         if (!window.cachedResults) window.cachedResults = {};
