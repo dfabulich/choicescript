@@ -1636,14 +1636,27 @@ function loginForm(target, optional, errorMessage, callback) {
         }
         if ("google" == choice) {
           if (!window.gapi) return asyncAlert("Sorry, we weren't able to sign you in with Google. (Your network connection may be down.) Please try again later, or contact support@choiceofgames.com for assistance.");
-          googleLoginCallbackCallback = function(ok) {
-            if (ok) {
-              return safeCall(null, function() {callback("ok")});
+          var done = false;
+          return gapi.auth.signIn({callback: function (authResult) {
+            if (done) return;
+            done = true;
+            if (authResult['status']['signed_in']) {
+              isRegistered(function(registered) {
+                if (!registered) xhrAuthRequest("POST", "google-login", function(ok, response){
+                  loginDiv(ok, response.email);
+                  recordLogin(ok, response.email);
+                  cacheKnownPurchases(response.purchases);
+                  if (ok) {
+                    callback("ok");
+                  } else {
+                    asyncAlert("Sorry, we weren't able to sign you in with Google. Please try again later, or contact support@choiceofgames.com for assistance.");
+                  }
+                }, "code", authResult['code'], "client_id", googleAppId);
+              });
             } else {
               asyncAlert("Sorry, we weren't able to sign you in with Google. Please try again later, or contact support@choiceofgames.com for assistance.");
             }
-          }
-          return gapi.auth.signIn();
+          }});
         }
         if (!/^\S+@\S+\.\S+$/.test(email) && "no" != choice) {
           showMessage('Sorry, "'+email+'" is not an email address.  Please type your email address again.');
@@ -1833,19 +1846,6 @@ function getPassword(target, code) {
   printButton("Cancel", target, false, function() {
     code(true);
   });
-}
-
-function facebookStatusChangeCallback(response) {
-  if (response.status == "connected") {
-    isRegistered(function(registered) {
-      if (!registered) xhrAuthRequest("POST", "facebook-login", function(ok, response){
-        loginDiv(ok, response.email);
-        cacheKnownPurchases(response.purchases);
-        recordLogin(ok, response.email);
-        if (ok) clearScreen(loadAndRestoreGame);
-      }, "app_id", facebookAppId);
-    });
-  }
 }
 
 function showPassword(target, password) {
@@ -2160,7 +2160,6 @@ if (window.isWeb) {
     var meta = metas[i];
     if ("fb:app_id" == meta.getAttribute("property")) {
       facebookAppId = meta.getAttribute("content");
-      break;
     } else if ("google-signin-clientid" == meta.getAttribute("name")) {
       googleAppId = meta.getAttribute("content");
     }
@@ -2174,10 +2173,6 @@ if (window.isWeb) {
                             // the session
         xfbml      : true,  // parse social plugins on this page
         version    : 'v2.0' // use version 2.0
-      });
-
-      FB.getLoginStatus(function(response) {
-        facebookStatusChangeCallback(response);
       });
     };
 
@@ -2375,20 +2370,3 @@ function platformCode() {
   return "unknown";
 }
 
-function googleLoginCallback(authResult) {
-  var callback = googleLoginCallbackCallback;
-  googleLoginCallbackCallback = null;
-  if (!callback) callback = function(ok) { if (ok) clearScreen(loadAndRestoreGame); };
-  if (authResult['status']['signed_in']) {
-    isRegistered(function(registered) {
-      if (!registered) xhrAuthRequest("POST", "google-login", function(ok, response){
-        loginDiv(ok, response.email);
-        recordLogin(ok, response.email);
-        cacheKnownPurchases(response.purchases);
-        callback("ok");
-      }, "code", authResult['code'], "client_id", googleAppId);
-    });
-  } else {
-    callback(!"ok");
-  }
-}
