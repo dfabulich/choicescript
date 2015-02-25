@@ -96,7 +96,7 @@ function compile(){
   scene = new Scene("startup");
   var scene_data = slurpFile(rootDir+'mygame/scenes/startup.txt', true);
   scene.loadLines(scene_data);
-  patt = /^\*scene_list$/gim;
+  patt = /^\*scene_list\b/i;
   for (i = 0; i < scene["lines"].length; i++) {
     if (patt.exec(scene["lines"][i])) {
       sceneList = true;
