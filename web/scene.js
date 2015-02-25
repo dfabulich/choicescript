@@ -3238,8 +3238,8 @@ Scene.prototype.author = function scene_author(author) {
 Scene.prototype.achievement = function scene_achievement(data) {
   var parsed = /(\S+)\s+(\S+)\s+(\S+)\s+(.*)/.exec(data);
   if (!parsed) throw new Error(this.lineMsg() + "Invalid *achievement, requires short name, visibility, points, and display title: " + data);
-  var achievementName = parsed[1].toLowerCase();
-  if (!/[a-z]+/.test(achievementName)) throw new Error(this.lineMsg()+"Invalid achievement name: " +achievementName);
+  var achievementName = parsed[1];
+  if (!/^[a-z][a-z0-9_]+$/.test(achievementName)) throw new Error(this.lineMsg()+"Invalid achievement name: " +achievementName);
 
   
   if (this.nav.achievements.hasOwnProperty(achievementName)) {
