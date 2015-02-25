@@ -10,7 +10,11 @@ if (typeof process != "undefined") {
   var outputFile = process.argv[2];
   if (!outputFile) throw new Error("Specify an output file on the command line");
   rootDir = process.argv[3];
-  rootDir += "/";
+  if (rootDir) {
+    rootDir += "/";
+  } else {
+    rootDir = "web/";
+  }
   fs = require('fs');
   path = require('path');
   vm = require('vm');
