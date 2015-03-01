@@ -859,18 +859,20 @@ Scene.prototype.purchase = function purchase_button(data) {
             safeCall(self, function() {
                 restorePurchases(function(error) {
                   checkPurchase([product], function(ok, purchases) {
-                    if (purchases[product]) {
+                    if (ok && purchases[product]) {
                       self["goto"](label);
                       self.finished = false;
                       self.resetPage();
                     } else {
-                      if (error) {
+                      if (error || !ok) {
                         asyncAlert("Restore failed. Please try again.");
                       } else {
                         asyncAlert("Restore completed. This product is not yet purchased.");
                       }
-                      // refresh, in case we're on web showing a full-screen login. Not necessary on mobile? But, meh.
-                      if (!self.secondaryMode) clearScreen(loadAndRestoreGame);
+                      if (ok) { // don't refresh if not OK, but should we refresh on error? assuming yes?
+                        // refresh, in case we're on web showing a full-screen login. Not necessary on mobile? But, meh.
+                        if (!self.secondaryMode) clearScreen(loadAndRestoreGame);
+                      }
                     }
                   });
                 });
