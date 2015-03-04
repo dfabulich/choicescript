@@ -1761,11 +1761,15 @@ Scene.prototype.ending = function ending() {
 Scene.prototype.restart = function restart() {
   if (this.secondaryMode) throw new Error(this.lineMsg() + "Cannot *restart in " + this.secondaryMode + " mode");
   this.finished = true;
-  this.reset();
   delayBreakEnd();
-  var startupScene = this.nav.getStartupScene();
-  var scene = new Scene(startupScene, this.stats, this.nav, {debugMode:this.debugMode, secondaryMode:false});
-  scene.resetPage();
+  var self = this;
+  this.save(function () {
+    self.reset();
+    var startupScene = self.nav.getStartupScene();
+    var scene = new Scene(startupScene, self.stats, self.nav, {debugMode:self.debugMode, secondaryMode:false});
+    scene.resetPage();
+  }, "");
+  
 };
 
 Scene.prototype.subscribe = function scene_subscribe(now) {
