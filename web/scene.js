@@ -3329,6 +3329,15 @@ Scene.prototype.achievement = function scene_achievement(data) {
       throw new Error(this.lineMsg()+"Too many *achievements. Each game can have up to 100 achievements.");
     }
   }
+
+  if (!this.seenAchievementTitles) this.seenAchievementTitles = {};
+
+  if (this.seenAchievementTitles[title]) {
+    throw new Error(this.lineMsg()+"An achievement with display title \"" + title + "\" was already defined at line " + this.seenAchievementTitles[title]);
+  }
+
+  this.seenAchievementTitles[title] = this.lineNum+1;
+
   this.nav.achievements[achievementName] = {
     visible: visible,
     points: points,
