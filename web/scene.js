@@ -553,11 +553,11 @@ Scene.prototype.nextNonBlankLine = function nextNonBlankLine(includingThisOne) {
 // reset the page and invoke code after clearing the screen
 Scene.prototype.resetPage = function resetPage() {
     var self = this;
-    this.save(function() {
+    clearScreen(function() {
       self.prevLine = "empty";
       self.screenEmpty = true;
-      clearScreen(function() {self.execute();});
-    }, "");
+      self.save(function() {self.execute();}, "");
+    });
 };
 
 /* The function needs some explaining.
