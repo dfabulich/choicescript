@@ -554,9 +554,10 @@ Scene.prototype.nextNonBlankLine = function nextNonBlankLine(includingThisOne) {
 Scene.prototype.resetPage = function resetPage() {
     var self = this;
     clearScreen(function() {
+      self.save(function() {});
       self.prevLine = "empty";
       self.screenEmpty = true;
-      self.save(function() {self.execute();}, "");
+      self.execute();
     });
 };
 
@@ -586,6 +587,13 @@ and save the temp stats as the "real" autosave slot.
 Thus, stat changes on the stat screen will only be permanently saved when
 the player clicks "Next" in the main game, ensuring that the game is still
 refreshable.
+
+But wait, there's more! We save the game asynchronously, so we need to
+record a "cookie" containing save data *before* loading the temp save.
+If we just save self.lineNum, and loadTempSave takes a while, we'll
+most likely save the wrong data. (e.g. if the user clicks Next, we want
+to permanently save the data as it was at that time, not after the
+subsequent page draws; we'd want to store that in the temp save.)
 */
 Scene.prototype.save = function save(callback, slot) {
     if (!slot) slot = this.saveSlot;
@@ -593,12 +601,29 @@ Scene.prototype.save = function save(callback, slot) {
     if (this.saveSlot) {
       saveCookie(callback, slot, self.stats, self.temps, self.lineNum, self.indent, self.debugMode, self.nav);
     } else {
-      loadTempStats(this.stats, function(stats) {
+      var cookie = {};
+      cookie.lineNum = this.lineNum;
+      cookie.indent = this.indent;
+      cookie.debugMode = this.debugMode;
+      cookie.nav = this.nav;
+      cookie.stats = {};
+      cookie.temps = {};
+      for (var stat in this.stats) {
+        if (this.stats.hasOwnProperty(stat)) {
+          cookie.stats[stat] = this.stats[stat];
+        }
+      }
+      for (var temp in this.temps) {
+        if (this.temps.hasOwnProperty(temp)) {
+          cookie.temps[temp] = this.temps[temp];
+        }
+      }
+      loadTempStats(cookie.stats, function(stats) {
         if (slot == "temp") {
           if (stats.choice_dirty_stats) {
             safeTimeout(callback, 0);
           } else {
-            saveCookie(callback, "temp", self.stats, self.temps, self.lineNum, self.indent, self.debugMode, self.nav);
+            saveCookie(callback, "temp", cookie.stats, cookie.temps, cookie.lineNum, cookie.indent, cookie.debugMode, cookie.nav);
           }
         } else {
           clearTemp();
@@ -607,7 +632,7 @@ Scene.prototype.save = function save(callback, slot) {
           stats.scene = self;
           self.stats = stats;
           if (typeof window != "undefined") window.stats = stats;
-          saveCookie(callback, slot, stats, self.temps, self.lineNum, self.indent, self.debugMode, self.nav);
+          saveCookie(callback, slot, stats, cookie.temps, cookie.lineNum, cookie.indent, cookie.debugMode, cookie.nav);
         }
       });
     }
