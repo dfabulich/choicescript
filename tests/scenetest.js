@@ -635,7 +635,7 @@ test("saveAndRestore", function() {
         options = _options;
         groups = _groups;
     };
-    scene.save = function() {};
+    scene.resetPage = function() {};
     scene.execute();
     doh.is([{"name":"foo","line":2,"group":"choice","endLine":4},{"name":"bar","line":5,"group":"choice","endLine":7}], options, "options");
     scene.standardResolution(options[0]);
@@ -658,7 +658,7 @@ test("saveAndRestoreGoSub", function() {
         options = _options;
         groups = _groups;
     };
-    scene.save = function() {};
+    scene.resetPage = function() {};
     scene.execute();
     doh.is([{group:"choice",endLine:9,name:"foo",line:7},{group:"choice",endLine:12,name:"bar",line:10}], options, "options");
     scene.standardResolution(options[0]);
