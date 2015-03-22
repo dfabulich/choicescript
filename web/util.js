@@ -17,13 +17,57 @@
  * either express or implied.
  */
 
+_global = this;
+
+(function() {
+  var userAgent, url, protocol;
+  if (typeof window !== "undefined") {
+    userAgent = navigator.userAgent;
+    url = window.location.href;
+    protocol = window.location.protocol;
+  }
+  _global.isWebOS = /webOS/.test(userAgent);
+  _global.isMobile = isWebOS || /Mobile/.test(userAgent);
+  _global.isFile = /^file:/.test(url);
+  _global.isXul = /^chrome:/.test(url);
+  _global.isWinOldApp = false;
+  try {
+    isWinOldApp = window.external.IsWinOldApp();
+  } catch (ignored) {}
+  _global.isWeb = !isWinOldApp && /^https?:/.test(url);
+  _global.isAndroid = /Android/.test(userAgent);
+  _global.isSecureWeb = /^https:?$/.test(protocol);
+  _global.isSafari = /Safari/.test(userAgent);
+  _global.isIE = /(MSIE|Trident)/.test(userAgent);
+  _global.isIPad = /iPad/.test(userAgent);
+  _global.isKindleFire = /Kindle Fire/.test(userAgent);
+  _global.isWinStoreApp = "ms-appx:" == protocol;
+  _global.isCef = !!_global.cefQuery;
+})();
+
+_global.loadTime = new Date().getTime();
+
+function callIos(scheme, path) {
+  if (!_global.isIosApp) return;
+  if (path) {
+    path = encodeURIComponent(path);
+  } else {
+    path = "";
+  }
+  setTimeout(function() {
+    var iframe = document.createElement("IFRAME");
+    iframe.setAttribute("src", scheme + "://" + path);
+    iframe.setAttribute("style", "display:none");
+    document.documentElement.appendChild(iframe);
+    iframe.parentNode.removeChild(iframe);
+    iframe = null;
+  }, 0);
+}
+
 function safeCall(obj, fn) {
     if (!fn) return;
     var isHeadless = typeof window == "undefined";
     var debug = false || (!isHeadless && window.debug);
-    var userAgent = this.window && window.navigator && window.navigator.userAgent;
-    var isSafari = /Safari/.test(userAgent);
-    var isIE = /MSIE/.test(userAgent);
     if (isIE || isHeadless) {
         // just call through; onerror will be called and debugger will handle it
         if (typeof MSApp != "undefined") {

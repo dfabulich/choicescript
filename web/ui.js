@@ -276,23 +276,6 @@ function printAchievements(target) {
   target.innerHTML = buffer.join("");
 }
 
-function callIos(scheme, path) {
-  if (!window.isIosApp) return;
-  if (path) {
-    path = encodeURIComponent(path);
-  } else {
-    path = "";
-  }
-  setTimeout(function() {
-    var iframe = document.createElement("IFRAME");
-    iframe.setAttribute("src", scheme + "://" + path);
-    iframe.setAttribute("style", "display:none");
-    document.documentElement.appendChild(iframe);
-    iframe.parentNode.removeChild(iframe);
-    iframe = null;
-  }, 0);
-}
-
 // in the iOS app, display a page curl animation
 function curl() {
   // TODO force a reflow before curling the page
@@ -1941,25 +1924,6 @@ function reportBug() {
   });
 }
 
-window.isWebOS = /webOS/.test(navigator.userAgent);
-window.isMobile = isWebOS || /Mobile/.test(navigator.userAgent);
-window.isFile = /^file:/.test(window.location.href);
-window.isXul = /^chrome:/.test(window.location.href);
-window.isWinOldApp = false;
-try {
-  isWinOldApp = window.external.IsWinOldApp();
-} catch (ignored) {}
-window.isWeb = !isWinOldApp && /^https?:/.test(window.location.href);
-window.isAndroid = /Android/.test(navigator.userAgent);
-window.isSecureWeb = /^https:?$/.test(window.location.protocol);
-window.isSafari = /Safari/.test(navigator.userAgent);
-window.isIE = /(MSIE|Trident)/.test(navigator.userAgent);
-window.isIPad = /iPad/.test(navigator.userAgent);
-window.isKindleFire = /Kindle Fire/.test(navigator.userAgent);
-window.isWinStoreApp = "ms-appx:" == window.location.protocol;
-window.isCef = !!window.cefQuery;
-
-window.loadTime = new Date().getTime();
 window.registered = false;
 
 function getSupportEmail() {
@@ -2135,8 +2099,6 @@ window.onload=function() {
 
     submitAnyDirtySaves();
 };
-
-_global = this;
 
 if ( document.addEventListener ) {
   document.addEventListener( "DOMContentLoaded", window.onload, false );
