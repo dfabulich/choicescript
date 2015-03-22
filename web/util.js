@@ -27,14 +27,14 @@ _global = this;
     protocol = window.location.protocol;
   }
   _global.isWebOS = /webOS/.test(userAgent);
-  _global.isMobile = isWebOS || /Mobile/.test(userAgent);
+  _global.isMobile = _global.isWebOS || /Mobile/.test(userAgent);
   _global.isFile = /^file:/.test(url);
   _global.isXul = /^chrome:/.test(url);
   _global.isWinOldApp = false;
   try {
     isWinOldApp = window.external.IsWinOldApp();
   } catch (ignored) {}
-  _global.isWeb = !isWinOldApp && /^https?:/.test(url);
+  _global.isWeb = !_global.isWinOldApp && /^https?:/.test(url);
   _global.isAndroid = /Android/.test(userAgent);
   _global.isSecureWeb = /^https:?$/.test(protocol);
   _global.isSafari = /Safari/.test(userAgent);
