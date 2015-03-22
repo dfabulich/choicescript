@@ -554,6 +554,7 @@ Scene.prototype.nextNonBlankLine = function nextNonBlankLine(includingThisOne) {
 Scene.prototype.resetPage = function resetPage() {
     var self = this;
     clearScreen(function() {
+      // save in the background, eventually
       self.save(function() {});
       self.prevLine = "empty";
       self.screenEmpty = true;
@@ -569,72 +570,33 @@ So we make a "temp" autosave slot, right as the page finishes redrawing,
 and the stat screen uses the "temp" autosave to display your current data.
 When you refresh the page, the "temp" autosave is rewritten.
 
-If you save stats on the stat screen, they're written into the "temp" autosave
-In addition, setVar will mark a special choice_dirty_stats variable, to indicate
-that there's something important in the "temp" autosave slot.
+If you save stats on the stat screen, they're written into tempStatWrites;
+when the stat screen saves, we transfer tempStatWrites back to the main
+game (if the main game is running in a separate iframe, e.g. iOS).
 
-Back in the main game, we load the temp save slot when saving the either the
-main autosave slot or the temp save slot.
-
-If the main game is about to rewrite the temp
-slot, but the temp slot has dirty stats (written by the stat screen), then
-we must be returning from the stats screen, so skip saving temp.
-Otherwise, save the temp slot normally.
-
-If the main game is about to write the main slot, clear the old temp slot,
-and save the temp stats as the "real" autosave slot.
+If the main game is about to write the main "" slot, we merge the temp
+stat writes into the main stats (and clear the stat writes) before
+saving.
 
 Thus, stat changes on the stat screen will only be permanently saved when
 the player clicks "Next" in the main game, ensuring that the game is still
 refreshable.
-
-But wait, there's more! We save the game asynchronously, so we need to
-record a "cookie" containing save data *before* loading the temp save.
-If we just save self.lineNum, and loadTempSave takes a while, we'll
-most likely save the wrong data. (e.g. if the user clicks Next, we want
-to permanently save the data as it was at that time, not after the
-subsequent page draws; we'd want to store that in the temp save.)
 */
 Scene.prototype.save = function save(callback, slot) {
-    if (!slot) slot = this.saveSlot;
-    var self = this;
     if (this.saveSlot) {
-      saveCookie(callback, slot, self.stats, self.temps, self.lineNum, self.indent, self.debugMode, self.nav);
+      transferTempStatWrites();
     } else {
-      var cookie = {};
-      cookie.lineNum = this.lineNum;
-      cookie.indent = this.indent;
-      cookie.debugMode = this.debugMode;
-      cookie.nav = this.nav;
-      cookie.stats = {};
-      cookie.temps = {};
-      for (var stat in this.stats) {
-        if (this.stats.hasOwnProperty(stat)) {
-          cookie.stats[stat] = this.stats[stat];
-        }
-      }
-      for (var temp in this.temps) {
-        if (this.temps.hasOwnProperty(temp)) {
-          cookie.temps[temp] = this.temps[temp];
-        }
-      }
-      loadTempStats(cookie.stats, function(stats) {
-        if (slot == "temp") {
-          if (stats.choice_dirty_stats) {
-            safeTimeout(callback, 0);
-          } else {
-            saveCookie(callback, "temp", cookie.stats, cookie.temps, cookie.lineNum, cookie.indent, cookie.debugMode, cookie.nav);
+      if (!slot) {
+        slot = "";
+        for (var key in tempStatWrites) {
+          if (tempStatWrites.hasOwnProperty(key)) {
+            this.stats[key] = tempStatWrites[key];
           }
-        } else {
-          clearTemp();
-          delete stats.choice_dirty_stats;
-          stats.sceneName = self.name;
-          stats.scene = self;
-          self.stats = stats;
-          if (typeof window != "undefined") window.stats = stats;
-          saveCookie(callback, slot, stats, cookie.temps, cookie.lineNum, cookie.indent, cookie.debugMode, cookie.nav);
         }
-      });
+        tempStatWrites = {};
+      }
+      
+      saveCookie(callback, slot, this.stats, this.temps, this.lineNum, this.indent, this.debugMode, this.nav);
     }
 };
 
@@ -1007,7 +969,7 @@ Scene.prototype.setVar = function setVar(variable, value) {
             throw new Error(this.lineMsg() + "Non-existent variable '"+variable+"'");
         }
         this.stats[variable] = value;
-        if (this.saveSlot == "temp") this.stats.choice_dirty_stats = true;
+        if (this.saveSlot == "temp") tempStatWrites[variable] = value;
     } else {
         this.temps[variable] = value;
     }

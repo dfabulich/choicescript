@@ -709,41 +709,10 @@ function redirectScene(sceneName, label, originLine) {
   clearScreen(function() {scene.execute();});
 }
 
-function loadTempStats(defaultValue, callback) {
-  function valueLoaded(ok, value) {
-    var state = {};
-    if (ok && value && String(value)) {
-      try {
-        state = jsonParse(value);
-      } catch (e) {}
-    }
-    if (state && state.stats) {
-      callback(state.stats);
-    } else {
-      callback(defaultValue);
-    }
-  }
-  if (!initStore()) {
-    if (window.pseudoSave && window.pseudoSave["temp"]) {
-      return safeTimeout(function() {
-        valueLoaded("ok", pseudoSave["temp"]);
-      }, 0);
-    } else {
-      return safeTimeout(function() {callback(defaultValue);}, 0);
-    }
-  } else {
-    window.store.get("statetemp", valueLoaded);
-  }
-}
+tempStatWrites = {};
 
-function clearTemp(callback) {
-  if (!initStore()) {
-    if (window.pseudoSave) {
-      delete window.pseudoSave.temp;
-    }
-    return safeTimeout(callback, 0);
-  }
-  window.store.remove("statetemp", callback);
+function transferTempStatWrites() {
+  // TODO
 }
 
 function getCookieByName(cookieName, ck) {
