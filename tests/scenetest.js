@@ -429,6 +429,12 @@ test("setRef", function() {
     scene.execute();
     doh.is(2, scene.temps.bar, "scene.temps.bar");
 })
+test("setByRef", function() {
+    var scene = new Scene();
+    scene.loadLines("*temp foo 0\n*temp bar 0\n*set foo \"bar\"\n*set {foo} 2");
+    scene.execute();
+    doh.is(2, scene.temps.bar, "scene.temps.bar");
+})
 test("errorSetRefNoExpression", function() {
     var scene = new Scene();
     scene.loadLines("*temp foo 0\n*temp bar 0\n*set foo \"bar\"\n*setref foo");

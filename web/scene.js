@@ -1665,13 +1665,42 @@ Scene.prototype.rand = function rand(data) {
 //     *set foo (foo/2)+(bar/3)
 //     *set foo +(bar/3)
 //
+// set variable by reference
+//
+//     *set foo bar
+//     *set {foo} 3
+//     *comment now bar=3
 Scene.prototype.set = function set(line) {
-    var result = /^(\w*)(.*)/.exec(line);
-    if (!result) throw new Error(this.lineMsg()+"Invalid set instruction, no variable specified: " + line);
-    var variable = result[1];
+    var variable, stack;
+    if (/^\{/.test(line)) {
+      stack = this.tokenizeExpr(line);
+      stack.shift();
+      var curlies = 0;
+      var closingCurly = -1;
+      for (var i = 0; i < stack.length; i++) {
+        if (stack[i].name == "OPEN_CURLY") {
+          curlies++;
+        } else if (stack[i].name == "CLOSE_CURLY") {
+          if (curlies) {
+            curlies--;
+          } else {
+            closingCurly = i;
+            break;
+          }
+        }
+      }
+      if (closingCurly == -1) throw new Error(this.lineMsg()+"Invalid set instruction, no closing curly bracket: " + line);
+      variable = this.evaluateExpr(stack.slice(0, closingCurly));
+      stack = stack.slice(closingCurly+1);
+    } else {
+      var result = /^(\w*)(.*)/.exec(line);
+      if (!result) throw new Error(this.lineMsg()+"Invalid set instruction, no variable specified: " + line);
+      variable = result[1];
+      var expr = result[2];
+      stack = this.tokenizeExpr(expr);
+    }
+    
     this.validateVariable(variable);
-    var expr = result[2];
-    var stack = this.tokenizeExpr(expr);
     if (stack.length === 0) throw new Error(this.lineMsg()+"Invalid set instruction, no expression specified: " + line);
     // if the first token is an operator, then it's implicitly based on the variable
     if (/OPERATOR|FAIRMATH/.test(stack[0].name)) stack.unshift({name:"VAR", value:variable, pos:"(implicit)"});
