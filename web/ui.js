@@ -2154,7 +2154,7 @@ if (window.isWeb) {
   })();
   
 }
-if (!isWeb && window.isIosApp) {
+if (!window.isWeb && window.isIosApp) {
   document.write("<style>"+
   "#header { display: none; }"+
   ""+
@@ -2191,7 +2191,7 @@ if (window.isMacApp || window.isWinOldApp || window.isCef || window.isAndroidApp
     ""+
     "</style>");
 }
-if (isWeb && !window.Touch) {
+if (window.isWeb && !window.Touch) {
   document.write("<style>label:hover {background-color: #E4DED8;}</style>");
 }
 if (window.isChromeApp) {
@@ -2311,7 +2311,7 @@ if (window.isWinStoreApp) {
     uiScript = document.createElement("script");
     uiScript.src = "//Microsoft.WinJS.1.0/js/ui.js";
     document.head.appendChild(uiScript);
-} else if (isWinOldApp) {
+} else if (window.isWinOldApp) {
     console = {
         log: function (message) { window.external.ConsoleLog(message); },
         error: function (message) { window.external.ConsoleError(message); }
