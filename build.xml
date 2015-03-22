@@ -164,6 +164,10 @@ either express or implied.
       <arg value="${input.dir}" />
       <arg value="${output.dir}" />
     </rhino>
+    <rhino output="web/${game.dir}/mygame.js">
+      <arg file="mygamegenerator.js" />
+      <arg value="${game.dir}" />
+    </rhino>
   </target>
   
   <target name="xmltranslator" depends="rhino">
