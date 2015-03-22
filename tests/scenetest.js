@@ -1335,6 +1335,15 @@ test("capitalize", function() {
     scene.execute();
     doh.is("This foo is a true Foo. <br><br>", printed.join(""), "printed");
 })
+test("references", function() {
+    printed = [];
+    var text = "This ${foo} is a true $!{{bar}}.";
+    var stats = {foo:"foo",bar:"foo"};
+    var scene = new Scene("test", stats);
+    scene.loadLines(text);
+    scene.execute();
+    doh.is("This foo is a true Foo. <br><br>", printed.join(""), "printed");
+})
 
 module("Parse Stat Chart");
 

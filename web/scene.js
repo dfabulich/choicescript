@@ -149,25 +149,47 @@ Scene.prototype.printLine = function printLine(line, parent) {
 };
 
 Scene.prototype.replaceVariables = function (line) {
-  if (!line.replace) line = String(line);
-  var self = this;
-  // replace ${variables} with values
-  line = line.replace(/\$(\!?\!?)\{([a-zA-Z][_\w]*)\}/g, function (matched, capitalize, variable) {
-    var value = self.getVar(variable);
+  line = String(line);
+  var replacer = /(\$(\!?\!?)\{)/;
+  var index = 0;
+  var output = [];
+  for (var result = replacer.exec(line); result; result = replacer.exec(line.substring(index))) {
+    output.push(line.substring(index, index + result.index));
+    var curlies = 0;
+    var closingCurly = -1;
+    var exprStart = index + result.index + result[1].length;
+    for (var i = exprStart; i < line.length; i++) {
+      var c = line.charAt(i);
+      if (c === "{") {
+        curlies++;
+      } else if (c === "}") {
+        if (curlies) {
+          curlies--;
+        } else {
+          closingCurly = i;
+          break;
+        }
+      }
+    }
+    if (closingCurly == -1) {
+      throw new Error(this.lineMsg() + "invalid ${} variable substitution at letter " + (index + result.index + 1));
+    }
+    var expr = line.substring(exprStart, closingCurly);
+    var stack = this.tokenizeExpr(expr);
+    var value = this.evaluateExpr(stack);
+    var capitalize = result[2];
+    if (capitalize) value = String(value);
     if (capitalize == "!") {
-      value = ""+value;
       value = value.charAt(0).toUpperCase() + value.slice(1);
     } else if (capitalize == "!!") {
-      value = (""+value).toUpperCase();
+      value = value.toUpperCase();
     }
-    return value;
-  });
-  // double-check for unreplaced/invalid ${} expressions
-  var unreplaced = line.search(/\$(\!?)\{/) + 1;
-  if (unreplaced) {
-    throw new Error(this.lineMsg() + "invalid ${} variable substitution at letter " + unreplaced);
+    output.push(value);
+    index = closingCurly+1;
   }
-  return line;
+  if (index === 0) return line;
+  output.push(line.substring(index));
+  return output.join("");
 };
 
 Scene.prototype.paragraph = function paragraph() {
