@@ -189,6 +189,7 @@ Scene.prototype.loadSceneFast = function loadSceneFast(url) {
       return this.loadLinesFast(result.crc, result.lines, result.labels);
     } else if (typeof allScenes != "undefined") {
       result = allScenes[this.name];
+      if (!result) throw new Error("Couldn't load scene '" + this.name + "'\nThe file doesn't exist.");
       return this.loadLinesFast(result.crc, result.lines, result.labels);
     }
     startLoading();
