@@ -756,7 +756,8 @@ function redirectScene(sceneName, label, originLine) {
 tempStatWrites = {};
 
 function transferTempStatWrites() {
-  // TODO
+  if (!_global.isIosApp) return;
+  callIos("transferwrites", JSON.stringify(tempStatWrites));
 }
 
 function getCookieByName(cookieName, ck) {
