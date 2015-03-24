@@ -2961,11 +2961,16 @@ Scene.prototype.evaluateExpr = function evaluateExpr(stack, parenthetical) {
     operator = Scene.operators[token.value];
     if (!operator) throw new Error(this.lineMsg() + "Invalid expression at char "+token.pos+", expected OPERATOR, was: " + token.name + " [" + token.value + "]");
 
-    // fetch the final value
-    value2 = this.evaluateValueToken(getToken(), stack);
+    if (token.value === "[") {
+      // it's an array; fetch the index value
+      value2 = this.evaluateValueToken(token, stack);
+    } else {
+      // fetch the final value
+      value2 = this.evaluateValueToken(getToken(), stack);
+    }
 
     // and do the operator
-    result = operator(value1, value2, this.lineNum+1);
+    result = operator(value1, value2, this.lineNum+1, this);
 
     if (parenthetical) {
         // expect close parenthesis
@@ -3001,6 +3006,8 @@ Scene.prototype.evaluateValueToken = function evaluateValueToken(token, stack) {
     } else if ("OPEN_CURLY" == name) {
         value = this.evaluateExpr(stack, "CLOSE_CURLY");
         return this.getVar(value);
+    } else if ("OPEN_SQUARE" == name) {
+        return this.evaluateExpr(stack, "CLOSE_SQUARE");
     } else if ("FUNCTION" == name) {
         var functionName = /^\w+/.exec(token.value)[0];
         if (!this.functions[functionName]) throw new Error(this.lineMsg + "Unknown function " + functionName);
@@ -3417,6 +3424,8 @@ Scene.tokens = [
     {name:"CLOSE_PARENTHESIS", test:function(str){ return Scene.regexpMatch(str,/^\)/); } },
     {name:"OPEN_CURLY", test:function(str){ return Scene.regexpMatch(str,/^\{/); } },
     {name:"CLOSE_CURLY", test:function(str){ return Scene.regexpMatch(str,/^\}/); } },
+    {name:"OPEN_SQUARE", test:function(str){ return Scene.regexpMatch(str,/^\[/); } },
+    {name:"CLOSE_SQUARE", test:function(str){ return Scene.regexpMatch(str,/^\]/); } },
     {name:"FUNCTION", test:function(str){ return Scene.regexpMatch(str,/^(not|round|timestamp|log)\s*\(/); } },
     {name:"NUMBER", test:function(str){ return Scene.regexpMatch(str,/^\d+(\.\d+)?/); } },
     {name:"STRING", test:function(str, line) {
@@ -3490,6 +3499,9 @@ Scene.operators = {
     },
     "or": function or(v1, v2, line) {
         return bool(v1,line) || bool(v2,line);
+    },
+    "[": function arrayIndex(name, index, line, self) {
+        return self.getVar(String(name)+"_"+index);
     }
 };
 
