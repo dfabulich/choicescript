@@ -1692,6 +1692,27 @@ Scene.prototype.set = function set(line) {
       if (closingCurly == -1) throw new Error(this.lineMsg()+"Invalid set instruction, no closing curly bracket: " + line);
       variable = this.evaluateExpr(stack.slice(0, closingCurly));
       stack = stack.slice(closingCurly+1);
+    } else if (/^[a-zA-Z]\w+\[/.test(line)) {
+      stack = this.tokenizeExpr(line);
+      if (stack[0].name != "VAR" && stack[1].name != "OPEN_SQUARE") throw new Error(this.lineMsg()+"Bug in ChoiceScript interpreter; send this line to technical support: " + line);
+      var brackets = 0;
+      var closingBracket = -1;
+      for (var i = 2; i < stack.length; i++) {
+        if (stack[i].name == "OPEN_SQUARE") {
+          brackets++;
+        } else if (stack[i].name == "CLOSE_SQUARE") {
+          if (brackets) {
+            brackets--;
+          } else {
+            closingBracket = i;
+            break;
+          }
+        }
+      }
+      if (closingBracket == -1) throw new Error(this.lineMsg()+"Invalid set instruction, no closing array bracket: " + line);
+      var index = this.evaluateExpr(stack.slice(2, closingBracket));
+      variable = String(stack[0].value) + "_" + index;
+      stack = stack.slice(closingBracket+1);
     } else {
       var result = /^(\w*)(.*)/.exec(line);
       if (!result) throw new Error(this.lineMsg()+"Invalid set instruction, no variable specified: " + line);
