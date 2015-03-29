@@ -2933,13 +2933,7 @@ Scene.prototype.evaluateExpr = function evaluateExpr(stack, parenthetical) {
     operator = Scene.operators[token.value];
     if (!operator) throw new Error(this.lineMsg() + "Invalid expression at char "+token.pos+", expected OPERATOR, was: " + token.name + " [" + token.value + "]");
 
-    if (token.value === "[") {
-      // it's an array; fetch the index value
-      value2 = this.evaluateValueToken(token, stack);
-    } else {
-      // fetch the final value
-      value2 = this.evaluateValueToken(getToken(), stack);
-    }
+    value2 = this.evaluateValueToken(getToken(), stack);
 
     // and do the operator
     result = operator(value1, value2, this.lineNum+1, this);
@@ -2991,7 +2985,12 @@ Scene.prototype.evaluateValueToken = function evaluateValueToken(token, stack) {
         // strip off the quotes and unescape backslashes
         return this.replaceVariables(token.value.slice(1,-1).replace(/\\(.)/g, "$1"));
     } else if ("VAR" == name) {
-        return this.getVar(token.value);
+        var variable = String(token.value);
+        while (stack.length && stack[0].name == "OPEN_SQUARE") {
+          stack.shift();
+          variable += "_" + this.evaluateExpr(stack, "CLOSE_SQUARE");
+        }
+        return this.getVar(variable);
     } else {
         throw new Error(this.lineMsg() + "Invalid expression at char "+token.pos+", expected NUMBER, STRING, VAR or PARENTHETICAL, was: " + name + " [" + token.value + "]");
     }
