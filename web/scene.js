@@ -625,7 +625,12 @@ Scene.prototype.save = function save(callback, slot) {
 
 // *goto labelName
 // Go to the line labeled with the label command *label labelName
-Scene.prototype["goto"] = function scene_goto(label) {
+// 
+// goto by reference
+//   *create foo "labelName"
+//   *goto {foo}
+Scene.prototype["goto"] = function scene_goto(line) {
+    var label = this.evaluateReference(this.tokenizeExpr(line));
     label = label.toLowerCase();
     if (typeof(this.labels[label]) != "undefined") {
         this.lineNum = this.labels[label];
