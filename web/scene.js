@@ -1675,40 +1675,14 @@ Scene.prototype.set = function set(line) {
     if (/^\{/.test(line)) {
       stack = this.tokenizeExpr(line);
       stack.shift();
-      var curlies = 0;
-      var closingCurly = -1;
-      for (var i = 0; i < stack.length; i++) {
-        if (stack[i].name == "OPEN_CURLY") {
-          curlies++;
-        } else if (stack[i].name == "CLOSE_CURLY") {
-          if (curlies) {
-            curlies--;
-          } else {
-            closingCurly = i;
-            break;
-          }
-        }
-      }
+      var closingCurly = this.findClosingBracket(stack, "CURLY");
       if (closingCurly == -1) throw new Error(this.lineMsg()+"Invalid set instruction, no closing curly bracket: " + line);
       variable = this.evaluateExpr(stack.slice(0, closingCurly));
       stack = stack.slice(closingCurly+1);
     } else if (/^[a-zA-Z]\w+\[/.test(line)) {
       stack = this.tokenizeExpr(line);
       if (stack[0].name != "VAR" && stack[1].name != "OPEN_SQUARE") throw new Error(this.lineMsg()+"Bug in ChoiceScript interpreter; send this line to technical support: " + line);
-      var brackets = 0;
-      var closingBracket = -1;
-      for (var i = 2; i < stack.length; i++) {
-        if (stack[i].name == "OPEN_SQUARE") {
-          brackets++;
-        } else if (stack[i].name == "CLOSE_SQUARE") {
-          if (brackets) {
-            brackets--;
-          } else {
-            closingBracket = i;
-            break;
-          }
-        }
-      }
+      var closingBracket = this.findClosingBracket(stack, "SQUARE", 2);
       if (closingBracket == -1) throw new Error(this.lineMsg()+"Invalid set instruction, no closing array bracket: " + line);
       var index = this.evaluateExpr(stack.slice(2, closingBracket));
       variable = String(stack[0].value) + "_" + index;
@@ -1727,6 +1701,25 @@ Scene.prototype.set = function set(line) {
     if (/OPERATOR|FAIRMATH/.test(stack[0].name)) stack.unshift({name:"VAR", value:variable, pos:"(implicit)"});
     var value = this.evaluateExpr(stack);
     this.setVar(variable, value);
+};
+
+Scene.prototype.findClosingBracket = function findClosingBracket(stack, type, offset) {
+  if (!offset) offset = 0;
+  var opens = 0;
+  var openType = "OPEN_"+type;
+  var closeType = "CLOSE_"+type;
+  for (var i = offset; i < stack.length; i++) {
+    if (stack[i].name == openType) {
+      opens++;
+    } else if (stack[i].name == closeType) {
+      if (opens) {
+        opens--;
+      } else {
+        return i;
+      }
+    }
+  }
+  return -1;
 };
 
 // *setref variableExpr expr
