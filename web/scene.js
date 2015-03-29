@@ -1460,7 +1460,13 @@ Scene.prototype.print = function scene_print(expr) {
 
 // *input_text var
 // record text typed by the user and store it in the specified variable
-Scene.prototype.input_text = function input_text(variable) {
+Scene.prototype.input_text = function input_text(line) {
+    var stack = this.tokenizeExpr(line);
+    var variable = this.evaluateReference(stack);
+    if ("undefined" === typeof this.temps[variable] && "undefined" === typeof this.stats[variable]) {
+      throw new Error(this.lineMsg() + "Non-existent variable '"+variable+"'");
+    }
+
     var inputType = "text";
     var longMatch = /^\S+(\s+long)/.exec(variable);
     if (longMatch) {
