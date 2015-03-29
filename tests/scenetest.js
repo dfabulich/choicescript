@@ -1181,7 +1181,6 @@ test("array", function() {
     var stack = scene.tokenizeExpr('foo[1]');
     //print(toJson(stack))
     doh.is([{"name":"VAR","value":"foo","pos":3},{"name":"OPEN_SQUARE","value":"[","pos":4},{"name":"NUMBER","value":"1","pos":5},{"name":"CLOSE_SQUARE","value":"]","pos":6}], stack, "stack");
-    var token = stack.shift();
     var actual = scene.evaluateExpr(stack);
     doh.is(true, actual, true);
 })
