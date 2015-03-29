@@ -1589,18 +1589,20 @@ Scene.prototype.validateVariable = function validateVariable(variable) {
 // *rand foo 1.0 6.0
 //   compute a decimal from [1.0,6.0)
 Scene.prototype.rand = function rand(data) {
-    // TODO make this parser more general
-    var args = data.split(/ /);
-    if (args.length != 3) {
-        throw new Error(this.lineMsg() + "Invalid rand statement, expected three args: varname min max");
-    }
-    var variable, minimum, maximum, diff;
-    variable = args[0];
+    var stack = this.tokenizeExpr(data);
+    if (!stack.length) throw new Error(this.lineMsg() + "Invalid rand statement, expected three args: varname min max");
+    var variable = this.evaluateReference(stack);
     if ("undefined" === typeof this.temps[variable] && "undefined" === typeof this.stats[variable]) {
       throw new Error(this.lineMsg() + "Non-existent variable '"+variable+"'");
     }
-    minimum = this.evaluateValueExpr(args[1]);
-    maximum = this.evaluateValueExpr(args[2]);
+
+    if (!stack.length) throw new Error(this.lineMsg() + "Invalid rand statement, expected three args: varname min max");
+    var minimum = this.evaluateValueToken(stack.shift(), stack);
+    if (!stack.length) throw new Error(this.lineMsg() + "Invalid rand statement, expected three args: varname min max");
+    var maximum = this.evaluateValueToken(stack.shift(), stack);
+    if (stack.length) throw new Error(this.lineMsg() + "Invalid rand statement, expected three args: varname min max");
+    var diff;
+
     diff = maximum - minimum;
     if (isNaN(diff)) {
         throw new Error(this.lineMsg() + "Invalid rand statement, min and max must be numbers");
