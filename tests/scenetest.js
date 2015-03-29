@@ -1020,7 +1020,7 @@ var tokenizerTests = {
     ,'round(1.5)': [{name:"FUNCTION",value:"round(",pos:6},{name:"NUMBER",value:"1.5",pos:9},{name:"CLOSE_PARENTHESIS",value:")",pos:10}]
 }
 
-var tokenizerErrorTests = ["_", '"foo'];
+var tokenizerErrorTests = ['"foo'];
 
 (function(){
 for (var key in tokenizerTests) {

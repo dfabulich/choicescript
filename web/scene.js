@@ -3025,6 +3025,11 @@ Scene.prototype.evaluateReference = function evaluateReference(stack) {
     name = this.evaluateExpr(stack.slice(0, closingCurly));
     stack.splice(0, closingCurly+1);
     return name;
+  } else if (stack[0].name === "NUMBER") {
+    // you could have a label that's just a number
+    name = stack[0].value;
+    stack.shift();
+    return name;
   } else {
     if (stack[0].name !== "VAR") throw new Error(this.lineMsg() + "Invalid expression; expected name, found " + stack[0].name + " at char " + stack[0].pos);
     if (stack.length > 1 && stack[1].name === "OPEN_SQUARE") {
@@ -3444,7 +3449,7 @@ Scene.tokens = [
     {name:"OPEN_SQUARE", test:function(str){ return Scene.regexpMatch(str,/^\[/); } },
     {name:"CLOSE_SQUARE", test:function(str){ return Scene.regexpMatch(str,/^\]/); } },
     {name:"FUNCTION", test:function(str){ return Scene.regexpMatch(str,/^(not|round|timestamp|log)\s*\(/); } },
-    {name:"NUMBER", test:function(str){ return Scene.regexpMatch(str,/^\d+(\.\d+)?/); } },
+    {name:"NUMBER", test:function(str){ return Scene.regexpMatch(str,/^\d+(\.\d+)?\b/); } },
     {name:"STRING", test:function(str, line) {
             var i;
             if (!/^\"/.test(str)) return null;
@@ -3461,7 +3466,7 @@ Scene.tokens = [
     },
     {name:"WHITESPACE", test:function(str){ return Scene.regexpMatch(str,/^\s+/); } },
     {name:"BOOLEAN_OPERATOR", test:function(str){ return Scene.regexpMatch(str,/^(and|or)\b/); } },
-    {name:"VAR", test:function(str){ return Scene.regexpMatch(str,/^[a-zA-Z]\w*/); } },
+    {name:"VAR", test:function(str){ return Scene.regexpMatch(str,/^\w*/); } },
     {name:"FAIRMATH", test:function(str){ return Scene.regexpMatch(str,/^%[\+\-]/); } },
     {name:"OPERATOR", test:function(str){ return Scene.regexpMatch(str,/^[\+\-\*\/\&\%\^]/); } },
     {name:"INEQUALITY", test:function(str){ return Scene.regexpMatch(str,/^[\!<>]\=?/); } },
