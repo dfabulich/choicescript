@@ -2997,7 +2997,7 @@ Scene.prototype.evaluateValueToken = function evaluateValueToken(token, stack) {
     }
 };
 
-// turn a var token into its name
+// turn a var token into its name, remove it from the stack
 // or if it's a curly parenthesis, evaluate that
 // or if it's an array expression, convert it into its raw underscore name
 Scene.prototype.evaluateReference = function evaluateReference(stack) {
