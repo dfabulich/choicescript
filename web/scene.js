@@ -1670,55 +1670,14 @@ Scene.prototype.rand = function rand(data) {
 //     *set {foo} 3
 //     *comment now bar=3
 Scene.prototype.set = function set(line) {
-    var variable, stack;
-    if (/^\{/.test(line)) {
-      stack = this.tokenizeExpr(line);
-      stack.shift();
-      var closingCurly = this.findClosingBracket(stack, "CURLY");
-      if (closingCurly == -1) throw new Error(this.lineMsg()+"Invalid set instruction, no closing curly bracket: " + line);
-      variable = this.evaluateExpr(stack.slice(0, closingCurly));
-      stack = stack.slice(closingCurly+1);
-    } else if (/^[a-zA-Z]\w+\[/.test(line)) {
-      stack = this.tokenizeExpr(line);
-      if (stack[0].name != "VAR" && stack[1].name != "OPEN_SQUARE") throw new Error(this.lineMsg()+"Bug in ChoiceScript interpreter; send this line to technical support: " + line);
-      var closingBracket = this.findClosingBracket(stack, "SQUARE", 2);
-      if (closingBracket == -1) throw new Error(this.lineMsg()+"Invalid set instruction, no closing array bracket: " + line);
-      var index = this.evaluateExpr(stack.slice(2, closingBracket));
-      variable = String(stack[0].value) + "_" + index;
-      stack = stack.slice(closingBracket+1);
-    } else {
-      var result = /^(\w*)(.*)/.exec(line);
-      if (!result) throw new Error(this.lineMsg()+"Invalid set instruction, no variable specified: " + line);
-      variable = result[1];
-      var expr = result[2];
-      stack = this.tokenizeExpr(expr);
-    }
-    
+    var stack = this.tokenizeExpr(line);
+    var variable = this.evaluateReference(stack);
     this.validateVariable(variable);
     if (stack.length === 0) throw new Error(this.lineMsg()+"Invalid set instruction, no expression specified: " + line);
     // if the first token is an operator, then it's implicitly based on the variable
     if (/OPERATOR|FAIRMATH/.test(stack[0].name)) stack.unshift({name:"VAR", value:variable, pos:"(implicit)"});
     var value = this.evaluateExpr(stack);
     this.setVar(variable, value);
-};
-
-Scene.prototype.findClosingBracket = function findClosingBracket(stack, type, offset) {
-  if (!offset) offset = 0;
-  var opens = 0;
-  var openType = "OPEN_"+type;
-  var closeType = "CLOSE_"+type;
-  for (var i = offset; i < stack.length; i++) {
-    if (stack[i].name == openType) {
-      opens++;
-    } else if (stack[i].name == closeType) {
-      if (opens) {
-        opens--;
-      } else {
-        return i;
-      }
-    }
-  }
-  return -1;
 };
 
 // *setref variableExpr expr
@@ -3042,11 +3001,29 @@ Scene.prototype.evaluateValueToken = function evaluateValueToken(token, stack) {
 // or if it's a curly parenthesis, evaluate that
 // or if it's an array expression, convert it into its raw underscore name
 Scene.prototype.evaluateReference = function evaluateReference(stack) {
+  function findClosingBracket(stack, type, offset) {
+    if (!offset) offset = 0;
+    var opens = 0;
+    var openType = "OPEN_"+type;
+    var closeType = "CLOSE_"+type;
+    for (var i = offset; i < stack.length; i++) {
+      if (stack[i].name == openType) {
+        opens++;
+      } else if (stack[i].name == closeType) {
+        if (opens) {
+          opens--;
+        } else {
+          return i;
+        }
+      }
+    }
+    return -1;
+  }
   if (!stack.length) throw new Error(this.lineMsg()+"Invalid expression, expected a name");
   var name;
   if (stack[0].name === "OPEN_CURLY") {
     stack.shift();
-    var closingCurly = this.findClosingBracket(stack, "CURLY");
+    var closingCurly = findClosingBracket(stack, "CURLY");
     if (closingCurly == -1) throw new Error(this.lineMsg()+"Invalid expression, no closing curly bracket: " + data);
     name = this.evaluateExpr(stack.slice(0, closingCurly));
     stack.splice(0, closingCurly+1);
@@ -3054,7 +3031,7 @@ Scene.prototype.evaluateReference = function evaluateReference(stack) {
   } else {
     if (stack[0].name !== "VAR") throw new Error(this.lineMsg() + "Invalid expression; expected name, found " + stack[0].name + " at char " + stack[0].pos);
     if (stack.length > 1 && stack[1].name === "OPEN_SQUARE") {
-      var closingBracket = this.findClosingBracket(stack, "SQUARE", 2);
+      var closingBracket = findClosingBracket(stack, "SQUARE", 2);
       if (closingBracket == -1) throw new Error(this.lineMsg()+"Invalid expression, no closing array bracket at char " + stack[1].pos);
       var index = this.evaluateExpr(stack.slice(2, closingBracket));
       name = String(stack[0].value) + "_" + index;
