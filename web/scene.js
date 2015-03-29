@@ -747,14 +747,13 @@ Scene.prototype.reset = function reset() {
 // *goto_scene foo
 //
 Scene.prototype.goto_scene = function gotoScene(data) {
-    var args = trim(data).split(/ /);
-    var sceneName, label;
-    if (args.length == 1) {
-      sceneName = data;
-    } else {
-      sceneName = args[0];
-      label = args[1];
+    var stack = this.tokenizeExpr(data);
+    var sceneName = this.evaluateReference(stack);
+    var label;
+    if (stack.length) {
+      label = this.evaluateReference(stack);
     }
+
     this.finished = true;
     this.skipFooter = true;
     var scene = new Scene(sceneName, this.stats, this.nav, {debugMode:this.debugMode, secondaryMode:this.secondaryMode});
@@ -3037,6 +3036,36 @@ Scene.prototype.evaluateValueToken = function evaluateValueToken(token, stack) {
     } else {
         throw new Error(this.lineMsg() + "Invalid expression at char "+token.pos+", expected NUMBER, STRING, VAR or PARENTHETICAL, was: " + name + " [" + token.value + "]");
     }
+};
+
+// turn a var token into its name
+// or if it's a curly parenthesis, evaluate that
+// or if it's an array expression, convert it into its raw underscore name
+Scene.prototype.evaluateReference = function evaluateReference(stack) {
+  if (!stack.length) throw new Error(this.lineMsg()+"Invalid expression, expected a name");
+  var name;
+  if (stack[0].name === "OPEN_CURLY") {
+    stack.shift();
+    var closingCurly = this.findClosingBracket(stack, "CURLY");
+    if (closingCurly == -1) throw new Error(this.lineMsg()+"Invalid expression, no closing curly bracket: " + data);
+    name = this.evaluateExpr(stack.slice(0, closingCurly));
+    stack.splice(0, closingCurly+1);
+    return name;
+  } else {
+    if (stack[0].name !== "VAR") throw new Error(this.lineMsg() + "Invalid expression; expected name, found " + stack[0].name + " at char " + stack[0].pos);
+    if (stack.length > 1 && stack[1].name === "OPEN_SQUARE") {
+      var closingBracket = this.findClosingBracket(stack, "SQUARE", 2);
+      if (closingBracket == -1) throw new Error(this.lineMsg()+"Invalid expression, no closing array bracket at char " + stack[1].pos);
+      var index = this.evaluateExpr(stack.slice(2, closingBracket));
+      name = String(stack[0].value) + "_" + index;
+      stack.splice(0, closingBracket+1);
+      return name;
+    } else {
+      name = stack[0].value;
+      stack.shift();
+      return name;
+    }
+  }
 };
 
 Scene.prototype.functions = {
