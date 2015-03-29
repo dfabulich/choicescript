@@ -2972,8 +2972,6 @@ Scene.prototype.evaluateValueToken = function evaluateValueToken(token, stack) {
     } else if ("OPEN_CURLY" == name) {
         value = this.evaluateExpr(stack, "CLOSE_CURLY");
         return this.getVar(value);
-    } else if ("OPEN_SQUARE" == name) {
-        return this.evaluateExpr(stack, "CLOSE_SQUARE");
     } else if ("FUNCTION" == name) {
         var functionName = /^\w+/.exec(token.value)[0];
         if (!this.functions[functionName]) throw new Error(this.lineMsg + "Unknown function " + functionName);
@@ -3518,9 +3516,6 @@ Scene.operators = {
     },
     "or": function or(v1, v2, line) {
         return bool(v1,line) || bool(v2,line);
-    },
-    "[": function arrayIndex(name, index, line, self) {
-        return self.getVar(String(name)+"_"+index);
     }
 };
 
