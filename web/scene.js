@@ -1462,7 +1462,9 @@ Scene.prototype.input_text = function input_text(variable) {
       variable = variable.substring(0, variable.length-longMatch[1].length);
       inputType = "textarea";
     }
-    this.validateVariable(variable);
+    if ("undefined" === typeof this.temps[variable] && "undefined" === typeof this.stats[variable]) {
+      throw new Error(this.lineMsg() + "Non-existent variable '"+variable+"'");
+    }
     this.finished = true;
     this.paragraph();
     var self = this;
@@ -1490,7 +1492,9 @@ Scene.prototype.input_number = function input_number(data) {
     }
     var variable, minimum, maximum;
     variable = args[0];
-    this.validateVariable(variable);
+    if ("undefined" === typeof this.temps[variable] && "undefined" === typeof this.stats[variable]) {
+      throw new Error(this.lineMsg() + "Non-existent variable '"+variable+"'");
+    }
     minimum = this.evaluateValueExpr(args[1]);
     if (isNaN(minimum*1)) throw new Error(this.lineMsg() + "Invalid minimum, not numeric: " + minimum);
     maximum = this.evaluateValueExpr(args[2]);
@@ -1587,7 +1591,9 @@ Scene.prototype.rand = function rand(data) {
     }
     var variable, minimum, maximum, diff;
     variable = args[0];
-    this.validateVariable(variable);
+    if ("undefined" === typeof this.temps[variable] && "undefined" === typeof this.stats[variable]) {
+      throw new Error(this.lineMsg() + "Non-existent variable '"+variable+"'");
+    }
     minimum = this.evaluateValueExpr(args[1]);
     maximum = this.evaluateValueExpr(args[2]);
     diff = maximum - minimum;
@@ -1672,7 +1678,9 @@ Scene.prototype.rand = function rand(data) {
 Scene.prototype.set = function set(line) {
     var stack = this.tokenizeExpr(line);
     var variable = this.evaluateReference(stack);
-    this.validateVariable(variable);
+    if ("undefined" === typeof this.temps[variable] && "undefined" === typeof this.stats[variable]) {
+      throw new Error(this.lineMsg() + "Non-existent variable '"+variable+"'");
+    }
     if (stack.length === 0) throw new Error(this.lineMsg()+"Invalid set instruction, no expression specified: " + line);
     // if the first token is an operator, then it's implicitly based on the variable
     if (/OPERATOR|FAIRMATH/.test(stack[0].name)) stack.unshift({name:"VAR", value:variable, pos:"(implicit)"});
@@ -1689,24 +1697,16 @@ Scene.prototype.set = function set(line) {
 // *comment now bar=3
 Scene.prototype.setref = function setref(line) {
     var stack = this.tokenizeExpr(line);
-    var reference = this.evaluateValueToken(stack.shift(), stack);
-    var referenceExpressionString;
-    try {
-        referenceExpressionString = trim(line.substring(0, stack[0].pos - stack[0].value.length));
-    } catch (e) {}
+    var variable = this.evaluateValueToken(stack.shift(), stack);
 
-    try {
-      this.validateVariable(reference);
-    } catch (e) {
-      if (typeof referenceExpressionString !== undefined) {
-        throw new Error(this.lineMsg()+
-          "The expression ("+referenceExpressionString+") was \""+reference+"\", which is invalid:\n" + e.message);
-      }
+    if ("undefined" === typeof this.temps[variable] && "undefined" === typeof this.stats[variable]) {
+      throw new Error(this.lineMsg() + "Non-existent variable '"+variable+"'");
     }
+
     // if the first token is an operator, then it's implicitly based on the variable
-    if (/OPERATOR|FAIRMATH/.test(stack[0].name)) stack.unshift({name:"VAR", value:reference, pos:"(implicit)"});
+    if (/OPERATOR|FAIRMATH/.test(stack[0].name)) stack.unshift({name:"VAR", value:variable, pos:"(implicit)"});
     var value = this.evaluateExpr(stack);
-    this.setVar(reference, value);
+    this.setVar(variable, value);
 };
 
 Scene.prototype.share_this_game = function share_links(now) {
