@@ -1491,18 +1491,20 @@ Scene.prototype.input_text = function input_text(variable) {
 // *input_number var min max
 // record number typed by the user and store it in the specified variable
 Scene.prototype.input_number = function input_number(data) {
-    var args = data.split(/ /);
-    if (args.length != 3) {
-        throw new Error(this.lineMsg() + "Invalid input_number statement, expected three args: varname min max");
-    }
-    var variable, minimum, maximum;
-    variable = args[0];
+    var stack = this.tokenizeExpr(data);
+    if (!stack.length) throw new Error(this.lineMsg() + "Invalid input_number statement, expected three args: varname min max");
+    var variable = this.evaluateReference(stack);
     if ("undefined" === typeof this.temps[variable] && "undefined" === typeof this.stats[variable]) {
       throw new Error(this.lineMsg() + "Non-existent variable '"+variable+"'");
     }
-    minimum = this.evaluateValueExpr(args[1]);
+
+    if (!stack.length) throw new Error(this.lineMsg() + "Invalid input_number statement, expected three args: varname min max");
+    var minimum = this.evaluateValueToken(stack.shift(), stack);
     if (isNaN(minimum*1)) throw new Error(this.lineMsg() + "Invalid minimum, not numeric: " + minimum);
-    maximum = this.evaluateValueExpr(args[2]);
+    if (!stack.length) throw new Error(this.lineMsg() + "Invalid input_number statement, expected three args: varname min max");
+
+    var maximum = this.evaluateValueToken(stack.shift(), stack);
+    if (stack.length) throw new Error(this.lineMsg() + "Invalid input_number statement, expected three args: varname min max");
     if (isNaN(maximum*1)) throw new Error(this.lineMsg() + "Invalid maximum, not numeric: " + maximum);
 
     if (parseFloat(minimum) > parseFloat(maximum)) throw new Error(this.lineMsg() + "Minimum " + minimum+ " should not be greater than maximum " + maximum);
