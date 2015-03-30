@@ -131,7 +131,7 @@ Scene.prototype.printLoop = function printLoop() {
     if (!this.finished) {
         this.autofinish();
     }
-    this.save(null, "temp");
+    this.save("temp");
     if (this.skipFooter) {
         this.skipFooter = false;
     } else {
@@ -578,7 +578,7 @@ Scene.prototype.resetPage = function resetPage() {
     var self = this;
     clearScreen(function() {
       // save in the background, eventually
-      self.save(function() {});
+      self.save("");
       self.prevLine = "empty";
       self.screenEmpty = true;
       self.execute();
@@ -605,7 +605,7 @@ Thus, stat changes on the stat screen will only be permanently saved when
 the player clicks "Next" in the main game, ensuring that the game is still
 refreshable.
 */
-Scene.prototype.save = function save(callback, slot) {
+Scene.prototype.save = function save(slot) {
     if (this.saveSlot) {
       transferTempStatWrites();
     } else {
@@ -619,7 +619,7 @@ Scene.prototype.save = function save(callback, slot) {
         tempStatWrites = {};
       }
       
-      saveCookie(callback, slot, this.stats, this.temps, this.lineNum, this.indent, this.debugMode, this.nav);
+      saveCookie(function() {}, slot, this.stats, this.temps, this.lineNum, this.indent, this.debugMode, this.nav);
     }
 };
 
@@ -1485,10 +1485,8 @@ Scene.prototype.input_text = function input_text(line) {
         value = value.replace(/\n/g, "[n/]");
         if (self.nav) self.nav.bugLog.push("*input_text " + variable + " " + value);
         self.finished = false;
-        self.save(function() {
-          self.setVar(variable, value);
-          self.resetPage();
-        }, "");
+        self.setVar(variable, value);
+        self.resetPage();
       });
     });
     if (this.debugMode) println(toJson(this.stats));
@@ -1548,10 +1546,8 @@ Scene.prototype.input_number = function input_number(data) {
         }
         if (self.nav) self.nav.bugLog.push("*input_number " + variable + " " + value);
         self.finished = false;
-        self.save(function() {
-          self.setVar(variable, numValue);
-          self.resetPage();
-        }, "");
+        self.setVar(variable, numValue);
+        self.resetPage();
       });
     }, minimum, maximum, intRequired);
     if (this.debugMode) println(toJson(this.stats));
@@ -1789,12 +1785,10 @@ Scene.prototype.restart = function restart() {
   this.finished = true;
   delayBreakEnd();
   var self = this;
-  this.save(function () {
-    self.reset();
-    var startupScene = self.nav.getStartupScene();
-    var scene = new Scene(startupScene, self.stats, self.nav, {debugMode:self.debugMode, secondaryMode:false});
-    scene.resetPage();
-  }, "");
+  self.reset();
+  var startupScene = self.nav.getStartupScene();
+  var scene = new Scene(startupScene, self.stats, self.nav, {debugMode:self.debugMode, secondaryMode:false});
+  scene.resetPage();
   
 };
 
