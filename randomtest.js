@@ -229,7 +229,7 @@ if (showText) {
 
 Scene.prototype.subscribe = noop;
 Scene.prototype.restore_game = noop;
-Scene.prototype.save = function(callback) { if (callback) timeout = callback; };
+Scene.prototype.save = noop;
 Scene.prototype.stat_chart = function() {
   this.parseStatChart();
 }
