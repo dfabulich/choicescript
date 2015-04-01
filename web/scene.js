@@ -757,7 +757,7 @@ Scene.prototype.reset = function reset() {
 //
 Scene.prototype.goto_scene = function gotoScene(data) {
     var sceneName, label;
-    if (/[\[\{]/.test(line)) {
+    if (/[\[\{]/.test(data)) {
       var stack = this.tokenizeExpr(data);
       sceneName = this.evaluateReference(stack, {toLowerCase: false});
       if (stack.length) {
