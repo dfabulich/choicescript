@@ -1708,6 +1708,7 @@ Scene.prototype.set = function set(line) {
 Scene.prototype.setref = function setref(line) {
     var stack = this.tokenizeExpr(line);
     var variable = this.evaluateValueToken(stack.shift(), stack);
+    variable = String(variable).toLowerCase();
 
     if ("undefined" === typeof this.temps[variable] && "undefined" === typeof this.stats[variable]) {
       throw new Error(this.lineMsg() + "Non-existent variable '"+variable+"'");
