@@ -631,7 +631,6 @@ Scene.prototype.save = function save(slot) {
 //   *goto {foo}
 Scene.prototype["goto"] = function scene_goto(line) {
     var label = this.evaluateReference(this.tokenizeExpr(line));
-    label = label.toLowerCase();
     if (typeof(this.labels[label]) != "undefined") {
         this.lineNum = this.labels[label];
         this.indent = this.getIndent(this.lines[this.lineNum]);
@@ -753,7 +752,7 @@ Scene.prototype.reset = function reset() {
 //
 Scene.prototype.goto_scene = function gotoScene(data) {
     var stack = this.tokenizeExpr(data);
-    var sceneName = this.evaluateReference(stack);
+    var sceneName = this.evaluateReference(stack, {toLowerCase: false});
     var label;
     if (stack.length) {
       label = this.evaluateReference(stack);
@@ -3006,7 +3005,9 @@ Scene.prototype.evaluateValueToken = function evaluateValueToken(token, stack) {
 // turn a var token into its name, remove it from the stack
 // or if it's a curly parenthesis, evaluate that
 // or if it's an array expression, convert it into its raw underscore name
-Scene.prototype.evaluateReference = function evaluateReference(stack) {
+Scene.prototype.evaluateReference = function evaluateReference(stack, options) {
+  var toLowerCase = true;
+  if (options && options.hasOwnProperty("toLowerCase")) toLowerCase = !!options.toLowerCase;
   function findClosingBracket(stack, type, offset) {
     if (!offset) offset = 0;
     var opens = 0;
@@ -3025,6 +3026,13 @@ Scene.prototype.evaluateReference = function evaluateReference(stack) {
     }
     return -1;
   }
+  function normalizeCase(name) {
+    if (toLowerCase) {
+      return String(name).toLowerCase();
+    } else {
+      return name;
+    }
+  }
   if (!stack.length) throw new Error(this.lineMsg()+"Invalid expression, expected a name");
   var name;
   if (stack[0].name === "OPEN_CURLY") {
@@ -3033,7 +3041,7 @@ Scene.prototype.evaluateReference = function evaluateReference(stack) {
     if (closingCurly == -1) throw new Error(this.lineMsg()+"Invalid expression, no closing curly bracket: " + data);
     name = this.evaluateExpr(stack.slice(0, closingCurly));
     stack.splice(0, closingCurly+1);
-    return name;
+    return normalizeCase(name);
   } else if (stack[0].name === "NUMBER") {
     // you could have a label that's just a number
     name = stack[0].value;
@@ -3047,11 +3055,11 @@ Scene.prototype.evaluateReference = function evaluateReference(stack) {
       var index = this.evaluateExpr(stack.slice(2, closingBracket));
       name = String(stack[0].value) + "_" + index;
       stack.splice(0, closingBracket+1);
-      return name;
+      return normalizeCase(name);
     } else {
       name = stack[0].value;
       stack.shift();
-      return name;
+      return normalizeCase(name);
     }
   }
 };
