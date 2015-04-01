@@ -630,7 +630,12 @@ Scene.prototype.save = function save(slot) {
 //   *create foo "labelName"
 //   *goto {foo}
 Scene.prototype["goto"] = function scene_goto(line) {
-    var label = this.evaluateReference(this.tokenizeExpr(line));
+    var label;
+    if (/[\[\{]/.test(line)) {
+      label = this.evaluateReference(this.tokenizeExpr(line));
+    } else {
+      label = String(line).toLowerCase();
+    }
     if (typeof(this.labels[label]) != "undefined") {
         this.lineNum = this.labels[label];
         this.indent = this.getIndent(this.lines[this.lineNum]);
@@ -751,12 +756,26 @@ Scene.prototype.reset = function reset() {
 // *goto_scene foo
 //
 Scene.prototype.goto_scene = function gotoScene(data) {
-    var stack = this.tokenizeExpr(data);
-    var sceneName = this.evaluateReference(stack, {toLowerCase: false});
-    var label;
-    if (stack.length) {
-      label = this.evaluateReference(stack);
+    var sceneName, label;
+    if (/[\[\{]/.test(line)) {
+      var stack = this.tokenizeExpr(data);
+      sceneName = this.evaluateReference(stack, {toLowerCase: false});
+      if (stack.length) {
+        label = this.evaluateReference(stack);
+      }
+      if (stack.length) {
+        throw new Error(this.lineMsg() + "Invalid *goto_scene command; nothing should appear after the label " + label);
+      }
+    } else {
+      var words = data.split(/ /);
+      sceneName = words[0];
+      if (words.length > 2) {
+        throw new Error(this.lineMsg() + "Invalid *goto_scene command; nothing should appear after the label " + words[1]);
+      } else if (words.length == 2) {
+        label = words[1];
+      }
     }
+    
 
     this.finished = true;
     this.skipFooter = true;
