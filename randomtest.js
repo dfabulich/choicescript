@@ -340,8 +340,8 @@ Scene.prototype.ending = function () {
 
 Scene.prototype.restart = Scene.prototype.ending;
 
-Scene.prototype.input_text = function(variable) {
-   this.setVar(variable, "blah blah");
+Scene.prototype.input_text = function(line) {
+   this.set(line + " \"blah blah\"");
 }
 
 Scene.prototype.input_number = function(data) {
