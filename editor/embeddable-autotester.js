@@ -419,6 +419,7 @@ function autotester(sceneText, nav, sceneName, extraLabels) {
       scene.loadLines(sceneText);
       scene.targetLabel = extraLabel;
       scene.testPath = [sceneName,",","goto " + extraLabel.label];
+      log (scene.testPath.join(''));
       scene.execute();
     }
   }
