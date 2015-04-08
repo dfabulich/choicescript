@@ -1115,6 +1115,61 @@ function purchase(product, callback) {
   }
 }
 
+shortMonthStrings = [null, "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+function printDiscount(product, fullYear, oneBasedMonthNumber, dayOfMonth, line, options) {
+  if (window.updatedDiscountDates && updatedDiscountDates[product]) {
+    var udd = updatedDiscountDates[product];
+    fullYear = udd.fullYear;
+    oneBasedMonthNumber = udd.oneBasedMonthNumber;
+    dayOfMonth = udd.dayOfMonth;
+  }
+  var shortMonthString = shortMonthStrings[oneBasedMonthNumber];
+  var discountTimestamp = new Date(shortMonthString + " " + dayOfMonth + ", " + fullYear).getTime();
+  var discountEligible = new Date().getTime() < discountTimestamp;
+  var span;
+  span = document.createElement("span");
+  span.setAttribute("id", "discount_" + product);
+  printx(line, span);
+  span.innerHTML = span.innerHTML.replace("${choice_discount_ends}", "<span id=discountdate_"+product+">"+shortMonthString + " " + parseInt(dayOfMonth, 10) + "</span>") + " ";
+
+  if (!discountEligible) {
+    span.style.display = "none";
+  }
+
+  text.appendChild(span);
+}
+
+function rewriteDiscount(product, fullYear, oneBasedMonthNumber, dayOfMonth) {
+  if (!window.updatedDiscountDates) window.updatedDiscountDates = {};
+  window.updatedDiscountDates[product] = {fullYear:fullYear, oneBasedMonthNumber:oneBasedMonthNumber, dayOfMonth:dayOfMonth};
+  var span = document.getElementById("discount_"+product);
+  if (!span) return;
+  var shortMonthString = shortMonthStrings[oneBasedMonthNumber];
+  var discountTimestamp = new Date(shortMonthString + " " + dayOfMonth + ", " + fullYear).getTime();
+  var discountEligible = new Date().getTime() < discountTimestamp;
+  if (discountEligible) {
+    var dateSpan = document.getElementById("discountdate_"+product);
+    if (!dateSpan) return;
+    span.style.display = "";
+    dateSpan.innerHTML = shortMonthString + " " + parseInt(dayOfMonth, 10);
+  } else {
+    span.style.display = "none";
+  }
+}
+
+function handleDiscountResponse(ok, response) {
+  if (!ok || !response || !window.storeName || !response[storeName]) return;
+  if (!window.updatedDiscountDates) window.updatedDiscountDates = {};
+  var udds = response[storeName];
+  for (var product in udds) {
+    if (!udds.hasOwnProperty(product)) continue;
+    var udd = udds[product];
+    var result = udd.split("-");
+    rewriteDiscount(product, result[0], parseInt(result[1],10), parseInt(result[2], 10));
+  }
+}
+
 function registerNativeAchievement(name) {
   if (window.blockNativeAchievements) return;
   if (window.isIosApp) {
@@ -2173,6 +2228,7 @@ if (!window.isWeb && window.isIosApp) {
       document.body.appendChild(dummy);
       window.setTimeout(function() {document.body.removeChild(dummy);}, 10);
     }, false);
+  callIos("checkdiscounts");
 } else if (window.isAndroidApp) {
   document.write("<style>"+
   "#header { display: none; }"+
