@@ -42,6 +42,7 @@ printShareLinks = function() {};
 printLink = function() {};
 printImage = function() {};
 showPassword = function() {};
+printDiscount = function() {};
 
 isRegistered = function() {return false;};
 isRegisterAllowed = function() {return false;};

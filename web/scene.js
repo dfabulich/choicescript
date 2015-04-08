@@ -931,7 +931,7 @@ Scene.prototype.print_discount = function print_Discount(line) {
   this.temps.choice_discount_ends = "POISONTOKEN";
   discountText = this.replaceVariables(discountText).replace("POISONTOKEN", "${choice_discount_ends}");
   delete this.temps.choice_discount_ends;
-  printDiscount(product, fullYear, oneBasedMonthNumber, dayOfMonth, discountText);
+  if (typeof printDiscount != "undefined") printDiscount(product, fullYear, oneBasedMonthNumber, dayOfMonth, discountText);
 };
 
 // *abort
