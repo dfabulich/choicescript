@@ -3396,6 +3396,7 @@ Scene.prototype.achievement = function scene_achievement(data) {
   }
   var points = parseInt(pointString, 10);
   if (points > 100) throw new Error(this.lineMsg()+"Invalid *achievement, no achievement may be worth more than 100 points: " + points);
+  if (points < 1) throw new Error(this.lineMsg()+"Invalid *achievement, no achievement may be worth less than 1 point: " + points);
   if (!this.achievementTotal) this.achievementTotal = 0;
   this.achievementTotal += points;
   if (this.achievementTotal > 1000) {
