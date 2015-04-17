@@ -167,7 +167,7 @@ test("nestedChoice", function() {
     +"\n*page_break"
     +"\ndone"
   ;
-  autotestScene(scene,  [1,1,1,1,1,1,1,1,2,1,1,3,1,0]);
+  autotestScene(scene,  [1,1,1,1,1,1,1,1,2,1,3,3,1,0]);
 })
 test("badElseIf", function() {
   stats = {};

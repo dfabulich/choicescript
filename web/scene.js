@@ -2853,6 +2853,15 @@ Scene.prototype["if"] = function scene_if(line) {
 
 // TODO Rename this function to just skipBranch
 Scene.prototype.skipTrueBranch = function skipTrueBranch(inElse) {
+  var self = this;
+  function prevNonBlankLine() {
+    var line;
+    var i = self.lineNum - 1;
+    while(isDefined(line = self.lines[i]) && !trim(line)) {
+      i--;
+    }
+    return i;
+  }
   var startIndent = this.indent;
   var nextIndent = null;
   while (isDefined(line = this.lines[++this.lineNum])) {
@@ -2869,7 +2878,7 @@ Scene.prototype.skipTrueBranch = function skipTrueBranch(inElse) {
           // check to see if this is an *else or *elseif
           if (indent == startIndent) parsed = /^\s*\*(\w+)(.*)/.exec(line);
           if (!parsed || inElse) {
-              this.lineNum--;
+              this.lineNum = prevNonBlankLine();
               this.rollbackLineCoverage();
               this.indent = indent;
               return;
@@ -2890,7 +2899,7 @@ Scene.prototype.skipTrueBranch = function skipTrueBranch(inElse) {
               this.lineNum = this.lineNum; // code coverage
               this["if"](data);
           } else {
-              this.lineNum--;
+              this.lineNum = prevNonBlankLine();
               this.rollbackLineCoverage();
               this.indent = this.getIndent(this.nextNonBlankLine());
           }
