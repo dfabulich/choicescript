@@ -753,36 +753,40 @@ Scene.prototype.reset = function reset() {
     this.stats.scene = this;
 };
 
+Scene.prototype.parseGotoScene = function parseGotoScene(data) {
+  var sceneName, label;
+  if (/[\[\{]/.test(data)) {
+    var stack = this.tokenizeExpr(data);
+    sceneName = this.evaluateReference(stack, {toLowerCase: false});
+    if (stack.length) {
+      label = this.evaluateReference(stack);
+    }
+    if (stack.length) {
+      throw new Error(this.lineMsg() + "Invalid *goto_scene command; nothing should appear after the label " + label);
+    }
+  } else {
+    var words = data.split(/ /);
+    sceneName = words[0];
+    if (words.length > 2) {
+      throw new Error(this.lineMsg() + "Invalid *goto_scene command; nothing should appear after the label " + words[1]);
+    } else if (words.length == 2) {
+      label = words[1];
+    }
+  }
+  return {sceneName:sceneName, label:label};
+};
+
 // *goto_scene foo
 //
 Scene.prototype.goto_scene = function gotoScene(data) {
-    var sceneName, label;
-    if (/[\[\{]/.test(data)) {
-      var stack = this.tokenizeExpr(data);
-      sceneName = this.evaluateReference(stack, {toLowerCase: false});
-      if (stack.length) {
-        label = this.evaluateReference(stack);
-      }
-      if (stack.length) {
-        throw new Error(this.lineMsg() + "Invalid *goto_scene command; nothing should appear after the label " + label);
-      }
-    } else {
-      var words = data.split(/ /);
-      sceneName = words[0];
-      if (words.length > 2) {
-        throw new Error(this.lineMsg() + "Invalid *goto_scene command; nothing should appear after the label " + words[1]);
-      } else if (words.length == 2) {
-        label = words[1];
-      }
-    }
-    
+    var result = parseGotoScene(data);
 
     this.finished = true;
     this.skipFooter = true;
-    var scene = new Scene(sceneName, this.stats, this.nav, {debugMode:this.debugMode, secondaryMode:this.secondaryMode});
+    var scene = new Scene(result.sceneName, this.stats, this.nav, {debugMode:this.debugMode, secondaryMode:this.secondaryMode});
     scene.screenEmpty = this.screenEmpty;
     scene.prevLine = this.prevLine;
-    if (typeof label != "undefined") scene.targetLabel = {label:label, origin:this.name, originLine:this.lineNum};
+    if (typeof result.label != "undefined") scene.targetLabel = {label:result.label, origin:this.name, originLine:this.lineNum};
     scene.execute();
 };
 

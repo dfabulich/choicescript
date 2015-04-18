@@ -200,13 +200,17 @@ if (fullGame) {
           var data = trim(result[2]);
           if (command == "goto_scene" || command == "gosub_scene") {
             if (data === null) data = "";
-            words = data.split(/ /);
-            if (words[0] !== "") {
-              addFile(words[0]+".txt");
-            }
-            if (words.length > 1) {
-              if (!gotoSceneLabels[words[0]]) gotoSceneLabels[words[0]] = [];
-              gotoSceneLabels[words[0]].push({origin:sceneName, originLine:j, label:words[1]});
+            if (/[\[\{]/.test(data)) {
+              // print warning?
+            } else {
+              words = data.split(/ /);
+              if (words[0] !== "") {
+                addFile(words[0]+".txt");
+              }
+              if (words.length > 1) {
+                if (!gotoSceneLabels[words[0]]) gotoSceneLabels[words[0]] = [];
+                gotoSceneLabels[words[0]].push({origin:sceneName, originLine:j, label:words[1]});
+              }
             }
           } else if (command == "save_game") {
             if (data !== null) addFile(data+".txt");
