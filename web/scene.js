@@ -779,7 +779,7 @@ Scene.prototype.parseGotoScene = function parseGotoScene(data) {
 // *goto_scene foo
 //
 Scene.prototype.goto_scene = function gotoScene(data) {
-    var result = parseGotoScene(data);
+    var result = this.parseGotoScene(data);
 
     this.finished = true;
     this.skipFooter = true;
