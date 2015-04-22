@@ -991,6 +991,7 @@ Scene.prototype.temp = function temp(line) {
 Scene.prototype.getVar = function getVar(variable) {
     var value;
     variable = String(variable).toLowerCase();
+    if (variable && !isNaN(1*variable) && String(1*variable) === variable) return 1*variable;
     if (variable == "true") return true;
     if (variable == "false") return false;
     if (variable == "choice_subscribe_allowed") return true;
