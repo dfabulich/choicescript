@@ -3126,6 +3126,9 @@ Scene.prototype.functions = {
   log: function(value) {
     if (isNaN(value*1)) throw new Error(this.lineMsg()+"log() value is not a number: " + value);
     return Math.log(value)/Math.log(10);
+  },
+  length: function(value) {
+    return String(value).length;
   }
 };
 
@@ -3514,7 +3517,7 @@ Scene.tokens = [
     {name:"CLOSE_CURLY", test:function(str){ return Scene.regexpMatch(str,/^\}/); } },
     {name:"OPEN_SQUARE", test:function(str){ return Scene.regexpMatch(str,/^\[/); } },
     {name:"CLOSE_SQUARE", test:function(str){ return Scene.regexpMatch(str,/^\]/); } },
-    {name:"FUNCTION", test:function(str){ return Scene.regexpMatch(str,/^(not|round|timestamp|log)\s*\(/); } },
+    {name:"FUNCTION", test:function(str){ return Scene.regexpMatch(str,/^(not|round|timestamp|log|length)\s*\(/); } },
     {name:"NUMBER", test:function(str){ return Scene.regexpMatch(str,/^\d+(\.\d+)?\b/); } },
     {name:"STRING", test:function(str, line) {
             var i;
@@ -3534,7 +3537,7 @@ Scene.tokens = [
     {name:"BOOLEAN_OPERATOR", test:function(str){ return Scene.regexpMatch(str,/^(and|or)\b/); } },
     {name:"VAR", test:function(str){ return Scene.regexpMatch(str,/^\w*/); } },
     {name:"FAIRMATH", test:function(str){ return Scene.regexpMatch(str,/^%[\+\-]/); } },
-    {name:"OPERATOR", test:function(str){ return Scene.regexpMatch(str,/^[\+\-\*\/\&\%\^]/); } },
+    {name:"OPERATOR", test:function(str){ return Scene.regexpMatch(str,/^[\+\-\*\/\&\%\^\#]/); } },
     {name:"INEQUALITY", test:function(str){ return Scene.regexpMatch(str,/^[\!<>]\=?/); } },
     {name:"EQUALITY", test:function(str){ return Scene.regexpMatch(str,/^=/); } }
     //
@@ -3547,6 +3550,7 @@ Scene.operators = {
     "%": function modulo(v1,v2,line) { return num(v1,line) % num(v2,line); },
     "^": function exponent(v1,v2,line) { return Math.pow(num(v1,line), num(v2,line)); },
     "&": function concatenate(v1,v2) { return [v1,v2].join(""); },
+    "#": function charAt(v1,v2,line) { return String(v1).charAt(num(v2,line)); },
     "%+": function fairAdd(v1, v2, line) {
         v1 = num(v1,line);
         v2 = num(v2,line);
