@@ -1371,6 +1371,7 @@ Scene.prototype.line_break = function line_break() {
 // display named image
 Scene.prototype.image = function image(data) {
     data = data || "";
+    data = this.replaceVariables(data);
     var args = data.split(" ");
     if (args > 2) throw new Error(this.lineMsg()+"Too many words; expected filename and alignment: " + data);
     var source = args[0];
