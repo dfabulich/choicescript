@@ -3550,7 +3550,16 @@ Scene.operators = {
     "%": function modulo(v1,v2,line) { return num(v1,line) % num(v2,line); },
     "^": function exponent(v1,v2,line) { return Math.pow(num(v1,line), num(v2,line)); },
     "&": function concatenate(v1,v2) { return [v1,v2].join(""); },
-    "#": function charAt(v1,v2,line) { return String(v1).charAt(num(v2,line)); },
+    "#": function charAt(v1,v2,line) {
+      var i = num(v2,line);
+      if (i < 1) {
+        throw new Error("line "+line+": There is no character at position " + i + "; the position must be greater than or equal to 1.");
+      }
+      if (i > String(v1).length) {
+        throw new Error("line "+line+": There is no character at position " + i + ". \""+v1+"\" is only " + String(v1).length + " characters long.");
+      }
+      return String(v1).charAt(i-1);
+    },
     "%+": function fairAdd(v1, v2, line) {
         v1 = num(v1,line);
         v2 = num(v2,line);
