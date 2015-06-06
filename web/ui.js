@@ -982,13 +982,19 @@ function isWebPurchaseSupported() {
 }
 
 function isRestorePurchasesSupported() {
-  return !!window.isIosApp || isWebPurchaseSupported();
+  return !!window.isIosApp || !!window.isAndroidApp || isWebPurchaseSupported();
 }
 
 function restorePurchases(callback) {
   if (window.isIosApp) {
     window.restoreCallback = callback;
     callIos("restorepurchases");
+  } else if (window.isAndroidApp) {
+    window.restoreCallback = function(error) {
+      window.restoreCallback = null;
+      callback(error);
+    };
+    androidBilling.forceRestoreTransactions();
   } else if (isWebPurchaseSupported()) {
     isRegistered(function(registered) {
       var restoreCallback = function() {callback();};
