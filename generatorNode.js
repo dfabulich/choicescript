@@ -14,7 +14,7 @@ while (i--) {
   var filePath = inputDir + '/' + list[i];
   var inputMod = fs.statSync(filePath).mtime.getTime();
   var outputMod = 0;
-  if (path.existsSync(filePath + ".json")) {
+  if (fs.existsSync(filePath + ".json")) {
     outputMod = fs.statSync(filePath + ".json").mtime.getTime();;
   }
   if (inputMod <= outputMod) {
