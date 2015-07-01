@@ -676,6 +676,8 @@ function printShareLinks(target, now) {
         mobileMesg = "  <li><a href='"+chromeUrl+"/reviews'>Rate this app</a> in the Chrome Web Store</li>\n";
       }
     }
+  } else if (window.isSteamApp) {
+    mobileMesg = "  <li><a href='#' onclick='try { purchase(\"adfree\", function() {}); } catch (e) {}; return false;'>Review this game</a> on Steam</li>\n";
   }
 
   var url = window.location.href;
@@ -928,29 +930,47 @@ function getKnownPurchases(callback) {
 
 // Callback expects a map from product ids to booleans
 function checkPurchase(products, callback) {
+  function publishPurchaseEvents(purchases) {
+    if (window.purchaseSubscriptions) {
+      for (var key in purchaseSubscriptions) {
+        if (purchases[key]) purchaseSubscriptions[key].call();
+      }
+    }
+  }
+
   var i;
   if (window.isIosApp) {
-    window.checkPurchaseCallback = function(purchases) {callback("ok",purchases); };
+    window.checkPurchaseCallback = function(purchases) {
+      callback("ok",purchases);
+      publishPurchaseEvents(purchases);
+    };
     callIos("checkpurchase", products);
   } else if (window.isAndroidApp && !window.isNookAndroidApp) {
-    window.checkPurchaseCallback = function(purchases) {callback("ok",purchases); };
+    window.checkPurchaseCallback = function(purchases) {
+      callback("ok",purchases);
+      publishPurchaseEvents(purchases);
+    };
     androidBilling.checkPurchase(products);
   } else if (window.isWinOldApp) {
     safeTimeout(function() {
       var purchases = eval(window.external.CheckPurchase(products));
       callback("ok",purchases);
+      publishPurchaseEvents(purchases);
     }, 0);
   } else if (window.isMacApp && window.macPurchase) {
     safeTimeout(function() {
       var purchases = JSON.parse(macPurchase.checkPurchases_(products));
       callback("ok",purchases);
+      publishPurchaseEvents(purchases);
     }, 0);
   } else if (window.isCef) {
     cefQuery({
       request:"CheckPurchases " + products,
       onSuccess: function(response) {
         console.log("cp response " + response);
-        callback("ok",JSON.parse(response));
+        var purchases = JSON.parse(response);
+        callback("ok",purchases);
+        publishPurchaseEvents(purchases);
       },
       onFailure: function(error_code, error_message) {
         console.error("CheckPurchases error: " + error_message);
@@ -961,9 +981,15 @@ function checkPurchase(products, callback) {
     isRegistered(function (registered) {
       if (!registered) return callback("ok", {billingSupported: true});
       if (window.knownPurchases) {
-        safeTimeout(function() { callback("ok", knownPurchases); }, 0);
+        safeTimeout(function() {
+          callback("ok", knownPurchases);
+          publishPurchaseEvents(knownPurchases);
+        }, 0);
       } else {
-        getKnownPurchases(callback);
+        getKnownPurchases(function(ok, purchases){
+          callback(ok, purchases);
+          publishPurchaseEvents(purchases);
+        });
       }
     });
   } else {
@@ -1031,6 +1057,9 @@ function purchase(product, callback) {
   var purchaseCallback = function() {
     window.purchaseCallback = null;
     safeCall(null, callback);
+    if (window.purchaseSubscriptions && purchaseSubscriptions[product]) {
+      purchaseSubscriptions[product].call();
+    }
   };
   if (window.isIosApp) {
     window.purchaseCallback = purchaseCallback;
@@ -1076,7 +1105,7 @@ function purchase(product, callback) {
                   doneLoading();
                   if (ok) {
                     cacheKnownPurchases(response);
-                    return callback();
+                    return purchaseCallback();
                   } else if (/^card error: /.test(response.error)) {
                     var cardError = response.error.substring("card error: ".length);
                     asyncAlert(cardError);
@@ -1104,7 +1133,7 @@ function purchase(product, callback) {
           if (registered) {
             checkPurchase(product, function(ok, response) {
               if (ok && response[product]) {
-                callback();
+                purchaseCallback();
               } else {
                 clearScreen(loadAndRestoreGame);
                 return fetchEmail(stripe);
@@ -1117,7 +1146,7 @@ function purchase(product, callback) {
       });
     });
   } else {
-    safeTimeout(callback, 0);
+    safeTimeout(purchaseCallback, 0);
   }
 }
 
@@ -2159,6 +2188,14 @@ window.onload=function() {
     }
 
     submitAnyDirtySaves();
+
+    if (window.purchaseSubscriptions) {
+      var productList = "";
+      for (var key in purchaseSubscriptions) {
+        productList += (productList ? " " : "") + key;
+      }
+      if (productList) checkPurchase(productList, function() {});
+    }
 };
 
 if ( document.addEventListener ) {
