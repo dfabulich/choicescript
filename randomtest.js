@@ -205,7 +205,8 @@ Scene.prototype.page_break = function randomtest_page_break(buttonText) {
   this.paragraph();
   println("*page_break " + buttonText);
   println("");
-}
+  this.resetCheckedPurchases();
+};
 
 if (showText) {
   var lineBuffer = [];
@@ -373,7 +374,14 @@ Scene.prototype.goto_scene = function random_goto_scene(name) {
   this.oldGotoScene.apply(this, arguments);
 }
 
-Scene.prototype.purchase = noop;
+Scene.prototype.purchase = function random_purchase(data) {
+  var result = /^(\w+)\s+(\S+)\s+(.*)/.exec(data);
+  if (!result) throw new Error(this.lineMsg() + "invalid line; can't parse purchaseable product: " + data);
+  var product = result[1];
+  var priceGuess = trim(result[2]);
+  var label = trim(result[3]);
+  if (typeof this.temps["choice_purchased_"+product] === "undefined") throw new Error(this.lineMsg() + "Didn't check_purchases on this page");
+};
 
 Scene.prototype.choice = function choice(data, fakeChoice) {
     var groups = ["choice"];

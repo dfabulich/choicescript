@@ -573,9 +573,18 @@ Scene.prototype.nextNonBlankLine = function nextNonBlankLine(includingThisOne) {
     return line;
 };
 
+Scene.prototype.resetCheckedPurchases = function resetCheckedPurchases() {
+  for (var temp in this.temps) {
+    if (/^choice_purchased/.test(temp)) {
+      delete this.temps[temp];
+    }
+  }
+};
+
 // reset the page and invoke code after clearing the screen
 Scene.prototype.resetPage = function resetPage() {
     var self = this;
+    this.resetCheckedPurchases();
     clearScreen(function() {
       // save in the background, eventually
       self.save("");
@@ -861,6 +870,7 @@ Scene.prototype.purchase = function purchase_button(data) {
   var product = result[1];
   var priceGuess = trim(result[2]);
   var label = trim(result[3]);
+  if (typeof this.temps["choice_purchased_"+product] === "undefined") throw new Error(this.lineMsg() + "Didn't check_purchases on this page");
   this.finished = true;
   this.skipFooter = true;
   var self = this;

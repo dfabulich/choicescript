@@ -31,7 +31,10 @@ function autotester(sceneText, nav, sceneName, extraLabels) {
   // Don't test for *bugs; *if cheating makes *bugs fake-reachable
   Scene.prototype.bug = Scene.prototype.finish;
 
-  Scene.prototype.page_break = function() {};
+  Scene.prototype.page_break = function(buttonName) {
+    this.replaceVariables(buttonName);
+    this.resetCheckedPurchases();
+  };
   Scene.prototype.subscribe = function() {};
   Scene.prototype.save = function() {};
   Scene.prototype.restore_game = function() {};
@@ -42,6 +45,7 @@ function autotester(sceneText, nav, sceneName, extraLabels) {
     var product = result[1];
     var priceGuess = trim(result[2]);
     var label = trim(result[3]);
+    if (typeof this.temps["choice_purchased_"+product] === "undefined") throw new Error(this.lineMsg() + "Didn't check_purchases on this page");
     if (seen[label]) return;
     var scene = this.clone();
     scene.testPath.push(',');
