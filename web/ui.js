@@ -1075,6 +1075,31 @@ function purchase(product, callback) {
   } else if (window.isCef) {
     cefQuerySimple("Purchase " + product);
     // no callback; we'll refresh on purchase
+  } else if (window.isWeb && product == window.appPurchase) {
+    var webStoreFallback = function() {
+      window.appPurchase = null;
+      purchase(product, callback);
+    };
+    var clickLink = function(id) {
+      var link = document.getElementById(id);
+      if (!link) return webStoreFallback();
+      var href = link.getAttribute("href");
+      if (!href) return webStoreFallback();
+      window.location.href = href;
+    };
+    
+    // instead of IAP, send the user to a store
+    if (/(iPhone OS|iPad)/.test(navigator.userAgent)) {
+      clickLink("iphoneLink");
+    } else if (/Silk/.test(navigator.userAgent)) {
+      clickLink("kindleLink");
+    } else if (/Android/.test(navigator.userAgent)) {
+      clickLink("androidLink");
+    } else if (document.getElementById("steamLink")) {
+      clickLink("steamLink");
+    } else {
+      webStoreFallback();
+    }
   } else if (isWebPurchaseSupported()) {
     if (!window.StripeCheckout) return asyncAlert("Sorry, we weren't able to initiate payment. (Your "+
       "network connection may be down.) Please refresh the page and try again, or contact "+
