@@ -679,7 +679,7 @@ Scene.prototype["return"] = function scene_return() {
       stackFrame = this.stats.choice_subscene_stack.pop();
       this.finished = true;
       this.skipFooter = true;
-      var scene = new Scene(stackFrame.name, this.stats, this.nav, {debugMode:this.debugMode, secondaryMode:this.secondaryMode});
+      var scene = new Scene(stackFrame.name, this.stats, this.nav, {debugMode:this.debugMode, secondaryMode:this.secondaryMode, saveSlot:this.saveSlot});
       scene.temps = stackFrame.temps;
       scene.screenEmpty = this.screenEmpty;
       scene.prevLine = this.prevLine;
@@ -792,7 +792,7 @@ Scene.prototype.goto_scene = function gotoScene(data) {
 
     this.finished = true;
     this.skipFooter = true;
-    var scene = new Scene(result.sceneName, this.stats, this.nav, {debugMode:this.debugMode, secondaryMode:this.secondaryMode});
+    var scene = new Scene(result.sceneName, this.stats, this.nav, {debugMode:this.debugMode, secondaryMode:this.secondaryMode, saveSlot:this.saveSlot});
     scene.screenEmpty = this.screenEmpty;
     scene.prevLine = this.prevLine;
     if (typeof result.label != "undefined") scene.targetLabel = {label:result.label, origin:this.name, originLine:this.lineNum};
