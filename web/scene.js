@@ -3108,18 +3108,16 @@ Scene.prototype.evaluateReference = function evaluateReference(stack, options) {
     return name;
   } else {
     if (stack[0].name !== "VAR") throw new Error(this.lineMsg() + "Invalid expression; expected name, found " + stack[0].name + " at char " + stack[0].pos);
-    if (stack.length > 1 && stack[1].name === "OPEN_SQUARE") {
-      var closingBracket = findClosingBracket(stack, "SQUARE", 2);
+    name = String(stack[0].value);
+    stack.shift();
+    while(stack.length && stack[0].name == "OPEN_SQUARE") {
+      var closingBracket = findClosingBracket(stack, "SQUARE", 1);
       if (closingBracket == -1) throw new Error(this.lineMsg()+"Invalid expression, no closing array bracket at char " + stack[1].pos);
-      var index = this.evaluateExpr(stack.slice(2, closingBracket));
-      name = String(stack[0].value) + "_" + index;
+      var index = this.evaluateExpr(stack.slice(1, closingBracket));
+      name += "_" + index;
       stack.splice(0, closingBracket+1);
-      return normalizeCase(name);
-    } else {
-      name = stack[0].value;
-      stack.shift();
-      return normalizeCase(name);
     }
+    return normalizeCase(name);
   }
 };
 
