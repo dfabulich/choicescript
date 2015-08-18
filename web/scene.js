@@ -470,6 +470,9 @@ Scene.prototype.runCommand = function runCommand(line) {
         } else {
           this.initialCommands = false;
         }
+        if (command == "choice" && String(this.name).toLowerCase() == "choicescript_screenshots") {
+          throw new Error(this.lineMsg() + "choicescript_screenshots files should only contain *fake_choice commands, not real *choice commands");
+        }
         this[command](data);
     } else {
         throw new Error(this.lineMsg() + "Non-existent command '"+command+"'");

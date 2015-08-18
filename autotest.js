@@ -71,6 +71,9 @@ if (!list.length || (list.length == 1 && !list[0])) {
   if (fileExists("web/"+gameName+"/scenes/choicescript_stats.txt")) {
     list.push("choicescript_stats.txt");
   }
+  if (fileExists("web/"+gameName+"/scenes/choicescript_screenshots.txt")) {
+    list.push("choicescript_screenshots.txt");
+  }
   if (fileExists("web/"+gameName+"/scenes/choicescript_upgrade.txt")) {
     list.push("choicescript_upgrade.txt");
   }

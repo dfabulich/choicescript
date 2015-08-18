@@ -30,6 +30,7 @@ for (var i = 0; i < nav._sceneList.length; i++) {
   addFile(nav._sceneList[i] + ".txt");
 }
 addFile("choicescript_stats.txt");
+addFile("choicescript_screenshots.txt");
 addFile("choicescript_upgrade.txt");
 
 Scene.prototype.verifySceneFile = function webVerifySceneFile(name) {
@@ -146,7 +147,7 @@ function loadScenes(sceneNum) {
   try {
     xhr.send();
   } catch (x) {
-    if (/^choicescript_(stats|upgrade)$/.test(sceneName)) {
+    if (/^choicescript_(stats|upgrade|screenshots)$/.test(sceneName)) {
       skip = true;
     } else {
       if (window.location.protocol == "file:" && /Chrome/.test(navigator.userAgent)) {
