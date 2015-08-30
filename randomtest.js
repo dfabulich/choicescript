@@ -21,7 +21,7 @@
 // e.g.   randomtest 10000 mygame 0 false false
 
 var isRhino = false;
-var iterations = 10, gameName = "mygame", randomSeed = 0, delay = false, showCoverage = true, isTrial = false, showText = false;
+var iterations = 10, gameName = "mygame", randomSeed = 0, delay = false, showCoverage = true, isTrial = false, showText = false, highlightGenderPronouns = false;
 function parseArgs(args) {
   if (args[0]) iterations = args[0];
   if (args[1]) gameName = args[1];
@@ -118,6 +118,7 @@ if (typeof importScripts != "undefined") {
     randomSeed = event.data.randomSeed;
     showCoverage = event.data.showCoverage;
     showText = event.data.showText;
+    highlightGenderPronouns = event.data.highlightGenderPronouns;
 
     if (event.data.showText) {
       var lineBuffer = [];

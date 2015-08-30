@@ -184,6 +184,10 @@ Scene.prototype.replaceVariables = function (line) {
     } else if (capitalize == "!!") {
       value = value.toUpperCase();
     }
+    if (typeof highlightGenderPronouns != "undefined" && highlightGenderPronouns && /\b(he|him|his|she|her|hers)\b/gi.test(value)) {
+      // this zero-width space will give us a hint for highlighting
+      output.push("\u200b");
+    }
     output.push(value);
     index = closingCurly+1;
   }
