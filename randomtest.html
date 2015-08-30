@@ -6,6 +6,7 @@
 <body>
 <p>Iterations: <input type="number" id="iterations" value="10000"></p>
 <p>Seed: <input type="number" id="seed" value="0"></p>
+<p><input type="checkbox" id="showChoices" checked> Show choices selected during game</p>
 <p><input type="checkbox" id="showText"> Show full text during game</p>
 <p><input type="checkbox" id="highlightGenderPronouns"> Highlight gender pronouns</p>
 <p><input type="checkbox" id="showCoverage"> Show line coverage statistics after test</p>
@@ -83,6 +84,7 @@ if (queryArgs.seed) document.getElementById("seed").value = queryArgs.seed;
 if (queryArgs.showText) document.getElementById("showText").checked = queryArgs.showText;
 if (queryArgs.highlightGenderPronouns) document.getElementById("highlightGenderPronouns").checked = queryArgs.highlightGenderPronouns;
 if (queryArgs.showCoverage) document.getElementById("showCoverage").checked = queryArgs.showCoverage;
+if (typeof queryArgs.showChoices != undefined) document.getElementById("showChoices").checked = !!queryArgs.showChoices;
 if (queryArgs.autoScroll) document.getElementById("autoScroll").checked = queryArgs.autoScroll;
 
 document.getElementById("start").onclick = function() {
@@ -90,9 +92,10 @@ document.getElementById("start").onclick = function() {
   randomSeed = document.getElementById("seed").value*1;
   var showText = document.getElementById("showText").checked;
   var showCoverage = document.getElementById("showCoverage").checked;
+  var showChoices = document.getElementById("showChoices").checked;
   highlightGenderPronouns = document.getElementById("highlightGenderPronouns").checked;
   document.body.innerHTML = "";
-  worker.postMessage({iterations:iterations, randomSeed:randomSeed, showText:showText, showCoverage:showCoverage, highlightGenderPronouns:highlightGenderPronouns});
+  worker.postMessage({iterations:iterations, randomSeed:randomSeed, showText:showText, showCoverage:showCoverage, highlightGenderPronouns:highlightGenderPronouns, showChoices:showChoices});
 }
 </script>
 </body>
