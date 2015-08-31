@@ -6,6 +6,7 @@
 <body>
 <p>Iterations: <input type="number" id="iterations" value="10000"></p>
 <p>Seed: <input type="number" id="seed" value="0"></p>
+<p><input type="checkbox" id="avoidUsedOptions"> Avoid used options (less random; finds bugs faster)</p>
 <p><input type="checkbox" id="showChoices" checked> Show choices selected during game</p>
 <p><input type="checkbox" id="showText"> Show full text during game</p>
 <p><input type="checkbox" id="highlightGenderPronouns"> Highlight gender pronouns</p>
@@ -81,6 +82,7 @@ for (var i = queryArgList.length - 1; i >= 0; i--) {
 
 if (queryArgs.iterations) document.getElementById("iterations").value = queryArgs.iterations;
 if (queryArgs.seed) document.getElementById("seed").value = queryArgs.seed;
+if (queryArgs.avoidUsedOptions) document.getElementById("avoidUsedOptions").checked = queryArgs.avoidUsedOptions;
 if (queryArgs.showText) document.getElementById("showText").checked = queryArgs.showText;
 if (queryArgs.highlightGenderPronouns) document.getElementById("highlightGenderPronouns").checked = queryArgs.highlightGenderPronouns;
 if (queryArgs.showCoverage) document.getElementById("showCoverage").checked = queryArgs.showCoverage;
@@ -90,12 +92,13 @@ if (queryArgs.autoScroll) document.getElementById("autoScroll").checked = queryA
 document.getElementById("start").onclick = function() {
   iterations = document.getElementById("iterations").value;
   randomSeed = document.getElementById("seed").value*1;
+  var avoidUsedOptions = document.getElementById("avoidUsedOptions").checked;
   var showText = document.getElementById("showText").checked;
   var showCoverage = document.getElementById("showCoverage").checked;
   var showChoices = document.getElementById("showChoices").checked;
   highlightGenderPronouns = document.getElementById("highlightGenderPronouns").checked;
   document.body.innerHTML = "";
-  worker.postMessage({iterations:iterations, randomSeed:randomSeed, showText:showText, showCoverage:showCoverage, highlightGenderPronouns:highlightGenderPronouns, showChoices:showChoices});
+  worker.postMessage({iterations:iterations, randomSeed:randomSeed, showText:showText, showCoverage:showCoverage, highlightGenderPronouns:highlightGenderPronouns, showChoices:showChoices, avoidUsedOptions:avoidUsedOptions});
 }
 </script>
 </body>

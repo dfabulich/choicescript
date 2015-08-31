@@ -21,7 +21,16 @@
 // e.g.   randomtest 10000 mygame 0 false false
 
 var isRhino = false;
-var iterations = 10, gameName = "mygame", randomSeed = 0, delay = false, showCoverage = true, isTrial = false, showText = false, highlightGenderPronouns = false, showChoices = true;
+var iterations = 10;
+var gameName = "mygame";
+var randomSeed = 0;
+var delay = false;
+var showCoverage = true;
+var isTrial = false;
+var showText = false;
+var highlightGenderPronouns = false;
+var showChoices = true;
+var avoidUsedOptions = false;
 function parseArgs(args) {
   if (args[0]) iterations = args[0];
   if (args[1]) gameName = args[1];
@@ -29,6 +38,7 @@ function parseArgs(args) {
   if (args[3]) delay = args[3] && args[3] !== "false";
   if (args[4]) isTrial = args[4] && args[4] !== "false";
   if (args[5]) showText = args[5] && args[5] !== "false";
+  if (args[6]) avoidUsedOptions = args[6] && args[6] !== "false";
   if (showText) showCoverage = false;
 }
 
@@ -120,6 +130,7 @@ if (typeof importScripts != "undefined") {
     showText = event.data.showText;
     showChoices = event.data.showChoices;
     highlightGenderPronouns = event.data.highlightGenderPronouns;
+    avoidUsedOptions = event.data.avoidUsedOptions;
 
     if (event.data.showText) {
       var lineBuffer = [];
@@ -175,15 +186,32 @@ saveCookie = function(callback) {
   if (callback) timeout = callback;
 };
 
+choiceUseCounts = {};
 
-var hardCodedRandomness = null; //[1, 1, 2, 1, 3, 3, 1, 1, 2, 5, 3, 1, 1, 2, 5, 1, 3, 3, 2, 2, 1, 2, 3, 2, 3, 1, 4, 5, 2, 3, 3, 2, 1, 1, 2, 2, 1, 1, 2, 3, ];
-function randomIndex(len) {
-  if (hardCodedRandomness) {
-    var hardCodedResult = hardCodedRandomness.shift();
-    if ("number" !== typeof(hardCodedResult)) throw new Error("Out of randomness!");
-    return hardCodedResult - 1;
+function chooseIndex(options, choiceLine, sceneName) {
+  function choiceKey(i) {
+    return "o:" + options[i].ultimateOption.line + ",c:" + choiceLine + ",s:" + sceneName;
   }
-  return Math.floor(Math.random()*(len));
+  if (avoidUsedOptions) {
+    var len = options.length;
+    var minUses = choiceUseCounts[choiceKey(0)] || 0;
+    var selectableOptions = [];
+    var result = 0;
+    for (var i = 0; i < len; i++) {
+      var choiceUseCount = choiceUseCounts[choiceKey(i)] || 0;
+      if (choiceUseCount < minUses) {
+        selectableOptions = [i];
+        minUses = choiceUseCount;
+      } else if (choiceUseCount == minUses) {
+        selectableOptions.push(i);
+      }
+    }
+    var result = selectableOptions[Math.floor(Math.random()*(selectableOptions.length))];
+    choiceUseCounts[choiceKey(result)] = minUses + 1;
+    return result;
+  } else {
+    return Math.floor(Math.random()*(options.length));
+  }
 }
 
 var printed = [];
@@ -393,7 +421,7 @@ Scene.prototype.choice = function choice(data, fakeChoice) {
     var flattenedOptions = [];
     flattenOptions(flattenedOptions, options);
 
-    var index = randomIndex(flattenedOptions.length);
+    var index = chooseIndex(flattenedOptions, choiceLine, this.name);
 
     var item = flattenedOptions[index];
     if (this.fakeChoice) {

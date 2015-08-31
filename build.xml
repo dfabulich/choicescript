@@ -130,6 +130,7 @@ either express or implied.
     <property name="output" value="randomtest-output.txt" />
     <property name="trial" value="false" />
     <property name="showText" value="false" />
+    <property name="avoidUsedOptions" value="false" />
     <echo>Executing randomtest, writing to ${output}</echo>
     <rhino output="${output}">
       <arg value="randomtest.js" />
@@ -139,6 +140,7 @@ either express or implied.
       <arg value="false" /> <!--delay-->
       <arg value="${trial}" />
       <arg value="${showText}" />
+      <arg value="${avoidUsedOptions}" />
     </rhino>
   </target>
   
