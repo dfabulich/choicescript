@@ -86,7 +86,7 @@ if (queryArgs.avoidUsedOptions) document.getElementById("avoidUsedOptions").chec
 if (queryArgs.showText) document.getElementById("showText").checked = queryArgs.showText;
 if (queryArgs.highlightGenderPronouns) document.getElementById("highlightGenderPronouns").checked = queryArgs.highlightGenderPronouns;
 if (queryArgs.showCoverage) document.getElementById("showCoverage").checked = queryArgs.showCoverage;
-if (typeof queryArgs.showChoices != undefined) document.getElementById("showChoices").checked = !!queryArgs.showChoices;
+if (typeof queryArgs.showChoices != "undefined") document.getElementById("showChoices").checked = !!queryArgs.showChoices;
 if (queryArgs.autoScroll) document.getElementById("autoScroll").checked = queryArgs.autoScroll;
 
 document.getElementById("start").onclick = function() {
