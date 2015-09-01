@@ -30,7 +30,7 @@ var isTrial = false;
 var showText = false;
 var highlightGenderPronouns = false;
 var showChoices = true;
-var avoidUsedOptions = false;
+var avoidUsedOptions = true;
 function parseArgs(args) {
   if (args[0]) iterations = args[0];
   if (args[1]) gameName = args[1];
