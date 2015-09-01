@@ -39,6 +39,7 @@ function parseArgs(args) {
   if (args[4]) isTrial = args[4] && args[4] !== "false";
   if (args[5]) showText = args[5] && args[5] !== "false";
   if (args[6]) avoidUsedOptions = args[6] && args[6] !== "false";
+  if (args[7]) showChoices = args[7] && args[7] !== "false";
   if (showText) showCoverage = false;
 }
 
