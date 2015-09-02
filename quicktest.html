@@ -167,7 +167,7 @@ function loadScenes(sceneNum) {
   }
 
   if (loadFailed) {
-    if (/^choicescript_(stats|upgrade)$/.test(sceneName)) {
+    if (/^choicescript_(stats|upgrade|screenshots)$/.test(sceneName)) {
       skip = true;
     } else {
       doneLoading();
@@ -269,7 +269,7 @@ function testScene(sceneNum) {
   try {
     xhr.send();
   } catch (x) {
-    if (/^choicescript_(stats|upgrade)$/.test(sceneName)) {
+    if (/^choicescript_(stats|upgrade|screenshots)$/.test(sceneName)) {
       skip = true;
     } else {
       if (window.location.protocol == "file:" && /Chrome/.test(navigator.userAgent)) {
@@ -289,7 +289,7 @@ function testScene(sceneNum) {
   }
 
   if (loadFailed) {
-    if (/^choicescript_(stats|upgrade)$/.test(sceneName)) {
+    if (/^choicescript_(stats|upgrade|screenshots)$/.test(sceneName)) {
       skip = true;
     } else {
       doneLoading();
