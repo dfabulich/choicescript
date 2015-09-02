@@ -437,6 +437,8 @@ Scene.prototype.execute = function execute() {
 Scene.prototype.parseLabels = function parseLabels() {
     var lineLength = this.lines.length;
     var oldLineNum = this.lineNum;
+    var screenshots = ("choicescript_screenshots" == this.name);
+    var seenChoiceWithoutSet = 0;
     for (this.lineNum = 0; this.lineNum < lineLength; this.lineNum++) {
         this.rollbackLineCoverage();
         var line = this.lines[this.lineNum];
@@ -453,6 +455,15 @@ Scene.prototype.parseLabels = function parseLabels() {
               throw new Error(this.lineMsg() + "label '"+data+"' already defined on line " + (this.labels[data]*1+1));
             }
             this.labels[data] = this.lineNum;
+        } else if (screenshots) {
+          if ("fake_choice" == command) {
+            if (seenChoiceWithoutSet) throw new Error(this.lineMsg() +
+              "In choicescript_screenshots, you need to *set at least one variable between *fake_choice commands, so the stat screen looks interesting. " +
+              "There was no *set since the last *fake_choice on line " + seenChoiceWithoutSet + ".");
+            seenChoiceWithoutSet = this.lineNum+1;
+          } else if ("set" == command) {
+            seenChoiceWithoutSet = 0;
+          }
         }
     }
     this.rollbackLineCoverage();
