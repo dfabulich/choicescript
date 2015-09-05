@@ -1095,7 +1095,7 @@ function purchase(product, callback) {
       clickLink("kindleLink");
     } else if (/Android/.test(navigator.userAgent)) {
       clickLink("androidLink");
-    } else if (document.getElementById("steamLink")) {
+    } else if (window.steamClobber && document.getElementById("steamLink")) {
       clickLink("steamLink");
     } else {
       webStoreFallback();
