@@ -1,8 +1,8 @@
 body {
   max-width: 680px;
   _width:expression(this.scrollWidth > 680 ? "680px" : "auto");
+  font: -apple-system-body;
   font-family: Georgia,"Times New Roman",serif;
-  font-size: 16px; /* reset, specified in px so IE currentStyle works */
   background-color: #F7F4F1;
   color: rgba(0, 0, 0, 0.85);
   margin: 8px auto; 
@@ -17,7 +17,7 @@ a {
   cursor: pointer;
 }
 
-#text {
+#main {
 	line-height: 1.5;
 }
 
@@ -59,7 +59,6 @@ table {
 }
 
 .choice label{
-    line-height:20px;
     padding: 11px 8px 12px;
     display:block;
     border-color:#a9acaf;
