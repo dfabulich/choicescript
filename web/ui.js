@@ -999,6 +999,7 @@ function checkPurchase(products, callback) {
       purchases[productList[i]] = true;
     }
     purchases.billingSupported = false;
+    publishPurchaseEvents(purchases);
     safeTimeout(function() {callback("ok", purchases);}, 0);
   }
 }
