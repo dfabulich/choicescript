@@ -1,7 +1,8 @@
 body {
   max-width: 680px;
   _width:expression(this.scrollWidth > 680 ? "680px" : "auto");
-  font: -apple-system-body;
+  font-size: 100%;  /* reset for CWS */
+  font: -apple-system-body; /* we'll override the font, but keep the size from iOS dynamic text sizing */
   font-family: Georgia,"Times New Roman",serif;
   background-color: #F7F4F1;
   color: rgba(0, 0, 0, 0.85);
