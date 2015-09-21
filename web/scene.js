@@ -1534,9 +1534,7 @@ Scene.prototype.input_text = function input_text(line) {
     }
 
     var inputType = "text";
-    var longMatch = /^\S+(\s+long)/.exec(variable);
-    if (longMatch) {
-      variable = variable.substring(0, variable.length-longMatch[1].length);
+    if (stack.length == 1 && stack[0].name == "VAR" && stack[0].value == "long") {
       inputType = "textarea";
     }
     if ("undefined" === typeof this.temps[variable] && "undefined" === typeof this.stats[variable]) {
