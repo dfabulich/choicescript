@@ -2769,7 +2769,7 @@ Scene.prototype.delay_ending = function(data) {
   this.skipFooter = true;
   var self = this;
   checkPurchase("adfree", function(ok, result) {
-    if (result.adfree || !result.billingSupported || (typeof window != "undefined" && window.isWeb)) {
+    if (result.adfree || !result.billingSupported) {
       self.ending();
       return;
     }
