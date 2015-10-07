@@ -2552,7 +2552,16 @@ Scene.prototype.stat_chart = function stat_chart() {
     }
 
     if (biggestSpanWidth > spanMaxWidth) {
-      span1.parentNode.style.fontSize = Math.floor(standardFontSize * spanMaxWidth / biggestSpanWidth) + "px";
+      var newSize = Math.floor(standardFontSize * spanMaxWidth / biggestSpanWidth);
+      span1.parentNode.style.fontSize = newSize + "px";
+      if (window.getComputedStyle) {
+        // on Android, if the user is using non-standand styles, browser may try to ignore our font setting
+        var actual = parseInt(getComputedStyle(span1).fontSize, 10);
+        if (actual > newSize) {
+          newSize *= newSize / actual;
+          span1.parentNode.style.fontSize = newSize + "px";
+        }
+      }
     }
 
   }
