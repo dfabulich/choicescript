@@ -3601,26 +3601,25 @@ Scene.operators = {
         if (!validValue) {
             throw new Error("line "+line+": Can't fairAdd to non-percentile value: " + v1);
         }
-        var multiplier = (100 - v1) / 100;
-        var actualModifier = v2 * multiplier;
-        var value = 1 * v1 + actualModifier;
-        value = Math.floor(value);
-        if (value > 99) value = 99;
-        return value;
+        if (v2 > 0) {
+          var multiplier = (100 - v1) / 100;
+          var actualModifier = v2 * multiplier;
+          var value = 1 * v1 + actualModifier;
+          value = Math.floor(value);
+          if (value > 99) value = 99;
+          return value;
+        } else {
+          var multiplier = v1 / 100;
+          var actualModifier = (0-v2) * multiplier;
+          var value = v1 - actualModifier;
+          value = Math.ceil(value);
+          if (value < 1) value = 1;
+          return value;
+        }
     },
     "%-": function fairSubtract(v1, v2, line) {
-        v1 = num(v1,line);
         v2 = num(v2,line);
-        var validValue = (v1 >= 0 && v1 <= 100);
-        if (!validValue) {
-            throw new Error("line "+line+": Can't fairAdd to non-percentile value: " + v1);
-        }
-        var multiplier = v1 / 100;
-        var actualModifier = v2 * multiplier;
-        var value = v1 - actualModifier;
-        value = Math.ceil(value);
-        if (value < 1) value = 1;
-        return value;
+        return Scene.operators["%+"](v1,0-v2,line);
     },
     "=": function equals(v1,v2) { return v1 == v2; },
     "<": function lessThan(v1,v2,line) {
