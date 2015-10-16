@@ -1026,6 +1026,7 @@ Scene.prototype.getVar = function getVar(variable) {
     if (variable == "choice_register_allowed") return isRegisterAllowed();
     if (variable == "choice_registered") return typeof window != "undefined" && !!window.registered;
     if (variable == "choice_is_web") return typeof window != "undefined" && !!window.isWeb;
+    if (variable == "choice_is_steam") return typeof window != "undefined" && !!window.isSteamApp;
     if (variable == "choice_is_advertising_supported") return typeof isAdvertisingSupported != "undefined" && !!isAdvertisingSupported();
     if (variable == "choice_is_trial") return !!(typeof isTrial != "undefined" && isTrial);
     if (variable == "choice_kindle") return false;
