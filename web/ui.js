@@ -2236,8 +2236,11 @@ try {
 } catch (e) {}
 
 if (window.isWeb) {
-  document.write("<style>.webOnly { display: block !important; }</style>\n"+
-    "<scr"+"ipt src='https://checkout.stripe.com/v2/checkout.js'></scr"+"ipt>");
+  document.write("<style>.webOnly { display: block !important; }</style>\n");
+  var checkoutScript = document.createElement("script");
+  checkoutScript.async = 1;
+  checkoutScript.src="https://checkout.stripe.com/v2/checkout.js";
+  document.getElementsByTagName("head")[0].appendChild(checkoutScript);
 
   var metas = document.getElementsByTagName("meta");
   var facebookAppId, googleAppId;
