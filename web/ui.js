@@ -54,11 +54,12 @@ function println(msg, parent) {
 
 function showStats() {
     if (document.getElementById('loading')) return;
-    setButtonTitles();
-    if (window.stats.scene.secondaryMode == "stats") {
-      clearScreen(loadAndRestoreGame);
-      return;
+    var button = document.getElementById("statsButton");
+    if (button && button.innerHTML == "Return to the Game") {
+      setButtonTitles();
+      return clearScreen(loadAndRestoreGame);
     }
+    setButtonTitles();
     var currentScene = window.stats.scene;
     var scene = new Scene("choicescript_stats", window.stats, this.nav, {secondaryMode:"stats", saveSlot:"temp"});
     main.innerHTML = "<div id='text'></div>";
