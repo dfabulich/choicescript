@@ -719,6 +719,12 @@ function restoreGame(state, forcedScene, userRestored) {
     var scene;
     var secondaryMode = null;
     var saveSlot = "";
+    var forcedSceneLabel = null;
+    if (/\|/.test(forcedScene)) {
+      var parts = forcedScene.split("|");
+      forcedScene = parts[0];
+      forcedSceneLabel = parts[1];
+    }
     if (forcedScene == "choicescript_stats") {
       secondaryMode = "stats";
       saveSlot = "temp";
@@ -729,7 +735,6 @@ function restoreGame(state, forcedScene, userRestored) {
     if (!isStateValid(state)) {
         var startupScene = forcedScene ? forcedScene : window.nav.getStartupScene();
         scene = new Scene(startupScene, window.stats, window.nav, {debugMode:window.debug, secondaryMode:secondaryMode, saveSlot:saveSlot});
-        safeCall(scene, scene.execute);
     } else {
       if (forcedScene) state.stats.sceneName = forcedScene;
       window.stats = state.stats;
@@ -743,8 +748,11 @@ function restoreGame(state, forcedScene, userRestored) {
       if (userRestored) {
         scene.temps.choice_user_restored = true;
       }
-      safeCall(scene, scene.execute);
     }
+    if (forcedSceneLabel !== null) {
+      scene.targetLabel = {label:forcedSceneLabel, origin:"url", originLine:0}
+    }
+    safeCall(scene, scene.execute);
 }
 
 function redirectScene(sceneName, label, originLine) {
