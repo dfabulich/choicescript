@@ -1092,7 +1092,12 @@ function purchase(product, callback) {
     
     // instead of IAP, send the user to a store
     if (/(iPhone OS|iPad)/.test(navigator.userAgent)) {
-      clickLink("iphoneLink");
+      if (/iPhone OS [456]_/.test(navigator.userAgent)) {
+        // ancient versions of iOS can't use our app
+        webStoreFallback();
+      } else {
+        clickLink("iphoneLink");
+      }
     } else if (/Silk/.test(navigator.userAgent)) {
       clickLink("kindleLink");
     } else if (/Android/.test(navigator.userAgent)) {
