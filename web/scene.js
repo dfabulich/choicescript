@@ -2571,7 +2571,7 @@ Scene.prototype.stat_chart = function stat_chart() {
     var row = rows[i];
     var type = row.type;
     var variable = row.variable;
-    var value = this.getVar(variable);
+    var value = this.evaluateExpr(this.tokenizeExpr(variable));
     var label = this.replaceVariables(row.label);
     var definition = this.replaceVariables(row.definition || "");
 
@@ -2721,13 +2721,37 @@ Scene.prototype.parseStatChart = function parseStatChart() {
           if (!/ /.test(data)) {
             variable = data;
             label = data;
+          } else if (/^\(/.test(data)) {
+            var parens = 0;
+            var closingParen = -1;
+            for (var i = 1; i < data.length; i++) {
+              var c = data.charAt(i);
+              if (c === "(") {
+                parens++;
+              } else if (c === ")") {
+                if (parens) {
+                  parens--;
+                } else {
+                  closingParen = i;
+                  break;
+                }
+              }
+            }
+            if (closingParen == -1) {
+              throw new Error(this.lineMsg() + "missing closing parenthesis");
+            }
+            variable = data.substring(1, closingParen);
+            label = trim(data.substring(closingParen+1))
+            if (label === "") {
+              label = variable;
+            }
           } else {
             result = /^(\S+) (.*)/.exec(data);
             if (!result) throw new Error(this.lineMsg() + "Bug! can't find a space when a space was found");
             variable = result[1];
             label = result[2];
           }
-          this.getVar(variable);
+          this.evaluateExpr(this.tokenizeExpr(variable));
           this.replaceVariables(label);
           line2 = this.lines[this.lineNum + 1];
           line2indent = this.getIndent(line2);
