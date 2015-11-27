@@ -1182,8 +1182,6 @@ function purchase(product, callback) {
   }
 }
 
-shortMonthStrings = [null, "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-
 function printDiscount(product, fullYear, oneBasedMonthNumber, dayOfMonth, line, options) {
   if (window.updatedDiscountDates && updatedDiscountDates[product]) {
     var udd = updatedDiscountDates[product];

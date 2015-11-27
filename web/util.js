@@ -907,3 +907,19 @@ function cefQuerySimple(method) {
     onFailure: function(error_code, error_message) {console.error(method + " error: " + error_message);}
   });
 }
+
+shortMonthStrings = [null, "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/parse
+// "Given a date string of "March 7, 2014", parse() assumes a local time zone, but given an
+// ISO format such as "2014-03-07" it will assume a time zone of UTC for ES5 or local for
+// ECMAScript 2015."
+function parseDateStringInCurrentTimezone(YYYY_MM_DD, line) {
+  var result = /^(\d{4})-(\d{2})-(\d{2})$/.exec(YYYY_MM_DD);
+  if (!result) throw new Error("line "+line+": invalid date string " + YYYY_MM_DD);
+  var fullYear = result[1];
+  var oneBasedMonthNumber = parseInt(result[2],10);
+  var dayOfMonth = parseInt(result[3],10);
+  var shortMonthString = shortMonthStrings[oneBasedMonthNumber];
+  return new Date(shortMonthString + " " + dayOfMonth + ", " + fullYear);
+}

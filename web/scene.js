@@ -952,6 +952,35 @@ Scene.prototype.purchase = function purchase_button(data) {
   });
 };
 
+Scene.prototype.purchase_discount = function purchase_discount(line) {
+  var args = trim(String(line)).split(" ");
+  if (args.length != 5) throw new Error(this.lineMsg() + "expected five arguments, saw "+args.length+": " + line);
+  var product = args[0];
+  var expectedEndDateString = args[1];
+  var expectedEndDate = parseDateStringInCurrentTimezone(expectedEndDateString, this.lineNum+1);
+  var fullPriceGuess = this.replaceVariables(args[2]);
+  var discountedPriceGuess = this.replaceVariables(args[3]);
+  var label = args[4];
+  var startsWithDollar = /^\$/;
+  if (!startsWithDollar.test(fullPriceGuess)) {
+    throw new Error(this.lineMsg() + "full price guess "+fullPriceGuess+"doesn't start with dollar: " + line);
+  }
+  if (!startsWithDollar.test(discountedPriceGuess)) {
+    throw new Error(this.lineMsg() + "discounted price guess "+discountedPriceGuess+"doesn't start with dollar: " + line);
+  }
+  var discountText = "[b]On sale until "+shortMonthStrings[expectedEndDate.getMonth()+1]+" "+expectedEndDate.getDate()+"! Buy now before the price increases![/b]"
+  if (typeof printDiscount != "undefined") {
+    printDiscount(product, expectedEndDate.getYear()+1900, expectedEndDate.getMonth()+1, expectedEndDate.getDate(), discountText);
+  }
+  var priceGuess;
+  if (new Date().getTime() < expectedEndDate.getTime()) {
+    priceGuess = discountedPriceGuess;
+  } else {
+    priceGuess = fullPriceGuess;
+  }
+  this.purchase([product, priceGuess, label].join(" "));
+}
+
 Scene.prototype.print_discount = function print_Discount(line) {
   var result = /(\w+) (\d{4})-(\d{2})-(\d{2}) (.*$)/.exec(line);
   if (!result) throw new Error("invalid discount: " + line);
@@ -3672,5 +3701,5 @@ Scene.validCommands = {"comment":1, "goto":1, "gotoref":1, "label":1, "looplimit
     "save_game":1,"delay_break":1,"image":1,"link":1,"input_number":1,"goto_random_scene":1,
     "restart":1,"more_games":1,"delay_ending":1,"end_trial":1,"login":1,"achieve":1,"scene_list":1,"title":1,
     "bug":1,"link_button":1,"check_registration":1,"sound":1,"author":1,"gosub_scene":1,"achievement":1,
-    "check_achievements":1,"redirect_scene":1,"print_discount":1
+    "check_achievements":1,"redirect_scene":1,"print_discount":1,"purchase_discount":1
     };
