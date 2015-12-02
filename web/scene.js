@@ -1431,12 +1431,15 @@ Scene.prototype.image = function image(data) {
     data = data || "";
     data = this.replaceVariables(data);
     var match = /(\S+) (\S+)(.*)/.exec(data);
-    if (!match) {
-      throw new Error(this.lineMsg()+"Not enough words; expected filename and alignment: " + data);
+    var source, alignment;
+    var alt = null;
+    if (match) {
+      var source = match[1];
+      var alignment = match[2];
+      var alt = trim(match[3]);
+    } else {
+      source = data;
     }
-    var source = match[1];
-    var alignment = match[2];
-    var alt = trim(match[3]);
     alignment = alignment || "center";
     if (!/(right|left|center|none)/.test(alignment)) throw new Error(this.lineMsg()+"Invalid alignment, expected right, left, center, or none: " + data);
     printImage(source, alignment, alt);
