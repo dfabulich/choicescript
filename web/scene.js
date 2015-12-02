@@ -1430,13 +1430,16 @@ Scene.prototype.line_break = function line_break() {
 Scene.prototype.image = function image(data) {
     data = data || "";
     data = this.replaceVariables(data);
-    var args = data.split(" ");
-    if (args > 2) throw new Error(this.lineMsg()+"Too many words; expected filename and alignment: " + data);
-    var source = args[0];
-    var alignment = args[1];
+    var match = /(\S+) (\S+)(.*)/.exec(data);
+    if (!match) {
+      throw new Error(this.lineMsg()+"Not enough words; expected filename and alignment: " + data);
+    }
+    var source = match[1];
+    var alignment = match[2];
+    var alt = trim(match[3]);
     alignment = alignment || "center";
     if (!/(right|left|center|none)/.test(alignment)) throw new Error(this.lineMsg()+"Invalid alignment, expected right, left, center, or none: " + data);
-    printImage(source, alignment);
+    printImage(source, alignment, alt);
     if (this.verifyImage) this.verifyImage(source);
 };
 
