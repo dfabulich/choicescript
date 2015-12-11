@@ -362,15 +362,26 @@ function fetchEmail(callback) {
     safeTimeout(function(){callback("");}, 0);
     return;
   }
+  // For some reason, this get seems to not respond sometimes
+  // adding a fallback timeout
   window.store.get("email", function(ok, value) {
     safeCall(null, function() {
+      if (!callback) return;
+      var temp = callback;
+      callback = null;
       if (ok && value) {
-        callback(value);
+        temp(value);
       } else {
-        callback("");
+        temp("");
       }
     });
   });
+  safeTimeout(function() {
+    if (!callback) return;
+    var temp = callback;
+    callback = null;
+    temp("");
+  }, 1000);
 }
 
 function restoreObject(store, key, defaultValue, callback) {
