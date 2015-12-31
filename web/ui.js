@@ -2162,8 +2162,13 @@ window.onload=function() {
       } else if (map.achievements) {
         doneLoading();
         showAchievements("hideNextButton");
-      } else {
+      } else if (map.forcedScene) {
         safeCall(null, function() {loadAndRestoreGame(window.slot, window.forcedScene);});
+      } else if (map.persistence) {
+        window.storeName = map.persistence;
+        safeCall(null, loadAndRestoreGame);
+      } else {
+        safeCall(null, loadAndRestoreGame);
       }
     } else {
       safeCall(null, loadAndRestoreGame);
