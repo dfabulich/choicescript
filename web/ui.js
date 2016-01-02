@@ -2166,7 +2166,11 @@ window.onload=function() {
         safeCall(null, function() {loadAndRestoreGame(window.slot, window.forcedScene);});
       } else if (map.persistence) {
         window.storeName = map.persistence;
-        safeCall(null, loadAndRestoreGame);
+        var startupScene = new Scene("startup", window.stats, window.nav, {secondaryMode:"startup", saveSlot:"startup"});
+        startupScene.startupCallback = function() {
+          safeCall(null, loadAndRestoreGame);
+        }
+        startupScene.execute();
       } else {
         safeCall(null, loadAndRestoreGame);
       }

@@ -473,7 +473,15 @@ Scene.prototype.parseLabels = function parseLabels() {
 // if this is a command line, run it
 Scene.prototype.runCommand = function runCommand(line) {
     var result = /^\s*\*(\w+)(.*)/.exec(line);
-    if (!result) return false;
+    if (!result) {
+      if (this.secondaryMode == "startup" && this.startupCallback) {
+        this.finished = true;
+        this.skipFooter = true;
+        this.startupCallback();
+        return true;
+      }
+      return false;
+    }
     var command = result[1].toLowerCase();
     var data = trim(result[2]);
     if (Scene.validCommands[command]) {
@@ -483,6 +491,12 @@ Scene.prototype.runCommand = function runCommand(line) {
             throw new Error(this.lineMsg() + "Invalid "+command+" instruction, only allowed at the top of startup.txt");
           }
         } else {
+          if (this.secondaryMode == "startup" && this.startupCallback) {
+            this.finished = true;
+            this.skipFooter = true;
+            this.startupCallback();
+            return true;
+          }
           this.initialCommands = false;
         }
         if (command == "choice" && String(this.name).toLowerCase() == "choicescript_screenshots") {
