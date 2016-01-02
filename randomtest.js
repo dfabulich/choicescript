@@ -260,7 +260,6 @@ if (showText) {
 }
 
 Scene.prototype.subscribe = noop;
-Scene.prototype.restore_game = noop;
 Scene.prototype.save = noop;
 Scene.prototype.stat_chart = function() {
   this.parseStatChart();
@@ -282,8 +281,14 @@ Scene.prototype.randomtest = true;
 
 Scene.prototype.save_game = noop;
 
-Scene.prototype.restore_game = function() {
+Scene.prototype.restore_game = function(data) {
   this.parseRestoreGame(false/*alreadyFinished*/);
+  if (data) {
+    var result = /^cancel=(\S+)$/.exec(data);
+    if (!result) throw new Error(this.lineMsg() + "invalid restore_game line: " + data);
+    cancel = result[1];
+    this["goto"](cancel);
+  }
 };
 
 Scene.prototype.delay_break = function randomtest_delayBreak(durationInSeconds) {

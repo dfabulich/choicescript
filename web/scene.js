@@ -1929,7 +1929,13 @@ Scene.prototype.subscribe = function scene_subscribe(now) {
   });
 };
 
-Scene.prototype.restore_game = function restore_game() {
+Scene.prototype.restore_game = function restore_game(data) {
+  var cancel;
+  if (data) {
+    var result = /^cancel=(\S+)$/.exec(data);
+    if (!result) throw new Error(this.lineMsg() + "invalid restore_game line: " + data);
+    cancel = result[1];
+  }
   this.finished = true;
   this.skipFooter = true;
   var self = this;
@@ -2022,6 +2028,9 @@ Scene.prototype.restore_game = function restore_game() {
       } else {
         if (option.cancel) {
           self.finished = false;
+          if (typeof cancel !== "undefined") {
+            self["goto"](cancel);
+          }
           self.resetPage();
         } else {
           var state = option.state;

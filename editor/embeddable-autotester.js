@@ -37,7 +37,6 @@ function autotester(sceneText, nav, sceneName, extraLabels) {
   };
   Scene.prototype.subscribe = function() {};
   Scene.prototype.save = function() {};
-  Scene.prototype.restore_game = function() {};
   Scene.prototype.restore_purchases = function() {};
   Scene.prototype.purchase = function(data) {
     var result = /^(\w+)\s+(\S+)\s+(.*)/.exec(data);
@@ -127,8 +126,14 @@ function autotester(sceneText, nav, sceneName, extraLabels) {
     this.verifySceneFile(destinationSceneName);
   }
   
-  Scene.prototype.restore_game = function() {
+  Scene.prototype.restore_game = function(data) {
     this.parseRestoreGame(false/*alreadyFinished*/);
+    if (data) {
+      var result = /^cancel=(\S+)$/.exec(data);
+      if (!result) throw new Error(this.lineMsg() + "invalid restore_game line: " + data);
+      cancel = result[1];
+      this["goto"](cancel);
+    }
   };
   
   Scene.prototype.rollbackLineCoverage = function(lineNum) {
