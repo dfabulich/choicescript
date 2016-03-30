@@ -1930,11 +1930,11 @@ Scene.prototype.subscribe = function scene_subscribe(now) {
 };
 
 Scene.prototype.restore_game = function restore_game(data) {
-  var cancel;
+  var cancelLabel;
   if (data) {
     var result = /^cancel=(\S+)$/.exec(data);
     if (!result) throw new Error(this.lineMsg() + "invalid restore_game line: " + data);
-    cancel = result[1];
+    cancelLabel = result[1];
   }
   this.finished = true;
   this.skipFooter = true;
@@ -1964,6 +1964,9 @@ Scene.prototype.restore_game = function restore_game(data) {
             promptEmailAddress(this.target, defaultEmail, function(cancel, email) {
               if (cancel) {
                 self.finished = false;
+                if (typeof cancelLabel !== "undefined") {
+                  self["goto"](cancelLabel);
+                }
                 self.resetPage();
                 return;
               }
@@ -1992,6 +1995,9 @@ Scene.prototype.restore_game = function restore_game(data) {
             promptEmailAddress(this.target, defaultEmail, function(cancel, email) {
               if (cancel) {
                 self.finished = false;
+                if (typeof cancelLabel !== "undefined") {
+                  self["goto"](cancelLabel);
+                }
                 self.resetPage();
                 return;
               }
@@ -2028,8 +2034,8 @@ Scene.prototype.restore_game = function restore_game(data) {
       } else {
         if (option.cancel) {
           self.finished = false;
-          if (typeof cancel !== "undefined") {
-            self["goto"](cancel);
+          if (typeof cancelLabel !== "undefined") {
+            self["goto"](cancelLabel);
           }
           self.resetPage();
         } else {
