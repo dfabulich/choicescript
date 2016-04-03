@@ -3620,6 +3620,36 @@ Scene.prototype.bug = function scene_bug(message) {
   throw new Error(this.lineMsg() + message);
 };
 
+Scene.prototype.parseTrackEvent = function(data) {
+  var event = {};
+  var stack = this.tokenizeExpr(data);
+  if (!stack.length) throw new Error(this.lineMsg() + "Invalid track_event statement, expected at least two args: category and action");
+  event.category = this.evaluateValueToken(stack.shift(), stack);
+  if (!stack.length) throw new Error(this.lineMsg() + "Invalid track_event statement, expected at least two args: category and action");
+  event.action = this.evaluateValueToken(stack.shift(), stack);
+  if (stack.length) {
+    event.label = this.evaluateValueToken(stack.shift(), stack);
+    if (stack.length) {
+      event.value = this.evaluateValueToken(stack.shift(), stack);
+      if (stack.length) {
+        throw new Error(this.lineMsg() + "Invalid track_event statement, expected at most four args: category, action, label, value");
+      }
+      var intValue = parseInt(event.value, 10);
+      if (isNaN(intValue) || event.value != intValue || event.value.toString() != intValue.toString()) {
+        throw new Error(this.lineMsg() + "Invalid track_event statement, value must be an integer: " + event.value);
+      }
+    }
+  }
+  return event;
+}
+
+Scene.prototype.track_event = function track_event(data) {
+  var event = this.parseTrackEvent(data);
+  if (typeof ga !== "undefined") {
+    ga('send', 'event', event.category, event.action, event.label, event.value);
+  }
+}
+
 Scene.prototype.lineMsg = function lineMsg() {
     return this.name + " line " + (this.lineNum+1) + ": ";
 };
@@ -3736,5 +3766,5 @@ Scene.validCommands = {"comment":1, "goto":1, "gotoref":1, "label":1, "looplimit
     "save_game":1,"delay_break":1,"image":1,"link":1,"input_number":1,"goto_random_scene":1,
     "restart":1,"more_games":1,"delay_ending":1,"end_trial":1,"login":1,"achieve":1,"scene_list":1,"title":1,
     "bug":1,"link_button":1,"check_registration":1,"sound":1,"author":1,"gosub_scene":1,"achievement":1,
-    "check_achievements":1,"redirect_scene":1,"print_discount":1,"purchase_discount":1
+    "check_achievements":1,"redirect_scene":1,"print_discount":1,"purchase_discount":1,"track_event":1
     };
