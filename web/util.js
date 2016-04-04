@@ -444,8 +444,10 @@ function fetchSavesFromSlotList(store, slotList, i, saveList, callback) {
     return safeCall(null, function() {callback(saveList);});
   }
   restoreObject(store, "state"+slotList[i], null, function(saveState) {
-    saveState.timestamp = slotList[i].substring(4/*"save".length*/);
-    saveList.push(saveState);
+    if (saveState) {
+      saveState.timestamp = slotList[i].substring(4/*"save".length*/);
+      saveList.push(saveState);
+    }
     fetchSavesFromSlotList(store, slotList, i+1, saveList, callback);
   });
 }
