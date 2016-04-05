@@ -145,7 +145,7 @@ Scene.prototype.verifyImage = function commandLineVerifyImage(name) {
 // test startup scene first, to run *create commands
 if (list[0] != nav.getStartupScene()+".txt") list.unshift(nav.getStartupScene()+".txt");
 
-var titleIncluded, authorIncluded;
+var gameTitle, authorIncluded;
 var gotoSceneLabels = {};
 
 // enumerate scenes; gather visited labels
@@ -245,7 +245,10 @@ if (fullGame) {
       verifyFileName("scenes", fileName);
       var sceneText = slurpFile("web/"+gameName+"/scenes/"+fileName, true /*throwOnError*/);
       if (i === 0) {
-        titleIncluded = /\*title /m.test(sceneText);
+        var match = /^\*title (.*)/m.exec(sceneText);
+        if (match) {
+          gameTitle = match[1];
+        }
         authorIncluded = /^\*author /m.test(sceneText);
       }
       uncovered = autotester(sceneText, nav, sceneName, gotoSceneLabels[sceneName])[1];
@@ -285,6 +288,10 @@ for (var i = 0; i < uncoveredScenes.length; i++) {
 
 
 if (!allLinesTested) print("SOME LINES UNTESTED");
-if (!titleIncluded) print("MISSING *TITLE COMMAND");
+if (typeof gameTitle === "undefined") {
+  print("MISSING *TITLE COMMAND");
+} else if (gameTitle.length > 30) {
+  print("TITLE TOO LONG (" + gameTitle.length + " out of 30 characters): " + gameTitle);
+}
 if (!authorIncluded) print("MISSING *AUTHOR COMMAND");
 print("QUICKTEST PASSED");

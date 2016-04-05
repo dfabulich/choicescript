@@ -133,7 +133,7 @@ function testForInvalidCharacters(text) {
 }
 
 var success = true;
-var titleIncluded, authorIncluded;
+var gameTitle, authorIncluded;
 var gotoSceneLabels = {};
 
 function loadScenes(sceneNum) {
@@ -308,7 +308,10 @@ function testScene(sceneNum) {
         uncoveredScenes.push({name:sceneName, lines:uncovered});
       }
       if (sceneNum === 0) {
-        titleIncluded = /\*title /m.test(xhr.responseText);
+        var match = /^\*title (.*)/m.exec(xhr.responseText);
+        if (match) {
+          gameTitle = match[1];
+        }
         authorIncluded = /^\*author /m.test(xhr.responseText);
       }
     } catch (x) {
@@ -342,7 +345,11 @@ function testScene(sceneNum) {
       }
     })();
     if (!allLinesTested) console.log("SOME LINES UNTESTED");
-    if (!titleIncluded) console.log("MISSING *TITLE COMMAND");
+    if (typeof gameTitle === "undefined") {
+      console.log("MISSING *TITLE COMMAND");
+    } else if (gameTitle.length > 30) {
+      console.log("TITLE TOO LONG (" + gameTitle.length + " out of 30 characters): " + gameTitle);
+    }
     if (!authorIncluded) console.log("MISSING *AUTHOR COMMAND");
     console.log("QUICKTEST PASSED");
   }
