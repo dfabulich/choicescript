@@ -2233,7 +2233,9 @@ Scene.prototype.save_game = function save_game(destinationSceneName) {
     saveName.setAttribute("style", "font-size: 25px; width: 90%;");
     form.appendChild(saveName);
 
-    if (_global.automaticCloudStorage) {
+    var hideEmailForm = false;
+    // hideEmailForm = _global.automaticCloudStorage;
+    if (hideEmailForm) {
       println("", form);
     } else {
       println("", form);
@@ -2299,7 +2301,7 @@ Scene.prototype.save_game = function save_game(destinationSceneName) {
         }
         saveStats.scene = {name:destinationSceneName};
 
-        if (_global.automaticCloudStorage) {
+        if (hideEmailForm) {
           clearScreen(function() {
             saveCookie(function() {
               recordSave(slot, function() {
