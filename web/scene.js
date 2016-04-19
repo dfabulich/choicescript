@@ -3742,7 +3742,7 @@ Scene.operators = {
         v2 = num(v2,line);
         return Scene.operators["%+"](v1,0-v2,line);
     },
-    "=": function equals(v1,v2) { return v1 == v2; },
+    "=": function equals(v1,v2) { return v1 == v2 || String(v1) == String(v2); },
     "<": function lessThan(v1,v2,line) {
         return num(v1,line) < num(v2,line); },
     ">": function greaterThan(v1,v2,line) { return num(v1,line) > num(v2,line); },
