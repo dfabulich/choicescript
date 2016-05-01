@@ -1595,7 +1595,7 @@ Scene.prototype.input_text = function input_text(line) {
     var self = this;
     printInput(this.target, inputType, function(value) {
       safeCall(self, function() {
-        value = ""+value || "";
+        value = trim(String(value));
         value = value.replace(/\n/g, "[n/]");
         if (self.nav) self.nav.bugLog.push("*input_text " + variable + " " + value);
         self.finished = false;
