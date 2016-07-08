@@ -1403,10 +1403,14 @@ function showTicker(target, endTimeInSeconds, finishedCallback) {
       if (minutesRemaining < 60) {
         remainderSeconds = secondsRemaining - minutesRemaining * 60;
         return ""+minutesRemaining+"m " + formatSecondsRemaining(remainderSeconds);
-      } else {
+      } else if (minutesRemaining < 6000) {
         var hoursRemaining = Math.floor(secondsRemaining / 3600);
         remainderSeconds = secondsRemaining - hoursRemaining * 3600;
         return ""+hoursRemaining+"h " + formatSecondsRemaining(remainderSeconds, true);
+      } else {
+        var daysRemaining = Math.floor(secondsRemaining / 86400);
+        remainderSeconds = secondsRemaining - daysRemaining * 86400;
+        return ""+daysRemaining+" days " + formatSecondsRemaining(remainderSeconds, true);
       }
     }
   }
