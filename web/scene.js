@@ -1072,6 +1072,19 @@ Scene.prototype.getVar = function getVar(variable) {
     if (variable == "choice_is_steam") return typeof window != "undefined" && !!window.isSteamApp;
     if (variable == "choice_is_advertising_supported") return typeof isAdvertisingSupported != "undefined" && !!isAdvertisingSupported();
     if (variable == "choice_is_trial") return !!(typeof isTrial != "undefined" && isTrial);
+    if (variable == "choice_release_date") {
+      if (typeof window != "undefined" && window.releaseDate) {
+        return simpleDateTimeFormat(window.releaseDate);
+      }
+      return "release day";
+    }
+    if (variable == "choice_prerelease") {
+      if (typeof window != "undefined" && window.releaseDate) {
+        return new Date() < window.releaseDate.getTime();
+      } else {
+        return false;
+      }
+    }
     if (variable == "choice_kindle") return false;
     if (variable == "choice_randomtest") return !!this.randomtest;
     if (variable == "choice_restore_purchases_allowed") return isRestorePurchasesSupported();
@@ -2836,7 +2849,13 @@ Scene.prototype.parseStatChart = function parseStatChart() {
 
 // *timer Dec 25, 2016 9:30:00 PDT
 Scene.prototype.timer = function(dateString) {
-  var end = Date.parse(dateString)/1000;
+  var end;
+  if (dateString == "release") {
+    if (typeof window === "undefined" || !window.releaseDate) return;
+    end = window.releaseDate/1000;
+  } else {
+    end = Date.parse(dateString)/1000;
+  }
   var now = new Date()/1000;
   if (now < end) {
     var target = this.target;
