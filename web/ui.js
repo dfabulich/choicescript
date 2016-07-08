@@ -998,7 +998,7 @@ function checkPurchase(products, callback) {
     var productList = products.split(/ /);
     var purchases = {};
     for (i = 0; i < productList.length; i++) {
-      purchases[productList[i]] = true;
+      purchases[productList[i]] = !!window.isChromeApp;
     }
     purchases.billingSupported = false;
     publishPurchaseEvents(purchases);
