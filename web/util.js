@@ -708,7 +708,7 @@ function isStateValid(state) {
 }
 
 function restartGame(shouldPrompt) {
-  if (window.tickerRunning) {
+  if (window.blockRestart) {
     asyncAlert("Please wait until the timer has run out.");
     return;
   }

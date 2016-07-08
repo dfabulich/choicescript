@@ -2834,6 +2834,24 @@ Scene.prototype.parseStatChart = function parseStatChart() {
     return rows;
 };
 
+// *timer Dec 25, 2016 9:30:00 PDT
+Scene.prototype.timer = function(dateString) {
+  var end = Date.parse(dateString)/1000;
+  var now = new Date()/1000;
+  if (now < end) {
+    var target = this.target;
+    if (!target) {
+      target = document.createElement("p");
+      document.getElementById('text').appendChild(target);
+    }
+    var self = this;
+    showTicker(target, end, function() {
+      clearScreen(loadAndRestoreGame());
+    });
+  }
+}
+
+// *delay_break 1200
 Scene.prototype.delay_break = function(durationInSeconds) {
   if (isNaN(durationInSeconds * 1)) throw new Error(this.lineMsg() + "invalid duration");
   this.finished = true;
@@ -2845,6 +2863,7 @@ Scene.prototype.delay_break = function(durationInSeconds) {
   }
   var self = this;
   delayBreakStart(function(delayStart) {
+    window.blockRestart = true;
     var endTimeInSeconds = durationInSeconds * 1 + delayStart * 1;
     showTicker(target, endTimeInSeconds, function() {
       printButton("Next", target, false, function() {
@@ -2857,6 +2876,7 @@ Scene.prototype.delay_break = function(durationInSeconds) {
   });
 };
 
+// *delay_ending 1200 $2.99 $0.99
 Scene.prototype.delay_ending = function(data) {
   var args = data.split(/ /);
   var durationInSeconds = args[0];
@@ -2923,6 +2943,7 @@ Scene.prototype.delay_ending = function(data) {
         var target = document.getElementById("0").parentElement;
 
         delayBreakStart(function(delayStart) {
+          window.blockRestart = true;
           var endTimeInSeconds = durationInSeconds * 1 + delayStart * 1;
           showTicker(target, endTimeInSeconds, function() {
             clearScreen(function() {
@@ -3771,5 +3792,6 @@ Scene.validCommands = {"comment":1, "goto":1, "gotoref":1, "label":1, "looplimit
     "save_game":1,"delay_break":1,"image":1,"link":1,"input_number":1,"goto_random_scene":1,
     "restart":1,"more_games":1,"delay_ending":1,"end_trial":1,"login":1,"achieve":1,"scene_list":1,"title":1,
     "bug":1,"link_button":1,"check_registration":1,"sound":1,"author":1,"gosub_scene":1,"achievement":1,
-    "check_achievements":1,"redirect_scene":1,"print_discount":1,"purchase_discount":1,"track_event":1
+    "check_achievements":1,"redirect_scene":1,"print_discount":1,"purchase_discount":1,"track_event":1,
+    "timer":1,
     };

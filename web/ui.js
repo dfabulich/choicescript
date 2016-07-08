@@ -1384,7 +1384,7 @@ function showTicker(target, endTimeInSeconds, finishedCallback) {
   }
 
   function cleanUpTicker() {
-    window.tickerRunning = false;
+    window.blockRestart = false;
     if (window.isAndroidApp) {
       notificationBridge.cancelNotification();
     } else if (window.isIosApp) {
@@ -1412,7 +1412,6 @@ function showTicker(target, endTimeInSeconds, finishedCallback) {
   }
 
   function tick() {
-    window.tickerRunning = true;
     var tickerElement = document.getElementById("delayTicker");
     var tickerStillVisible = tickerElement && tickerElement.parentNode && tickerElement.parentNode.parentNode;
     if (!tickerStillVisible) {
