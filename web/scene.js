@@ -916,7 +916,14 @@ Scene.prototype.purchase = function purchase_button(data) {
       var target = self.target;
       if (!target) target = document.getElementById('text');
       self.paragraph();
-      var button = printButton("Buy It Now for " + price, target, false,
+      var prerelease = (typeof window !== "undefined" && window.releaseDate && window.isWeb && window.releaseDate > new Date());
+      var buttonText;
+      if (prerelease) {
+        buttonText = "Pre-Purchase It for " + price;
+      } else {
+        buttonText = "Buy It Now for " + price;
+      }
+      var button = printButton(buttonText, target, false,
         function() {
           safeCall(self, function() {
               purchase(product, function() {
@@ -982,7 +989,13 @@ Scene.prototype.purchase_discount = function purchase_discount(line) {
   if (!startsWithDollar.test(discountedPriceGuess)) {
     throw new Error(this.lineMsg() + "discounted price guess "+discountedPriceGuess+"doesn't start with dollar: " + line);
   }
-  var discountText = "[b]On sale until "+shortMonthStrings[expectedEndDate.getMonth()+1]+" "+expectedEndDate.getDate()+"! Buy now before the price increases![/b]"
+  var prerelease = (typeof window !== "undefined" && window.releaseDate && window.isWeb && window.releaseDate > new Date());
+  var discountText;
+  if (prerelease) {
+    discountText = "[b]Buy now before the price increases![/b]";
+  } else {
+    discountText = "[b]On sale until "+shortMonthStrings[expectedEndDate.getMonth()+1]+" "+expectedEndDate.getDate()+"! Buy now before the price increases![/b]"
+  }
   if (typeof printDiscount != "undefined") {
     printDiscount(product, expectedEndDate.getYear()+1900, expectedEndDate.getMonth()+1, expectedEndDate.getDate(), discountText);
   }
