@@ -430,6 +430,10 @@ Scene.prototype.execute = function execute() {
           throw new Error(this.targetLabel.origin + " line " + (this.targetLabel.originLine+1) + ": "+this.name+" doesn't contain label " + label);
       }
     }
+    if (this.redirectingFromStats) {
+      this.save();
+      delete this.redirectingFromStats;
+    }
     this.printLoop();
 };
 
@@ -827,6 +831,7 @@ Scene.prototype.goto_scene = function gotoScene(data) {
     var scene = new Scene(result.sceneName, this.stats, this.nav, {debugMode:this.debugMode, secondaryMode:this.secondaryMode, saveSlot:this.saveSlot});
     scene.screenEmpty = this.screenEmpty;
     scene.prevLine = this.prevLine;
+    scene.redirectingFromStats = this.redirectingFromStats;
     if (typeof result.label != "undefined") scene.targetLabel = {label:result.label, origin:this.name, originLine:this.lineNum};
     scene.execute();
 };
@@ -847,6 +852,8 @@ Scene.prototype.redirect_scene = function redirectScene(data) {
   var self = this;
   redirectFromStats(sceneName, label, this.lineNum, function() {
     delete self.secondaryMode;
+    delete self.saveSlot;
+    self.redirectingFromStats = true;
     self.goto_scene(data);
   });
 };
