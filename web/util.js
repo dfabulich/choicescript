@@ -43,6 +43,7 @@ _global = this;
   _global.isKindleFire = /Kindle Fire/.test(userAgent);
   _global.isWinStoreApp = "ms-appx:" == protocol;
   _global.isCef = !!_global.cefQuery;
+  _global.isNode = typeof process !== "undefined";
 })();
 
 _global.loadTime = new Date().getTime();
@@ -351,6 +352,7 @@ function recordDirtySlots(slots, callback) {
 
 function recordEmail(email, callback) {
   if (initStore()) {
+    window.recordedEmail = email;
     window.store.set("email", email, safeCallback(callback));
   } else {
     safeTimeout(callback, 0);
@@ -366,6 +368,7 @@ function fetchEmail(callback) {
   // adding a fallback timeout
   window.store.get("email", function(ok, value) {
     safeCall(null, function() {
+      if (ok) window.recordedEmail = value;
       if (!callback) return;
       var temp = callback;
       callback = null;

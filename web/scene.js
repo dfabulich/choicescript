@@ -217,6 +217,52 @@ Scene.prototype.loadSceneFast = function loadSceneFast(url) {
       result = allScenes[this.name];
       if (!result) throw new Error("Couldn't load scene '" + this.name + "'\nThe file doesn't exist.");
       return this.loadLinesFast(result.crc, result.lines, result.labels);
+    } else if (typeof isIosApp != "undefined") {
+      startLoading();
+      var self = this;
+      var startedWaiting = new Date().getTime();
+
+      function retryScenes(command) {
+        if (!command) command = "retryscenes";
+        clearScreen(function() {
+          startLoading();
+          if (command == "retryscenes") curl();
+          window.downloadState = null;
+          callIos(command);
+          startedWaiting = new Date().getTime();
+          awaitAllScenes();
+        });
+      }
+
+      function awaitAllScenes() {
+        if (typeof allScenes != "undefined") {
+          result = allScenes[self.name];
+          if (!result) throw new Error("Couldn't load scene '" + self.name + "'\nThe file doesn't exist.");
+          self.loadLinesFast(result.crc, result.lines, result.labels);
+        } else if (window.downloadState == "failed" || (new Date().getTime() - startedWaiting) > 5000) {
+          doneLoading();
+          if (window.downloadRequired) {
+            println("We weren't able to download the latest version of the game.");
+            println("");
+            printButton("Try Again", main, false, retryScenes);
+          } else {
+            println("We weren't able to download the latest version of the game. Please try downloading again. The latest version may contain important fixes.");
+            println("");
+            var retry = {name: "Try downloading again."};
+            var ignore = {name: "Continue playing without the latest version."}
+            printOptions([""], [retry, ignore], function(option) {
+              if (option == retry) {
+                retryScenes();
+              } else {
+                retryScenes("requestscenesforce");
+              }
+            });
+          }
+        } else {
+          setTimeout(awaitAllScenes, 0);
+        }
+      }
+      return awaitAllScenes();
     }
     startLoading();
     if (!url) {
@@ -429,10 +475,6 @@ Scene.prototype.execute = function execute() {
       } else {
           throw new Error(this.targetLabel.origin + " line " + (this.targetLabel.originLine+1) + ": "+this.name+" doesn't contain label " + label);
       }
-    }
-    if (this.redirectingFromStats) {
-      this.save();
-      delete this.redirectingFromStats;
     }
     this.printLoop();
 };
@@ -831,7 +873,6 @@ Scene.prototype.goto_scene = function gotoScene(data) {
     var scene = new Scene(result.sceneName, this.stats, this.nav, {debugMode:this.debugMode, secondaryMode:this.secondaryMode, saveSlot:this.saveSlot});
     scene.screenEmpty = this.screenEmpty;
     scene.prevLine = this.prevLine;
-    scene.redirectingFromStats = this.redirectingFromStats;
     if (typeof result.label != "undefined") scene.targetLabel = {label:result.label, origin:this.name, originLine:this.lineNum};
     scene.execute();
 };
@@ -852,8 +893,6 @@ Scene.prototype.redirect_scene = function redirectScene(data) {
   var self = this;
   redirectFromStats(sceneName, label, this.lineNum, function() {
     delete self.secondaryMode;
-    delete self.saveSlot;
-    self.redirectingFromStats = true;
     self.goto_scene(data);
   });
 };
@@ -865,7 +904,7 @@ Scene.prototype.restore_purchases = function scene_restorePurchases(data) {
   var button = printButton("Restore Purchases", target, false,
     function() {
       safeCall(self, function() {
-          restorePurchases(function() {
+          restorePurchases(null, function() {
             self["goto"](data);
             self.finished = false;
             self.resetPage();
@@ -926,7 +965,7 @@ Scene.prototype.purchase = function purchase_button(data) {
       var prerelease = (typeof window !== "undefined" && window.releaseDate && window.isWeb && window.releaseDate > new Date());
       var buttonText;
       if (prerelease) {
-        buttonText = "Pre-Purchase It for " + price;
+        buttonText = "Pre-Order It for " + price;
       } else {
         buttonText = "Buy It Now for " + price;
       }
@@ -946,11 +985,12 @@ Scene.prototype.purchase = function purchase_button(data) {
       self.prevLine = "block";
       if (isRestorePurchasesSupported()) {
         self.prevLine = "text";
-        printLink(target, "#", "Restore Purchases",
+        printx("If you've already purchased, click here to ", target);
+        printLink(target, "#", "restore purchases",
           function() {
             safeCall(self, function() {
-                restorePurchases(function(error) {
-                  checkPurchase([product], function(ok, purchases) {
+                restorePurchases(product, function(error) {
+                  checkPurchase(product, function(ok, purchases) {
                     if (ok && purchases[product]) {
                       self["goto"](label);
                       self.finished = false;
@@ -1090,6 +1130,7 @@ Scene.prototype.getVar = function getVar(variable) {
     if (variable == "choice_registered") return typeof window != "undefined" && !!window.registered;
     if (variable == "choice_is_web") return typeof window != "undefined" && !!window.isWeb;
     if (variable == "choice_is_steam") return typeof window != "undefined" && !!window.isSteamApp;
+    if (variable == "choice_is_ios_app") return typeof window != "undefined" && !!window.isIosApp;
     if (variable == "choice_is_advertising_supported") return typeof isAdvertisingSupported != "undefined" && !!isAdvertisingSupported();
     if (variable == "choice_is_trial") return !!(typeof isTrial != "undefined" && isTrial);
     if (variable == "choice_release_date") {
@@ -1491,6 +1532,8 @@ Scene.prototype.image = function image(data) {
     if (!/(right|left|center|none)/.test(alignment)) throw new Error(this.lineMsg()+"Invalid alignment, expected right, left, center, or none: " + data);
     printImage(source, alignment, alt);
     if (this.verifyImage) this.verifyImage(source);
+    if (alignment == "none") this.prevLine = "text";
+    this.screenEmpty = false;
 };
 
 // *sound
@@ -1940,16 +1983,31 @@ Scene.prototype.restart = function restart() {
   
 };
 
-Scene.prototype.subscribe = function scene_subscribe(now) {
-  // "now" means we should immediately display the signup form
-  // otherwise, we should display a Subscribe button which displays the form
-  // On some platforms, "now" is impossible, so we ignore it.
-  now = ("now" == now);
+/* Subscribe options, in JSON format.
+"now" on mobile means we should immediately mailto: the subscribe address
+otherwise, we should display a Subscribe button which launches the mailto:
+On non-mailte: platforms, we ignore "now"
+
+"allowContinue" is the default; setting it to false blocks the "No, Thanks"
+button and the "Next" button after successfully subscribing
+Only Coming Soon pages use "allowContinue"
+
+"message" is the message we'll show to justify subscribing
+the default message is: "we'll notify you when our next game is ready!" */
+Scene.prototype.subscribe = function scene_subscribe(data) {
+  var options = {};
+  if (data) {
+    try {
+      options = JSON.parse(data);
+    } catch (e) {
+      throw new Error(this.lineMsg() + "Couldn't parse subscribe arguments: " + data);
+    }
+  }
   this.prevLine = "block";
   this.finished = true;
   this.skipFooter = true;
   var self = this;
-  subscribe(this.target, now, function(now) {
+  subscribe(this.target, options, function(now) {
     self.finished = false;
     // if "now" actually worked, then continue the scene
     // otherwise, reset the page before continuing
@@ -1994,7 +2052,7 @@ Scene.prototype.restore_game = function restore_game(data) {
         clearScreen(function() {
           fetchEmail(function(defaultEmail){
             self.printLine("Please type your email address to identify yourself.");
-            promptEmailAddress(this.target, defaultEmail, function(cancel, email) {
+            promptEmailAddress(this.target, defaultEmail, "allowContinue", function(cancel, email) {
               if (cancel) {
                 self.finished = false;
                 if (typeof cancelLabel !== "undefined") {
@@ -2025,7 +2083,7 @@ Scene.prototype.restore_game = function restore_game(data) {
         clearScreen(function() {
           fetchEmail(function(defaultEmail){
             self.printLine("Please type your email address to identify yourself.");
-            promptEmailAddress(this.target, defaultEmail, function(cancel, email) {
+            promptEmailAddress(this.target, defaultEmail, "allowContinue", function(cancel, email) {
               if (cancel) {
                 self.finished = false;
                 if (typeof cancelLabel !== "undefined") {
@@ -2677,10 +2735,10 @@ Scene.prototype.stat_chart = function stat_chart() {
     var statWidth, div, span, statValue;
     if (type == "text") {
       div = document.createElement("div");
-      setClass(div, "statLine");
+      setClass(div, "statText");
       span = document.createElement("span");
       if (trim(label) || trim(value)) {
-        printx("\u00a0\u00a0"+label + ": " + value, span);
+        printx(label + ": " + value, span);
       } else {
         // unofficial line_break
         printx(" ", span);
@@ -2971,7 +3029,7 @@ Scene.prototype.delay_ending = function(data) {
               });
             });
           } else if (option == restorePurchasesOption) {
-            restorePurchases(function() {
+            restorePurchases("adfree", function() {
               clearScreen(loadAndRestoreGame);
             });
           } else {
@@ -3685,6 +3743,31 @@ Scene.prototype.bug = function scene_bug(message) {
   throw new Error(this.lineMsg() + message);
 };
 
+Scene.prototype.feedback = function scene_feedback() {
+  if (typeof window == "undefined" || this.randomtest) return;
+  this.paragraph();
+  this.printLine("On a scale from 1 to 10, how likely are you to recommend this game to a friend?[n/][n/]");
+  this.paragraph();
+  var options = [{name:"10 (Most likely)"}];
+  for (var i = 9; i > 1; i--) {
+    options.push({name:i});
+  }
+  options.push({name:"1 (Least likely)"});
+  options.push({name:"No response."});
+  var self = this;
+  this.renderOptions([""], options, function(option) {
+    var value = "null";
+    var numberMatch = /^(\d+)/.exec(option.name);
+    if (numberMatch) value = numberMatch[1]*1;
+    if (window.storeName) xhrAuthRequest("POST", "feedback", function(ok, response) {
+      if (window.console) console.log("ok", ok, response);
+    }, "game", window.storeName, "platform", platformCode(), "rating", value);
+    self.finished = false;
+    self.resetPage();
+  });
+  this.finished = true;
+};
+
 Scene.prototype.parseTrackEvent = function(data) {
   var event = {};
   var stack = this.tokenizeExpr(data);
@@ -3828,6 +3911,7 @@ Scene.validCommands = {"comment":1, "goto":1, "gotoref":1, "label":1, "looplimit
     "goto_scene":1, "fake_choice":1, "input_text":1, "ending":1, "share_this_game":1, "stat_chart":1,
     "subscribe":1, "show_password":1, "gosub":1, "return":1, "hide_reuse":1, "disable_reuse":1, "allow_reuse":1,
     "check_purchase":1,"restore_purchases":1,"purchase":1,"restore_game":1,"advertisement":1,
+    "feedback":1,
     "save_game":1,"delay_break":1,"image":1,"link":1,"input_number":1,"goto_random_scene":1,
     "restart":1,"more_games":1,"delay_ending":1,"end_trial":1,"login":1,"achieve":1,"scene_list":1,"title":1,
     "bug":1,"link_button":1,"check_registration":1,"sound":1,"author":1,"gosub_scene":1,"achievement":1,
