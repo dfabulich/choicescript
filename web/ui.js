@@ -2168,7 +2168,13 @@ window.onload=function() {
       } else if (map.forcedScene) {
         safeCall(null, function() {loadAndRestoreGame(window.slot, window.forcedScene);});
       } else if (map.persistence) {
-        window.storeName = map.persistence;
+        var persistenceParts = map.persistence.split("|");
+        if (persistenceParts.length == 2) {
+          window.storeName = persistenceParts[0];
+          window.remoteStoreName = persistenceParts[1];
+        } else {
+          window.storeName = map.persistence;
+        }
         var startupScene = new Scene("startup", window.stats, window.nav, {secondaryMode:"startup", saveSlot:"startup"});
         startupScene.startupCallback = function() {
           safeCall(null, loadAndRestoreGame);
