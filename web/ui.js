@@ -584,6 +584,19 @@ function playSound(source) {
   }
 }
 
+function printYoutubeFrame(slug) {
+  var wrapper = document.createElement("div");
+  setClass(wrapper, "videoWrapper");
+  var iframe = document.createElement("iframe");
+  iframe.width="560";
+  iframe.height="315";
+  iframe.src="https://www.youtube.com/embed/"+slug;
+  iframe.setAttribute("frameborder", 0);
+  iframe.setAttribute("allowfullscreen", true);
+  wrapper.appendChild(iframe);
+  document.getElementById("text").appendChild(wrapper);
+}
+
 function moreGames() {
     if (window.isIosApp) {
       window.location.href = "itms-apps://itunes.com/apps/choiceofgames";

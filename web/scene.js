@@ -1543,6 +1543,14 @@ Scene.prototype.sound = function sound(source) {
     if (this.verifyImage) this.verifyImage(source);
 };
 
+Scene.prototype.youtube = function youtube(slug) {
+  if (typeof printYoutubeFrame !== "undefined") {
+    printYoutubeFrame(slug);
+    this.prevLine = "block";
+    this.screenEmpty = false;
+  }
+}
+
 // *link
 // Display URL with anchor text
 Scene.prototype.link = function link(data) {
@@ -3916,5 +3924,5 @@ Scene.validCommands = {"comment":1, "goto":1, "gotoref":1, "label":1, "looplimit
     "restart":1,"more_games":1,"delay_ending":1,"end_trial":1,"login":1,"achieve":1,"scene_list":1,"title":1,
     "bug":1,"link_button":1,"check_registration":1,"sound":1,"author":1,"gosub_scene":1,"achievement":1,
     "check_achievements":1,"redirect_scene":1,"print_discount":1,"purchase_discount":1,"track_event":1,
-    "timer":1,
+    "timer":1,"youtube":1
     };
