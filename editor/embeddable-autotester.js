@@ -26,6 +26,7 @@ function autotester(sceneText, nav, sceneName, extraLabels) {
     this.finished = true;
     if (!buttonName) buttonName = "Next Chapter";
     buttonName = this.replaceVariables(buttonName);
+    if (this.testFinish) this.testFinish();
   }
   
   // Don't test for *bugs; *if cheating makes *bugs fake-reachable
@@ -117,7 +118,7 @@ function autotester(sceneText, nav, sceneName, extraLabels) {
     }
 
     if (!/\ballow_no_selection\b/.test(data)) {
-      this.finish();
+      this.finished = true;
     }
   }
   
@@ -280,7 +281,8 @@ function autotester(sceneText, nav, sceneName, extraLabels) {
           return this.oldRunCommand(line);
         } else {
           //log("overcovered " + (this._lineNum+1) + " " + coverage[this._lineNum]);
-          return this.finish();
+          this.finished = true;
+          return;
         }
     } else {
       return this.oldRunCommand(line);
@@ -321,7 +323,7 @@ function autotester(sceneText, nav, sceneName, extraLabels) {
   Scene.prototype.goto_scene = function testGotoScene(data) {
     var result = this.parseGotoScene(data);
     this.verifySceneFile(result.sceneName);
-    this.finish();
+    this.finished = true;
   }
 
   Scene.prototype.gosub_scene = function testGosubScene(data) {

@@ -57,6 +57,7 @@ if (typeof java == "undefined") {
 nav.setStartingStatsClone(stats);
 
 var sceneList = [];
+var warnings = [];
 
 function debughelp() {
     debugger;
@@ -142,6 +143,19 @@ Scene.prototype.verifyImage = function commandLineVerifyImage(name) {
   }
 };
 
+Scene.prototype.testFinish = function commandLineTestFinish(buttonName) {
+  var nextSceneName;
+  for (var i = 0; i < sceneList.length; i++) {
+    if (sceneList[i] === this.name) {
+      nextSceneName = sceneList[i+1];
+      break;
+    }
+  }
+  if (!nextSceneName && !/^choicescript_/.test(this.name)) {
+      warnings.push(this.lineMsg() + " WARNING there is no next scene; *finish will end game. Use *ending instead.");
+  }
+}
+
 // test startup scene first, to run *create commands
 if (list[0] != nav.getStartupScene()+".txt") list.unshift(nav.getStartupScene()+".txt");
 
@@ -218,10 +232,11 @@ if (fullGame) {
           } else if (command == "save_game") {
             if (data !== null) addFile(data+".txt");
           } else if (command == "scene_list" && i === 0) {
-            var sceneList = parseSceneList(sceneLines, j);
-            j = sceneList.lineNum;
-            for (var k = 0; k < sceneList.scenes.length; k++) {
-              addFile(sceneList.scenes[k]+".txt");
+            var parsedSceneList = parseSceneList(sceneLines, j);
+            j = parsedSceneList.lineNum;
+            for (var k = 0; k < parsedSceneList.scenes.length; k++) {
+              addFile(parsedSceneList.scenes[k]+".txt");
+              sceneList.push(parsedSceneList.scenes[k]);
             }
           }
         }
@@ -232,8 +247,6 @@ if (fullGame) {
     }
   }());
 }
-
-
 
 (function(){
   for (var i = 0; i < list.length; i++) {
@@ -294,4 +307,7 @@ if (typeof gameTitle === "undefined") {
   print("TITLE TOO LONG (" + gameTitle.length + " out of 30 characters): " + gameTitle);
 }
 if (!authorIncluded) print("MISSING *AUTHOR COMMAND");
+for (var i = 0; i < warnings.length; i++) {
+  print(warnings[i]);
+}
 print("QUICKTEST PASSED");
