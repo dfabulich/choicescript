@@ -30,7 +30,9 @@ function autotester(sceneText, nav, sceneName, extraLabels) {
   }
   
   // Don't test for *bugs; *if cheating makes *bugs fake-reachable
-  Scene.prototype.bug = Scene.prototype.finish;
+  Scene.prototype.bug = function test_bug() {
+    this.finished = true;
+  };
 
   Scene.prototype.page_break = function(buttonName) {
     this.replaceVariables(buttonName);
@@ -339,7 +341,7 @@ function autotester(sceneText, nav, sceneName, extraLabels) {
       this.indent = stackFrame.indent;
     } else {
       // testing the scenes in isolation, there's no way to know if a given *return is truly invalid
-      this.finish();
+      this.finished = true;
     }
     
 };
