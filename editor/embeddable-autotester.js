@@ -319,8 +319,10 @@ function autotester(sceneText, nav, sceneName, extraLabels) {
     if (!seen[label.toLowerCase()]) this.oldGosub(label);
   }
   
-  Scene.prototype.ending = Scene.prototype.finish;
-  Scene.prototype.restart = Scene.prototype.finish;
+  Scene.prototype.ending = function test_ending() {
+    this.finished = true;
+  };
+  Scene.prototype.restart = Scene.prototype.ending;
   
   Scene.prototype.goto_scene = function testGotoScene(data) {
     var result = this.parseGotoScene(data);
