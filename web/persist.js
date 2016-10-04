@@ -823,7 +823,7 @@ return r;},version:'0.2.1',enabled:false};me.enabled=alive.call(me);return me;}(
             delete window[nonce];
             fn.call(scope || this, true, value);
           }
-          this.callIos("storageget://" + key + " " + nonce);
+          this.callIos("storageget://" + key + "%20" + nonce);
         },
 
         set: function(key, val, fn, scope) {
@@ -836,7 +836,7 @@ return r;},version:'0.2.1',enabled:false};me.enabled=alive.call(me);return me;}(
             delete window[nonce];
             if (fn) fn.call(scope || this, true, val);
           }
-          this.callIos("storageset://" + key + " " + nonce + " " + encodeURIComponent(encodeURIComponent(val)));
+          this.callIos("storageset://" + key + "%20" + nonce + "%20" + encodeURIComponent(encodeURIComponent(val)));
         },
 
         remove: function(key, fn, scope) {
@@ -861,7 +861,7 @@ return r;},version:'0.2.1',enabled:false};me.enabled=alive.call(me);return me;}(
             delete window[nonce];
             if (fn) fn.call(scope || this, (val !== null), val);
           }
-          this.callIos("storagerem://" + key + " " + nonce + " " + encodeURIComponent(val));
+          this.callIos("storagerem://" + key + "%20" + nonce + "%20" + encodeURIComponent(val));
         } 
       }
     }, 
