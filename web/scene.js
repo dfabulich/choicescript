@@ -3843,7 +3843,7 @@ Scene.tokens = [
         }
     },
     {name:"WHITESPACE", test:function(str){ return Scene.regexpMatch(str,/^\s+/); } },
-    {name:"BOOLEAN_OPERATOR", test:function(str){ return Scene.regexpMatch(str,/^(and|or)\b/); } },
+    {name:"NAMED_OPERATOR", test:function(str){ return Scene.regexpMatch(str,/^(and|or|modulo)\b/); } },
     {name:"VAR", test:function(str){ return Scene.regexpMatch(str,/^\w*/); } },
     {name:"FAIRMATH", test:function(str){ return Scene.regexpMatch(str,/^%[\+\-]/); } },
     {name:"OPERATOR", test:function(str){ return Scene.regexpMatch(str,/^[\+\-\*\/\&\%\^\#]/); } },
@@ -3908,7 +3908,8 @@ Scene.operators = {
     },
     "or": function or(v1, v2, line) {
         return bool(v1,line) || bool(v2,line);
-    }
+    },
+    "modulo": function modulo(v1,v2,line) { return num(v1,line) % num(v2,line); },
 };
 
 Scene.initialCommands = {"create":1,"scene_list":1,"title":1,"author":1,"comment":1,"achievement":1};
