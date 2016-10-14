@@ -62,10 +62,14 @@ Scene.prototype.testFinish = function commandLineTestFinish(buttonName) {
     }
   }
   if (!nextSceneName && !/^choicescript_/.test(this.name)) {
-      warnings.push(this.lineMsg() + " WARNING there is no next scene; *finish will end game. Use *ending instead.");
+      warnings.push(this.lineMsg() + "WARNING there is no next scene; *finish will end game. Use *ending instead.");
   }
 }
 
+Scene.prototype.moduloWarning = function moduloWarning() {
+  warnings.push(this.lineMsg() + "WARNING this is a bare % sign, which should be replaced with %+, %-, or modulo if you're really advanced.");
+  warnings.push(this.lineMsg() + "WARNING For more details on modulo, see: https://forum.choiceofgames.com/t/21176");
+}
 
 printFooter = function() {};
 printShareLinks = function() {};

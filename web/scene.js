@@ -3242,6 +3242,8 @@ Scene.prototype.evaluateExpr = function evaluateExpr(stack, parenthetical) {
     operator = Scene.operators[token.value];
     if (!operator) throw new Error(this.lineMsg() + "Invalid expression at char "+token.pos+", expected OPERATOR, was: " + token.name + " [" + token.value + "]");
 
+    if (token.value === '%' && this.moduloWarning) this.moduloWarning();
+
     value2 = this.evaluateValueToken(getToken(), stack);
 
     // and do the operator
