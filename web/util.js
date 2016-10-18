@@ -51,7 +51,9 @@ _global.loadTime = new Date().getTime();
 function callIos(scheme, path) {
   if (!_global.isIosApp) return;
   if (path) {
-    path = encodeURIComponent(path);
+    path = encodeURIComponent(path).replace(/[!~*')(]/g, function(match) {
+      return "%" + match.charCodeAt(0).toString(16);
+    });
   } else {
     path = "";
   }

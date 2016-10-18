@@ -805,9 +805,15 @@ return r;},version:'0.2.1',enabled:false};me.enabled=alive.call(me);return me;}(
 
         },
 
-        callIos: function(url) {
+        callIos: function(scheme, path) {
+          path = encodeURIComponent(path).replace(/[!~*')(]/g, function(match) {
+            return "%" + match.charCodeAt(0).toString(16);
+          });
+
+          var url = scheme + "://" + path;
           var iframe = document.createElement("IFRAME");
           iframe.setAttribute("src", url);
+          iframe.setAttribute("style", "display:none");
           document.documentElement.appendChild(iframe);
           iframe.parentNode.removeChild(iframe);
           iframe = null;
@@ -823,7 +829,7 @@ return r;},version:'0.2.1',enabled:false};me.enabled=alive.call(me);return me;}(
             delete window[nonce];
             fn.call(scope || this, true, value);
           }
-          this.callIos("storageget://" + key + "%20" + nonce);
+          this.callIos("storageget", key + " " + nonce);
         },
 
         set: function(key, val, fn, scope) {
@@ -836,7 +842,7 @@ return r;},version:'0.2.1',enabled:false};me.enabled=alive.call(me);return me;}(
             delete window[nonce];
             if (fn) fn.call(scope || this, true, val);
           }
-          this.callIos("storageset://" + key + "%20" + nonce + "%20" + encodeURIComponent(encodeURIComponent(val)));
+          this.callIos("storageset", key + " " + nonce + " " + encodeURIComponent(val));
         },
 
         remove: function(key, fn, scope) {
@@ -861,7 +867,7 @@ return r;},version:'0.2.1',enabled:false};me.enabled=alive.call(me);return me;}(
             delete window[nonce];
             if (fn) fn.call(scope || this, (val !== null), val);
           }
-          this.callIos("storagerem://" + key + "%20" + nonce + "%20" + encodeURIComponent(val));
+          this.callIos("storagerem", key + " " + nonce);
         } 
       }
     }, 
