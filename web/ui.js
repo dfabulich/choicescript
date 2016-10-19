@@ -755,6 +755,8 @@ function isReviewSupported() {
 
 function isFollowEnabled() {
   if (!window.isWeb) return false;
+  // iOS add to homescreen seems not to like these iframes
+  if (window.navigator.standalone) return false;
   if ("localhost" != window.location.hostname && !/\.?choiceofgames\.com$/.test(window.location.hostname)) return false;
   return true;
 }
