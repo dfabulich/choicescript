@@ -887,7 +887,13 @@ function simpleDateTimeFormat(date) {
   var month = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][date.getMonth()];
   var minutes = date.getMinutes();
   if (minutes < 10) minutes = "0" + (""+minutes);
-  return day + " " + month + " " + date.getDate() + " " + date.getHours() + ":" + minutes;
+  var oneYearInMillis = 1000 * 60 * 60 * 24 * 365;
+  var millisAgo = new Date().getTime() - date.getTime();
+  var yearString = ""
+  if (millisAgo > oneYearInMillis) {
+    yearString = ", " + date.getFullYear();
+  }
+  return day + ", " + month + " " + date.getDate() + yearString + ", " + date.getHours() + ":" + minutes;
 }
 
 function jsonParse(str) {
