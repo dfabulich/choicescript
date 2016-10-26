@@ -281,8 +281,10 @@ function testScene(game, sceneNum, progressCallback) {
       skip = true;
     } else {
       doneLoading();
+      var errorMessage = "ERROR: couldn't open " + fileName;
+      if (progressCallback) progressCallback(sceneNum, knownScenes.length, errorMessage);
       console.log("QUICKTEST FAILED");
-      console.log("ERROR: couldn't open " + fileName);
+      console.log(errorMessage);
       success = false;
       return;
     }
