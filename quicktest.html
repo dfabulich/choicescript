@@ -144,7 +144,8 @@ var success = true;
 var gameTitle, authorIncluded;
 var gotoSceneLabels = {};
 
-function loadScenes(sceneNum) {
+function loadScenes(game, sceneNum) {
+  if (!game) game = {};
   var fileName = knownScenes[sceneNum];
   var sceneName = fileName.replace(/.txt$/, "");
   var url = "web/mygame/scenes/" + fileName;
@@ -222,6 +223,7 @@ function loadScenes(sceneNum) {
 
 
     try {
+      game[fileName] = xhr.responseText;
       var sceneLines = xhr.responseText.split("\n");
       for (var j = 0; j < sceneLines.length; j++) {
         var line = sceneLines[j];
@@ -261,49 +263,24 @@ function loadScenes(sceneNum) {
     }
   }
   
-  if (++sceneNum < knownScenes.length) return setTimeout(function(){loadScenes(sceneNum)}, 0);
+  if (++sceneNum < knownScenes.length) return setTimeout(function(){loadScenes(game, sceneNum)}, 0);
 
-  testScene(0);
+  testScene(game, 0);
 }
 
 
-function testScene(sceneNum) {
+function testScene(game, sceneNum) {
   var fileName = knownScenes[sceneNum];
-  var sceneName = fileName.replace(/.txt$/, "");
-  var url = "web/mygame/scenes/" + fileName;
-  xhr = new XMLHttpRequest();
-  xhr.open("GET", url, false);
+  var sceneText = game[fileName];
+
   var skip = false;
-  var loadFailed = false;
-  try {
-    xhr.send();
-  } catch (x) {
-    if (/^choicescript_(stats|upgrade|screenshots)$/.test(sceneName)) {
-      skip = true;
-    } else {
-      if (window.location.protocol == "file:" && /Chrome/.test(navigator.userAgent)) {
-        doneLoading();
-        console.log("We're sorry, Google Chrome has blocked ChoiceScript from functioning.  (\"file:\" URLs cannot "+
-          "load files in Chrome.)  ChoiceScript works just fine in Chrome, but only on a published website like "+
-          "choiceofgames.com.  For the time being, please try another browser like Mozilla Firefox.");
-        success = false;
-        return;
-      }
-      loadFailed = true;
-    }
-  }
-
-  if (xhr.status && xhr.status != 200) {
-    loadFailed = true;
-  }
-
-  if (loadFailed) {
-    if (/^choicescript_(stats|upgrade|screenshots)$/.test(sceneName)) {
+  if (!sceneText) {
+    if (/^choicescript_(stats|upgrade|screenshots)\.txt$/.test(fileName)) {
       skip = true;
     } else {
       doneLoading();
       console.log("QUICKTEST FAILED");
-      console.log("ERROR: couldn't open " + url);
+      console.log("ERROR: couldn't open " + fileName);
       success = false;
       return;
     }
@@ -311,27 +288,27 @@ function testScene(sceneNum) {
   if (!skip) {
     console.log(sceneName);
     try {
-      var uncovered = autotester(xhr.responseText, nav, sceneName, gotoSceneLabels[sceneName])[1];
+      var uncovered = autotester(sceneText, nav, sceneName, gotoSceneLabels[sceneName])[1];
       if (uncovered) {
         uncoveredScenes.push({name:sceneName, lines:uncovered});
       }
       if (sceneNum === 0) {
-        var match = /^\*title (.*)/m.exec(xhr.responseText);
+        var match = /^\*title (.*)/m.exec(sceneText);
         if (match) {
           gameTitle = match[1];
         }
-        authorIncluded = /^\*author /m.test(xhr.responseText);
+        authorIncluded = /^\*author /m.test(sceneText);
       }
     } catch (x) {
       console.log("QUICKTEST FAILED");
-        console.log(x);
-        console.error(x.stack);
-        success = false;
-        return;
+      console.log(x);
+      console.error(x.stack);
+      success = false;
+      return;
     }
   }
   
-  if (++sceneNum < knownScenes.length) return setTimeout(function(){testScene(sceneNum)}, 0);
+  if (++sceneNum < knownScenes.length) return setTimeout(function(){testScene(game, sceneNum)}, 0);
 
   if (success) {
     var allLinesTested = true;
@@ -371,7 +348,7 @@ function testScene(sceneNum) {
 <body>
 <div id="loading">Loading...</div>
 <script>
-loadScenes(0);
+loadScenes(null, 0);
 </script>
 </body>
 </html>
