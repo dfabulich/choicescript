@@ -140,18 +140,6 @@ console.log = function() {
 
 uncoveredScenes = [];
 
-function testForInvalidCharacters(text) {
-  var lines = text.split(/\r?\n/);
-  var firstLine = lines[0];
-  // strip byte order mark
-  if (firstLine.charCodeAt(0) == 65279) lines[0] = firstLine.substring(1);
-  for (i = 0; i < lines.length; i++) {
-    var line = lines[i];
-    var invalidCharacter = line.match(/^(.*)\ufffd/);
-    if (invalidCharacter) throw new Error("line " + (i+1) + ": invalid character. Is this text Unicode?\n" + invalidCharacter[0]);
-  }
-}
-
 var success = true;
 var gameTitle, authorIncluded;
 var gotoSceneLabels = {};
@@ -323,7 +311,6 @@ function testScene(sceneNum) {
   if (!skip) {
     console.log(sceneName);
     try {
-      testForInvalidCharacters(xhr.responseText);
       var uncovered = autotester(xhr.responseText, nav, sceneName, gotoSceneLabels[sceneName])[1];
       if (uncovered) {
         uncoveredScenes.push({name:sceneName, lines:uncovered});

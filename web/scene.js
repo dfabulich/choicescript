@@ -488,6 +488,10 @@ Scene.prototype.parseLabels = function parseLabels() {
     for (this.lineNum = 0; this.lineNum < lineLength; this.lineNum++) {
         this.rollbackLineCoverage();
         var line = this.lines[this.lineNum];
+        // strip byte order mark
+        if (this.lineNum == 0 && line.charCodeAt(0) == 65279) lines[0] = line.substring(1);
+        var invalidCharacter = line.match(/^(.*)\ufffd/);
+        if (invalidCharacter) throw new Error(this.lineMsg() + "invalid character. (ChoiceScript text should be saved in the UTF-8 encoding.) " + invalidCharacter[0]);
         var result = /^(\s*)\*(\w+)(.*)/.exec(line);
         if (!result) continue;
         var indentation = result[1];
