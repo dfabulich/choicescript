@@ -31,6 +31,7 @@ var showText = false;
 var highlightGenderPronouns = false;
 var showChoices = true;
 var avoidUsedOptions = true;
+var slurps = {}
 function parseArgs(args) {
   if (args[0]) iterations = args[0];
   if (args[1]) gameName = args[1];
@@ -132,6 +133,11 @@ if (typeof importScripts != "undefined") {
     showChoices = event.data.showChoices;
     highlightGenderPronouns = event.data.highlightGenderPronouns;
     avoidUsedOptions = event.data.avoidUsedOptions;
+    if (event.data.sceneContent) {
+      for (scene in event.data.sceneContent) {
+        slurps['web/'+gameName+'/scenes/'+scene] = event.data.sceneContent[scene];
+      }
+    }
 
     if (event.data.showText) {
       var lineBuffer = [];
@@ -220,8 +226,6 @@ printx = println = function printx(msg, parent) {
   //printed.push(msg);
 }
 
-
-slurps = {}
 function slurpFileCached(name) {
   if (!slurps[name]) slurps[name] = slurpFile(name);
   return slurps[name];
