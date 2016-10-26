@@ -39,6 +39,7 @@ function autotester(sceneText, nav, sceneName, extraLabels) {
     this.resetCheckedPurchases();
   };
   Scene.prototype.subscribe = function() {};
+  Scene.prototype.feedback = function() {};
   Scene.prototype.save = function() {};
   Scene.prototype.restore_purchases = function() {};
   Scene.prototype.purchase = function(data) {
