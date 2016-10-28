@@ -410,7 +410,9 @@ Scene.prototype.finish = Scene.prototype.autofinish = function random_finish(but
 }
 
 Scene.prototype.oldGotoScene = Scene.prototype.goto_scene;
-Scene.prototype.goto_scene = function random_goto_scene(name) {
+Scene.prototype.goto_scene = function random_goto_scene(data) {
+  var result = this.parseGotoScene(data);
+  var name = result.sceneName;
   if (isTrial && typeof purchases != "undefined" && purchases[name]) {
     throw new Error(this.lineMsg() + "Trying to go to scene " + name + " but that scene requires purchase");
   }
