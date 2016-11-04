@@ -81,6 +81,9 @@ function autotester(sceneText, nav, sceneName, extraLabels) {
     var products = data.split(/ /);
     for (var i = 0; i < products.length; i++) {
       this.temps["choice_purchased_"+products[i]] = true;
+      if (!this.nav.products[products[i]] && products[i] != "adfree") {
+        throw new Error(this.lineMsg() + "The product " + products[i] + " wasn't declared in a *product command");
+      }
     }
     this.temps.choice_purchase_supported = false;
     this.temps.choice_purchased_everything = true;
