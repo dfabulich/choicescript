@@ -55,6 +55,9 @@ if (typeof java == "undefined") {
 }
 
 nav.setStartingStatsClone(stats);
+if (typeof purchases !== "undefined") {
+  nav.loadProducts(undefined, purchases);
+}
 
 var sceneList = [];
 var warnings = [];

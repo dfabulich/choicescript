@@ -2279,9 +2279,7 @@ window.onload=function() {
       checkAchievements(function() {});
       setButtonTitles();
     }
-    if (window.knownProducts && window.knownProducts.length) {
-      nav.loadProducts(window.knownProducts);
-    }
+    nav.loadProducts(window.knownProducts, window.purchases);
     stats.sceneName = window.nav.getStartupScene();
     var map = parseQueryString(window.location.search);
     if (!map) {
@@ -2383,11 +2381,27 @@ window.onload=function() {
     }
     if (window.isWeb && window.appPurchase) {
       (function() {
-        var fullProductName = window.storeName + "." + appPurchase;
+        var productMap = {};
+        if (typeof purchases === "object") {
+          for (var scene in purchases) {
+            productMap[purchases[scene]] = 1;
+          }
+        }
+        if (!window.knownProducts) window.knownProducts = [];
+        for (var product in productMap) {
+          window.knownProducts.push(product);
+        }
+
+        var fullProducts = [];
+        for (var i = 0; i < window.knownProducts.length; i++) {
+          fullProducts[i] = window.storeName + "." + window.knownProducts[i];
+        }
         xhrAuthRequest("GET", "product-data", function(ok, data) {
           if (!window.productData) window.productData = {};
-          window.productData[appPurchase] = data[fullProductName];
-        }, "products", fullProductName);
+          for (var i = 0; i < window.knownProducts.length; i++) {
+            window.productData[window.knownProducts[i]] = data[window.storeName + "." + window.knownProducts[i]];
+          }
+        }, "products", fullProducts.join(","));
       })();
     }
 

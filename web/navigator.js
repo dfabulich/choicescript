@@ -97,10 +97,14 @@ SceneNavigator.prototype.loadAchievements = function(achievementArray) {
     this.achievementList.push(achievementName);
   }
 };
-SceneNavigator.prototype.loadProducts = function(productArray) {
-  if (!productArray) return;
+SceneNavigator.prototype.loadProducts = function(productArray, purchaseMap) {
+  if (!productArray && !purchaseMap) return;
   this.products = {};
   for (var i = 0; i < productArray; i++) {
     this.products[productArray[i]] = {};
+  }
+  for (var scene in purchaseMap) {
+    var product = purchaseMap[scene];
+    this.products[product] = {};
   }
 }
