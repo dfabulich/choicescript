@@ -2279,6 +2279,9 @@ window.onload=function() {
       checkAchievements(function() {});
       setButtonTitles();
     }
+    if (window.knownProducts && window.knownProducts.length) {
+      nav.loadProducts(window.knownProducts);
+    }
     stats.sceneName = window.nav.getStartupScene();
     var map = parseQueryString(window.location.search);
     if (!map) {

@@ -901,6 +901,11 @@ Scene.prototype.redirect_scene = function redirectScene(data) {
   });
 };
 
+Scene.prototype.product = function product(productId) {
+  if (!/^[a-z]+$/.test(productId)) throw new Error(this.lineMsg()+"Invalid product id: " +productId);
+  if (this.nav) this.nav.products[productId] = {};
+}
+
 Scene.prototype.restore_purchases = function scene_restorePurchases(data) {
   var self = this;
   var target = this.target;
@@ -925,6 +930,13 @@ Scene.prototype.check_purchase = function scene_checkPurchase(data) {
   this.finished = true;
   this.skipFooter = true;
   var self = this;
+  var productList = data.split(/ /);
+  for (var i = 0; i < productList.length; i++) {
+    var product = productList[i];
+    if (!this.nav.products[product] && product != "adfree") {
+      throw new Error(this.lineMsg() + "The product " + product + " wasn't declared in a *product command");
+    }
+  }
   checkPurchase(data, function(ok, result) {
     self.finished = false;
     self.skipFooter = false;
@@ -952,6 +964,9 @@ Scene.prototype.purchase = function purchase_button(data) {
   var product = result[1];
   var priceGuess = trim(result[2]);
   var label = trim(result[3]);
+  if (!this.nav.products[product] && product != "adfree") {
+    throw new Error(this.lineMsg() + "The product " + product + " wasn't declared in a *product command");
+  }
   if (typeof this.temps["choice_purchased_"+product] === "undefined") throw new Error(this.lineMsg() + "Didn't check_purchases on this page");
   this.finished = true;
   this.skipFooter = true;
@@ -3918,7 +3933,7 @@ Scene.operators = {
     "modulo": function modulo(v1,v2,line) { return num(v1,line) % num(v2,line); },
 };
 
-Scene.initialCommands = {"create":1,"scene_list":1,"title":1,"author":1,"comment":1,"achievement":1};
+Scene.initialCommands = {"create":1,"scene_list":1,"title":1,"author":1,"comment":1,"achievement":1,"product":1};
 
 Scene.validCommands = {"comment":1, "goto":1, "gotoref":1, "label":1, "looplimit":1, "finish":1, "abort":1,
     "choice":1, "create":1, "temp":1, "delete":1, "set":1, "setref":1, "print":1, "if":1, "rand":1,
@@ -3931,5 +3946,5 @@ Scene.validCommands = {"comment":1, "goto":1, "gotoref":1, "label":1, "looplimit
     "restart":1,"more_games":1,"delay_ending":1,"end_trial":1,"login":1,"achieve":1,"scene_list":1,"title":1,
     "bug":1,"link_button":1,"check_registration":1,"sound":1,"author":1,"gosub_scene":1,"achievement":1,
     "check_achievements":1,"redirect_scene":1,"print_discount":1,"purchase_discount":1,"track_event":1,
-    "timer":1,"youtube":1
+    "timer":1,"youtube":1,"product":1
     };

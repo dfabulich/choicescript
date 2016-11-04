@@ -73,6 +73,7 @@ SceneNavigator.prototype.bugLog = [];
 SceneNavigator.prototype.achievements = {};
 SceneNavigator.prototype.achievementList = [];
 SceneNavigator.prototype.achieved = {};
+SceneNavigator.prototype.products = {};
 
 SceneNavigator.prototype.loadAchievements = function(achievementArray) {
   if (!achievementArray) return;
@@ -96,3 +97,10 @@ SceneNavigator.prototype.loadAchievements = function(achievementArray) {
     this.achievementList.push(achievementName);
   }
 };
+SceneNavigator.prototype.loadProducts = function(productArray) {
+  if (!productArray) return;
+  this.products = {};
+  for (var i = 0; i < productArray; i++) {
+    this.products[productArray[i]] = {};
+  }
+}
