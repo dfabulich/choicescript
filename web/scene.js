@@ -3261,7 +3261,10 @@ Scene.prototype.evaluateExpr = function evaluateExpr(stack, parenthetical) {
     operator = Scene.operators[token.value];
     if (!operator) throw new Error(this.lineMsg() + "Invalid expression at char "+token.pos+", expected OPERATOR, was: " + token.name + " [" + token.value + "]");
 
-    if (token.value === '%' && this.moduloWarning) this.moduloWarning();
+    if (token.value === '%') {
+      this.warning("this is a bare % sign, which should be replaced with %+, %-, or modulo if you're really advanced.");
+      this.warning("For more details on modulo, see: https://forum.choiceofgames.com/t/21176");
+    }
 
     value2 = this.evaluateValueToken(getToken(), stack);
 
@@ -3771,6 +3774,10 @@ Scene.prototype.bug = function scene_bug(message) {
   }
   throw new Error(this.lineMsg() + message);
 };
+
+Scene.prototype.warning = function scene_warning(message) {
+  // quicktest implements this
+}
 
 Scene.prototype.feedback = function scene_feedback() {
   if (typeof window == "undefined" || this.randomtest) return;

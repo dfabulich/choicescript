@@ -67,9 +67,8 @@ Scene.prototype.testFinish = function commandLineTestFinish(buttonName) {
   }
 }
 
-Scene.prototype.moduloWarning = function moduloWarning() {
-  warnings.push(this.lineMsg() + "WARNING this is a bare % sign, which should be replaced with %+, %-, or modulo if you're really advanced.");
-  warnings.push(this.lineMsg() + "WARNING For more details on modulo, see: https://forum.choiceofgames.com/t/21176");
+Scene.prototype.warning = function htmlWarning(message) {
+  warnings.push(this.lineMsg() + "WARNING " + message);
 }
 
 printFooter = function() {};
