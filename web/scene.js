@@ -545,7 +545,7 @@ Scene.prototype.runCommand = function runCommand(line) {
     if (Scene.validCommands[command]) {
         if ("comment" == command) return true;
         if (Scene.initialCommands[command]) {
-          if ("startup" != this.name || !this.initialCommands) {
+          if ("startup" != String(this.name).toLowerCase() || !this.initialCommands) {
             throw new Error(this.lineMsg() + "Invalid "+command+" instruction, only allowed at the top of startup.txt");
           }
         } else {
@@ -3645,7 +3645,7 @@ Scene.prototype.parseSceneList = function parseSceneList() {
       if (purchaseMatch) {
         line = purchaseMatch[2];
       }
-      if (!scenes.length && "startup" != line) scenes.push("startup");
+      if (!scenes.length && "startup" != String(line).toLowerCase()) scenes.push("startup");
       scenes.push(line);
   }
   return scenes;
