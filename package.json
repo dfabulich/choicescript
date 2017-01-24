@@ -1,0 +1,19 @@
+{
+  "name": "cside-choicescript",
+  "version": "1.0.0",
+  "description": "CSIDE compatible version of ChoiceScript",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ChoicescriptIDE/choicescript.git"
+  },
+  "keywords": [],
+  "author": "dfabulich",
+  "contributors": [
+    "CareyJWilliams"
+  ],
+  "license": "SEE LICENSE AT https://www.choiceofgames.com/LICENSE-1.0.txt",
+  "bugs": {
+    "url": "https://github.com/ChoicescriptIDE/choicescript/issues"
+  },
+  "homepage": "https://github.com/ChoicescriptIDE/choicescript#readme"
+}
