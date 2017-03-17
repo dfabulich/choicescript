@@ -428,12 +428,13 @@ function getFormValue(name) {
 }
 
 function printOptions(groups, options, callback) {
+  if (!options || !options.length) return safeCall(null, function() {callback({});});
+
   var form = document.createElement("form");
   main.appendChild(form);
-  var self = this;
   form.action="#";
   form.onsubmit = function() {
-      safeCall(self, function() {
+      safeCall(null, function() {
         var currentOptions = options;
         var option, group;
         for (var i = 0; i < groups.length; i++) {
@@ -465,8 +466,6 @@ function printOptions(groups, options, callback) {
       return false;
   };
 
-  if (!options) throw new Error(this.lineMsg()+"undefined options");
-  if (!options.length) throw new Error(this.lineMsg()+"no options");
   // global num will be used to assign accessKeys to the options
   var globalNum = 1;
   var currentOptions = options;
