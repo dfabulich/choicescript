@@ -563,11 +563,12 @@ function printOptionRadioButton(div, name, option, localChoiceNumber, globalChoi
     div.appendChild(div2);
 }
 
-function printImage(source, alignment, alt) {
+function printImage(source, alignment, alt, width) {
   var img = document.createElement("img");
   img.src = source;
   if (alt !== null && String(alt).length > 0) img.setAttribute("alt", alt);
   setClass(img, "align"+alignment);
+  if (width) img.style.width=width
   document.getElementById("text").appendChild(img);
 }
 
