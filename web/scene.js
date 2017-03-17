@@ -151,7 +151,7 @@ Scene.prototype.printLine = function printLine(line, parent) {
 
 Scene.prototype.replaceVariables = function (line) {
   line = String(line);
-  var replacer = /(\$(\!?\!?)\{)/;
+  var replacer = /([$@](\!?\!?)\{)/;
   var index = 0;
   var output = [];
   for (var result = replacer.exec(line); result; result = replacer.exec(line.substring(index))) {
@@ -173,11 +173,67 @@ Scene.prototype.replaceVariables = function (line) {
       }
     }
     if (closingCurly == -1) {
-      throw new Error(this.lineMsg() + "invalid ${} variable substitution at letter " + (index + result.index + 1));
+      throw new Error(this.lineMsg() + "invalid "+result[0]+"} variable substitution at letter " + (index + result.index + 1));
     }
-    var expr = line.substring(exprStart, closingCurly);
-    var stack = this.tokenizeExpr(expr);
-    var value = this.evaluateExpr(stack);
+    var body = line.substring(exprStart, closingCurly);
+    var stack, value;
+    if (result[0].charAt(0) === "$") {
+      stack = this.tokenizeExpr(body);
+      value = this.evaluateExpr(stack);
+    } else {
+      var expr;
+      var options;
+      if (/^\s*\(/.test(body)) {
+        var parens = 0;
+        var closingParen = -1;
+        for (var i = 1; i < body.length; i++) {
+          var c = body.charAt(i);
+          if (c === "(") {
+            parens++;
+          } else if (c === ")") {
+            if (parens) {
+              parens--;
+            } else {
+              closingParen = i;
+              break;
+            }
+          }
+        }
+        if (closingParen == -1) {
+          throw new Error(this.lineMsg() + "invalid "+result[0]+"} at letter " + (index + result.index + 1) + "; missing closing parenthesis )");
+        }
+        if (body.charAt(closingParen+1) != " ") {
+          throw new Error(this.lineMsg() + "invalid "+result[0]+"} at letter " + (index + result.index + 1) + "; there should be a space after the closing parenthesis )");
+        }
+        expr = body.substring(1, closingParen);
+        options = body.substring(closingParen+2).split("|");
+      } else {
+        if (!/^\S+ /.test(body)) {
+          throw new Error(this.lineMsg() + "invalid "+result[0]+"} at letter " + (index + result.index + 1) + "; there should be a space after the first word");
+        }
+        var spaceIndex = body.indexOf(' ');
+        expr = body.substring(0, spaceIndex);
+        options = body.substring(spaceIndex+1).split("|");
+      }
+      if (options.length < 2) {
+        throw new Error(this.lineMsg() + "invalid "+result[0]+"} at letter " + (index + result.index + 1) + "; there should be at least one pipe | to separate options");
+      }
+      stack = this.tokenizeExpr(expr);
+      value = this.evaluateExpr(stack);
+      if (typeof value === "boolean" || /^(true|false)$/i.test(value)) {
+        value = bool(value) ? 1 : 2;
+      }
+      value = num(value, this.lineNum+1);
+      if ((value | 0) !== value) {
+        throw new Error(this.lineMsg() + "invalid "+result[0]+"} at letter " + (index + result.index + 1) + "; '"+expr+"' is equal to " + value + " which is not a whole integer number");
+      } else if (value < 1) {
+        throw new Error(this.lineMsg() + "invalid "+result[0]+"} at letter " + (index + result.index + 1) + "; '"+expr+"' is equal to " + value + " which is not a positive number");
+      } else if (value > options.length) {
+        throw new Error(this.lineMsg() + "invalid "+result[0]+"} at letter " + (index + result.index + 1) + "; '"+expr+"' is equal to " + value + " but there are only " + options.length + " options");
+      }
+      value = options[value-1];
+      value = this.replaceVariables(value);
+    }
     var capitalize = result[2];
     if (capitalize) value = String(value);
     if (capitalize == "!") {
