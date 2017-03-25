@@ -5,11 +5,12 @@
   <script src=web/scene.js></script>
   <script src=web/navigator.js></script>
   <script src=web/util.js></script>
-  <script src=web/mygame/mygame.js></script>
   <script src=editor/embeddable-autotester.js></script>
 <script>
 
-nav.setStartingStatsClone(stats);
+nav = new SceneNavigator(["startup"]);
+nav.setStartingStatsClone({});
+stats = {};
 
 function doneLoading() {
   var loadingDiv = document.getElementById("loading");
@@ -17,6 +18,7 @@ function doneLoading() {
 }
 function changeTitle() {}
 knownScenes = [];
+knownImages = {};
 sceneList = [];
 warnings = [];
 
@@ -27,10 +29,7 @@ function addFile(name) {
   knownScenes.push(name);
 }
 
-var sceneName = nav.getStartupScene();
-for (var i = 0; i < nav._sceneList.length; i++) {
-  addFile(nav._sceneList[i] + ".txt");
-}
+addFile("startup.txt");
 addFile("choicescript_stats.txt");
 addFile("choicescript_screenshots.txt");
 addFile("choicescript_upgrade.txt");
@@ -40,6 +39,7 @@ Scene.prototype.verifySceneFile = function webVerifySceneFile(name) {
 }
 
 Scene.prototype.verifyImage = function webVerifyImage(fileName) {
+  if (knownImages[fileName]) return;
   var xhr = new XMLHttpRequest();
   var url = "web/mygame/" + fileName;
   xhr.open("GET", url, false);
@@ -51,6 +51,7 @@ Scene.prototype.verifyImage = function webVerifyImage(fileName) {
   if (xhr.status && xhr.status != 200) {
     throw new Error(this.lineMsg() + "File does not exist: " + fileName);
   }
+  knownImages[fileName] = 1;
 }
 
 Scene.prototype.testFinish = function commandLineTestFinish(buttonName) {
@@ -66,9 +67,8 @@ Scene.prototype.testFinish = function commandLineTestFinish(buttonName) {
   }
 }
 
-Scene.prototype.moduloWarning = function moduloWarning() {
-  warnings.push(this.lineMsg() + "WARNING this is a bare % sign, which should be replaced with %+, %-, or modulo if you're really advanced.");
-  warnings.push(this.lineMsg() + "WARNING For more details on modulo, see: https://forum.choiceofgames.com/t/21176");
+Scene.prototype.warning = function htmlWarning(message) {
+  warnings.push(this.lineMsg() + "WARNING " + message);
 }
 
 printFooter = function() {};
@@ -140,23 +140,12 @@ console.log = function() {
 
 uncoveredScenes = [];
 
-function testForInvalidCharacters(text) {
-  var lines = text.split(/\r?\n/);
-  var firstLine = lines[0];
-  // strip byte order mark
-  if (firstLine.charCodeAt(0) == 65279) lines[0] = firstLine.substring(1);
-  for (i = 0; i < lines.length; i++) {
-    var line = lines[i];
-    var invalidCharacter = line.match(/^(.*)\ufffd/);
-    if (invalidCharacter) throw new Error("line " + (i+1) + ": invalid character. Is this text Unicode?\n" + invalidCharacter[0]);
-  }
-}
-
 var success = true;
 var gameTitle, authorIncluded;
 var gotoSceneLabels = {};
 
-function loadScenes(sceneNum) {
+function loadScenes(game, sceneNum) {
+  if (!game) game = {};
   var fileName = knownScenes[sceneNum];
   var sceneName = fileName.replace(/.txt$/, "");
   var url = "web/mygame/scenes/" + fileName;
@@ -234,6 +223,7 @@ function loadScenes(sceneNum) {
 
 
     try {
+      game[fileName] = xhr.responseText;
       var sceneLines = xhr.responseText.split("\n");
       for (var j = 0; j < sceneLines.length; j++) {
         var line = sceneLines[j];
@@ -273,49 +263,27 @@ function loadScenes(sceneNum) {
     }
   }
   
-  if (++sceneNum < knownScenes.length) return setTimeout(function(){loadScenes(sceneNum)}, 0);
+  if (++sceneNum < knownScenes.length) return setTimeout(function(){loadScenes(game, sceneNum)}, 0);
 
-  testScene(0);
+  testScene(game, 0);
 }
 
 
-function testScene(sceneNum) {
+function testScene(game, sceneNum, progressCallback) {
   var fileName = knownScenes[sceneNum];
   var sceneName = fileName.replace(/.txt$/, "");
-  var url = "web/mygame/scenes/" + fileName;
-  xhr = new XMLHttpRequest();
-  xhr.open("GET", url, false);
+  var sceneText = game[fileName];
+
   var skip = false;
-  var loadFailed = false;
-  try {
-    xhr.send();
-  } catch (x) {
-    if (/^choicescript_(stats|upgrade|screenshots)$/.test(sceneName)) {
-      skip = true;
-    } else {
-      if (window.location.protocol == "file:" && /Chrome/.test(navigator.userAgent)) {
-        doneLoading();
-        console.log("We're sorry, Google Chrome has blocked ChoiceScript from functioning.  (\"file:\" URLs cannot "+
-          "load files in Chrome.)  ChoiceScript works just fine in Chrome, but only on a published website like "+
-          "choiceofgames.com.  For the time being, please try another browser like Mozilla Firefox.");
-        success = false;
-        return;
-      }
-      loadFailed = true;
-    }
-  }
-
-  if (xhr.status && xhr.status != 200) {
-    loadFailed = true;
-  }
-
-  if (loadFailed) {
-    if (/^choicescript_(stats|upgrade|screenshots)$/.test(sceneName)) {
+  if (!sceneText) {
+    if (/^choicescript_(stats|upgrade|screenshots)\.txt$/.test(fileName)) {
       skip = true;
     } else {
       doneLoading();
+      var errorMessage = "ERROR: couldn't open " + fileName;
+      if (progressCallback) progressCallback(sceneNum, knownScenes.length, errorMessage);
       console.log("QUICKTEST FAILED");
-      console.log("ERROR: couldn't open " + url);
+      console.log(errorMessage);
       success = false;
       return;
     }
@@ -323,28 +291,32 @@ function testScene(sceneNum) {
   if (!skip) {
     console.log(sceneName);
     try {
-      testForInvalidCharacters(xhr.responseText);
-      var uncovered = autotester(xhr.responseText, nav, sceneName, gotoSceneLabels[sceneName])[1];
+      var uncovered = autotester(sceneText, nav, sceneName, gotoSceneLabels[sceneName])[1];
       if (uncovered) {
         uncoveredScenes.push({name:sceneName, lines:uncovered});
       }
       if (sceneNum === 0) {
-        var match = /^\*title (.*)/m.exec(xhr.responseText);
+        var match = /^\*title (.*)/m.exec(sceneText);
         if (match) {
           gameTitle = match[1];
         }
-        authorIncluded = /^\*author /m.test(xhr.responseText);
+        authorIncluded = /^\*author /m.test(sceneText);
       }
     } catch (x) {
+      if (progressCallback) progressCallback(sceneNum, knownScenes.length, x);
       console.log("QUICKTEST FAILED");
-        console.log(x);
-        console.error(x.stack);
-        success = false;
-        return;
+      console.log(x);
+      console.error(x.stack);
+      success = false;
+      return;
     }
   }
-  
-  if (++sceneNum < knownScenes.length) return setTimeout(function(){testScene(sceneNum)}, 0);
+
+  ++sceneNum;
+  if (progressCallback) progressCallback(sceneNum, knownScenes.length, !"error");
+  if (sceneNum < knownScenes.length) {
+    return setTimeout(function(){testScene(game, sceneNum, progressCallback)}, 0);
+  }
 
   if (success) {
     var allLinesTested = true;
@@ -384,7 +356,7 @@ function testScene(sceneNum) {
 <body>
 <div id="loading">Loading...</div>
 <script>
-loadScenes(0);
+if (!window.location.search) loadScenes(null, 0);
 </script>
 </body>
 </html>

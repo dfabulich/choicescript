@@ -55,6 +55,9 @@ if (typeof java == "undefined") {
 }
 
 nav.setStartingStatsClone(stats);
+if (typeof purchases !== "undefined") {
+  nav.loadProducts(undefined, purchases);
+}
 
 var sceneList = [];
 var warnings = [];
@@ -156,9 +159,8 @@ Scene.prototype.testFinish = function commandLineTestFinish(buttonName) {
   }
 }
 
-Scene.prototype.moduloWarning = function commandLineModuloWarning() {
-  warnings.push(this.lineMsg() + "WARNING this is a bare % sign, which should be replaced with %+, %-, or modulo if you're really advanced.");
-  warnings.push(this.lineMsg() + "WARNING For more details on modulo, see: https://forum.choiceofgames.com/t/21176");
+Scene.prototype.warning = function commandLineWarning(message) {
+  warnings.push(this.lineMsg() + "WARNING " + message);
 }
 
 // test startup scene first, to run *create commands

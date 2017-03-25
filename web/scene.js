@@ -394,7 +394,15 @@ Scene.prototype.loadScene = function loadScene(url) {
             " <p><button onclick='window.location.reload();'>Refresh Now</button></p>";
             return;
         } else if (xhr.responseText === "") {
-          throw new Error("Couldn't load " + url + "\nThe file is probably missing or empty.");
+          if (window.location.protocol == "file:" && !window.isMobile && /Chrome/.test(navigator.userAgent)) {
+            window.onerror("We're sorry, Google Chrome has blocked ChoiceScript from functioning.  (\"file:\" URLs cannot "+
+            "load files in Chrome.)  ChoiceScript works just fine in Chrome, but only on a published website like "+
+            "choiceofgames.com.  For the time being, please try another browser like Mozilla Firefox.");
+            return;
+          } else {
+            window.onerror("Couldn't load " + url + "\nThe file is probably missing or empty.");
+            return;
+          }
         }
         var result = xhr.responseText;
         scene = result;
@@ -488,6 +496,10 @@ Scene.prototype.parseLabels = function parseLabels() {
     for (this.lineNum = 0; this.lineNum < lineLength; this.lineNum++) {
         this.rollbackLineCoverage();
         var line = this.lines[this.lineNum];
+        // strip byte order mark
+        if (this.lineNum == 0 && line.charCodeAt(0) == 65279) lines[0] = line.substring(1);
+        var invalidCharacter = line.match(/^(.*)\ufffd/);
+        if (invalidCharacter) throw new Error(this.lineMsg() + "invalid character. (ChoiceScript text should be saved in the UTF-8 encoding.) " + invalidCharacter[0]);
         var result = /^(\s*)\*(\w+)(.*)/.exec(line);
         if (!result) continue;
         var indentation = result[1];
@@ -533,7 +545,7 @@ Scene.prototype.runCommand = function runCommand(line) {
     if (Scene.validCommands[command]) {
         if ("comment" == command) return true;
         if (Scene.initialCommands[command]) {
-          if ("startup" != this.name || !this.initialCommands) {
+          if ("startup" != String(this.name).toLowerCase() || !this.initialCommands) {
             throw new Error(this.lineMsg() + "Invalid "+command+" instruction, only allowed at the top of startup.txt");
           }
         } else {
@@ -897,6 +909,11 @@ Scene.prototype.redirect_scene = function redirectScene(data) {
   });
 };
 
+Scene.prototype.product = function product(productId) {
+  if (!/^[a-z]+$/.test(productId)) throw new Error(this.lineMsg()+"Invalid product id: " +productId);
+  if (this.nav) this.nav.products[productId] = {};
+}
+
 Scene.prototype.restore_purchases = function scene_restorePurchases(data) {
   var self = this;
   var target = this.target;
@@ -921,6 +938,13 @@ Scene.prototype.check_purchase = function scene_checkPurchase(data) {
   this.finished = true;
   this.skipFooter = true;
   var self = this;
+  var productList = data.split(/ /);
+  for (var i = 0; i < productList.length; i++) {
+    var product = productList[i];
+    if (!this.nav.products[product] && product != "adfree") {
+      throw new Error(this.lineMsg() + "The product " + product + " wasn't declared in a *product command");
+    }
+  }
   checkPurchase(data, function(ok, result) {
     self.finished = false;
     self.skipFooter = false;
@@ -948,6 +972,9 @@ Scene.prototype.purchase = function purchase_button(data) {
   var product = result[1];
   var priceGuess = trim(result[2]);
   var label = trim(result[3]);
+  if (!this.nav.products[product] && product != "adfree") {
+    throw new Error(this.lineMsg() + "The product " + product + " wasn't declared in a *product command");
+  }
   if (typeof this.temps["choice_purchased_"+product] === "undefined") throw new Error(this.lineMsg() + "Didn't check_purchases on this page");
   this.finished = true;
   this.skipFooter = true;
@@ -3197,6 +3224,8 @@ Scene.prototype.tokenizeExpr = function tokenizeExpr(str) {
                 pos += token.length;
                 if ("WHITESPACE" == tokenType.name) {
                     break;
+                } else if ("CURLY_QUOTE" == tokenType.name) {
+                  throw new Error(this.lineMsg()+"Invalid use of curly smart quote: " + token + "\nUse straight quotes \" instead")
                 }
                 stack.push({name:tokenType.name, value:token, pos:pos});
                 break;
@@ -3242,7 +3271,10 @@ Scene.prototype.evaluateExpr = function evaluateExpr(stack, parenthetical) {
     operator = Scene.operators[token.value];
     if (!operator) throw new Error(this.lineMsg() + "Invalid expression at char "+token.pos+", expected OPERATOR, was: " + token.name + " [" + token.value + "]");
 
-    if (token.value === '%' && this.moduloWarning) this.moduloWarning();
+    if (token.value === '%') {
+      this.warning("this is a bare % sign, which should be replaced with %+, %-, or modulo if you're really advanced.");
+      this.warning("For more details on modulo, see: https://forum.choiceofgames.com/t/21176");
+    }
 
     value2 = this.evaluateValueToken(getToken(), stack);
 
@@ -3613,7 +3645,7 @@ Scene.prototype.parseSceneList = function parseSceneList() {
       if (purchaseMatch) {
         line = purchaseMatch[2];
       }
-      if (!scenes.length && "startup" != line) scenes.push("startup");
+      if (!scenes.length && "startup" != String(line).toLowerCase()) scenes.push("startup");
       scenes.push(line);
   }
   return scenes;
@@ -3753,6 +3785,10 @@ Scene.prototype.bug = function scene_bug(message) {
   throw new Error(this.lineMsg() + message);
 };
 
+Scene.prototype.warning = function scene_warning(message) {
+  // quicktest implements this
+}
+
 Scene.prototype.feedback = function scene_feedback() {
   if (typeof window == "undefined" || this.randomtest) return;
   this.paragraph();
@@ -3844,6 +3880,7 @@ Scene.tokens = [
             throw new Error("line "+line+": Invalid string, open quote with no close quote: " + str);
         }
     },
+    {name:"CURLY_QUOTE", test:function(str){ return Scene.regexpMatch(str,/^[\u201c|\u201d]/); } },
     {name:"WHITESPACE", test:function(str){ return Scene.regexpMatch(str,/^\s+/); } },
     {name:"NAMED_OPERATOR", test:function(str){ return Scene.regexpMatch(str,/^(and|or|modulo)\b/); } },
     {name:"VAR", test:function(str){ return Scene.regexpMatch(str,/^\w*/); } },
@@ -3914,7 +3951,7 @@ Scene.operators = {
     "modulo": function modulo(v1,v2,line) { return num(v1,line) % num(v2,line); },
 };
 
-Scene.initialCommands = {"create":1,"scene_list":1,"title":1,"author":1,"comment":1,"achievement":1};
+Scene.initialCommands = {"create":1,"scene_list":1,"title":1,"author":1,"comment":1,"achievement":1,"product":1};
 
 Scene.validCommands = {"comment":1, "goto":1, "gotoref":1, "label":1, "looplimit":1, "finish":1, "abort":1,
     "choice":1, "create":1, "temp":1, "delete":1, "set":1, "setref":1, "print":1, "if":1, "rand":1,
@@ -3927,5 +3964,5 @@ Scene.validCommands = {"comment":1, "goto":1, "gotoref":1, "label":1, "looplimit
     "restart":1,"more_games":1,"delay_ending":1,"end_trial":1,"login":1,"achieve":1,"scene_list":1,"title":1,
     "bug":1,"link_button":1,"check_registration":1,"sound":1,"author":1,"gosub_scene":1,"achievement":1,
     "check_achievements":1,"redirect_scene":1,"print_discount":1,"purchase_discount":1,"track_event":1,
-    "timer":1,"youtube":1
+    "timer":1,"youtube":1,"product":1
     };

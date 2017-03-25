@@ -31,6 +31,7 @@ var showText = false;
 var highlightGenderPronouns = false;
 var showChoices = true;
 var avoidUsedOptions = true;
+var slurps = {}
 function parseArgs(args) {
   if (args[0]) iterations = args[0];
   if (args[1]) gameName = args[1];
@@ -85,13 +86,16 @@ if (typeof importScripts != "undefined") {
     xhr.open("GET", url, false);
     try {
       xhr.send();
+      if (xhr.status && xhr.status != 200) {
+        throw new Error("Couldn't open " + url + " with status " + xhr.status);
+      }
       doneLoading();
       return xhr.responseText;
     } catch (x) {
       doneLoading();
       console.log("RANDOMTEST FAILED");
       console.log("ERROR: couldn't open " + url);
-      if (window.location.protocol == "file:" && /Chrome/.test(navigator.userAgent)) {
+      if (typeof window != "undefined" && window.location.protocol == "file:" && /Chrome/.test(navigator.userAgent)) {
             console.log("We're sorry, Google Chrome has blocked ChoiceScript from functioning.  (\"file:\" URLs cannot "+
               "load files in Chrome.)  ChoiceScript works just fine in Chrome, but only on a published website like "+
               "choiceofgames.com.  For the time being, please try another browser like Mozilla Firefox.");
@@ -132,6 +136,11 @@ if (typeof importScripts != "undefined") {
     showChoices = event.data.showChoices;
     highlightGenderPronouns = event.data.highlightGenderPronouns;
     avoidUsedOptions = event.data.avoidUsedOptions;
+    if (event.data.sceneContent) {
+      for (scene in event.data.sceneContent) {
+        slurps['web/'+gameName+'/scenes/'+scene] = event.data.sceneContent[scene];
+      }
+    }
 
     if (event.data.showText) {
       var lineBuffer = [];
@@ -220,8 +229,6 @@ printx = println = function printx(msg, parent) {
   //printed.push(msg);
 }
 
-
-slurps = {}
 function slurpFileCached(name) {
   if (!slurps[name]) slurps[name] = slurpFile(name);
   return slurps[name];
@@ -403,7 +410,9 @@ Scene.prototype.finish = Scene.prototype.autofinish = function random_finish(but
 }
 
 Scene.prototype.oldGotoScene = Scene.prototype.goto_scene;
-Scene.prototype.goto_scene = function random_goto_scene(name) {
+Scene.prototype.goto_scene = function random_goto_scene(data) {
+  var result = this.parseGotoScene(data);
+  var name = result.sceneName;
   if (isTrial && typeof purchases != "undefined" && purchases[name]) {
     throw new Error(this.lineMsg() + "Trying to go to scene " + name + " but that scene requires purchase");
   }
@@ -616,8 +625,7 @@ function randomtest() {
       }
       println(); // flush buffer
     } catch (e) {
-      console.log("RANDOMTEST FAILED\n");
-      console.log(e);
+      console.log("RANDOMTEST FAILED: " + e);
       if (isRhino) {
         java.lang.System.exit(1);
       } else if (typeof process != "undefined" && process.exit) {

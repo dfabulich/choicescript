@@ -755,6 +755,8 @@ function isReviewSupported() {
 
 function isFollowEnabled() {
   if (!window.isWeb) return false;
+  // iOS add to homescreen seems not to like these iframes
+  if (window.navigator.standalone) return false;
   if ("localhost" != window.location.hostname && !/\.?choiceofgames\.com$/.test(window.location.hostname)) return false;
   return true;
 }
@@ -2277,6 +2279,7 @@ window.onload=function() {
       checkAchievements(function() {});
       setButtonTitles();
     }
+    nav.loadProducts(window.knownProducts, window.purchases);
     stats.sceneName = window.nav.getStartupScene();
     var map = parseQueryString(window.location.search);
     if (!map) {
@@ -2378,11 +2381,27 @@ window.onload=function() {
     }
     if (window.isWeb && window.appPurchase) {
       (function() {
-        var fullProductName = window.storeName + "." + appPurchase;
+        var productMap = {};
+        if (typeof purchases === "object") {
+          for (var scene in purchases) {
+            productMap[purchases[scene]] = 1;
+          }
+        }
+        if (!window.knownProducts) window.knownProducts = [];
+        for (var product in productMap) {
+          window.knownProducts.push(product);
+        }
+
+        var fullProducts = [];
+        for (var i = 0; i < window.knownProducts.length; i++) {
+          fullProducts[i] = window.storeName + "." + window.knownProducts[i];
+        }
         xhrAuthRequest("GET", "product-data", function(ok, data) {
           if (!window.productData) window.productData = {};
-          window.productData[appPurchase] = data[fullProductName];
-        }, "products", fullProductName);
+          for (var i = 0; i < window.knownProducts.length; i++) {
+            window.productData[window.knownProducts[i]] = data[window.storeName + "." + window.knownProducts[i]];
+          }
+        }, "products", fullProducts.join(","));
       })();
     }
 
@@ -2400,7 +2419,7 @@ try {
 } catch (e) {}
 
 if (window.isWeb) {
-  document.write("<style>.webOnly { display: block !important; }</style>\n");
+  document.getElementById("dynamic").innerHTML = ".webOnly { display: block !important; }";
   var checkoutScript = document.createElement("script");
   checkoutScript.async = 1;
   checkoutScript.src="https://checkout.stripe.com/v2/checkout.js";
@@ -2444,18 +2463,15 @@ if (window.isWeb) {
     var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
   })();
   
-}
-if (!window.isWeb && window.isIosApp) {
-  document.write("<style>"+
+} else if (window.isIosApp) {
+  document.getElementById("dynamic").innerHTML =
   "#header { display: none; }"+
   ""+
   "#emailUs { display: none; }"+
   ""+
-  "#main { padding-top: 1em; }"+
-  "</style>"+
+  "#main { padding-top: 1em; }";
   // Use UIWebView width, not screen width, on iPad
-  "<meta name = 'viewport' content = 'width = "+window.innerWidth+"'>"
-  );
+  document.querySelector("meta[name=viewport]").setAttribute("content", "width="+window.innerWidth);
   window.addEventListener("resize", function() {
       document.querySelector("meta[name=viewport]").setAttribute("content", "width="+window.innerWidth);
       // this dummy element seems to be required to get the viewport to stick
@@ -2477,25 +2493,21 @@ if (!window.isWeb && window.isIosApp) {
     safeTimeout(requester, 0);
   })();
 } else if (window.isAndroidApp) {
-  document.write("<style>"+
+  document.getElementById("dynamic").innerHTML =
   "#header { display: none; }"+
   ""+
   "#emailUs { display: none; }"+
   ""+
-  "#main { padding-top: 1em; }"+
-  "</style>");
-}
-if (window.isWebOS) document.write("<style>body {font-family: Prelude; font-size: 14pt}\n#header {font-size: 13pt}</style>");
-if (window.isMacApp || window.isWinOldApp || window.isCef || window.isAndroidApp || window.isNode) {
-  document.write("<style>"+
+  "#main { padding-top: 1em; }";
+} else if (window.isMacApp || window.isWinOldApp || window.isCef || window.isNode) {
+  document.getElementById("dynamic").innerHTML =
     "#headerLinks { display: none; }"+
     ""+
-    "#emailUs { display: none; }"+
-    ""+
-    "</style>");
+    "#emailUs { display: none; }";
 }
-if (window.isWeb && !window.Touch) {
-  document.write("<style>label:hover {background-color: #E4DED8;}</style>");
+// on touch devices, this hover state never goes away
+if (!('ontouchstart' in window)) {
+  document.getElementById("dynamic").innerHTML += ".choice label:hover {background-color: #E4DED8;}";
 }
 if (window.isChromeApp) {
   var base = document.createElement('base');

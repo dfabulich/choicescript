@@ -51,7 +51,9 @@ _global.loadTime = new Date().getTime();
 function callIos(scheme, path) {
   if (!_global.isIosApp) return;
   if (path) {
-    path = encodeURIComponent(path);
+    path = encodeURIComponent(path).replace(/[!~*')(]/g, function(match) {
+      return "%" + match.charCodeAt(0).toString(16);
+    });
   } else {
     path = "";
   }
@@ -834,7 +836,7 @@ function findOptimalDomain(docDomain) {
 
 function num(x, line) {
     if (!line) line = "UNKNOWN";
-    var x_num = x * 1;
+    var x_num = parseFloat(x);
     if (isNaN(x_num)) throw new Error("line "+line+": Not a number: " + x);
     return x_num;
 }
@@ -885,7 +887,13 @@ function simpleDateTimeFormat(date) {
   var month = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][date.getMonth()];
   var minutes = date.getMinutes();
   if (minutes < 10) minutes = "0" + (""+minutes);
-  return day + " " + month + " " + date.getDate() + " " + date.getHours() + ":" + minutes;
+  var oneYearInMillis = 1000 * 60 * 60 * 24 * 365;
+  var millisAgo = new Date().getTime() - date.getTime();
+  var yearString = ""
+  if (millisAgo > oneYearInMillis) {
+    yearString = ", " + date.getFullYear();
+  }
+  return day + ", " + month + " " + date.getDate() + yearString + ", " + date.getHours() + ":" + minutes;
 }
 
 function jsonParse(str) {
