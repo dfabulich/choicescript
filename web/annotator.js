@@ -23,16 +23,19 @@ var annotatorCurLabel;
 // Functions
 // 
 function unloadHypothesis() {
-        var appLinkEl =
-          document.querySelector('link[type="application/annotator+html"]');
-        appLinkEl.dispatchEvent(new Event('destroy'));
-      };
+	var appLinkEl =
+		document.querySelector('link[type="application/annotator+html"]');
+
+	if (appLinkEl) {
+		appLinkEl.dispatchEvent(new Event('destroy'));
+	}
+};
 
 function loadHypothesis() {
-        var embedScript = document.createElement('script');
-        embedScript.setAttribute('src','https://hypothes.is/app/embed.js');
-        document.body.appendChild(embedScript);
-      };
+	var embedScript = document.createElement('script');
+	embedScript.setAttribute('src','https://hypothes.is/app/embed.js');
+	document.body.appendChild(embedScript);
+};
 
 /* KNOWN ISSUES:
  *
