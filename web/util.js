@@ -741,7 +741,9 @@ function restoreGame(state, forcedScene, userRestored) {
 
 	// Remove annotator querystring
 	if (!forcedScene) {
+		unloadHypothesis();
 		window.history.replaceState({}, "", window.location.href.split("?")[0])
+		loadHypothesis();
 	}
 
     if (/\|/.test(forcedScene)) {
