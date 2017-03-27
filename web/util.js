@@ -738,6 +738,12 @@ function restoreGame(state, forcedScene, userRestored) {
     var secondaryMode = null;
     var saveSlot = "";
     var forcedSceneLabel = null;
+
+	// Remove annotator querystring
+	if (!forcedScene) {
+		window.history.replaceState({}, "", window.location.href.split("?")[0])
+	}
+
     if (/\|/.test(forcedScene)) {
       var parts = forcedScene.split("|");
       forcedScene = parts[0];
