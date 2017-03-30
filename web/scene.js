@@ -1545,19 +1545,21 @@ Scene.prototype.line_break = function line_break() {
 Scene.prototype.image = function image(data) {
     data = data || "";
     data = this.replaceVariables(data);
-    var match = /(\S+) (\S+)(.*)/.exec(data);
+    var match = /(\S+) (\S+) (\S+)(.*)/.exec(data);
     var source, alignment;
     var alt = null;
+    var width = null;
     if (match) {
       var source = match[1];
       var alignment = match[2];
       var alt = trim(match[3]);
+      var width = trim(match[4]);
     } else {
       source = data;
     }
     alignment = alignment || "center";
     if (!/(right|left|center|none)/.test(alignment)) throw new Error(this.lineMsg()+"Invalid alignment, expected right, left, center, or none: " + data);
-    printImage(source, alignment, alt);
+    printImage(source, alignment, alt, width);
     if (this.verifyImage) this.verifyImage(source);
     if (alignment == "none") this.prevLine = "text";
     this.screenEmpty = false;
