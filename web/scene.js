@@ -312,7 +312,7 @@ Scene.prototype.loadSceneFast = function loadSceneFast(url) {
         } else if (xhr.responseText === "") {
           throw new Error("Couldn't load " + url + "\nThe file is probably missing or empty.");
         }
-        
+
         if (!window.cachedResults) window.cachedResults = {};
         cachedResults[self.name] = result;
         self.loadLinesFast(result.crc, result.lines, result.labels);
@@ -717,14 +717,14 @@ Scene.prototype.save = function save(slot) {
         }
         tempStatWrites = {};
       }
-      
+
       saveCookie(function() {}, slot, this.stats, this.temps, this.lineNum, this.indent, this.debugMode, this.nav);
     }
 };
 
 // *goto labelName
 // Go to the line labeled with the label command *label labelName
-// 
+//
 // goto by reference
 //   *create foo "labelName"
 //   *goto {foo}
@@ -781,7 +781,7 @@ Scene.prototype["return"] = function scene_return() {
     } else {
       throw new Error(this.lineMsg() + "invalid return; we've already returned from the last gosub");
     }
-    
+
 };
 
 // *gotoref expression
@@ -1039,7 +1039,7 @@ Scene.prototype.purchase = function purchase_button(data) {
           }
         );
       }
-      
+
       self.skipFooter = false;
       self.finished = false;
       self.execute();
@@ -1541,19 +1541,24 @@ Scene.prototype.line_break = function line_break() {
 };
 
 // *image
-// display named image
+// display named image //CJW edited to compensate for data uri images
 Scene.prototype.image = function image(data) {
     data = data || "";
     data = this.replaceVariables(data);
-    var match = /(\S+) (\S+)(.*)/.exec(data);
+    var args = data.split(" ");
     var source, alignment;
     var alt = null;
-    if (match) {
-      var source = match[1];
-      var alignment = match[2];
-      var alt = trim(match[3]);
-    } else {
-      source = data;
+    if (args.length > 2) {
+      var source = args[0];
+      var alignment = args[1];
+      var alt = trim(args[2]);
+    }
+    else if (args.length > 1) {
+      var source = args[0];
+      var alignment = args[1];
+    }
+    else {
+      var source = data;
     }
     alignment = alignment || "center";
     if (!/(right|left|center|none)/.test(alignment)) throw new Error(this.lineMsg()+"Invalid alignment, expected right, left, center, or none: " + data);
@@ -2015,7 +2020,7 @@ Scene.prototype.restart = function restart() {
   var startupScene = self.nav.getStartupScene();
   var scene = new Scene(startupScene, self.stats, self.nav, {debugMode:self.debugMode, secondaryMode:false});
   scene.resetPage();
-  
+
 };
 
 /* Subscribe options, in JSON format.
@@ -2449,7 +2454,7 @@ Scene.prototype.save_game = function save_game(destinationSceneName) {
           message.appendChild(messageText);
           return;
         }
-        
+
         recordEmail(email, function() {
           clearScreen(function() {
             saveCookie(function() {
@@ -3043,7 +3048,7 @@ Scene.prototype.delay_ending = function(data) {
         options.push(playMoreGames);
         var emailMe = {name: "Email me when new games are available."};
         options.push(emailMe);
-        
+
         self.paragraph();
         printOptions([""], options, function(option) {
           if (option == playMoreGames) {
@@ -3672,7 +3677,7 @@ Scene.prototype.achievement = function scene_achievement(data) {
   var achievementName = parsed[1];
   if (!/^[a-z][a-z0-9_]+$/.test(achievementName)) throw new Error(this.lineMsg()+"Invalid achievement name: " +achievementName);
 
-  
+
   if (this.nav.achievements.hasOwnProperty(achievementName)) {
     // this achievement already exists...
     if (!this.nav.achievements[achievementName].lineNumber) {
