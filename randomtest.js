@@ -1,16 +1,16 @@
 /*
  * Copyright 2010 by Dan Fabulich.
- * 
+ *
  * Dan Fabulich licenses this file to you under the
  * ChoiceScript License, Version 1.0 (the "License"); you may
- * not use this file except in compliance with the License. 
+ * not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *  http://www.choiceofgames.com/LICENSE-1.0.txt
- * 
+ *
  * See the License for the specific language governing
  * permissions and limitations under the License.
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
@@ -20,6 +20,7 @@
 // usage: randomtest iterations gameName randomSeed delay trial
 // e.g.   randomtest 10000 mygame 0 false false
 
+var projectPath = "";
 var isRhino = false;
 var iterations = 10;
 var gameName = "mygame";
@@ -82,6 +83,7 @@ if (typeof importScripts != "undefined") {
   _global = this;
 
   slurpFile = function slurpFile(url) {
+    url = "file://" + url; // CJW: necessary to force latest versions of nwjs to treat/load as file
     xhr = new XMLHttpRequest();
     xhr.open("GET", url, false);
     try {
@@ -129,6 +131,7 @@ if (typeof importScripts != "undefined") {
   nav.setStartingStatsClone(stats);
   delay = true;
   onmessage = function(event) {
+    if (projectPath == "") projectPath = event.data.projectPath;
     iterations = event.data.iterations;
     randomSeed = event.data.randomSeed;
     showCoverage = event.data.showCoverage;
@@ -138,7 +141,7 @@ if (typeof importScripts != "undefined") {
     avoidUsedOptions = event.data.avoidUsedOptions;
     if (event.data.sceneContent) {
       for (scene in event.data.sceneContent) {
-        slurps['web/'+gameName+'/scenes/'+scene] = event.data.sceneContent[scene];
+        slurps[thisProject.getPath()+scene] = event.data.sceneContent[scene];
       }
     }
 
@@ -502,14 +505,14 @@ Scene.prototype.choice = function choice(data, fakeChoice) {
 }
 
   Scene.prototype.loadScene = function loadScene() {
-    var file = slurpFileCached('web/'+gameName+'/scenes/'+this.name+'.txt');
+    var file = slurpFileCached(projectPath+this.name+'.txt');
     this.loadLines(file);
     this.loaded = true;
     if (this.executing) {
       this.execute();
     }
   }
-    
+
 
     var coverage = {};
 var sceneNames = [];
@@ -518,7 +521,7 @@ var sceneNames = [];
     if (!lineNum) lineNum = this.lineNum;
     coverage[this.name][lineNum]--;
   }
-  
+
   try {
     Scene.prototype.__defineGetter__("lineNum", function() { return this._lineNum; });
     Scene.prototype.__defineSetter__("lineNum", function(val) {
@@ -528,7 +531,7 @@ var sceneNames = [];
 	  coverage[this.name] = [];
 	}
 	sceneCoverage = coverage[this.name];
-	
+
         if (sceneCoverage[val]) {
             sceneCoverage[val]++;
         } else {
@@ -580,7 +583,7 @@ function randomtestAsync(i, showCoverage) {
       if (showCoverage) {
         for (i = 0; i < sceneNames.length; i++) {
           var sceneName = sceneNames[i];
-          var sceneLines = slurpFileLines('web/'+gameName+'/scenes/'+sceneName+'.txt');
+          var sceneLines = slurpFileLines(projectPath+sceneName+'.txt');
           var sceneCoverage = coverage[sceneName];
           for (var j = 0; j < sceneCoverage.length; j++) {
             console.log(sceneName + " "+ (sceneCoverage[j] || 0) + ": " + sceneLines[j]);
@@ -603,9 +606,9 @@ function randomtestAsync(i, showCoverage) {
       scene.execute();
       if (timeout) return runTimeout(timeout);
     } catch (e) {
-      return fail(e); 
+      return fail(e);
     }
-  
+
 }
 
 function randomtest() {
@@ -643,7 +646,7 @@ function randomtest() {
     if (showCoverage) {
       for (i = 0; i < sceneNames.length; i++) {
         var sceneName = sceneNames[i];
-        var sceneLines = slurpFileLines('web/'+gameName+'/scenes/'+sceneName+'.txt');
+        var sceneLines = slurpFileLines(projectPath+sceneName+'.txt');
         var sceneCoverage = coverage[sceneName];
         for (var j = 0; j < sceneCoverage.length; j++) {
           console.log(sceneName + " "+ (sceneCoverage[j] || 0) + ": " + sceneLines[j]);

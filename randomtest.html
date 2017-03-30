@@ -14,6 +14,11 @@
 <p><input type="checkbox" id="autoScroll"> Automatically scroll to the bottom</p>
 <button id="start">Start Randomtest</button>
 <script>
+
+// CSIDE Window
+var scope = window.opener ? window.opener.parent : parent.window;
+var thisProject = scope.cside.getActiveProject();
+
 var worker = new Worker("randomtest.js");
 var messages = [];
 var highlightGenderPronouns;
@@ -33,7 +38,11 @@ setInterval(function() {
     };
     document.body.appendChild(frag);
     messages = [];
-    if (queryArgs.autoScroll) window.scroll(0,document.height);
+    if (queryArgs.autoScroll) {
+  	  var br = document.createElement("br");
+  	  document.body.appendChild(br);
+  	  br.scrollIntoView();
+	 }
   }
 }, 100);
 
@@ -87,9 +96,9 @@ if (queryArgs.showText) document.getElementById("showText").checked = queryArgs.
 if (queryArgs.highlightGenderPronouns) document.getElementById("highlightGenderPronouns").checked = queryArgs.highlightGenderPronouns;
 if (queryArgs.showCoverage) document.getElementById("showCoverage").checked = queryArgs.showCoverage;
 if (typeof queryArgs.showChoices != "undefined") document.getElementById("showChoices").checked = !!queryArgs.showChoices;
-if (queryArgs.autoScroll) document.getElementById("autoScroll").checked = queryArgs.autoScroll;
 
 document.getElementById("start").onclick = function() {
+  if (document.getElementById("autoScroll").checked) queryArgs.autoScroll = true;
   iterations = document.getElementById("iterations").value;
   randomSeed = document.getElementById("seed").value*1;
   var avoidUsedOptions = document.getElementById("avoidUsedOptions").checked;
@@ -98,7 +107,7 @@ document.getElementById("start").onclick = function() {
   var showChoices = document.getElementById("showChoices").checked;
   highlightGenderPronouns = document.getElementById("highlightGenderPronouns").checked;
   document.body.innerHTML = "";
-  worker.postMessage({iterations:iterations, randomSeed:randomSeed, showText:showText, showCoverage:showCoverage, highlightGenderPronouns:highlightGenderPronouns, showChoices:showChoices, avoidUsedOptions:avoidUsedOptions});
+  worker.postMessage({iterations:iterations, randomSeed:randomSeed, showText:showText, showCoverage:showCoverage, highlightGenderPronouns:highlightGenderPronouns, showChoices:showChoices, avoidUsedOptions:avoidUsedOptions, projectPath: thisProject.getPath()});
 }
 </script>
 </body>

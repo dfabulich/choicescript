@@ -8,6 +8,10 @@
   <script src=editor/embeddable-autotester.js></script>
 <script>
 
+// CSIDE Window
+var scope = window.opener ? window.opener.parent : parent.window;
+var thisProject = scope.cside.getActiveProject();
+
 nav = new SceneNavigator(["startup"]);
 nav.setStartingStatsClone({});
 stats = {};
@@ -41,7 +45,7 @@ Scene.prototype.verifySceneFile = function webVerifySceneFile(name) {
 Scene.prototype.verifyImage = function webVerifyImage(fileName) {
   if (knownImages[fileName]) return;
   var xhr = new XMLHttpRequest();
-  var url = "web/mygame/" + fileName;
+  var url = "file://" + thisProject.getPath() + fileName;
   xhr.open("GET", url, false);
   try {
     xhr.send();
@@ -148,7 +152,7 @@ function loadScenes(game, sceneNum) {
   if (!game) game = {};
   var fileName = knownScenes[sceneNum];
   var sceneName = fileName.replace(/.txt$/, "");
-  var url = "web/mygame/scenes/" + fileName;
+  var url = "file://" + thisProject.getPath() + fileName; // CJW: necessary to force latest versions of nwjs to treat/load as file
   xhr = new XMLHttpRequest();
   xhr.open("GET", url, false);
   var skip = false;
@@ -262,7 +266,7 @@ function loadScenes(game, sceneNum) {
       console.log(e);
     }
   }
-  
+
   if (++sceneNum < knownScenes.length) return setTimeout(function(){loadScenes(game, sceneNum)}, 0);
 
   testScene(game, 0);
