@@ -45,7 +45,9 @@ Scene.prototype.verifySceneFile = function webVerifySceneFile(name) {
 Scene.prototype.verifyImage = function webVerifyImage(fileName) {
   if (knownImages[fileName]) return;
   var xhr = new XMLHttpRequest();
-  var url = "file://" + thisProject.getPath() + fileName;
+  var url = thisProject.getPath() + fileName;
+  if (scope.cside.getPlatform() != "web-dropbox")
+    url = "file://" + url;
   xhr.open("GET", url, false);
   try {
     xhr.send();
@@ -152,8 +154,9 @@ function loadScenes(game, sceneNum) {
   if (!game) game = {};
   var fileName = knownScenes[sceneNum];
   var sceneName = fileName.replace(/.txt$/, "");
-  var url = "file://" + thisProject.getPath() + fileName; // CJW: necessary to force latest versions of nwjs to treat/load as file
-  xhr = new XMLHttpRequest();
+  var url = thisProject.getPath() + fileName;
+  if (scope.cside.getPlatform() != "web-dropbox")
+    url = "file://" + url;  xhr = new XMLHttpRequest();
   xhr.open("GET", url, false);
   var skip = false;
   var loadFailed = false;
