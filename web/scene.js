@@ -123,8 +123,7 @@ Scene.prototype.printLoop = function printLoop() {
             }
             this.prevLine = "text";
             this.screenEmpty = false;
-            this.printLine(trim(line));
-            printx(' ', this.target);
+            this.printLine(line);
         }
     }
     this.rollbackLineCoverage();
@@ -143,9 +142,11 @@ Scene.prototype.dedent = function dedent(newDent) {};
 
 Scene.prototype.printLine = function printLine(line, parent) {
     if (!line) return null;
-    line = this.replaceVariables(line);
+    line = this.replaceVariables(line.replace(/^ */, ""));
     if (!parent) parent = this.target;
-    return printx(line, parent);
+    printx(line, parent);
+    // insert extra space unless the line ends with hyphen or dash
+    if (!/[-\u2011-\u2014]$/.test(line)) printx(' ', parent);
 };
 
 Scene.prototype.replaceVariables = function (line) {
@@ -1681,7 +1682,6 @@ Scene.prototype.print = function scene_print(expr) {
     this.prevLine = "text";
     this.screenEmpty = false;
     this.printLine(value);
-    printx(' ', this.target);
 };
 
 // *input_text var
