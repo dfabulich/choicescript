@@ -21,6 +21,8 @@ function autotester(sceneText, nav, sceneName, extraLabels) {
     }
   }
 
+  Scene.prototype.quicktest = true;
+
   Scene.prototype.finish = function test_finish(buttonName) {
     this.paragraph();
     this.finished = true;

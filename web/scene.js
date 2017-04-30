@@ -1728,6 +1728,13 @@ Scene.prototype.input_number = function input_number(data) {
       throw new Error(this.lineMsg() + "Non-existent variable '"+variable+"'");
     }
 
+    var simpleConstants;
+    if (stack.length == 2 && stack[0].name == "NUMBER" && stack[1].name == "NUMBER") {
+      simpleConstants = true;
+    } else {
+      simpleConstants = false;
+    }
+
     if (!stack.length) throw new Error(this.lineMsg() + "Invalid input_number statement, expected three args: varname min max");
     var minimum = this.evaluateValueToken(stack.shift(), stack);
     if (isNaN(minimum*1)) throw new Error(this.lineMsg() + "Invalid minimum, not numeric: " + minimum);
@@ -1737,7 +1744,12 @@ Scene.prototype.input_number = function input_number(data) {
     if (stack.length) throw new Error(this.lineMsg() + "Invalid input_number statement, expected three args: varname min max");
     if (isNaN(maximum*1)) throw new Error(this.lineMsg() + "Invalid maximum, not numeric: " + maximum);
 
-    if (parseFloat(minimum) > parseFloat(maximum)) throw new Error(this.lineMsg() + "Minimum " + minimum+ " should not be greater than maximum " + maximum);
+    // in quicktest, min and max can get mixed up as the interpreter "cheats" on if statements
+    // so quicktest will ignore min/max errors unless they're simple constants e.g. *input_number x 6 4
+    var checkMinMax = !this.quicktest || simpleConstants;
+    if (checkMinMax && parseFloat(minimum) > parseFloat(maximum)) {
+      throw new Error(this.lineMsg() + "Minimum " + minimum+ " should not be greater than maximum " + maximum);
+    }
 
     function isInt(x) {
        var y=parseInt(x,10);
@@ -1766,7 +1778,7 @@ Scene.prototype.input_number = function input_number(data) {
           asyncAlert("Please use a number greater than or equal to " + minimum);
           return;
         }
-        if (numValue > maximum * 1) {
+        if (numValue > maximum * 1 && !this.quicktest) {
           asyncAlert("Please use a number less than or equal to " + maximum);
           return;
         }
