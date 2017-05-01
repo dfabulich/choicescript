@@ -2379,8 +2379,12 @@ window.onload=function() {
       }
       if (productList) checkPurchase(productList, function() {});
     }
-    if (window.isWeb && window.appPurchase) {
+    if (window.isWeb) {
       (function() {
+        if (window.releaseDate && new Date() < window.releaseDate) {
+          var appLinks = document.getElementById('mobileLinks');
+          if (appLinks) appLinks.style.display = 'none';
+        }
         var productMap = {};
         if (typeof purchases === "object") {
           for (var scene in purchases) {
@@ -2419,7 +2423,7 @@ try {
 } catch (e) {}
 
 if (window.isWeb) {
-  document.getElementById("dynamic").innerHTML = ".webOnly { display: block !important; }";
+  document.getElementById("dynamic").innerHTML = ".webOnly { display: block; }";
   var checkoutScript = document.createElement("script");
   checkoutScript.async = 1;
   checkoutScript.src="https://checkout.stripe.com/v2/checkout.js";
