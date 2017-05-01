@@ -1380,6 +1380,15 @@ test("references", function() {
     scene.execute();
     doh.is("This foo is a true Foo. <br><br>", printed.join(""), "printed");
 })
+test("multiReplace", function() {
+    printed = [];
+    var text = "There @{foo is one thing|are two things} here in the room, and @{(bar) one person|two people}.";
+    var stats = {foo:1, bar:false};
+    var scene = new Scene("test", stats);
+    scene.loadLines(text);
+    scene.execute();
+    doh.is("There is one thing here in the room, and two people. <br><br>", printed.join(""), "printed");
+})
 
 module("Parse Stat Chart");
 

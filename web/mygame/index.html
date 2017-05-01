@@ -29,13 +29,13 @@ either express or implied.
 <script src="../persist.js"></script>
 <script src="../alertify.min.js"></script>
 <script src="../util.js"></script>
+<link href="../style.css" rel="stylesheet" type="text/css">
 <style id="dynamic"></style>
 <script src="../ui.js"></script>
 <script src="../scene.js"></script>
 <script src="../navigator.js"></script>
 <script src="mygame.js"></script>
 <link href="../alertify.css" rel="stylesheet" type="text/css">
-<link href="../style.css" rel="stylesheet" type="text/css">
 <!--[if IE 6]><style>.alertify-logs { position: absolute; }</style><![endif]-->
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <script>
@@ -57,7 +57,7 @@ var rootDir = "../";
   <p id="headerLinks">
       <!-- <a href="credits.html" id="aboutLink" class="spacedLink">About</a> -->
     </p>
-  <p id="buttons"><button id="statsButton" class="spacedLink" onclick="showStats()">Show Stats</button> <button id="restartButton" class="spacedLink" onclick="restartGame('prompt')">Restart</button> <button id="achievementsButton" onclick="showAchievements()" class="spacedLink" style="display: none">Achievements</button></p>
+  <p id="buttons"><button id="statsButton" class="spacedLink" onclick="showStats()">Show Stats</button> <button id="restartButton" class="spacedLink" onclick="restartGame('prompt')">Restart</button> <button id="achievementsButton" onclick="showAchievements()" class="spacedLink" style="display: none">Achievements</button> <button id="bugButton" onclick="reportBug()" class="spacedLink" style="display: none">Report Bug</button></p>
 </div>
 <div id="main">
 <div id="text">

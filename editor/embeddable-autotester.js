@@ -21,6 +21,8 @@ function autotester(sceneText, nav, sceneName, extraLabels) {
     }
   }
 
+  Scene.prototype.quicktest = true;
+
   Scene.prototype.finish = function test_finish(buttonName) {
     this.paragraph();
     this.finished = true;
@@ -287,7 +289,7 @@ function autotester(sceneText, nav, sceneName, extraLabels) {
           return this.oldRunCommand(line);
         } else {
           //log("overcovered " + (this._lineNum+1) + " " + coverage[this._lineNum]);
-          this.finished = true;
+          this["return"]();
           return;
         }
     } else {
@@ -309,7 +311,7 @@ function autotester(sceneText, nav, sceneName, extraLabels) {
       //var key = toJson(this.stats) + toJson(this.temps) + label;
       if (seen[key]) {
           //throw new Error("yay! seen!");
-          this.finished = true;
+          this["return"]();
           return;
       }
       seen[key] = 1;

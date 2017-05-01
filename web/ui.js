@@ -116,6 +116,8 @@ function showMenu() {
       {name:"Email us at " + getSupportEmail() + ".", group:"choice", contactUs:true},
       {name:"Share this game with friends.", group:"choice", share:true},
       {name:"Email me when new games are available.", group:"choice", subscribe:true},
+      {name:"Make the text bigger or smaller.", group:"choice", fontSizeMenu:true},
+      {name:"Change the background color.", group:"choice", background:true},
     ];
     printOptions([""], options, function(option) {
       if (option.resume) {
@@ -137,6 +139,10 @@ function showMenu() {
         subscribeLink();
       } else if (option.contactUs) {
         window.location.href="mailto:"+getSupportEmail();
+      } else if (option.fontSizeMenu) {
+        fontSizeMenu();
+      } else if (option.background) {
+        backgroundColorMenu();
       }
     });
   }
@@ -147,7 +153,11 @@ function setButtonTitles() {
   var button;
   button = document.getElementById("menuButton");
   if (button) {
-    button.innerHTML = "Menu";
+    if (window.isWeb) {
+      menuButton.innerHTML = "Settings";
+    } else {
+      button.innerHTML = "Menu";
+    }
   }
   button = document.getElementById("statsButton");
   if (button) {
@@ -162,8 +172,145 @@ function setButtonTitles() {
       button.style.display = "none";
     }
   }
-
 }
+
+function fontSizeMenu() {
+  clearScreen(function() {
+    var text = document.getElementById("text");
+    var oldZoom = getZoomFactor();
+    text.innerHTML = "<p>Make the text bigger or smaller.</p>";
+    options = [
+      {name:"Return to the game.", group:"choice", resume:true},
+      {name:"Make the text bigger.", group:"choice", bigger:true},
+      {name:"Make the text smaller.", group:"choice", smaller:true},
+    ];
+    if (oldZoom <= 0.5) {
+      options[options.length-1].unselectable = true;
+    }
+    if (oldZoom !== 1) {
+      options.push({name:"Reset the text to its original size.", group:"choice", reset:true});
+    }
+    printOptions([""], options, function(option) {
+      if (option.resume) {
+        setButtonTitles();
+        return clearScreen(loadAndRestoreGame);
+      } else if (option.reset) {
+        setZoomFactor(1);
+        fontSizeMenu();
+      } else {
+        changeFontSize(option.bigger);
+        fontSizeMenu();
+      }
+    })
+  });
+}
+
+function textOptionsMenu() {
+  clearScreen(function() {
+    var text = document.getElementById("text");
+    var oldZoom = getZoomFactor();
+    text.innerHTML = "<p>Change the size and color of the text.</p>";
+    options = [
+      {name:"Return to the game.", group:"choice", resume:true},
+      {name:"Make the text bigger.", group:"choice", bigger:true},
+      {name:"Make the text smaller.", group:"choice", smaller:true},
+    ];
+    if (oldZoom <= 0.5) {
+      options[options.length-1].unselectable = true;
+    }
+    if (oldZoom !== 1) {
+      options.push({name:"Reset the text to its original size.", group:"choice", reset:true});
+    }
+    options.push(
+      {name:"Use a black background.", group:"choice", color:"black"},
+      {name:"Use a sepia background.", group:"choice", color:"sepia"},
+      {name:"Use a white background.", group:"choice", color:"white"}
+    );
+    printOptions([""], options, function(option) {
+      if (option.resume) {
+        setButtonTitles();
+        return clearScreen(loadAndRestoreGame);
+      } else if (option.color) {
+        changeBackgroundColor(option.color);
+      } else if (option.reset) {
+        setZoomFactor(1);
+        textOptionsMenu();
+      } else {
+        changeFontSize(option.bigger);
+        textOptionsMenu();
+      }
+      curl();
+    })
+    curl();
+  });
+}
+
+function getZoomFactor() {
+  if (document.body.style.zoom === undefined) {
+    return window.zoomFactor || 1;
+  } else {
+    var zoomFactor = parseFloat(document.body.style.zoom);
+    if (isNaN(zoomFactor)) zoomFactor = 1;
+    return zoomFactor;
+  }
+}
+
+function setZoomFactor(zoomFactor) {
+  if (document.body.style.zoom === undefined) {
+    var initialMaxWidth = 680;
+    document.body.style.maxWidth = (initialMaxWidth / zoomFactor) + "px";
+    document.body.style.transformOrigin = "center top";
+    document.body.style.transform = "scale("+zoomFactor+")";
+    window.zoomFactor = zoomFactor;
+  } else {
+    document.body.style.zoom = zoomFactor;
+  }
+  if (initStore()) store.set("preferredZoom", String(zoomFactor));
+}
+
+function changeFontSize(bigger) {
+  var oldZoom = getZoomFactor();
+  if (bigger) {
+    setZoomFactor(oldZoom + 0.1);
+  } else {
+    setZoomFactor(oldZoom - 0.1);
+  }
+}
+
+function changeBackgroundColor(color) {
+  if (color === "sepia") {
+    document.body.classList.remove("nightmode", "whitemode");
+  } else if (color === "black") {
+    document.body.classList.remove("whitemode");
+    document.body.classList.add("nightmode");
+  } else if (color === "white") {
+    document.body.classList.remove("nightmode");
+    document.body.classList.add("whitemode");
+  }
+  if (initStore()) store.set("preferredBackground", color);
+}
+
+function backgroundColorMenu() {
+  clearScreen(function() {
+    var text = document.getElementById("text");
+    text.innerHTML = "<p>Change the background color.</p>";
+    options = [
+      {name:"Return to the game.", group:"choice", resume:true},
+      {name:"Use a black background.", group:"choice", color:"black"},
+      {name:"Use a sepia background.", group:"choice", color:"sepia"},
+      {name:"Use a white background.", group:"choice", color:"white"},
+    ];
+    printOptions([""], options, function(option) {
+      if (option.resume) {
+        setButtonTitles();
+        return clearScreen(loadAndRestoreGame);
+      } else {
+        changeBackgroundColor(option.color);
+      }
+    })
+  });
+}
+
 
 
 function spell(num) {
@@ -564,11 +711,15 @@ function printOptionRadioButton(div, name, option, localChoiceNumber, globalChoi
     div.appendChild(div2);
 }
 
-function printImage(source, alignment, alt) {
+function printImage(source, alignment, alt, invert) {
   var img = document.createElement("img");
   img.src = source;
   if (alt !== null && String(alt).length > 0) img.setAttribute("alt", alt);
-  setClass(img, "align"+alignment);
+  if (invert) {
+    setClass(img, "invert align"+alignment);
+  } else {
+    setClass(img, "align"+alignment);
+  }
   document.getElementById("text").appendChild(img);
 }
 
@@ -1086,6 +1237,24 @@ function checkPurchase(products, callback) {
         callback(!"ok");
       }
     });
+  } else if (window.isGreenworks) {
+    var greenworks = require('greenworks');
+    var greenworksApps = require('../package.json').products;
+    var purchases = {};
+    var productList = products.split(/ /);
+    for (i = 0; i < productList.length; i++) {
+      var appId = greenworksApps[productList[i]];
+      var purchased = false;
+      try {
+        purchased = greenworks.isSubscribedApp(appId);
+      } catch (e) {
+        return safeTimeout(function() {callback(!"ok");}, 0);
+      }
+      purchases[productList[i]] = purchased;
+    }
+    purchases.billingSupported = true;
+    publishPurchaseEvents(purchases);
+    safeTimeout(function() {callback("ok", purchases);}, 0);
   } else if (isWebPurchaseSupported()) {
     checkWebPurchases(function(ok, knownPurchases) {
       callback(ok, knownPurchases);
@@ -1112,26 +1281,37 @@ function isRestorePurchasesSupported() {
 }
 
 function restorePurchases(product, callback) {
+  function webRestoreCallback() {
+    var purchased = window.knownPurchases && window.knownPurchases[product];
+    if (!purchased) {
+      if (window.isAndroidApp) {
+        asyncAlert("Restore completed. This product is not yet purchased. Sometimes purchases can fail to restore for reasons outside our control. If you have already purchased this product, try uninstalling and reinstalling the app. If that doesn't work, please email a copy of your receipt to " + getSupportEmail() + " and we'll find a way to help you.");
+      } else {
+        asyncAlert("Restore completed. This product is not yet purchased.");
+      }
+    }
+    callback(purchased);
+  }
   function secondaryRestore(error) {
     window.restoreCallback = null;
     if (product) {
       checkPurchase(product, function(ok, purchases) {
         if (purchases[product]) {
-          callback();
+          callback("purchased");
         } else {
           clearScreen(function() {
             var target = document.getElementById('text');
             if (error) {
-              target.innerHTML="<p>Restore completed. Please try again later, or sign in to Choiceofgames.com to restore purchases.</p>";
+              target.innerHTML="<p>Restore failed. Please try again later, or sign in to Choiceofgames.com to restore purchases.</p>";
             } else {
               target.innerHTML="<p>Restore completed. This product is not yet purchased. You may also sign in to Choiceofgames.com to restore purchases.</p>";
             }
-            loginForm(document.getElementById('text'), /*optionality*/1, /*err*/null, function() {callback(); });
+            loginForm(document.getElementById('text'), /*optionality*/1, /*err*/null, webRestoreCallback);
           });
         }
       });
     } else {
-      callback(error);
+      callback();
     }
   }
   if (window.isIosApp) {
@@ -1151,16 +1331,16 @@ function restorePurchases(product, callback) {
           } else {
             if (response.error != "not registered") {
               alertify.error("There was an error downloading your purchases from Choiceofgames.com. "+
-                "Please refresh this page to try again, or contact support@choiceofgames.com for assistance.", 15000);
+                "Please refresh this page to try again, or contact " + getSupportEmail() + " for assistance.", 15000);
             }
           }
-          callback(!ok);
+          webRestoreCallback();
         });
       } else {
         clearScreen(function() {
           var target = document.getElementById('text');
           target.innerHTML="<p>Please sign in to Choiceofgames.com to restore purchases.</p>";
-          loginForm(document.getElementById('text'), /*optional*/1, /*err*/null, function() {callback();});
+          loginForm(document.getElementById('text'), /*optional*/1, /*err*/null, webRestoreCallback);
         });
       }
     });
@@ -1176,9 +1356,41 @@ function getPrice(product, callback) {
   } else if (window.isAndroidApp) {
     window.priceCallback = callback;
     androidBilling.getPrice(product);
+  } else if (window.isWeb) {
+    if (window.productData && window.productData[product] && window.productData[product].amount) {
+      safeTimeout(function () {
+        callback.call(this, "$"+(productData[product].amount/100));
+      }, 0);
+    } else {
+      safeTimeout(function() {
+        if (window.productData && window.productData[product] && window.productData[product].amount) {
+          callback.call(this, "$"+(productData[product].amount/100));
+        } else {
+          callback.call(this, "guess");
+        }
+      }, 500);
+    }
+  } else if (window.isGreenworks) {
+    if (window.productData && window.productData[product]) {
+      safeTimeout(function () {
+        callback.call(this, productData[product]);
+      }, 0);
+    } else {
+      window.awaitSteamProductData = function() {
+        doneLoading();
+        window.awaitSteamProductData = null;
+        if (window.productData && window.productData[product]) {
+          callback.call(this, productData[product]);
+        } else {
+          callback.call(this, "hide");
+        }
+      };
+      startLoading();
+      safeTimeout(function() {if (window.awaitSteamProductData) awaitSteamProductData();}, 5000);
+    }
   } else {
     safeTimeout(function () {
-      callback.call(this, "guess");
+      callback.call(this, "hide");
     }, 0);
   }
 }
@@ -1202,6 +1414,9 @@ function purchase(product, callback) {
     window.external.Purchase(product);
   } else if (window.isMacApp && window.macPurchase) {
     macPurchase.purchase_(product);
+  } else if (window.isGreenworks) {
+    var greenworksApps = require('../package.json').products;
+    if (greenworksApps[product]) require("electron").shell.openExternal("steam://advertise/"+greenworksApps[product]);
   } else if (window.isCef) {
     cefQuerySimple("Purchase " + product);
     // no callback; we'll refresh on purchase
@@ -1368,6 +1583,10 @@ function registerNativeAchievement(name) {
     window.external.Achieve(name);
   } else if (window.isCef) {
     cefQuerySimple("Achieve " + name);
+  } else if (window.isGreenworks) {
+    require('greenworks').activateAchievement(name, function() {
+      console.log("registered achievement " + name);
+    })
   }
 }
 
@@ -1421,6 +1640,31 @@ function checkAchievements(callback) {
         alreadyLoadingAchievements = !!window.checkAchievementCallback;
         window.checkAchievementCallback = mergeNativeAchievements;
         if (!alreadyLoadingAchievements) callIos("checkachievements");
+      } else if (window.isGreenworks) {
+        if (!window.greenworksAchivementCallbackCount) {
+          var greenworks = require('greenworks');
+          var nativeAchievementNames = greenworks.getAchievementNames();
+          window.greenworksAchivementCallbackCount = nativeAchievementNames.length;
+          if (!window.greenworksAchivementCallbackCount) {
+            return callback();
+          }
+          var nativeAchievements = [];
+          for (var i = 0; i < nativeAchievementNames.length; i++) {
+            (function(i) {
+              greenworks.getAchievement(nativeAchievementNames[i], function(bAchieved) {
+                greenworksAchivementCallbackCount--;
+                if (bAchieved) {
+                  nativeAchievements.push(nativeAchievementNames[i]);
+                }
+                if (!greenworksAchivementCallbackCount) {
+                  mergeNativeAchievements(nativeAchievements);
+                }
+              }, function(err) {
+                greenworksAchivementCallbackCount--;
+              });
+            })(i);
+          }
+        }
       } else if (window.isMacApp && window.macAchievements) {
         alreadyLoadingAchievements = !!window.checkAchievementCallback;
         window.checkAchievementCallback = mergeNativeAchievements;
@@ -2274,6 +2518,23 @@ window.onload=function() {
     window.main = document.getElementById("main");
     var head = document.getElementsByTagName("head")[0];
     window.nav.setStartingStatsClone(window.stats);
+    if (initStore()) {
+      store.get("preferredZoom", function(ok, preferredZoom) {
+        if (ok && !isNaN(parseFloat(preferredZoom))) {
+          setZoomFactor(parseFloat(preferredZoom));
+        }
+      });
+      store.get("preferredBackground", function(ok, preferredBackground) {
+        if (!/^(sepia|black|white)$/.test(preferredBackground)) {
+          preferredBackground = "sepia";
+        }
+        if (preferredBackground === "black") {
+          document.body.classList.add("nightmode");
+        } else if (preferredBackground === "white") {
+          document.body.classList.add("whitemode");
+        }
+      });
+    }
     if (window.achievements && window.achievements.length) {
       nav.loadAchievements(window.achievements);
       checkAchievements(function() {});
@@ -2314,6 +2575,8 @@ window.onload=function() {
           safeCall(null, loadAndRestoreGame);
         }
         startupScene.execute();
+      } else if (map.textOptionsMenu) {
+        textOptionsMenu();
       } else {
         safeCall(null, loadAndRestoreGame);
       }
@@ -2341,7 +2604,7 @@ window.onload=function() {
             };
         }
     }
-    if (window.isCef || window.isNode) {
+    if (window.isCef || window.isNode || window.isMacApp) {
       var buttons = document.getElementById("buttons");
       buttons.appendChild(document.createTextNode(" "));
       var menuButton = document.createElement("button");
@@ -2349,6 +2612,15 @@ window.onload=function() {
       setClass(menuButton, "spacedLink");
       menuButton.onclick = showMenu;
       menuButton.innerHTML = "Menu";
+      buttons.appendChild(menuButton);
+    } else if (window.isWeb) {
+      var buttons = document.getElementById("buttons");
+      buttons.appendChild(document.createTextNode(" "));
+      var menuButton = document.createElement("button");
+      menuButton.id = "menuButton";
+      setClass(menuButton, "spacedLink");
+      menuButton.onclick = textOptionsMenu;
+      menuButton.innerHTML = "Settings";
       buttons.appendChild(menuButton);
     }
     if (window.isWinOldApp) {
@@ -2379,8 +2651,12 @@ window.onload=function() {
       }
       if (productList) checkPurchase(productList, function() {});
     }
-    if (window.isWeb && window.appPurchase) {
+    if (window.isWeb) {
       (function() {
+        if (window.releaseDate && new Date() < window.releaseDate) {
+          var appLinks = document.getElementById('mobileLinks');
+          if (appLinks) appLinks.style.display = 'none';
+        }
         var productMap = {};
         if (typeof purchases === "object") {
           for (var scene in purchases) {
@@ -2419,7 +2695,7 @@ try {
 } catch (e) {}
 
 if (window.isWeb) {
-  document.getElementById("dynamic").innerHTML = ".webOnly { display: block !important; }";
+  document.getElementById("dynamic").innerHTML = ".webOnly { display: block; }";
   var checkoutScript = document.createElement("script");
   checkoutScript.async = 1;
   checkoutScript.src="https://checkout.stripe.com/v2/checkout.js";
@@ -2467,6 +2743,8 @@ if (window.isWeb) {
   document.getElementById("dynamic").innerHTML =
   "#header { display: none; }"+
   ""+
+  "body { transition-duration: 0; }"+
+  ""+
   "#emailUs { display: none; }"+
   ""+
   "#main { padding-top: 1em; }";
@@ -2507,7 +2785,9 @@ if (window.isWeb) {
 }
 // on touch devices, this hover state never goes away
 if (!('ontouchstart' in window)) {
-  document.getElementById("dynamic").innerHTML += ".choice label:hover {background-color: #E4DED8;}";
+  document.getElementById("dynamic").innerHTML += ".choice label:hover {background-color: #E4DED8;}\n" +
+    "body.nightmode .choice label:hover {background-color: #555;}\n"+
+    "body.whitemode .choice label:hover {background-color: #ddd;}\n";
 }
 if (window.isChromeApp) {
   var base = document.createElement('base');
@@ -2588,6 +2868,52 @@ if (window.isCef) {
     });
   };
   pollPurchases();
+} else if (window.isGreenworks) {
+	(function() {
+		var greenworksApps = require('../package.json').products;
+		if (typeof greenworksApps === "undefined") throw new Error("package.json missing products");
+		var greenworksAppId = window.isTrial ? greenworksApps.steam_demo : greenworksApps.adfree;
+		if (greenworks.restartAppIfNecessary(greenworksAppId)) return require('electron').remote.app.quit();
+		if (!greenworks.initAPI()) {
+			var errorCode = greenworks.isSteamRunning() ? 77778 : 77777;
+			alert("There was an error connecting to Steam. Steam must be running" +
+				" to play this game. If you launched this game using Steam, try restarting Steam" +
+				" or rebooting your computer. If that doesn't work, try completely uninstalling" +
+				" Steam and downloading a fresh copy from steampowered.com.\n\nIf none of that works, please contact" +
+				" support@choiceofgames.com and we'll try to help. (Mention error code "+errorCode+".)")
+			require('electron').remote.app.quit();
+    }
+		if (window.isTrial && greenworks.isSubscribedApp(greenworksApps.adfree)) {
+			alert("This is the demo version of the game, " +
+				"but you now own the full version. The demo will now exit. Your progress has been saved." +
+				" Please launch the full version of the game using Steam.");
+			require('electron').remote.app.quit();
+		}
+		var pollPurchases = function(oldCount) {
+			var count = 0;
+			for (var product in greenworksApps) {
+				if (greenworks.isSubscribedApp(greenworksApps[product])) {
+					count++;
+				}
+			}
+			if (count != oldCount && typeof oldCount !== "undefined") clearScreen(loadAndRestoreGame);
+			safeTimeout(function() {pollPurchases(count)}, 100);
+		};
+		pollPurchases();
+
+    var appIds = [];
+    for (var product in greenworksApps) {
+      appIds.push(greenworksApps[product]);
+    }
+
+    xhrAuthRequest("GET", "steam-price", function(ok, data) {
+      if (!window.productData) window.productData = {};
+      for (var product in greenworksApps) {
+        window.productData[product] = data[greenworksApps[product]];
+      }
+      if (window.awaitSteamProductData) window.awaitSteamProductData();
+    }, "user_id", greenworks.getSteamId().steamId, "app_ids", appIds.join(","));
+	})();
 }
 
 function winStoreShareLinkHandler(e) {

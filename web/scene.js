@@ -123,8 +123,7 @@ Scene.prototype.printLoop = function printLoop() {
             }
             this.prevLine = "text";
             this.screenEmpty = false;
-            this.printLine(trim(line));
-            printx(' ', this.target);
+            this.printLine(line);
         }
     }
     this.rollbackLineCoverage();
@@ -143,14 +142,16 @@ Scene.prototype.dedent = function dedent(newDent) {};
 
 Scene.prototype.printLine = function printLine(line, parent) {
     if (!line) return null;
-    line = this.replaceVariables(line);
+    line = this.replaceVariables(line.replace(/^ */, ""));
     if (!parent) parent = this.target;
-    return printx(line, parent);
+    printx(line, parent);
+    // insert extra space unless the line ends with hyphen or dash
+    if (!/[-\u2011-\u2014]$/.test(line)) printx(' ', parent);
 };
 
 Scene.prototype.replaceVariables = function (line) {
   line = String(line);
-  var replacer = /(\$(\!?\!?)\{)/;
+  var replacer = /([$@](\!?\!?)\{)/;
   var index = 0;
   var output = [];
   for (var result = replacer.exec(line); result; result = replacer.exec(line.substring(index))) {
@@ -172,11 +173,67 @@ Scene.prototype.replaceVariables = function (line) {
       }
     }
     if (closingCurly == -1) {
-      throw new Error(this.lineMsg() + "invalid ${} variable substitution at letter " + (index + result.index + 1));
+      throw new Error(this.lineMsg() + "invalid "+result[0]+"} variable substitution at letter " + (index + result.index + 1));
     }
-    var expr = line.substring(exprStart, closingCurly);
-    var stack = this.tokenizeExpr(expr);
-    var value = this.evaluateExpr(stack);
+    var body = line.substring(exprStart, closingCurly);
+    var stack, value;
+    if (result[0].charAt(0) === "$") {
+      stack = this.tokenizeExpr(body);
+      value = this.evaluateExpr(stack);
+    } else {
+      var expr;
+      var options;
+      if (/^\s*\(/.test(body)) {
+        var parens = 0;
+        var closingParen = -1;
+        for (var i = 1; i < body.length; i++) {
+          var c = body.charAt(i);
+          if (c === "(") {
+            parens++;
+          } else if (c === ")") {
+            if (parens) {
+              parens--;
+            } else {
+              closingParen = i;
+              break;
+            }
+          }
+        }
+        if (closingParen == -1) {
+          throw new Error(this.lineMsg() + "invalid "+result[0]+"} at letter " + (index + result.index + 1) + "; missing closing parenthesis )");
+        }
+        if (body.charAt(closingParen+1) != " ") {
+          throw new Error(this.lineMsg() + "invalid "+result[0]+"} at letter " + (index + result.index + 1) + "; there should be a space after the closing parenthesis )");
+        }
+        expr = body.substring(1, closingParen);
+        options = body.substring(closingParen+2).split("|");
+      } else {
+        if (!/^\S+ /.test(body)) {
+          throw new Error(this.lineMsg() + "invalid "+result[0]+"} at letter " + (index + result.index + 1) + "; there should be a space after the first word");
+        }
+        var spaceIndex = body.indexOf(' ');
+        expr = body.substring(0, spaceIndex);
+        options = body.substring(spaceIndex+1).split("|");
+      }
+      if (options.length < 2) {
+        throw new Error(this.lineMsg() + "invalid "+result[0]+"} at letter " + (index + result.index + 1) + "; there should be at least one pipe | to separate options");
+      }
+      stack = this.tokenizeExpr(expr);
+      value = this.evaluateExpr(stack);
+      if (typeof value === "boolean" || /^(true|false)$/i.test(value)) {
+        value = bool(value) ? 1 : 2;
+      }
+      value = num(value, this.lineNum+1);
+      if ((value | 0) !== value) {
+        throw new Error(this.lineMsg() + "invalid "+result[0]+"} at letter " + (index + result.index + 1) + "; '"+expr+"' is equal to " + value + " which is not a whole integer number");
+      } else if (value < 1) {
+        throw new Error(this.lineMsg() + "invalid "+result[0]+"} at letter " + (index + result.index + 1) + "; '"+expr+"' is equal to " + value + " which is not a positive number");
+      } else if (value > options.length) {
+        throw new Error(this.lineMsg() + "invalid "+result[0]+"} at letter " + (index + result.index + 1) + "; '"+expr+"' is equal to " + value + " but there are only " + options.length + " options");
+      }
+      value = options[value-1];
+      value = this.replaceVariables(value);
+    }
     var capitalize = result[2];
     if (capitalize) value = String(value);
     if (capitalize == "!") {
@@ -986,16 +1043,19 @@ Scene.prototype.purchase = function purchase_button(data) {
       self.resetPage();
     } else {
       if (price == "guess") price = priceGuess;
-      var target = self.target;
-      if (!target) target = document.getElementById('text');
-      self.paragraph();
       var prerelease = (typeof window !== "undefined" && window.releaseDate && window.isWeb && window.releaseDate > new Date());
       var buttonText;
       if (prerelease) {
-        buttonText = "Pre-Order It for " + price;
+        buttonText = "Pre-Order It";
       } else {
-        buttonText = "Buy It Now for " + price;
+        buttonText = "Buy It Now";
       }
+      if (price != "hide") {
+        buttonText += " for " + price;
+      }
+      var target = self.target;
+      if (!target) target = document.getElementById('text');
+      self.paragraph();
       var button = printButton(buttonText, target, false,
         function() {
           safeCall(self, function() {
@@ -1016,24 +1076,15 @@ Scene.prototype.purchase = function purchase_button(data) {
         printLink(target, "#", "restore purchases",
           function() {
             safeCall(self, function() {
-                restorePurchases(product, function(error) {
-                  checkPurchase(product, function(ok, purchases) {
-                    if (ok && purchases[product]) {
-                      self["goto"](label);
-                      self.finished = false;
-                      self.resetPage();
-                    } else {
-                      if (error || !ok) {
-                        asyncAlert("Restore failed. Please try again.");
-                      } else {
-                        asyncAlert("Restore completed. This product is not yet purchased.");
-                      }
-                      if (ok) { // don't refresh if not OK, but should we refresh on error? assuming yes?
-                        // refresh, in case we're on web showing a full-screen login. Not necessary on mobile? But, meh.
-                        if (!self.secondaryMode) clearScreen(loadAndRestoreGame);
-                      }
-                    }
-                  });
+                restorePurchases(product, function(purchased) {
+                  if (purchased) {
+                    self["goto"](label);
+                    self.finished = false;
+                    self.resetPage();
+                  } else {
+                    // refresh, in case we're on web showing a full-screen login. Not necessary on mobile? But, meh.
+                    if (!self.secondaryMode) clearScreen(loadAndRestoreGame);
+                  }
                 });
             });
           }
@@ -1175,6 +1226,7 @@ Scene.prototype.getVar = function getVar(variable) {
     }
     if (variable == "choice_kindle") return false;
     if (variable == "choice_randomtest") return !!this.randomtest;
+    if (variable == "choice_quicktest") return false; // quicktest will explore "false" paths
     if (variable == "choice_restore_purchases_allowed") return isRestorePurchasesSupported();
     if (variable == "choice_save_allowed") return areSaveSlotsSupported();
     if (variable == "choice_time_stamp") return Math.floor(new Date()/1000);
@@ -1542,7 +1594,7 @@ Scene.prototype.line_break = function line_break() {
 
 // *image
 // display named image //CJW edited to compensate for data uri images
-Scene.prototype.image = function image(data) {
+Scene.prototype.image = function image(data, invert) {
     data = data || "";
     data = this.replaceVariables(data);
     var args = data.split(" ");
@@ -1562,11 +1614,15 @@ Scene.prototype.image = function image(data) {
     }
     alignment = alignment || "center";
     if (!/(right|left|center|none)/.test(alignment)) throw new Error(this.lineMsg()+"Invalid alignment, expected right, left, center, or none: " + data);
-    printImage(source, alignment, alt);
+    printImage(source, alignment, alt, invert);
     if (this.verifyImage) this.verifyImage(source);
     if (alignment == "none") this.prevLine = "text";
     this.screenEmpty = false;
 };
+
+Scene.prototype.text_image = function textImage(data) {
+  this.image(data, "invert");
+}
 
 // *sound
 // play named sound file
@@ -1687,7 +1743,6 @@ Scene.prototype.print = function scene_print(expr) {
     this.prevLine = "text";
     this.screenEmpty = false;
     this.printLine(value);
-    printx(' ', this.target);
 };
 
 // *input_text var
@@ -1732,6 +1787,13 @@ Scene.prototype.input_number = function input_number(data) {
       throw new Error(this.lineMsg() + "Non-existent variable '"+variable+"'");
     }
 
+    var simpleConstants;
+    if (stack.length == 2 && stack[0].name == "NUMBER" && stack[1].name == "NUMBER") {
+      simpleConstants = true;
+    } else {
+      simpleConstants = false;
+    }
+
     if (!stack.length) throw new Error(this.lineMsg() + "Invalid input_number statement, expected three args: varname min max");
     var minimum = this.evaluateValueToken(stack.shift(), stack);
     if (isNaN(minimum*1)) throw new Error(this.lineMsg() + "Invalid minimum, not numeric: " + minimum);
@@ -1741,7 +1803,12 @@ Scene.prototype.input_number = function input_number(data) {
     if (stack.length) throw new Error(this.lineMsg() + "Invalid input_number statement, expected three args: varname min max");
     if (isNaN(maximum*1)) throw new Error(this.lineMsg() + "Invalid maximum, not numeric: " + maximum);
 
-    if (parseFloat(minimum) > parseFloat(maximum)) throw new Error(this.lineMsg() + "Minimum " + minimum+ " should not be greater than maximum " + maximum);
+    // in quicktest, min and max can get mixed up as the interpreter "cheats" on if statements
+    // so quicktest will ignore min/max errors unless they're simple constants e.g. *input_number x 6 4
+    var checkMinMax = !this.quicktest || simpleConstants;
+    if (checkMinMax && parseFloat(minimum) > parseFloat(maximum)) {
+      throw new Error(this.lineMsg() + "Minimum " + minimum+ " should not be greater than maximum " + maximum);
+    }
 
     function isInt(x) {
        var y=parseInt(x,10);
@@ -1770,7 +1837,7 @@ Scene.prototype.input_number = function input_number(data) {
           asyncAlert("Please use a number greater than or equal to " + minimum);
           return;
         }
-        if (numValue > maximum * 1) {
+        if (numValue > maximum * 1 && !this.quicktest) {
           asyncAlert("Please use a number less than or equal to " + maximum);
           return;
         }
@@ -3969,5 +4036,5 @@ Scene.validCommands = {"comment":1, "goto":1, "gotoref":1, "label":1, "looplimit
     "restart":1,"more_games":1,"delay_ending":1,"end_trial":1,"login":1,"achieve":1,"scene_list":1,"title":1,
     "bug":1,"link_button":1,"check_registration":1,"sound":1,"author":1,"gosub_scene":1,"achievement":1,
     "check_achievements":1,"redirect_scene":1,"print_discount":1,"purchase_discount":1,"track_event":1,
-    "timer":1,"youtube":1,"product":1
+    "timer":1,"youtube":1,"product":1,"text_image":1
     };

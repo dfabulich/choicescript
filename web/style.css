@@ -9,6 +9,8 @@ body {
   margin: 8px auto; 
   padding: 0 8px;
   -webkit-user-select: text; /* selectable text for Chrome app support */
+  transition-property: background-color, color;
+  transition-duration: 2s;
 }
 
 a {
@@ -32,6 +34,7 @@ a {
   line-height: 2em;
   margin: 4px 0;
   width: 300px;
+  max-width: 100%;
   color: #f7f4f1;
   position: relative; /* to allow absolute positioned value */
   z-index: 0;
@@ -149,12 +152,12 @@ input[type=email],input[type=password] {
 }
 
 h1 {
-  font-size: x-large;
+  font-size: 1.5em;
   font-weight: normal;
 }
 
 h2 {
-  font-size: large;
+  font-size: 1.125em;
   font-weight: normal;
 }
 
@@ -262,6 +265,49 @@ h2 {
   left: 0;
   width: 100%;
   height: 100%;
+}
+
+body.nightmode {
+  background-color: #242424;
+  color: rgba(255,255,255,0.85);
+}
+
+body.nightmode a {
+  color: #7bc8fa;
+}
+
+body.nightmode .next {
+  color: #242424; /* Match background color */
+  background-color: #D9D9D9;
+}
+
+body.nightmode .next:hover {
+  color: #555;
+}
+
+body.nightmode .alertify {
+  color: black;
+}
+
+body.nightmode a.alertify-button {
+  color: white;
+}
+
+body.nightmode img.invert {
+  -webkit-filter: invert(100%);
+  filter: invert(100%);
+}
+
+body.whitemode {
+  background-color: white;
+}
+
+body.whitemode .next {
+  color: white; /* Match background color */
+}
+
+body.whitemode .next:hover {
+  color: #ddd;
 }
 
 @media only screen and (max-width: 480px) {

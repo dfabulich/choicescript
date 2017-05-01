@@ -350,7 +350,7 @@ XmlScene.prototype.gotoref = function xmlGotoRef(data) {
 }
 
 XmlScene.prototype.printLine = function xmlPrintLine(data) {
-  printx(this.replaceLine(data));
+  printx(this.replaceLine(data.replace(/^ */, "") + ' '));
 }
 
 XmlScene.prototype.replaceLine = function xmlReplaceLine(data) {
