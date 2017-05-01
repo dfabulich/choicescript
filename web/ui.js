@@ -1281,26 +1281,37 @@ function isRestorePurchasesSupported() {
 }
 
 function restorePurchases(product, callback) {
+  function webRestoreCallback() {
+    var purchased = window.knownPurchases && window.knownPurchases[product];
+    if (!purchased) {
+      if (window.isAndroidApp) {
+        asyncAlert("Restore completed. This product is not yet purchased. Sometimes purchases can fail to restore for reasons outside our control. If you have already purchased this product, try uninstalling and reinstalling the app. If that doesn't work, please email a copy of your receipt to " + getSupportEmail() + " and we'll find a way to help you.");
+      } else {
+        asyncAlert("Restore completed. This product is not yet purchased.");
+      }
+    }
+    callback(purchased);
+  }
   function secondaryRestore(error) {
     window.restoreCallback = null;
     if (product) {
       checkPurchase(product, function(ok, purchases) {
         if (purchases[product]) {
-          callback();
+          callback("purchased");
         } else {
           clearScreen(function() {
             var target = document.getElementById('text');
             if (error) {
-              target.innerHTML="<p>Restore completed. Please try again later, or sign in to Choiceofgames.com to restore purchases.</p>";
+              target.innerHTML="<p>Restore failed. Please try again later, or sign in to Choiceofgames.com to restore purchases.</p>";
             } else {
               target.innerHTML="<p>Restore completed. This product is not yet purchased. You may also sign in to Choiceofgames.com to restore purchases.</p>";
             }
-            loginForm(document.getElementById('text'), /*optionality*/1, /*err*/null, function() {callback(); });
+            loginForm(document.getElementById('text'), /*optionality*/1, /*err*/null, webRestoreCallback);
           });
         }
       });
     } else {
-      callback(error);
+      callback();
     }
   }
   if (window.isIosApp) {
@@ -1320,16 +1331,16 @@ function restorePurchases(product, callback) {
           } else {
             if (response.error != "not registered") {
               alertify.error("There was an error downloading your purchases from Choiceofgames.com. "+
-                "Please refresh this page to try again, or contact support@choiceofgames.com for assistance.", 15000);
+                "Please refresh this page to try again, or contact " + getSupportEmail() + " for assistance.", 15000);
             }
           }
-          callback(!ok);
+          webRestoreCallback();
         });
       } else {
         clearScreen(function() {
           var target = document.getElementById('text');
           target.innerHTML="<p>Please sign in to Choiceofgames.com to restore purchases.</p>";
-          loginForm(document.getElementById('text'), /*optional*/1, /*err*/null, function() {callback();});
+          loginForm(document.getElementById('text'), /*optional*/1, /*err*/null, webRestoreCallback);
         });
       }
     });
@@ -1345,9 +1356,41 @@ function getPrice(product, callback) {
   } else if (window.isAndroidApp) {
     window.priceCallback = callback;
     androidBilling.getPrice(product);
+  } else if (window.isWeb) {
+    if (window.productData && window.productData[product] && window.productData[product].amount) {
+      safeTimeout(function () {
+        callback.call(this, "$"+(productData[product].amount/100));
+      }, 0);
+    } else {
+      safeTimeout(function() {
+        if (window.productData && window.productData[product] && window.productData[product].amount) {
+          callback.call(this, "$"+(productData[product].amount/100));
+        } else {
+          callback.call(this, "guess");
+        }
+      }, 500);
+    }
+  } else if (window.isGreenworks) {
+    if (window.productData && window.productData[product]) {
+      safeTimeout(function () {
+        callback.call(this, productData[product]);
+      }, 0);
+    } else {
+      window.awaitSteamProductData = function() {
+        doneLoading();
+        window.awaitSteamProductData = null;
+        if (window.productData && window.productData[product]) {
+          callback.call(this, productData[product]);
+        } else {
+          callback.call(this, "hide");
+        }
+      };
+      startLoading();
+      safeTimeout(function() {if (window.awaitSteamProductData) awaitSteamProductData();}, 5000);
+    }
   } else {
     safeTimeout(function () {
-      callback.call(this, "guess");
+      callback.call(this, "hide");
     }, 0);
   }
 }

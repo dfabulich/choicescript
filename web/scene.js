@@ -986,16 +986,19 @@ Scene.prototype.purchase = function purchase_button(data) {
       self.resetPage();
     } else {
       if (price == "guess") price = priceGuess;
-      var target = self.target;
-      if (!target) target = document.getElementById('text');
-      self.paragraph();
       var prerelease = (typeof window !== "undefined" && window.releaseDate && window.isWeb && window.releaseDate > new Date());
       var buttonText;
       if (prerelease) {
-        buttonText = "Pre-Order It for " + price;
+        buttonText = "Pre-Order It";
       } else {
-        buttonText = "Buy It Now for " + price;
+        buttonText = "Buy It Now";
       }
+      if (price != "hide") {
+        buttonText += " for " + price;
+      }
+      var target = self.target;
+      if (!target) target = document.getElementById('text');
+      self.paragraph();
       var button = printButton(buttonText, target, false,
         function() {
           safeCall(self, function() {
@@ -1016,24 +1019,15 @@ Scene.prototype.purchase = function purchase_button(data) {
         printLink(target, "#", "restore purchases",
           function() {
             safeCall(self, function() {
-                restorePurchases(product, function(error) {
-                  checkPurchase(product, function(ok, purchases) {
-                    if (ok && purchases[product]) {
-                      self["goto"](label);
-                      self.finished = false;
-                      self.resetPage();
-                    } else {
-                      if (error || !ok) {
-                        asyncAlert("Restore failed. Please try again.");
-                      } else {
-                        asyncAlert("Restore completed. This product is not yet purchased.");
-                      }
-                      if (ok) { // don't refresh if not OK, but should we refresh on error? assuming yes?
-                        // refresh, in case we're on web showing a full-screen login. Not necessary on mobile? But, meh.
-                        if (!self.secondaryMode) clearScreen(loadAndRestoreGame);
-                      }
-                    }
-                  });
+                restorePurchases(product, function(purchased) {
+                  if (purchased) {
+                    self["goto"](label);
+                    self.finished = false;
+                    self.resetPage();
+                  } else {
+                    // refresh, in case we're on web showing a full-screen login. Not necessary on mobile? But, meh.
+                    if (!self.secondaryMode) clearScreen(loadAndRestoreGame);
+                  }
                 });
             });
           }
