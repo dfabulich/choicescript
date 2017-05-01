@@ -30,6 +30,10 @@ _global = this;
   _global.isMobile = _global.isWebOS || /Mobile/.test(userAgent);
   _global.isFile = /^file:/.test(url);
   _global.isXul = /^chrome:/.test(url);
+  try {
+    _global.greenworks = require('greenworks');
+    _global.isGreenworks = true;
+  } catch (ignored) {}
   _global.isWinOldApp = false;
   try {
     isWinOldApp = window.external.IsWinOldApp();

@@ -1237,6 +1237,24 @@ function checkPurchase(products, callback) {
         callback(!"ok");
       }
     });
+  } else if (window.isGreenworks) {
+    var greenworks = require('greenworks');
+    var greenworksApps = require('../package.json').products;
+    var purchases = {};
+    var productList = products.split(/ /);
+    for (i = 0; i < productList.length; i++) {
+      var appId = greenworksApps[productList[i]];
+      var purchased = false;
+      try {
+        purchased = greenworks.isSubscribedApp(appId);
+      } catch (e) {
+        return safeTimeout(function() {callback(!"ok");}, 0);
+      }
+      purchases[productList[i]] = purchased;
+    }
+    purchases.billingSupported = true;
+    publishPurchaseEvents(purchases);
+    safeTimeout(function() {callback("ok", purchases);}, 0);
   } else if (isWebPurchaseSupported()) {
     checkWebPurchases(function(ok, knownPurchases) {
       callback(ok, knownPurchases);
@@ -1353,6 +1371,9 @@ function purchase(product, callback) {
     window.external.Purchase(product);
   } else if (window.isMacApp && window.macPurchase) {
     macPurchase.purchase_(product);
+  } else if (window.isGreenworks) {
+    var greenworksApps = require('../package.json').products;
+    if (greenworksApps[product]) require("electron").shell.openExternal("steam://advertise/"+greenworksApps[product]);
   } else if (window.isCef) {
     cefQuerySimple("Purchase " + product);
     // no callback; we'll refresh on purchase
@@ -1519,6 +1540,10 @@ function registerNativeAchievement(name) {
     window.external.Achieve(name);
   } else if (window.isCef) {
     cefQuerySimple("Achieve " + name);
+  } else if (window.isGreenworks) {
+    require('greenworks').activateAchievement(name, function() {
+      console.log("registered achievement " + name);
+    })
   }
 }
 
@@ -1572,6 +1597,31 @@ function checkAchievements(callback) {
         alreadyLoadingAchievements = !!window.checkAchievementCallback;
         window.checkAchievementCallback = mergeNativeAchievements;
         if (!alreadyLoadingAchievements) callIos("checkachievements");
+      } else if (window.isGreenworks) {
+        if (!window.greenworksAchivementCallbackCount) {
+          var greenworks = require('greenworks');
+          var nativeAchievementNames = greenworks.getAchievementNames();
+          window.greenworksAchivementCallbackCount = nativeAchievementNames.length;
+          if (!window.greenworksAchivementCallbackCount) {
+            return callback();
+          }
+          var nativeAchievements = [];
+          for (var i = 0; i < nativeAchievementNames.length; i++) {
+            (function(i) {
+              greenworks.getAchievement(nativeAchievementNames[i], function(bAchieved) {
+                greenworksAchivementCallbackCount--;
+                if (bAchieved) {
+                  nativeAchievements.push(nativeAchievementNames[i]);
+                }
+                if (!greenworksAchivementCallbackCount) {
+                  mergeNativeAchievements(nativeAchievements);
+                }
+              }, function(err) {
+                greenworksAchivementCallbackCount--;
+              });
+            })(i);
+          }
+        }
       } else if (window.isMacApp && window.macAchievements) {
         alreadyLoadingAchievements = !!window.checkAchievementCallback;
         window.checkAchievementCallback = mergeNativeAchievements;
@@ -2775,6 +2825,52 @@ if (window.isCef) {
     });
   };
   pollPurchases();
+} else if (window.isGreenworks) {
+	(function() {
+		var greenworksApps = require('../package.json').products;
+		if (typeof greenworksApps === "undefined") throw new Error("package.json missing products");
+		var greenworksAppId = window.isTrial ? greenworksApps.steam_demo : greenworksApps.adfree;
+		if (greenworks.restartAppIfNecessary(greenworksAppId)) return require('electron').remote.app.quit();
+		if (!greenworks.initAPI()) {
+			var errorCode = greenworks.isSteamRunning() ? 77778 : 77777;
+			alert("There was an error connecting to Steam. Steam must be running" +
+				" to play this game. If you launched this game using Steam, try restarting Steam" +
+				" or rebooting your computer. If that doesn't work, try completely uninstalling" +
+				" Steam and downloading a fresh copy from steampowered.com.\n\nIf none of that works, please contact" +
+				" support@choiceofgames.com and we'll try to help. (Mention error code "+errorCode+".)")
+			require('electron').remote.app.quit();
+    }
+		if (window.isTrial && greenworks.isSubscribedApp(greenworksApps.adfree)) {
+			alert("This is the demo version of the game, " +
+				"but you now own the full version. The demo will now exit. Your progress has been saved." +
+				" Please launch the full version of the game using Steam.");
+			require('electron').remote.app.quit();
+		}
+		var pollPurchases = function(oldCount) {
+			var count = 0;
+			for (var product in greenworksApps) {
+				if (greenworks.isSubscribedApp(greenworksApps[product])) {
+					count++;
+				}
+			}
+			if (count != oldCount && typeof oldCount !== "undefined") clearScreen(loadAndRestoreGame);
+			safeTimeout(function() {pollPurchases(count)}, 100);
+		};
+		pollPurchases();
+
+    var appIds = [];
+    for (var product in greenworksApps) {
+      appIds.push(greenworksApps[product]);
+    }
+
+    xhrAuthRequest("GET", "steam-price", function(ok, data) {
+      if (!window.productData) window.productData = {};
+      for (var product in greenworksApps) {
+        window.productData[product] = data[greenworksApps[product]];
+      }
+      if (window.awaitSteamProductData) window.awaitSteamProductData();
+    }, "user_id", greenworks.getSteamId().steamId, "app_ids", appIds.join(","));
+	})();
 }
 
 function winStoreShareLinkHandler(e) {
