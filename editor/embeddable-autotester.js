@@ -290,7 +290,7 @@ function autotester(sceneText, nav, sceneName, extraLabels) {
         } else {
           //log("overcovered " + (this._lineNum+1) + " " + coverage[this._lineNum]);
           this["return"]();
-          return;
+          return true;
         }
     } else {
       return this.oldRunCommand(line);
