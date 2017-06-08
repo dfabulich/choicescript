@@ -3964,7 +3964,11 @@ Scene.operators = {
     "+": function add(v1,v2,line) { return num(v1,line) + num(v2,line); },
     "-": function subtract(v1,v2,line) { return num(v1,line) - num(v2,line); },
     "*": function multiply(v1,v2,line) { return num(v1,line) * num(v2,line); },
-    "/": function divide(v1,v2,line) { return num(v1,line) / num(v2,line); },
+    "/": function divide(v1,v2,line) {
+      v2 = num(v2, line);
+      if (v2 === 0) throw new Error("line "+line+": can't divide by zero");
+      return num(v1,line) / num(v2,line);
+    },
     "%": function modulo(v1,v2,line) { return num(v1,line) % num(v2,line); },
     "^": function exponent(v1,v2,line) { return Math.pow(num(v1,line), num(v2,line)); },
     "&": function concatenate(v1,v2) { return [v1,v2].join(""); },

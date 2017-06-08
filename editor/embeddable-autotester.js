@@ -410,6 +410,12 @@ function autotester(sceneText, nav, sceneName, extraLabels) {
   Scene.prototype.stat_chart = function() {
     this.parseStatChart();
   }
+
+  Scene.operators["/"] = function divide(v1,v2,line) {
+    v2 = num(v2, line);
+    if (v2 === 0) return 9007199254740991; //Number.MAX_SAFE_INTEGER
+    return num(v1,line) / num(v2,line);
+  };
   
   //Scene.prototype.choice = function() { this.finished = true;}
   

@@ -842,6 +842,7 @@ function num(x, line) {
     if (!line) line = "UNKNOWN";
     var x_num = parseFloat(x);
     if (isNaN(x_num)) throw new Error("line "+line+": Not a number: " + x);
+    if (!isFinite(x_num)) throw new Error("line "+line+": Not finite " + x);
     return x_num;
 }
 
