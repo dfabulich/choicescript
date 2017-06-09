@@ -108,19 +108,19 @@ Scene.prototype.printLoop = function printLoop() {
           continue;
         }
         this.indent = indent;
-        if (!this.runCommand(line)) {
-            if (/^\s*#/.test(line)) {
-                if (this.temps.fakeChoiceEnd) {
-                    this.rollbackLineCoverage();
-                    this.lineNum = this.temps.fakeChoiceEnd;
-                    this.rollbackLineCoverage();
-                    delete this.temps.fakeChoiceEnd;
-                    delete this.temps.fakeChoiceLines;
-                    continue;
-                } else {
-                    throw new Error(this.lineMsg() + "It is illegal to fall out of a *choice statement; you must *goto or *finish before the end of the indented block.");
-                }
+        if (/^\s*#/.test(line)) {
+            if (this.temps.fakeChoiceEnd) {
+                this.rollbackLineCoverage();
+                this.lineNum = this.temps.fakeChoiceEnd;
+                this.rollbackLineCoverage();
+                delete this.temps.fakeChoiceEnd;
+                delete this.temps.fakeChoiceLines;
+                continue;
+            } else {
+                throw new Error(this.lineMsg() + "It is illegal to fall out of a *choice statement; you must *goto or *finish before the end of the indented block.");
             }
+        }
+        if (!this.runCommand(line)) {
             this.prevLine = "text";
             this.screenEmpty = false;
             this.printLine(line);
