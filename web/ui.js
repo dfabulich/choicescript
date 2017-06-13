@@ -111,11 +111,11 @@ function showMenu() {
   function menu() {
     options = [
       {name:"Return to the game.", group:"choice", resume:true},
-      {name:"View the credits.", group:"choice", credits:true},
+      /*{name:"View the credits.", group:"choice", credits:true},
       {name:"Play more games like this.", group:"choice", moreGames:true},
       {name:"Email us at " + getSupportEmail() + ".", group:"choice", contactUs:true},
       {name:"Share this game with friends.", group:"choice", share:true},
-      {name:"Email me when new games are available.", group:"choice", subscribe:true},
+      {name:"Email me when new games are available.", group:"choice", subscribe:true},*/
       {name:"Make the text bigger or smaller.", group:"choice", fontSizeMenu:true},
       {name:"Change the background color.", group:"choice", background:true},
     ];
