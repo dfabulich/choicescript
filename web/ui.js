@@ -812,6 +812,112 @@ function printOptions(groups, options, callback) {
 
   form.appendChild(document.createElement("br"));
 
+  var touchStartHandler = function (e) {
+    if (e.touches.length > 1) return;
+    var target = e.target;
+    var rect = target.getBoundingClientRect();
+    var shuttle;
+    var shuttleWidth = rect.width * 0.2;
+    //console.log(rect);
+    var lastMouse = e.touches[0];
+    var draw = function () {
+      var transformX = rect.width + rect.left - lastMouse.clientX - (shuttleWidth/2);
+      if (transformX < 0) transformX = 0;
+      var maxX = rect.width - shuttleWidth - 2;
+      if (transformX > maxX) transformX = maxX;
+      if (transformX >= maxX * 0.8) {
+        target.classList.add('selected');
+      } else {
+        target.classList.remove('selected');
+      }
+      shuttle.style.transform = "translateX(-"+transformX+"px)"
+      shuttle.style.webkitTransform = "translateX(-"+transformX+"px)"
+    };
+    var outsideTimeout = null;
+    var moveTracker = function(e) {
+      e.preventDefault();
+      lastMouse = e.touches[0];
+      // on iPad app, touchend doesn't fire outside webview (touchmove does)
+      // so, fire a fake touchend 300 ms after touchmove outside webview
+      if (window.isIosApp && window.isIPad) {
+        if (outsideTimeout) {
+          clearTimeout(outsideTimeout);
+          outsideTimeout = null;
+        }
+        if (lastMouse.pageY < 0 || lastMouse.pageX < 0) {
+          outsideTimeout = setTimeout(function() {
+            document.body.dispatchEvent(new Event('touchend'));
+          }, 300);
+        }
+      }
+      window.requestAnimationFrame(draw);
+    }
+    if ((e.touches[0].clientX - rect.left) > rect.width - shuttleWidth) {
+      shuttle = document.createElement("div");
+      shuttle.classList.add("shuttle");
+      target.appendChild(shuttle);
+      shuttle.style.width = shuttleWidth + "px";
+      document.body.addEventListener('touchmove', moveTracker, {passive: false});
+      var touchEnd = function(e) {
+        document.body.removeEventListener('touchmove', moveTracker, {passive: false});
+        document.body.removeEventListener('touchend', touchEnd);
+        if (target.classList.contains('selected')) {
+          if (target.click) {
+            target.click();
+          } else {
+            var event = document.createEvent('Events');
+            event.initEvent("click", true, true);
+            target.dispatchEvent(event);
+          }
+          if (window.isIosApp) {
+            window.freezeCallback = function() {
+              window.freezeCallback = null;
+              form.onsubmit();
+            };
+            callIos("freeze");
+          } else {
+            safeCall(null, function() {form.onsubmit();});
+          }
+        } else {
+          if (shuttle.style.opacity !== "0") {
+            shuttle.style.opacity = 0;
+            var removeShuttle = function(e) {
+              if (shuttle.parentElement) shuttle.parentElement.removeChild(shuttle);
+            };
+            shuttle.addEventListener('transitionend', removeShuttle);
+            shuttle.addEventListener('webkitTransitionEnd', removeShuttle);
+          } else {
+            if (shuttle.parentElement) shuttle.parentElement.removeChild(shuttle);
+          }
+        }
+      };
+      document.body.addEventListener('touchend', touchEnd);
+    }
+    //console.log(e);
+  };
+
+  var slidingEnabled = true;
+  if (window.slidingEnabled === false || groups.length > 1) slidingEnabled = false;
+
+  if (slidingEnabled) [].forEach.call(document.querySelectorAll('label'), function(label) {
+    label.addEventListener('touchstart', touchStartHandler);
+    if (window.isMobile) label.addEventListener('click', function(e) {
+      var target = e.currentTarget;
+      if (document.body.querySelector(".shuttle.discovery")) return;
+      var shuttle = document.createElement("div");
+      shuttle.classList.add("shuttle");
+      shuttle.classList.add("discovery");
+      target.appendChild(shuttle);
+      var animationEnd = function(e) {
+        if (e.animationName === 'shuttlefadeout') {
+          if (shuttle.parentElement) shuttle.parentElement.removeChild(shuttle);
+        }
+      };
+      shuttle.addEventListener('animationend', animationEnd);
+      shuttle.addEventListener('webkitAnimationEnd', animationEnd);
+    })
+  });
+
   var useRealForm = false;
   if (useRealForm) {
     printButton("Next", form, false);
