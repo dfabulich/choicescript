@@ -53,6 +53,7 @@ printDiscount = function() {};
 
 isRegistered = function() {return false;};
 isRegisterAllowed = function() {return false;};
+isFullScreenAdvertisingSupported = function() {return false;};
 isRestorePurchasesSupported = function() {return false;};
 areSaveSlotsSupported = function() {return false;};
 isAdvertisingSupported = function() {return false;};

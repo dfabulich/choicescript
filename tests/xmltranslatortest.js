@@ -450,6 +450,14 @@ test("reuse", function() {
     "</choice>\n";
   translateScene(scene, expected);
 })
+test("restoreGameBasic", function() {
+  var scene = "*restore_game";
+  translateScene(scene,  "<restore-game></restore-game>\n");
+})
+test("restoreGameExclude", function() {
+  var scene = "*restore_game\n  Episode3 Sorry, this episode & blah blah!";
+  translateScene(scene,  "<restore-game><scene name='episode3'>Sorry, this episode &amp; blah blah!</scene></restore-game>\n");
+})
 test("variablized string", function() {
   var scene = ""
     +"*temp foo\n"

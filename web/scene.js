@@ -3094,6 +3094,10 @@ Scene.prototype.delay_break = function(durationInSeconds) {
 
 // *delay_ending 1200 $2.99 $0.99
 Scene.prototype.delay_ending = function(data) {
+  // Steam doesn't do delay breaks and especially not skiponce
+  if (typeof window != "undefined" && !!window.isSteamApp) {
+    return this.ending();
+  }
   var args = data.split(/ /);
   var durationInSeconds = args[0];
   var fullPriceGuess = args[1];

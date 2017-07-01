@@ -1224,7 +1224,7 @@ test("divide", function() {
     doh.is(3, value, 3);
 })
 test("modulo", function() {
-    var value = Scene.operators["%"]("3", "2");
+    var value = Scene.operators["modulo"]("3", "2");
     doh.is(1, value, 1);
 })
 test("concatenate", function() {
