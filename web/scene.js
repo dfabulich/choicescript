@@ -1296,8 +1296,18 @@ Scene.prototype.parseOptions = function parseOptions(startIndent, choicesRemaini
     var atLeastOneSelectableOption = false;
     var prevOption, ifResult;
     var startingLine = this.lineNum;
-    function removeModifierCommand() {
-      line = trim(line.replace(/^\s*\*(\w+)(.*)/, "$2"));
+    var self = this;
+    function removeModifierCommand(stripParethentical) {
+      if (stripParethentical) {
+        var openParen = line.indexOf("(")+1;
+        var closingParen = matchBracket(line, "()", openParen);
+        if (closingParen == -1) {
+          throw new Error(self.lineMsg() + "missing closing parenthesis");
+        }
+        line = trim(line.substr(closingParen+1));
+      } else {
+        line = trim(line.replace(/^\s*\*(\w+)(.*)/, "$2"));
+      }
       parsed = /^\s*\*(\w+)(.*)/.exec(line);
       if (parsed) {
         command = parsed[1].toLowerCase();

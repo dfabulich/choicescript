@@ -953,3 +953,22 @@ function parseDateStringInCurrentTimezone(YYYY_MM_DD, line) {
   var shortMonthString = shortMonthStrings[oneBasedMonthNumber];
   return new Date(shortMonthString + " " + dayOfMonth + ", " + fullYear);
 }
+
+function matchBracket(line, brackets, startIndex) {
+  var openBracket = brackets[0];
+  var closeBracket = brackets[1];
+  var brackets = 0;
+  for (var i = startIndex; i < line.length; i++) {
+    var c = line.charAt(i);
+    if (c === openBracket) {
+      brackets++;
+    } else if (c === closeBracket) {
+      if (brackets) {
+        brackets--;
+      } else {
+        return i;
+      }
+    }
+  }
+  return -1;
+}
