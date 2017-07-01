@@ -2074,15 +2074,21 @@ Scene.prototype.ending = function ending() {
 };
 
 Scene.prototype.restart = function restart() {
-  if (this.secondaryMode) throw new Error(this.lineMsg() + "Cannot *restart in " + this.secondaryMode + " mode");
+  if (this.secondaryMode && this.secondaryMode != "stats") {
+    throw new Error(this.lineMsg() + "Cannot *restart in " + this.secondaryMode + " mode");
+  }
   this.finished = true;
   delayBreakEnd();
-  var self = this;
-  self.reset();
-  var startupScene = self.nav.getStartupScene();
-  var scene = new Scene(startupScene, self.stats, self.nav, {debugMode:self.debugMode, secondaryMode:false});
-  scene.resetPage();
-  
+  this.reset();
+  var startupScene = this.nav.getStartupScene();
+  if (this.secondaryMode == "stats") {
+    this.redirect_scene(startupScene);
+  } else {
+    var self = this;
+    clearScreen(function() {
+      self.goto_scene(startupScene);
+    })
+  }
 };
 
 /* Subscribe options, in JSON format.
