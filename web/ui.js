@@ -1617,6 +1617,13 @@ function restorePurchases(product, callback) {
         clearScreen(function() {
           var target = document.getElementById('text');
           target.innerHTML="<p>Please sign in to Choiceofgames.com to restore purchases.</p>";
+          if (window.steamRestore) {
+            window.steamRestoreCallback = function(response) {
+              window.steamRestoreCallback = null;
+              if (response) cacheKnownPurchases(response);
+              webRestoreCallback();
+            }
+          }
           loginForm(document.getElementById('text'), /*optional*/1, /*err*/null, webRestoreCallback);
           curl();
         });
@@ -2291,6 +2298,7 @@ function loginForm(target, optional, errorMessage, callback) {
           "<input type=email name=email id=email value='"+escapedEmail+"' style='font-size: 25px; width: 11em'></label>"+
           ((isWeb && window.facebookAppId)?"<label for=facebook><input type=radio name=choice value=facebook id=facebook > Sign in with Facebook.</label>":"")+
           ((isWeb && window.googleAppId)?"<label for=google><input type=radio name=choice value=google id=google > Sign in with Google.</label>":"")+
+          ((window.steamRestoreCallback)?"<label for=steam><input type=radio name=choice value=steam id=steam > Restore purchases from Steam.</label>":"")+
           "<label for=no class=lastChild><input type=radio name=choice value=no id=no > No, thanks.</label>"+
           "<p><label class=noBorder for=subscribe><input type=checkbox name=subscribe id=subscribe checked> "+
           "Email me when new games are available.</label></p>";
@@ -2356,6 +2364,9 @@ function loginForm(target, optional, errorMessage, callback) {
         var email = trim(form.email.value);
         var subscribe = form.subscribe.checked;
         var choice = getFormValue("choice");
+        if ("steam" == choice) {
+          window.open('https://www.choiceofgames.com/api/Steam/');
+        }
         if ("facebook" == choice) {
           if (!window.FB) return asyncAlert("Sorry, we weren't able to sign you in with Facebook. (Your network connection may be down.) Please try again later, or contact support@choiceofgames.com for assistance.");
           var loginParams = {scope:'email',return_scopes:true};
