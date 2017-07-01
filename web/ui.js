@@ -17,6 +17,18 @@
  * either express or implied.
  */
 
+;(function() {
+  var lastTime = 0;
+  if (!window.requestAnimationFrame)
+    window.requestAnimationFrame = function(callback, element) {
+        var currTime = new Date().getTime();
+        var timeToCall = Math.max(0, 16 - (currTime - lastTime));
+        var id = window.setTimeout(function() { callback(currTime + timeToCall); },
+          timeToCall);
+        lastTime = currTime + timeToCall;
+        return id;
+    };
+})();
 
 function printx(msg, parent) {
     if (msg === null || msg === undefined || msg === "") return;
@@ -161,6 +173,7 @@ function showMenu() {
         backgroundColorMenu();
       }
     });
+    curl();
   }
   clearScreen(menu);
 }
@@ -440,12 +453,6 @@ function printAchievements(target) {
   target.innerHTML = buffer.join("");
 }
 
-// in the iOS app, display a page curl animation
-function curl() {
-  // TODO force a reflow before curling the page
-  callIos("curl");
-}
-
 function asyncAlert(message, callback) {
   if (!callback) callback = function(){};
   if (window.isIosApp) {
@@ -488,12 +495,57 @@ function asyncConfirm(message, callback) {
 
 
 function clearScreen(code) {
-    // can't create div via innerHTML; div mysteriously doesn't show up on iOS
-    main.innerHTML = "";
-    var text = document.createElement("div");
-    text.setAttribute("id", "text");
-    main.appendChild(text);
+    var text = document.getElementById("text");
+    var container1 = document.getElementById("container1");
 
+    window.animateEnabled = true;
+    window.animationProperty = "animationName";
+
+    if (window.animateEnabled && window.animationProperty && !window.isIosApp && !document.getElementById('container2')) {
+      var container2 = document.createElement("div");
+      container2.setAttribute("id", "container2");
+      container2.classList.add('container');
+      document.body.classList.add('frozen');
+      container2.style.opacity = 0;
+
+
+      // get the vertical scroll position as pageYOffset
+      // translate up by pageYOffset pixels, then scroll to the top
+      // now we're scrolled up, but the viewport *looks* like it has retained its scroll position
+      var pageYOffset = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
+      var extraScroll = 0;
+      if (window.isMobile && window.isWeb && window.isAndroid && !/Chrome/.test(navigator.userAgent)) {
+        extraScroll = 1; // try to hide url bar
+      }
+      pageYOffset -= extraScroll;
+      var zoomFactor = window.zoomFactor || document.body.style.zoom;
+      if (zoomFactor) pageYOffset /= parseFloat(zoomFactor);
+      container1.style.transform = "translateY(-"+pageYOffset+ "px)";
+      container1.style.webkitTransform = "translateY(-"+pageYOffset+ "px)";
+      window.scrollTo(0,extraScroll);
+
+      container2.innerHTML = container1.innerHTML;
+      [].forEach.call(container1.querySelectorAll('input,button,a,textarea,label'), function(element) {
+        element.setAttribute("tabindex", "-1");
+        element.removeAttribute("accesskey");
+      });
+
+      document.body.insertBefore(container2, container1);
+      main = document.getElementById("main");
+      main.innerHTML = "";
+      text = document.createElement("div");
+      text.setAttribute("id", "text");
+      main.appendChild(text);
+      if (window.isChromeApp) fixChromeLinks();
+    } else {
+      main = document.getElementById("main");
+      main.innerHTML = "";
+      text = document.createElement("div");
+      text.setAttribute("id", "text");
+      main.appendChild(text);
+
+      window.scrollTo(0,1);
+    }
 
 
     var useAjax = true;
@@ -503,18 +555,6 @@ function clearScreen(code) {
 
     if (useAjax) {
       doneLoading();
-      setTimeout(function() {
-        if (window.isChromeApp) {
-          document.body.firstElementChild.scrollIntoView();
-        } else {
-          window.scrollTo(0,0);
-          if (window.isIosApp || (window.isSafari && window.isMobile && !window.isAndroid)) {
-            // focus on text for iOS Voiceover
-            main.setAttribute("tabindex", "-1");
-            main.focus();
-          }
-        }
-      }, 0);
       safeCall(null, code);
     } else {
       if (!initStore()) alert("Your browser has disabled cookies; this game requires cookies to work properly.  Please re-enable cookies and refresh this page to continue.");
@@ -526,6 +566,123 @@ function clearScreen(code) {
       main.appendChild(form);
       form.submit();
     }
+}
+
+// in the iOS app, display a page curl animation
+function curl() {
+  var focusFirst = function() {
+    var text = document.getElementById("text");
+    if (text.firstElementChild) {
+      var focusable = text.firstElementChild;
+      if (/^img$/i.test(focusable.tagName) && focusable.complete === false) {
+        focusable.addEventListener("load", focusFirst);
+        return;
+      }
+      focusable.setAttribute("tabindex", "-1");
+      focusable.classList.add("tempfocus");
+      focusable.focus();
+      focusable.blur();
+      requestAnimationFrame(function() {
+        focusable.focus();
+        requestAnimationFrame(function() {
+          focusable.blur();
+          focusable.removeAttribute("tabindex");
+          focusable.classList.remove("tempfocus");
+        });
+      });
+    }
+  }
+
+  // TODO force a reflow before curling the page
+  var container2 = document.getElementById('container2');
+  if (!container2) {
+    focusFirst();
+    return window.animateEnabled ? callIos("curl") : callIos("unfreeze");
+  }
+
+  var container1 = document.getElementById('container1');
+  var onContainer1Disappeared = function(e) {
+    if (container1.parentElement) container1.parentElement.removeChild(container1);
+  };
+  var onContainer2Appeared = function(e) {
+    document.body.classList.remove('frozen');
+    focusFirst();
+    container2.removeEventListener('transitionend', onContainer2Appeared);
+    container2.removeEventListener('webkitTransitionEnd', onContainer2Appeared);
+  };
+
+  if (!window.isIosApp && window.animationProperty) {
+    var slideoutStyle = document.getElementById('slideoutStyle');
+    if (!slideoutStyle) {
+      slideoutStyle = document.createElement("style");
+      slideoutStyle.setAttribute("id", "slideoutStyle");
+      document.head.appendChild(slideoutStyle);
+    }
+
+    var shouldSlide = true;
+
+    var timingFunction = "\n.container { transition-timing-function: ease-in; };";
+    if (shouldSlide) timingFunction = "";
+
+    slideoutStyle.innerHTML = "@keyframes containerslideout { "+
+      "from { transform: "+container1.style.transform+"; } " +
+      "to   { transform: "+container1.style.transform+" translateX(-105%); } }\n"+
+      "@-webkit-keyframes containerslideout { "+
+      "from { -webkit-transform: "+container1.style.webkitTransform+"; } " +
+      "to   { -webkit-transform: "+container1.style.webkitTransform+" translateX(-105%); } }"+
+      timingFunction;
+
+    // double rAF so we start after container1 is transformed and scrolled to the top
+    // minimizes flicker on iOS
+    requestAnimationFrame(function() {
+      requestAnimationFrame(function() {
+        if (shouldSlide) {
+          var fastApple = window.isIPad || window.isIPhone || window.isMacApp;
+          var slowAndroid = window.isAndroidApp && /Android 4/.test(navigator.userAgent);
+          var useCssAnimations = fastApple || slowAndroid;
+          if (useCssAnimations) {
+            container1.style[window.animationProperty] = 'containerslideout';
+            container2.style[window.animationProperty] = 'containerslidein';
+          } else {
+            var frames = 0;
+            var durationInSeconds = 0.5;
+            var framesPerSecond = 60;
+            var totalSteps = framesPerSecond * durationInSeconds;
+            var oldContainer1Transform = container1.style.transform;
+            var rafSlide = function(stamp) {
+              var fraction = frames / totalSteps;
+              // ease approximation https://github.com/mietek/ease-tween/blob/master/src/index.js
+              fraction = 1.0042954579734844 * Math.exp(
+                -6.4041738958415664 * Math.exp(
+                  -7.2908241330981340 * fraction));
+              container1.style.transform = container1.style.webkitTransform =
+                oldContainer1Transform + " translateX(-" + (105 * fraction) + "%)";
+              container2.style.transform = container2.style.webkitTransform =
+                "translateX(" + (100 - 100 * fraction) + "%)";
+              if (frames < totalSteps) {
+                frames++;
+                requestAnimationFrame(rafSlide);
+              }
+            }
+            requestAnimationFrame(rafSlide);
+          }
+        }
+        container1.style.opacity = 0;
+        container2.style.opacity = 1;
+        container1.addEventListener('transitionend', onContainer1Disappeared);
+        container2.addEventListener('transitionend', onContainer2Appeared);
+        container1.addEventListener('webkitTransitionEnd', onContainer1Disappeared);
+        container2.addEventListener('webkitTransitionEnd', onContainer2Appeared);
+      })
+    })
+  } else {
+    onContainer2Appeared();
+    onContainer1Disappeared();
+    window.animateEnabled ? callIos("curl") : callIos("unfreeze");
+  }
+
+  container1.removeAttribute("id");
+  container2.setAttribute("id", "container1");
 }
 
 function safeSubmit(code) {
@@ -541,10 +698,8 @@ function startLoading() {
       safeCall(null, function() {
         loading = document.createElement('div');
         loading.setAttribute("id", "loading");
-        loading.innerHTML = "<p>Loading...</p><p>"+
-          (/MSIE [67]/.test(navigator.userAgent)?"":"<img src=\"data:image/gif;base64,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\">")+
-          "</p>";
-        main.appendChild(loading);
+        loading.innerHTML = (/MSIE [67]/.test(navigator.userAgent)?"":"<img src=\"data:image/gif;base64,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\">");
+        document.body.appendChild(loading);
       });
     }
 }
@@ -911,6 +1066,7 @@ function shareAction(e) {
     printButton("Next", target, false, function () {
       clearScreen(loadAndRestoreGame);
     });
+    curl();
   });
 }
 
@@ -919,6 +1075,7 @@ function isReviewSupported() {
 }
 
 function isFollowEnabled() {
+  return false;
   if (!window.isWeb) return false;
   // iOS add to homescreen seems not to like these iframes
   if (window.navigator.standalone) return false;
@@ -948,6 +1105,7 @@ function subscribeLink(e) {
     subscribe(document.getElementById('text'), {now:1}, function() {
       clearScreen(loadAndRestoreGame);
     });
+    curl();
   });
 }
 
@@ -1019,6 +1177,7 @@ function subscribe(target, options, callback) {
                 safeCall(null, callback);
               });
             }
+            curl();
           });
         }
       };
@@ -1141,6 +1300,7 @@ function downloadLink(e) {
         }
       });
     }
+    curl();
   });
 }
 
@@ -1321,6 +1481,7 @@ function restorePurchases(product, callback) {
               target.innerHTML="<p>Restore completed. This product is not yet purchased. You may also sign in to Choiceofgames.com to restore purchases.</p>";
             }
             loginForm(document.getElementById('text'), /*optionality*/1, /*err*/null, webRestoreCallback);
+            curl();
           });
         }
       });
@@ -1355,6 +1516,7 @@ function restorePurchases(product, callback) {
           var target = document.getElementById('text');
           target.innerHTML="<p>Please sign in to Choiceofgames.com to restore purchases.</p>";
           loginForm(document.getElementById('text'), /*optional*/1, /*err*/null, webRestoreCallback);
+          curl();
         });
       }
     });
@@ -1500,6 +1662,7 @@ function purchase(product, callback) {
                     "support@choiceofgames.com for assistance.");
                   clearScreen(loadAndRestoreGame);
                 }
+                curl();
               }, "stripeToken", response.id, "product", fullProductName, "key", window.stripeKey);
             });
           }
@@ -1528,6 +1691,7 @@ function purchase(product, callback) {
           clearScreen(loadAndRestoreGame);
         }
       });
+      curl();
     });
   } else {
     safeTimeout(purchaseCallback, 0);
@@ -1554,7 +1718,7 @@ function printDiscount(product, fullYear, oneBasedMonthNumber, dayOfMonth, line,
     span.style.display = "none";
   }
 
-  text.appendChild(span);
+  document.getElementById('text').appendChild(span);
 }
 
 function rewriteDiscount(product, fullYear, oneBasedMonthNumber, dayOfMonth) {
@@ -2159,12 +2323,13 @@ function loginForm(target, optional, errorMessage, callback) {
                   optional = subscribe ? optional_new_subscribe : optional_new_no_subscribe;
                 }
                 loginForm(document.getElementById("text"), optional, null, callback);
+                curl();
               });
             } else if ("no" == choice) {
               safeCall(null, function() {callback(false);});
             } else if ("new" == choice) {
               target.innerHTML = "";
-              window.scrollTo(0,0);
+              window.scrollTo(0,1);
               form = document.createElement("form");
               var escapedEmail = email.replace(/'/g, "&apos;");
               form.innerHTML = "<div id=message style='color:red; font-weight:bold'></div>"+
@@ -2186,7 +2351,7 @@ function loginForm(target, optional, errorMessage, callback) {
                 }
                 startLoading();
                 form.style.display = "none";
-                window.scrollTo(0,0);
+                window.scrollTo(0,1);
                 login(email, form.password.value, /*register*/true, subscribe, function(ok, response) {
                   doneLoading();
                   if (ok) {
@@ -2218,7 +2383,7 @@ function loginForm(target, optional, errorMessage, callback) {
             } else if ("passwordButton" == choice) {
               startLoading();
               form.style.display = "none";
-              window.scrollTo(0,0);
+              window.scrollTo(0,1);
               login(email, form.password.value, /*register*/false, form.subscribe.checked, function(ok, response) {
                 doneLoading();
                 form.style.display = "";
@@ -2242,7 +2407,7 @@ function loginForm(target, optional, errorMessage, callback) {
             } else if ("forgot" == choice) {
               startLoading();
               form.style.display = "none";
-              window.scrollTo(0,0);
+              window.scrollTo(0,1);
               forgotPassword(email, function(ok, response) {
                 doneLoading();
                 form.style.display = "";
