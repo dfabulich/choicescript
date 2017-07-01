@@ -26,15 +26,7 @@ function printx(msg, parent) {
       parent.appendChild(document.createTextNode(" "));
       return;
     }
-    msg = (msg+"").replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/\[n\/\]/g, '<br>')
-      .replace(/\[b\]/g, '<b>')
-      .replace(/\[\/b\]/g, '</b>')
-      .replace(/\[i\]/g, '<i>')
-      .replace(/\[\/i\]/g, '</i>');
+    msg = replaceBbCode(msg);
     var frag = document.createDocumentFragment();
     temp = document.createElement('div');
     temp.innerHTML = msg;
@@ -44,6 +36,18 @@ function printx(msg, parent) {
     parent.appendChild(frag);
 }
 
+function replaceBbCode(msg) {
+  return msg = String(msg).replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/\[n\/\]/g, '<br>')
+      .replace(/\[b\]/g, '<b>')
+      .replace(/\[\/b\]/g, '</b>')
+      .replace(/\[i\]/g, '<i>')
+      .replace(/\[\/i\]/g, '</i>');
+}
+
 function println(msg, parent) {
     if (!parent) parent = document.getElementById('text');
     printx(msg, parent);
@@ -51,19 +55,31 @@ function println(msg, parent) {
     parent.appendChild(br);
 }
 
+function printParagraph(msg, parent) {
+  if (msg === null || msg === undefined || msg === "") return;
+  if (!parent) parent = document.getElementById('text');
+  msg = replaceBbCode(msg);
+  p = document.createElement('p');
+  p.innerHTML = msg;
+  parent.appendChild(p);
+  return p;
+}
 
 function showStats() {
     if (document.getElementById('loading')) return;
     var button = document.getElementById("statsButton");
     if (button && button.innerHTML == "Return to the Game") {
-      setButtonTitles();
-      return clearScreen(loadAndRestoreGame);
+      return clearScreen(function() {
+        setButtonTitles();
+        loadAndRestoreGame();
+      });
     }
-    setButtonTitles();
     var currentScene = window.stats.scene;
     var scene = new Scene("choicescript_stats", window.stats, this.nav, {secondaryMode:"stats", saveSlot:"temp"});
-    main.innerHTML = "<div id='text'></div>";
-    scene.execute();
+    clearScreen(function() {
+      setButtonTitles();
+      scene.execute();
+    })
 }
 
 function redirectFromStats(scene, label, originLine, callback) {
@@ -797,8 +813,6 @@ function printShareLinks(target, now) {
       callIos("share");
     };
     msgDiv.appendChild(button);
-    msgDiv.appendChild(document.createElement("br")); // insert our own paragraph break, to match <ul>
-    msgDiv.appendChild(document.createElement("br"));
     target.appendChild(msgDiv);
     return;
   }
@@ -882,7 +896,7 @@ function printShareLinks(target, now) {
   msgDiv.innerHTML = nowMsg + "<ul id='sharelist'>\n"+
     mobileMesg+
     shareLinkText+
-    "</ul><br>\n"; // just one line break; <ul> provides its own
+    "</ul>\n";
   target.appendChild(msgDiv);
 }
 

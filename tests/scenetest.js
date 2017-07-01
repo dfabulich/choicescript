@@ -29,7 +29,7 @@ test("labelGoto", function() {
     var scene = new Scene();
     scene.loadLines(text);
     scene.execute();
-    equal(printed.join(""), "foo bar <br><br>", "printed value");
+    equal(printed.join(""), "<p>foo bar </p>", "printed value");
 })
 test("gotoRef", function() {
     printed = [];
@@ -37,7 +37,7 @@ test("gotoRef", function() {
     var scene = new Scene();
     scene.loadLines(text);
     scene.execute();
-    equal(printed.join(""), "foo bar <br><br>", "printed value");
+    equal(printed.join(""), "<p>foo bar </p>", "printed value");
 })
 test("mixedCaseLabels", function() {
     printed = [];
@@ -45,7 +45,7 @@ test("mixedCaseLabels", function() {
     var scene = new Scene();
     scene.loadLines(text);
     scene.execute();
-    equal(printed.join(""), "foo bar <br><br>", "printed value");
+    equal(printed.join(""), "<p>foo bar </p>", "printed value");
 })
 test("finish", function() {
     printed = [];
@@ -53,7 +53,7 @@ test("finish", function() {
     var scene = new Scene();
     scene.loadLines(text);
     scene.execute();
-    equal(printed.join(""), "foo <br><br>", "printed value");
+    equal(printed.join(""), "<p>foo </p>", "printed value");
 })
 
 module("OptionParsing");
@@ -390,7 +390,7 @@ test("setTempOverridingStat", function() {
     scene.execute();
     doh.is(2, scene.stats.foo, "scene.stats.foo");
     doh.is(3, scene.temps.foo, "scene.temps.foo");
-    doh.is("3 <br><br>", printed.join(""), "printed");
+    doh.is("<p>3 </p>", printed.join(""), "printed");
 })
 test("deleteTempOverridingStat", function() {
     printed = [];
@@ -400,7 +400,7 @@ test("deleteTempOverridingStat", function() {
     scene.execute();
     doh.is(2, scene.stats.foo, "scene.stats.foo");
     doh.is("undefined", typeof scene.temps.foo, "typeof scene.temps.foo");
-    doh.is("2 <br><br>", printed.join(""), "printed");
+    doh.is("<p>2 </p>", printed.join(""), "printed");
 })
 test("implicitVariable", function() {
     var scene = new Scene();
@@ -467,56 +467,56 @@ test("basic", function() {
     var scene = new Scene();
     scene.loadLines("*if true\n  Truthy\n  *finish\n*else\n  Falsish\n  *finish");
     scene.execute();
-    doh.is("Truthy <br><br>", printed.join(""), "Wrong printed value");
+    doh.is("<p>Truthy </p>", printed.join(""), "Wrong printed value");
 })
 test("extraLineBreak", function() {
     printed = [];
     var scene = new Scene();
     scene.loadLines("*if true\n\n  Truthy\n  *finish\n*else\n  Falsish\n  *finish");
     scene.execute();
-    doh.is("Truthy <br><br>", printed.join(""), "Wrong printed value");
+    doh.is("<p>Truthy </p>", printed.join(""), "Wrong printed value");
 })
 test("testElse", function() {
     printed = [];
     var scene = new Scene();
     scene.loadLines("*if false\n  Truthy\n  *finish\n*else\n  Falsish\n  *finish");
     scene.execute();
-    doh.is("Falsish <br><br>", printed.join(""), "Wrong printed value");
+    doh.is("<p>Falsish </p>", printed.join(""), "Wrong printed value");
 })
 test("testElseExtraLineBreak", function() {
     printed = [];
     var scene = new Scene();
     scene.loadLines("*if false\n  Truthy\n  *finish\n*else\n\n  Falsish\n  *finish");
     scene.execute();
-    doh.is("Falsish <br><br>", printed.join(""), "Wrong printed value");
+    doh.is("<p>Falsish </p>", printed.join(""), "Wrong printed value");
 })
 test("testElseIfTrue", function() {
     printed = [];
     var scene = new Scene();
     scene.loadLines("*if false\n  Truthy\n  *finish\n*elseif true\n  Elsey\n  *finish\n*else\n  Falsish\n  *finish");
     scene.execute();
-    doh.is("Elsey <br><br>", printed.join(""), "Wrong printed value");
+    doh.is("<p>Elsey </p>", printed.join(""), "Wrong printed value");
 })
 test("testElseIfFalse", function() {
     printed = [];
     var scene = new Scene();
     scene.loadLines("*if false\n  Truthy\n  *finish\n*elseif false\n  Elsey\n  *finish\n*else\n  Falsish\n  *finish");
     scene.execute();
-    doh.is("Falsish <br><br>", printed.join(""), "Wrong printed value");
+    doh.is("<p>Falsish </p>", printed.join(""), "Wrong printed value");
 })
 test("testDoubleElseIf", function() {
     printed = [];
     var scene = new Scene();
     scene.loadLines("*if false\n  Truthy\n  *finish\n*elseif false\n  Elsey\n  *finish\n*elseif true\n  Double Elsey\n  *finish\n*else\n  Falsish\n  *finish");
     scene.execute();
-    doh.is("Double Elsey <br><br>", printed.join(""), "Wrong printed value");
+    doh.is("<p>Double Elsey </p>", printed.join(""), "Wrong printed value");
 })
 test("nested", function() {
     printed = [];
     var scene = new Scene();
     scene.loadLines("*if true\n  *if true\n    Truthy\n*label end");
     scene.execute();
-    doh.is("Truthy <br><br>", printed.join(""), "Wrong printed value");
+    doh.is("<p>Truthy </p>", printed.join(""), "Wrong printed value");
 })
 test("errorNonNestedElse", function() {
     printed = [];
@@ -529,7 +529,7 @@ test("nestedExtraLineBreak", function() {
     var scene = new Scene();
     scene.loadLines("*if true\n  *if true\n    Truthy\n\n  Still Truthy\n*label end");
     scene.execute();
-    doh.is("Truthy <br><br>Still Truthy <br><br>", printed.join(""), "Wrong printed value");
+    doh.is("<p>Truthy </p><p>Still Truthy </p>", printed.join(""), "Wrong printed value");
 })
 test("errorDrift", function() {
     var scene = new Scene();
@@ -641,7 +641,7 @@ test("single", function() {
     scene.execute();
     doh.is([{"name":"foo","line":2,"group":"choice","endLine":4},{"name":"bar","line":5,"group":"choice","endLine":7}], options, "options");
     scene.standardResolution(options[0]);
-    doh.is("Foo! <br><br>", printed.join(""), "printed");
+    doh.is("<p>Foo! </p>", printed.join(""), "printed");
 })
 test("saveAndRestore", function() {
     printed = [];
@@ -664,7 +664,7 @@ test("saveAndRestore", function() {
     scene2.lineNum = scene.lineNum;
     scene2.indent = scene.indent;
     scene2.execute();
-    doh.is("Foo! <br><br>", printed.join(""), "printed");
+    doh.is("<p>Foo! </p>", printed.join(""), "printed");
 })
 test("saveAndRestoreGoSub", function() {
     printed = [];
@@ -675,6 +675,7 @@ test("saveAndRestoreGoSub", function() {
     scene.renderOptions = function(_groups, _options) {
         options = _options;
         groups = _groups;
+        this.paragraph();
     };
     scene.resetPage = function() {};
     scene.execute();
@@ -687,7 +688,7 @@ test("saveAndRestoreGoSub", function() {
     scene2.lineNum = scene.lineNum;
     scene2.indent = scene.indent;
     scene2.execute();
-    doh.is("start Foo! end <br><br>", printed.join(""), "printed");
+    doh.is("<p>start </p><p>Foo! end </p>", printed.join(""), "printed");
 })
 test("extraLineBreak", function() {
     printed = [];
@@ -702,7 +703,7 @@ test("extraLineBreak", function() {
     scene.execute();
     doh.is([{"name":"foo","line":2,"group":"choice","endLine":5},{"name":"bar","line":6,"group":"choice","endLine":8}], options, "options");
     scene.standardResolution(options[0]);
-    doh.is("Foo! <br><br>", printed.join(""), "printed");
+    doh.is("<p>Foo! </p>", printed.join(""), "printed");
 })
 test("fake", function() {
     printed = [];
@@ -717,7 +718,7 @@ test("fake", function() {
     scene.execute();
     doh.is([{"name":"foo","line":2,"group":"choice","endLine":3},{"name":"bar","line":4,"group":"choice","endLine":5}], options, "options");
     scene.standardResolution(options[0]);
-    doh.is("Foo! baz <br><br>", printed.join(""), "printed");
+    doh.is("<p>Foo! baz </p>", printed.join(""), "printed");
 })
 test("fakeNoBody", function() {
     printed = [];
@@ -732,7 +733,7 @@ test("fakeNoBody", function() {
     scene.execute();
     doh.is([{"name":"foo","line":2,"group":"choice","endLine":2},{"name":"bar","line":3,"group":"choice","endLine":3}], options, "options");
     scene.standardResolution(options[0]);
-    doh.is("baz <br><br>", printed.join(""), "printed");
+    doh.is("<p>baz </p>", printed.join(""), "printed");
 })
 test("unselectableFake", function() {
     printed = [];
@@ -747,7 +748,7 @@ test("unselectableFake", function() {
     scene.execute();
     doh.is([{"name":"foo","line":2,"group":"choice","endLine":3},{"name":"bar","line":4,"group":"choice","unselectable":true,"endLine":5}], (options), "options");
     scene.standardResolution(options[0]);
-    doh.is("Foo! baz <br><br>", printed.join(""), "printed");
+    doh.is("<p>Foo! baz </p>", printed.join(""), "printed");
 })
 test("unselecteableFakeNoBody", function() {
     printed = [];
@@ -762,7 +763,7 @@ test("unselecteableFakeNoBody", function() {
     scene.execute();
     doh.is([{"name":"foo","line":2,"group":"choice","endLine":2},{"name":"bar","line":3,"group":"choice","unselectable":true,"endLine":3}], (options), "options");
     scene.standardResolution(options[0]);
-    doh.is("baz <br><br>", printed.join(""), "printed");
+    doh.is("<p>baz </p>", printed.join(""), "printed");
 })
 /*test("choiceTemp", function() {
     printed = [];
@@ -780,7 +781,7 @@ test("unselecteableFakeNoBody", function() {
     scene.execute();
     doh.is([{"name":"foo","line":2,"group":"choice","endLine":4},{"name":"bar","line":5,"group":"choice","endLine":6}], options, "options");
     scene.resolveChoice(options,groups);
-    doh.is("Foo! foo <br><br>", printed.join(""), "printed");
+    doh.is("<p>Foo! foo </p>", printed.join(""), "printed");
 })*/
 test("fallingChoices", function() {
     printed = [];
@@ -809,7 +810,7 @@ test("fallingChoices", function() {
     scene.standardResolution(options[1]);
     doh.is([{"name":"one","line":9,"group":"choice","endLine":11},{"name":"two","line":12,"group":"choice","endLine":13}], options, "options");
     scene.standardResolution(options[1]);
-    doh.is("Bar baz two <br><br>", printed.join(""), "printed");
+    doh.is("<p>Bar baz two </p>", printed.join(""), "printed");
 })
 
 module("Reuse Options");
@@ -841,6 +842,7 @@ test("modifiers", function() {
     scene.renderOptions = function(_groups, _options) {
         options = _options;
         groups = _groups;
+        this.paragraph();
     };
     scene.execute();
     doh.is([
@@ -867,11 +869,11 @@ test("modifiers", function() {
     doh.is(expected, options, "options4");
     scene.standardResolution(options[2]);
     doh.is(expected, options, "options5");
-    doh.is("What do you want to do? You do some of this. "
-      +"What do you want to do? You do some of that. "
-      +"What do you want to do? Very well. "
-      +"What do you want to do? Quit stalling! "
-      +"What do you want to do?", trim(printed.join("")), "printed");
+    doh.is("<p>What do you want to do? </p><p>You do some of this. "
+      +"What do you want to do? </p><p>You do some of that. "
+      +"What do you want to do? </p><p>Very well. "
+      +"What do you want to do? </p><p>Quit stalling! "
+      +"What do you want to do? </p>", trim(printed.join("")), "printed");
 })
 test("hideByDefault", function() {
     printed = [];
@@ -900,6 +902,7 @@ test("hideByDefault", function() {
     scene.renderOptions = function(_groups, _options) {
         options = _options;
         groups = _groups;
+        this.paragraph();
     };
     scene.execute();
     doh.is([
@@ -929,11 +932,11 @@ test("hideByDefault", function() {
       {reuse:"disable",group:"choice",endLine:10,unselectable:true,name:"A little of that.",line:8},
       {group:"choice",endLine:13,name:"Let me think about it a little longer.",line:11},
       {reuse:"hide",group:"choice",endLine:20,name:"Nothing; I\'m done.",line:17}], options, "options5");
-    doh.is("What do you want to do? You do some of this. "
-      +"What do you want to do? You do some of that. "
-      +"What do you want to do? Very well. "
-      +"What do you want to do? Quit stalling! "
-      +"What do you want to do?", trim(printed.join("")), "printed");
+    doh.is("<p>What do you want to do? </p><p>You do some of this. "
+      +"What do you want to do? </p><p>You do some of that. "
+      +"What do you want to do? </p><p>Very well. "
+      +"What do you want to do? </p><p>Quit stalling! "
+      +"What do you want to do? </p>", trim(printed.join("")), "printed");
 })
 test("disableByDefault", function() {
     printed = [];
@@ -962,6 +965,7 @@ test("disableByDefault", function() {
     scene.renderOptions = function(_groups, _options) {
         options = _options;
         groups = _groups;
+        this.paragraph();
     };
     scene.execute();
     doh.is([
@@ -992,11 +996,11 @@ test("disableByDefault", function() {
       {group:"choice",endLine:13,name:"Let me think about it a little longer.",line:11},
       {reuse:"disable",group:"choice",endLine:16,unselectable:true,name:"What was the question?",line:14},
       {reuse:"disable",group:"choice",endLine:20,name:"Nothing; I\'m done.",line:17}], options, "options5");
-    doh.is("What do you want to do? You do some of this. "
-      +"What do you want to do? You do some of that. "
-      +"What do you want to do? Very well. "
-      +"What do you want to do? Quit stalling! "
-      +"What do you want to do?", trim(printed.join("")), "printed");
+    doh.is("<p>What do you want to do? </p><p>You do some of this. "
+      +"What do you want to do? </p><p>You do some of that. "
+      +"What do you want to do? </p><p>Very well. "
+      +"What do you want to do? </p><p>Quit stalling! "
+      +"What do you want to do? </p>", trim(printed.join("")), "printed");
 })
 
 module("Tokenizer");
@@ -1295,7 +1299,7 @@ test("noBreaks", function() {
     var scene = new Scene();
     scene.loadLines(text);
     scene.execute();
-    doh.is("No line breaks <br><br>", printed.join(""), "printed");
+    doh.is("<p>No line breaks </p>", printed.join(""), "printed");
 })
 test("oneTrailingBreak", function() {
     printed = [];
@@ -1303,7 +1307,7 @@ test("oneTrailingBreak", function() {
     var scene = new Scene();
     scene.loadLines(text);
     scene.execute();
-    doh.is("One trailing break <br><br>", printed.join(""), "printed");
+    doh.is("<p>One trailing break </p>", printed.join(""), "printed");
 })
 test("singleBreakNoBr", function() {
     printed = [];
@@ -1311,7 +1315,7 @@ test("singleBreakNoBr", function() {
     var scene = new Scene();
     scene.loadLines(text);
     scene.execute();
-    doh.is("This is one sentence <br><br>", printed.join(""), "printed");
+    doh.is("<p>This is one sentence </p>", printed.join(""), "printed");
 })
 test("doubleBreakDoubleBr", function() {
     printed = [];
@@ -1319,7 +1323,7 @@ test("doubleBreakDoubleBr", function() {
     var scene = new Scene();
     scene.loadLines(text);
     scene.execute();
-    doh.is("This is one sentence. <br><br>This is another. <br><br>", printed.join(""), "printed");
+    doh.is("<p>This is one sentence. </p><p>This is another. </p>", printed.join(""), "printed");
 })
 test("doubleBreakAfterPrint", function() {
     printed = [];
@@ -1327,7 +1331,7 @@ test("doubleBreakAfterPrint", function() {
     var scene = new Scene();
     scene.loadLines(text);
     scene.execute();
-    doh.is("This is one sentence. <br><br>This is another. <br><br>", printed.join(""), "printed");
+    doh.is("<p>This is one sentence. </p><p>This is another. </p>", printed.join(""), "printed");
 })
 test("tripleBreakDoubleBr", function() {
     printed = [];
@@ -1335,7 +1339,7 @@ test("tripleBreakDoubleBr", function() {
     var scene = new Scene();
     scene.loadLines(text);
     scene.execute();
-    doh.is("This is one sentence. <br><br>This is another. <br><br>", printed.join(""), "printed");
+    doh.is("<p>This is one sentence. </p><p>This is another. </p>", printed.join(""), "printed");
 })
 
 module("Variable Interpolation")
@@ -1348,7 +1352,7 @@ test("replacement", function() {
     var scene = new Scene("test", stats);
     scene.loadLines(text);
     scene.execute();
-    doh.is("This foo is a bar. <br><br>", printed.join(""), "printed");
+    doh.is("<p>This foo is a bar. </p>", printed.join(""), "printed");
 })
 test("unknownVariable", function() {
     var text = "Unknown variable: ${foo}.";
@@ -1369,7 +1373,7 @@ test("capitalize", function() {
     var scene = new Scene("test", stats);
     scene.loadLines(text);
     scene.execute();
-    doh.is("This foo is a true Foo. <br><br>", printed.join(""), "printed");
+    doh.is("<p>This foo is a true Foo. </p>", printed.join(""), "printed");
 })
 test("references", function() {
     printed = [];
@@ -1378,7 +1382,7 @@ test("references", function() {
     var scene = new Scene("test", stats);
     scene.loadLines(text);
     scene.execute();
-    doh.is("This foo is a true Foo. <br><br>", printed.join(""), "printed");
+    doh.is("<p>This foo is a true Foo. </p>", printed.join(""), "printed");
 })
 test("multiReplace", function() {
     printed = [];
@@ -1387,7 +1391,7 @@ test("multiReplace", function() {
     var scene = new Scene("test", stats);
     scene.loadLines(text);
     scene.execute();
-    doh.is("There is one thing here in the room, and two people. <br><br>", printed.join(""), "printed");
+    doh.is("<p>There is one thing here in the room, and two people. </p>", printed.join(""), "printed");
 })
 
 module("Parse Stat Chart");
