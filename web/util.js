@@ -44,6 +44,7 @@ _global = this;
   _global.isSafari = /Safari/.test(userAgent);
   _global.isIE = /(MSIE|Trident)/.test(userAgent);
   _global.isIPad = /iPad/.test(userAgent);
+  _global.isIPhone = /iPhone/.test(userAgent);
   _global.isKindleFire = /Kindle Fire/.test(userAgent);
   _global.isWinStoreApp = "ms-appx:" == protocol;
   _global.isCef = !!_global.cefQuery;

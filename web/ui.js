@@ -110,18 +110,24 @@ function showAchievements(hideNextButton) {
   var button = document.getElementById("achievementsButton");
   if (!button) return;
   if (button.innerHTML == "Return to the Game") {
-    setButtonTitles();
-    return clearScreen(loadAndRestoreGame);
+    return clearScreen(function() {
+      setButtonTitles();
+      loadAndRestoreGame();
+    });
   }
-  setButtonTitles();
-  button.innerHTML = "Return to the Game";
   clearScreen(function() {
+    setButtonTitles();
+    var button = document.getElementById("achievementsButton");
+    button.innerHTML = "Return to the Game";
     checkAchievements(function() {
       printAchievements(document.getElementById("text"));
       if (!hideNextButton) printButton("Next", main, false, function() {
-        setButtonTitles();
-        clearScreen(loadAndRestoreGame);
+        clearScreen(function() {
+          setButtonTitles();
+          loadAndRestoreGame();
+        });
       });
+      curl();
     });
   });
 }
@@ -131,12 +137,15 @@ function showMenu() {
   var button = document.getElementById("menuButton");
   if (!button) return;
   if (button.innerHTML == "Return to the Game") {
-    button.innerHTML = "Menu";
-    return clearScreen(loadAndRestoreGame);
+    return clearScreen(function() {
+      setButtonTitles();
+      loadAndRestoreGame();
+    });
   }
-  setButtonTitles();
-  button.innerHTML = "Return to the Game";
   function menu() {
+    setButtonTitles();
+    var button = document.getElementById("menuButton");
+    button.innerHTML = "Return to the Game";
     options = [
       {name:"Return to the game.", group:"choice", resume:true},
       {name:"View the credits.", group:"choice", credits:true},
@@ -146,11 +155,14 @@ function showMenu() {
       {name:"Email me when new games are available.", group:"choice", subscribe:true},
       {name:"Make the text bigger or smaller.", group:"choice", fontSizeMenu:true},
       {name:"Change the background color.", group:"choice", background:true},
+      {name:"Change the animation between pages.", group:"choice", animation:true},
     ];
     printOptions([""], options, function(option) {
       if (option.resume) {
-        setButtonTitles();
-        return clearScreen(loadAndRestoreGame);
+        return clearScreen(function() {
+          setButtonTitles();
+          loadAndRestoreGame();
+        });
       } else if (option.credits) {
         absolutizeAboutLink();
         aboutClick();
@@ -168,9 +180,11 @@ function showMenu() {
       } else if (option.contactUs) {
         window.location.href="mailto:"+getSupportEmail();
       } else if (option.fontSizeMenu) {
-        fontSizeMenu();
+        textOptionsMenu({size:1});
       } else if (option.background) {
-        backgroundColorMenu();
+        textOptionsMenu({color:1});
+      } else if (option.animation) {
+        textOptionsMenu({animation:1});
       }
     });
     curl();
@@ -182,10 +196,10 @@ function setButtonTitles() {
   var button;
   button = document.getElementById("menuButton");
   if (button) {
-    if (window.isWeb) {
-      menuButton.innerHTML = "Settings";
-    } else {
+    if (window.isCef || window.isNode || window.isMacApp) {
       button.innerHTML = "Menu";
+    } else {
+      button.innerHTML = "Settings";
     }
   }
   button = document.getElementById("statsButton");
@@ -203,72 +217,76 @@ function setButtonTitles() {
   }
 }
 
-function fontSizeMenu() {
-  clearScreen(function() {
-    var text = document.getElementById("text");
-    var oldZoom = getZoomFactor();
-    text.innerHTML = "<p>Make the text bigger or smaller.</p>";
-    options = [
-      {name:"Return to the game.", group:"choice", resume:true},
-      {name:"Make the text bigger.", group:"choice", bigger:true},
-      {name:"Make the text smaller.", group:"choice", smaller:true},
-    ];
-    if (oldZoom <= 0.5) {
-      options[options.length-1].unselectable = true;
-    }
-    if (oldZoom !== 1) {
-      options.push({name:"Reset the text to its original size.", group:"choice", reset:true});
-    }
-    printOptions([""], options, function(option) {
-      if (option.resume) {
-        setButtonTitles();
-        return clearScreen(loadAndRestoreGame);
-      } else if (option.reset) {
-        setZoomFactor(1);
-        fontSizeMenu();
-      } else {
-        changeFontSize(option.bigger);
-        fontSizeMenu();
-      }
-    })
-  });
-}
 
-function textOptionsMenu() {
+function textOptionsMenu(categories) {
+  if (!categories) {
+    categories = {size:1, color:1, animation:1};
+    if (document.getElementById('loading')) return;
+    var button = document.getElementById("menuButton");
+    if (!button) return;
+    if (button.innerHTML == "Menu") return showMenu();
+    if (button.innerHTML == "Return to the Game") {
+      return clearScreen(function() {
+        setButtonTitles();
+        loadAndRestoreGame();
+      });
+    }
+  }
   clearScreen(function() {
+    var button = document.getElementById("menuButton");
+    if (button) button.innerHTML = "Return to the Game";
     var text = document.getElementById("text");
     var oldZoom = getZoomFactor();
-    text.innerHTML = "<p>Change the size and color of the text.</p>";
+    if (categories.size && categories.color) {
+      text.innerHTML = "<p>Change the game's appearance.</p>";
+    } else if (categories.size) {
+      text.innerHTML = "<p>Make the text bigger or smaller.</p>";
+    } else if (categories.color) {
+      text.innerHTML = "<p>Change the background color.</p>";
+    } else if (categories.animation) {
+      text.innerHTML = "<p>Change the animation between pages.</p>";
+    }
     options = [
       {name:"Return to the game.", group:"choice", resume:true},
-      {name:"Make the text bigger.", group:"choice", bigger:true},
-      {name:"Make the text smaller.", group:"choice", smaller:true},
     ];
-    if (oldZoom <= 0.5) {
-      options[options.length-1].unselectable = true;
+    if (categories.size) {
+      options.push(
+        {name:"Make the text bigger.", group:"choice", bigger:true},
+        {name:"Make the text smaller.", group:"choice", smaller:true}
+      );
+      if (oldZoom <= 0.5) {
+        options[options.length-1].unselectable = true;
+      }
+      if (oldZoom !== 1) {
+        options.push({name:"Reset the text to its original size.", group:"choice", reset:true});
+      }
     }
-    if (oldZoom !== 1) {
-      options.push({name:"Reset the text to its original size.", group:"choice", reset:true});
-    }
-    options.push(
+    if (categories.color) options.push(
       {name:"Use a black background.", group:"choice", color:"black"},
       {name:"Use a sepia background.", group:"choice", color:"sepia"},
       {name:"Use a white background.", group:"choice", color:"white"}
     );
+    if (categories.animation) options.push(
+      {name: "Animate between pages.", group:"choice", animation:1},
+      {name: "Don't animate between pages.", group:"choice", animation:2}
+    );
     printOptions([""], options, function(option) {
       if (option.resume) {
-        setButtonTitles();
-        return clearScreen(loadAndRestoreGame);
+        return clearScreen(function() {
+          setButtonTitles();
+          loadAndRestoreGame();
+        });
       } else if (option.color) {
         changeBackgroundColor(option.color);
       } else if (option.reset) {
         setZoomFactor(1);
-        textOptionsMenu();
+      } else if (option.animation) {
+        window.animateEnabled = option.animation !== 2;
+        if (initStore()) store.set("preferredAnimation", parseFloat(option.animation));
       } else {
         changeFontSize(option.bigger);
-        textOptionsMenu();
       }
-      curl();
+      textOptionsMenu(categories);
     })
     curl();
   });
@@ -290,6 +308,8 @@ function setZoomFactor(zoomFactor) {
     document.body.style.maxWidth = (initialMaxWidth / zoomFactor) + "px";
     document.body.style.transformOrigin = "center top";
     document.body.style.transform = "scale("+zoomFactor+")";
+    document.body.style.webkitTransformOrigin = "center top";
+    document.body.style.webkitTransform = "scale("+zoomFactor+")";
     window.zoomFactor = zoomFactor;
   } else {
     document.body.style.zoom = zoomFactor;
@@ -308,7 +328,8 @@ function changeFontSize(bigger) {
 
 function changeBackgroundColor(color) {
   if (color === "sepia") {
-    document.body.classList.remove("nightmode", "whitemode");
+    document.body.classList.remove("nightmode");
+    document.body.classList.remove("whitemode");
   } else if (color === "black") {
     document.body.classList.remove("whitemode");
     document.body.classList.add("nightmode");
@@ -318,28 +339,6 @@ function changeBackgroundColor(color) {
   }
   if (initStore()) store.set("preferredBackground", color);
 }
-
-function backgroundColorMenu() {
-  clearScreen(function() {
-    var text = document.getElementById("text");
-    text.innerHTML = "<p>Change the background color.</p>";
-    options = [
-      {name:"Return to the game.", group:"choice", resume:true},
-      {name:"Use a black background.", group:"choice", color:"black"},
-      {name:"Use a sepia background.", group:"choice", color:"sepia"},
-      {name:"Use a white background.", group:"choice", color:"white"},
-    ];
-    printOptions([""], options, function(option) {
-      if (option.resume) {
-        setButtonTitles();
-        return clearScreen(loadAndRestoreGame);
-      } else {
-        changeBackgroundColor(option.color);
-      }
-    })
-  });
-}
-
 
 
 function spell(num) {
@@ -497,9 +496,6 @@ function asyncConfirm(message, callback) {
 function clearScreen(code) {
     var text = document.getElementById("text");
     var container1 = document.getElementById("container1");
-
-    window.animateEnabled = true;
-    window.animationProperty = "animationName";
 
     if (window.animateEnabled && window.animationProperty && !window.isIosApp && !document.getElementById('container2')) {
       var container2 = document.createElement("div");
@@ -2651,6 +2647,40 @@ function aboutClick() {
     window.location.href = document.getElementById("aboutLink").href;
 }
 
+function loadPreferences() {
+  if (initStore()) {
+    store.get("preferredZoom", function(ok, preferredZoom) {
+      if (ok && !isNaN(parseFloat(preferredZoom))) {
+        setZoomFactor(parseFloat(preferredZoom));
+      }
+    });
+    store.get("preferredBackground", function(ok, preferredBackground) {
+      if (!/^(sepia|black|white)$/.test(preferredBackground)) {
+        preferredBackground = "sepia";
+      }
+      if (preferredBackground === "black") {
+        document.body.classList.add("nightmode");
+      } else if (preferredBackground === "white") {
+        document.body.classList.add("whitemode");
+      }
+    });
+    store.get("preferredAnimation", function(ok, preferredAnimation) {
+      window.animateEnabled = parseFloat(preferredAnimation) !== 2;
+    });
+  } else {
+    window.animateEnabled = true;
+  }
+  if (typeof document.body.style.animationName === "undefined") {
+    if (typeof document.body.style.webkitAnimationName === "undefined") {
+      window.animateEnabled = false;
+    } else {
+      window.animationProperty = "webkitAnimationName";
+    }
+  } else {
+    window.animationProperty = "animationName";
+  }
+}
+
 window.onerror=function(msg, file, line, stack) {
     if (window.console) {
       window.console.error(msg);
@@ -2697,23 +2727,7 @@ window.onload=function() {
     window.main = document.getElementById("main");
     var head = document.getElementsByTagName("head")[0];
     window.nav.setStartingStatsClone(window.stats);
-    if (initStore()) {
-      store.get("preferredZoom", function(ok, preferredZoom) {
-        if (ok && !isNaN(parseFloat(preferredZoom))) {
-          setZoomFactor(parseFloat(preferredZoom));
-        }
-      });
-      store.get("preferredBackground", function(ok, preferredBackground) {
-        if (!/^(sepia|black|white)$/.test(preferredBackground)) {
-          preferredBackground = "sepia";
-        }
-        if (preferredBackground === "black") {
-          document.body.classList.add("nightmode");
-        } else if (preferredBackground === "white") {
-          document.body.classList.add("whitemode");
-        }
-      });
-    }
+    loadPreferences();
     if (window.achievements && window.achievements.length) {
       nav.loadAchievements(window.achievements);
       checkAchievements(function() {});
@@ -2755,7 +2769,7 @@ window.onload=function() {
         }
         startupScene.execute();
       } else if (map.textOptionsMenu) {
-        textOptionsMenu();
+        textOptionsMenu({size:1, color:1, animation:1});
       } else {
         safeCall(null, loadAndRestoreGame);
       }
@@ -2784,23 +2798,10 @@ window.onload=function() {
         }
     }
     if (window.isCef || window.isNode || window.isMacApp) {
-      var buttons = document.getElementById("buttons");
-      buttons.appendChild(document.createTextNode(" "));
-      var menuButton = document.createElement("button");
-      menuButton.id = "menuButton";
-      setClass(menuButton, "spacedLink");
-      menuButton.onclick = showMenu;
-      menuButton.innerHTML = "Menu";
-      buttons.appendChild(menuButton);
-    } else if (window.isWeb) {
-      var buttons = document.getElementById("buttons");
-      buttons.appendChild(document.createTextNode(" "));
-      var menuButton = document.createElement("button");
-      menuButton.id = "menuButton";
-      setClass(menuButton, "spacedLink");
-      menuButton.onclick = textOptionsMenu;
-      menuButton.innerHTML = "Settings";
-      buttons.appendChild(menuButton);
+      var menuButton = document.getElementById("menuButton");
+      if (menuButton) {
+        menuButton.innerHTML = "Menu";
+      }
     }
     if (window.isWinOldApp) {
         absolutizeAboutLink();
@@ -2968,32 +2969,27 @@ if (!('ontouchstart' in window)) {
     "body.nightmode .choice label:hover {background-color: #555;}\n"+
     "body.whitemode .choice label:hover {background-color: #ddd;}\n";
 }
-if (window.isChromeApp) {
-  var base = document.createElement('base');
-  base.setAttribute("target", "_blank");
-  document.head.appendChild(base);
-
-  document.addEventListener( "DOMContentLoaded", function() {
-    var aboutLink = document.getElementById("aboutLink");
-    aboutLink.addEventListener("click", function() {
-      if (chrome.app.window) {
-        event.preventDefault();
-        chrome.app.window.create("credits.html", {}, function(w) {
-          w.contentWindow.addEventListener( "DOMContentLoaded", function() {
-            var win = this;
-            var back = win.document.getElementById("back");
-            back.addEventListener("click", function(event) {
-              event.preventDefault();
-              win.close();
-            }, false);
-            var base = win.document.createElement('base');
-            base.setAttribute("target", "_blank");
-            win.document.head.appendChild(base);
-            win.document.documentElement.style.overflowY = "scroll";
+function fixChromeLinks() {
+  var aboutLink = document.getElementById("aboutLink");
+  aboutLink.addEventListener("click", function() {
+    if (chrome.app.window) {
+      event.preventDefault();
+      chrome.app.window.create("credits.html", {}, function(w) {
+        w.contentWindow.addEventListener( "DOMContentLoaded", function() {
+          var win = this;
+          var back = win.document.getElementById("back");
+          back.addEventListener("click", function(event) {
+            event.preventDefault();
+            win.close();
           }, false);
-        });
-      }
-    }, false);
+          var base = win.document.createElement('base');
+          base.setAttribute("target", "_blank");
+          win.document.head.appendChild(base);
+          win.document.documentElement.style.overflowY = "scroll";
+        }, false);
+      });
+    }
+  }, false);
 
     var statsButton = document.getElementById("statsButton");
     if (statsButton) {
@@ -3028,7 +3024,21 @@ if (window.isChromeApp) {
       event.preventDefault();
     }, false);
 
-  }, false );
+  var menuButton = document.getElementById("menuButton");
+  menuButton.onclick = undefined;
+  menuButton.addEventListener("click", function() {
+    textOptionsMenu();
+  }, false);
+}
+if (window.isChromeApp) {
+  var base = document.createElement('base');
+  base.setAttribute("target", "_blank");
+  document.head.appendChild(base);
+
+  document.addEventListener("DOMContentLoaded", fixChromeLinks);
+  setInterval(function() {
+    document.body.style.height = document.querySelector(".container").offsetHeight + "px";
+  }, 100);
 }
 if (window.isCef) {
   var pollPurchases = function() {
