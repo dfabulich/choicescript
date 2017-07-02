@@ -3357,7 +3357,11 @@ Scene.prototype.evaluateExpr = function evaluateExpr(stack, parenthetical) {
 
     // Since this isn't a singleton, it must be an operator
     operator = Scene.operators[token.value];
-    if (!operator) throw new Error(this.lineMsg() + "Invalid expression at char "+token.pos+", expected OPERATOR, was: " + token.name + " [" + token.value + "]");
+    if (!operator) {
+      throw new Error(this.lineMsg() + "Invalid expression at char "+token.pos+", expected OPERATOR"+
+        (parenthetical?" or " + parenthetical : "")+
+        ", was: " + token.name + " [" + token.value + "]");
+    }
 
     if (token.value === '%') {
       this.warning("this is a bare % sign, which should be replaced with %+, %-, or modulo if you're really advanced.");
