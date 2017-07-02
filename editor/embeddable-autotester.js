@@ -5,7 +5,7 @@ function autotester(sceneText, nav, sceneName, extraLabels) {
   var coverage = [];
 
   var printed = [];
-  printx = function printx(msg, parent) {
+  printx = printParagraph = function printx(msg, parent) {
       //printed.push(msg);
   }
     
