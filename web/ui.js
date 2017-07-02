@@ -496,6 +496,7 @@ function asyncConfirm(message, callback) {
 function clearScreen(code) {
     var text = document.getElementById("text");
     var container1 = document.getElementById("container1");
+    if (!container1) throw new Error("<div id=container1> is missing from index.html");
 
     if (window.animateEnabled && window.animationProperty && !window.isIosApp && !document.getElementById('container2')) {
       var container2 = document.createElement("div");
