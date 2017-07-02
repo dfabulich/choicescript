@@ -1,16 +1,20 @@
 body {
+  position: relative;
   max-width: 680px;
+  min-height: 100vh; /* keep iOS address bar from popping in and out */
   _width:expression(this.scrollWidth > 680 ? "680px" : "auto");
   font-size: 100%;  /* reset for CWS */
   font: -apple-system-body; /* we'll override the font, but keep the size from iOS dynamic text sizing */
   font-family: Georgia,"Times New Roman",serif;
   background-color: #F7F4F1;
   color: rgba(0, 0, 0, 0.85);
-  margin: 8px auto; 
-  padding: 0 8px;
+  margin: 8px auto;
+  padding: 0;
   -webkit-user-select: text; /* selectable text for Chrome app support */
   transition-property: background-color, color;
   transition-duration: 2s;
+  -webkit-transition-property: background-color, color;
+  -webkit-transition-duration: 2s;
 }
 
 a {
@@ -22,6 +26,56 @@ a {
 
 #main {
 	line-height: 1.5;
+}
+
+.container {
+  position: absolute; /* so containers can overlap */
+  left: 0;
+  right: 0;
+  margin: 0 8px;
+  animation-duration: 0.5s;
+  -webkit-animation-duration: 0.5s;
+  transition-property: opacity;
+  transition-duration: 0.5s;
+  transition-timing-function: ease-in;
+  -webkit-transition-property: opacity;
+  -webkit-transition-duration: 0.5s;
+  -webkit-transition-timing-function: ease-in;
+}
+
+@keyframes containerslidein {
+  from {
+    transform: translateX(100%);
+  }
+
+  to {
+    transform: none;
+  }
+}
+
+@-webkit-keyframes containerslidein {
+  from {
+    -webkit-transform: translateX(100%);
+  }
+
+  to {
+    -webkit-transform: none;
+  }
+}
+
+.tempfocus:focus {
+  outline: none;
+}
+
+#loading {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+}
+
+.frozen {
+  overflow-x: hidden;
+  pointer-events: none;
 }
 
 #text img {
@@ -68,11 +122,76 @@ table {
 }
 
 .choice label{
+    position: relative; /* so the .shuttle can be positioned absolutely within it */
+    transition-property: background-color, color;
+    transition-duration: 0.1s;
+    -webkit-transition-property: background-color, color;
+    -webkit-transition-duration: 0.1s;
+    -webkit-tap-highlight-color: transparent;
     padding: 11px 8px 12px;
     display:block;
     border-color:#a9acaf;
     border-style:solid;
     border-width: 1px 1px 0px 1px
+}
+
+.shuttle {
+  position: absolute;
+  right: 0px;
+  top: 0px;
+  width: 20%;
+  height: 100%;
+  background-color: #626160; /* match next */
+  opacity: 0.25;
+  transition-property: opacity;
+  transition-duration: 0.3s;
+  -webkit-transition-property: opacity;
+  -webkit-transition-duration: 0.3s;
+}
+
+.shuttle.discovery {
+  width: 20%;
+  animation-name: shuttlefadein, shuttleslide, shuttlefadeout;
+  animation-duration: 0.75s, 1s, 1s;
+  animation-delay: 0s, 0.75s, 1.75s;
+  -webkit-animation-name: shuttlefadein, shuttleslide, shuttlefadeout;
+  -webkit-animation-duration: 0.75s, 1s, 1s;
+  -webkit-animation-delay: 0s, 0.75s, 1.75s;
+}
+
+@keyframes shuttlefadein {
+  from {opacity: 0;}
+  to {opacity: 0.25;}
+}
+
+@keyframes shuttlefadeout {
+  from {opacity: 0.25; transform: translateX(-403%);} /* borders, maybe? */
+  to {opacity: 0; transform: translateX(-403%);}
+}
+
+@keyframes shuttleslide {
+  from { opacity: 0.25; transform: translateX(0);}
+  to { opacity: 0.25; transform: translateX(-403%); }
+}
+
+@-webkit-keyframes shuttlefadein {
+  from {opacity: 0;}
+  to {opacity: 0.25;}
+}
+
+@-webkit-keyframes shuttlefadeout {
+  from {opacity: 0.25; -webkit-transform: translateX(-403%);} /* borders, maybe? */
+  to {opacity: 0; -webkit-transform: translateX(-403%);}
+}
+
+@-webkit-keyframes shuttleslide {
+  from { opacity: 0.25; -webkit-transform: translateX(0);}
+  to { opacity: 0.25; -webkit-transform: translateX(-403%); }
+}
+
+.selected {
+  color: rgba(255,255,255,0.85);
+  background-color: #007AFF;
 }
 
 .choice .firstChild{
@@ -131,7 +250,7 @@ input[type=email],input[type=password] {
     font-size:1.5em;
     font-weight:bolder;
     font-family: -apple-system, sans-serif; /* reset, for Android */
-    margin-bottom: 1em; /* reset button margin */
+    margin-bottom: 1rem; /* reset button margin */
     -webkit-appearance: none; /* Safari, don't override my CSS styles */
     color: #f7f4f1; /* Match background color */ 
     background-color: #626160;
@@ -278,6 +397,10 @@ body.nightmode a {
 
 body.nightmode .next {
   color: #242424; /* Match background color */
+  background-color: #D9D9D9;
+}
+
+body.nightmode .shuttle {
   background-color: #D9D9D9;
 }
 

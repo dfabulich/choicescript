@@ -5,7 +5,7 @@ function autotester(sceneText, nav, sceneName, extraLabels) {
   var coverage = [];
 
   var printed = [];
-  printx = function printx(msg, parent) {
+  printx = printParagraph = function printx(msg, parent) {
       //printed.push(msg);
   }
     
@@ -83,8 +83,8 @@ function autotester(sceneText, nav, sceneName, extraLabels) {
     var products = data.split(/ /);
     for (var i = 0; i < products.length; i++) {
       this.temps["choice_purchased_"+products[i]] = true;
-      if (!this.nav.products[products[i]] && products[i] != "adfree") {
-        throw new Error(this.lineMsg() + "The product " + products[i] + " wasn't declared in a *product command");
+      if ((!this.nav.products || !this.nav.products[products[i]]) && products[i] != "adfree") {
+        this.warning("The product " + products[i] + " wasn't declared in a *product command");
       }
     }
     this.temps.choice_purchase_supported = false;
@@ -227,7 +227,7 @@ function autotester(sceneText, nav, sceneName, extraLabels) {
   Scene.prototype.clone = function clone() {
     this.stats.scene = null;
     var clonedStats = dojoClone(this.stats);
-    var scene = new Scene(this.name, clonedStats, this.nav);
+    var scene = new Scene(this.name, clonedStats, this.nav, {secondaryMode:this.secondaryMode});
     scene.lines = this.lines;
     scene.labels = this.labels;
     scene.temps = dojoClone(this.temps);
@@ -290,7 +290,7 @@ function autotester(sceneText, nav, sceneName, extraLabels) {
         } else {
           //log("overcovered " + (this._lineNum+1) + " " + coverage[this._lineNum]);
           this["return"]();
-          return;
+          return true;
         }
     } else {
       return this.oldRunCommand(line);
@@ -334,6 +334,11 @@ function autotester(sceneText, nav, sceneName, extraLabels) {
     var result = this.parseGotoScene(data);
     this.verifySceneFile(result.sceneName);
     this.finished = true;
+  }
+
+  Scene.prototype.redirect_scene = function testRedirectScene(data) {
+    if (this.secondaryMode != "stats") throw new Error(this.lineMsg() + "The *redirect_scene command can only be used from the stats screen.");
+    this.goto_scene(data);
   }
 
   Scene.prototype.gosub_scene = function testGosubScene(data) {
@@ -410,6 +415,12 @@ function autotester(sceneText, nav, sceneName, extraLabels) {
   Scene.prototype.stat_chart = function() {
     this.parseStatChart();
   }
+
+  Scene.operators["/"] = function divide(v1,v2,line) {
+    v2 = num(v2, line);
+    if (v2 === 0) return 9007199254740991; //Number.MAX_SAFE_INTEGER
+    return num(v1,line) / num(v2,line);
+  };
   
   //Scene.prototype.choice = function() { this.finished = true;}
   
@@ -427,7 +438,13 @@ function autotester(sceneText, nav, sceneName, extraLabels) {
   nav.resetStats(startingStats);
 
   // *finish will barf if we use the real sceneName
-  var scene = new Scene(sceneName, startingStats, nav);
+  var secondaryMode = undefined;
+  if (sceneName == "choicescript_stats") {
+    secondaryMode = "stats";
+  } else if (sceneName == "choicescript_upgrade") {
+    secondaryMode = "upgrade";
+  }
+  var scene = new Scene(sceneName, startingStats, nav, {secondaryMode: secondaryMode});
   var originalScene = scene;
   scene.testPath = [sceneName];
   scene.loadLines(sceneText);
@@ -438,8 +455,10 @@ function autotester(sceneText, nav, sceneName, extraLabels) {
   if (extraLabels) {
     for (var i = 0; i < extraLabels.length; i++) {
       var extraLabel = extraLabels[i];
-      scene = new Scene(sceneName, startingStats, nav);
-      scene.loadLines(sceneText);
+      scene = new Scene(sceneName, startingStats, nav, {secondaryMode: secondaryMode});
+      scene.lines = originalScene.lines;
+      scene.labels = originalScene.labels;
+      scene.loaded = true;
       scene.targetLabel = extraLabel;
       scene.testPath = [sceneName,",","goto " + extraLabel.label];
       log (scene.testPath.join(''));

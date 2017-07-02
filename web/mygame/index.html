@@ -45,7 +45,7 @@ window.storeName = null;
 var rootDir = "../";
 </script>
 </head>
-<body>
+<body><div class="container" id="container1">
 <div id="advertisement">
 </div>
 <div id="header">
@@ -57,7 +57,13 @@ var rootDir = "../";
   <p id="headerLinks">
       <!-- <a href="credits.html" id="aboutLink" class="spacedLink">About</a> -->
     </p>
-  <p id="buttons"><button id="statsButton" class="spacedLink" onclick="showStats()">Show Stats</button> <button id="restartButton" class="spacedLink" onclick="restartGame('prompt')">Restart</button> <button id="achievementsButton" onclick="showAchievements()" class="spacedLink" style="display: none">Achievements</button> <button id="bugButton" onclick="reportBug()" class="spacedLink" style="display: none">Report Bug</button></p>
+  <p id="buttons">
+    <button id="statsButton" class="spacedLink" onclick="showStats()">Show Stats</button>
+    <button id="restartButton" class="spacedLink" onclick="restartGame('prompt')">Restart</button>
+    <button id="achievementsButton" onclick="showAchievements()" class="spacedLink" style="display: none">Achievements</button>
+    <button id="bugButton" onclick="reportBug()" class="spacedLink" style="display: none">Report Bug</button>
+    <button id="menuButton" onclick="textOptionsMenu()" class="spacedLink">Settings</button>
+  </p>
 </div>
 <div id="main">
 <div id="text">

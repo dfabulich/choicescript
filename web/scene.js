@@ -71,6 +71,8 @@ function Scene(name, stats, nav, options) {
 
     // where should we print text?
     this.target = null;
+
+    this.accumulatedParagraph = [];
 }
 
 Scene.prototype.reexecute = function reexecute() {
@@ -108,19 +110,19 @@ Scene.prototype.printLoop = function printLoop() {
           continue;
         }
         this.indent = indent;
-        if (!this.runCommand(line)) {
-            if (/^\s*#/.test(line)) {
-                if (this.temps.fakeChoiceEnd) {
-                    this.rollbackLineCoverage();
-                    this.lineNum = this.temps.fakeChoiceEnd;
-                    this.rollbackLineCoverage();
-                    delete this.temps.fakeChoiceEnd;
-                    delete this.temps.fakeChoiceLines;
-                    continue;
-                } else {
-                    throw new Error(this.lineMsg() + "It is illegal to fall out of a *choice statement; you must *goto or *finish before the end of the indented block.");
-                }
+        if (/^\s*#/.test(line)) {
+            if (this.temps.fakeChoiceEnd) {
+                this.rollbackLineCoverage();
+                this.lineNum = this.temps.fakeChoiceEnd;
+                this.rollbackLineCoverage();
+                delete this.temps.fakeChoiceEnd;
+                delete this.temps.fakeChoiceLines;
+                continue;
+            } else {
+                throw new Error(this.lineMsg() + "It is illegal to fall out of a *choice statement; you must *goto or *finish before the end of the indented block.");
             }
+        }
+        if (!this.runCommand(line)) {
             this.prevLine = "text";
             this.screenEmpty = false;
             this.printLine(line);
@@ -140,13 +142,12 @@ Scene.prototype.printLoop = function printLoop() {
 
 Scene.prototype.dedent = function dedent(newDent) {};
 
-Scene.prototype.printLine = function printLine(line, parent) {
+Scene.prototype.printLine = function printLine(line) {
     if (!line) return null;
     line = this.replaceVariables(line.replace(/^ */, ""));
-    if (!parent) parent = this.target;
-    printx(line, parent);
+    this.accumulatedParagraph.push(line);
     // insert extra space unless the line ends with hyphen or dash
-    if (!/[-\u2011-\u2014]$/.test(line)) printx(' ', parent);
+    if (!/[-\u2011-\u2014]$/.test(line)) this.accumulatedParagraph.push(' ');
 };
 
 Scene.prototype.replaceVariables = function (line) {
@@ -254,12 +255,8 @@ Scene.prototype.replaceVariables = function (line) {
 };
 
 Scene.prototype.paragraph = function paragraph() {
-    if (this.prevLine == "text") {
-        println("", this.target);
-        println("", this.target);
-    } else if (this.prevLine == "block") {
-      println("", this.target);
-    }
+    printParagraph(this.accumulatedParagraph.join(""));
+    this.accumulatedParagraph = [];
     this.prevLine = "empty";
 };
 
@@ -832,6 +829,7 @@ Scene.prototype["return"] = function scene_return() {
       scene.prevLine = this.prevLine;
       scene.lineNum = stackFrame.lineNum;
       scene.indent = stackFrame.indent;
+      scene.accumulatedParagraph = this.accumulatedParagraph;
       scene.execute();
     } else if (!this.temps.choice_substack && !this.stats.choice_subscene_stack) {
       throw new Error(this.lineMsg() + "invalid return; gosub has not yet been called");
@@ -942,6 +940,7 @@ Scene.prototype.goto_scene = function gotoScene(data) {
     var scene = new Scene(result.sceneName, this.stats, this.nav, {debugMode:this.debugMode, secondaryMode:this.secondaryMode, saveSlot:this.saveSlot});
     scene.screenEmpty = this.screenEmpty;
     scene.prevLine = this.prevLine;
+    scene.accumulatedParagraph = this.accumulatedParagraph;
     if (typeof result.label != "undefined") scene.targetLabel = {label:result.label, origin:this.name, originLine:this.lineNum};
     scene.execute();
 };
@@ -1072,9 +1071,9 @@ Scene.prototype.purchase = function purchase_button(data) {
       self.prevLine = "block";
       if (isRestorePurchasesSupported()) {
         self.prevLine = "text";
-        printx("If you've already purchased, click here to ", target);
-        printLink(target, "#", "restore purchases",
-          function() {
+        printLink(printParagraph("If you've already purchased, click here to "), "#", "restore purchases",
+          function(e) {
+            preventDefault(e);
             safeCall(self, function() {
                 restorePurchases(product, function(purchased) {
                   if (purchased) {
@@ -1099,6 +1098,7 @@ Scene.prototype.purchase = function purchase_button(data) {
 };
 
 Scene.prototype.purchase_discount = function purchase_discount(line) {
+  this.paragraph();
   var args = trim(String(line)).split(" ");
   if (args.length != 5) throw new Error(this.lineMsg() + "expected five arguments, saw "+args.length+": " + line);
   var product = args[0];
@@ -1173,7 +1173,7 @@ Scene.prototype.create = function create(line) {
     var token = stack[0];
     if (!/STRING|NUMBER|VAR/.test(token.name)) complexError();
     if ("VAR" == token.name && !/^true|false$/i.test(token.value)) complexError();
-    if ("STRING" == token.name && /\$!?!?{/.test(token.value)) throw new Error(this.lineMsg() + "Invalid create instruction, value must be a simple string without ${}: " + line);
+    if ("STRING" == token.name && /(\$|@)!?!?{/.test(token.value)) throw new Error(this.lineMsg() + "Invalid create instruction, value must be a simple string without ${} or @{}: " + line);
     var value = this.evaluateExpr(stack);
     this.stats[variable] = value;
     if (this.nav) this.nav.startingStats[variable] = value;
@@ -1296,8 +1296,18 @@ Scene.prototype.parseOptions = function parseOptions(startIndent, choicesRemaini
     var atLeastOneSelectableOption = false;
     var prevOption, ifResult;
     var startingLine = this.lineNum;
-    function removeModifierCommand() {
-      line = trim(line.replace(/^\s*\*(\w+)(.*)/, "$2"));
+    var self = this;
+    function removeModifierCommand(stripParethentical) {
+      if (stripParethentical) {
+        var openParen = line.indexOf("(")+1;
+        var closingParen = matchBracket(line, "()", openParen);
+        if (closingParen == -1) {
+          throw new Error(self.lineMsg() + "missing closing parenthesis");
+        }
+        line = trim(line.substr(closingParen+1));
+      } else {
+        line = trim(line.replace(/^\s*\*(\w+)(.*)/, "$2"));
+      }
       parsed = /^\s*\*(\w+)(.*)/.exec(line);
       if (parsed) {
         command = parsed[1].toLowerCase();
@@ -1589,7 +1599,7 @@ Scene.prototype.page_break = function page_break(buttonName) {
 // *line_break
 // single line break in the middle of a paragraph
 Scene.prototype.line_break = function line_break() {
-    println("", this.target);
+    this.accumulatedParagraph.push('[n/]');
 };
 
 // *image
@@ -2079,15 +2089,21 @@ Scene.prototype.ending = function ending() {
 };
 
 Scene.prototype.restart = function restart() {
-  if (this.secondaryMode) throw new Error(this.lineMsg() + "Cannot *restart in " + this.secondaryMode + " mode");
+  if (this.secondaryMode && this.secondaryMode != "stats") {
+    throw new Error(this.lineMsg() + "Cannot *restart in " + this.secondaryMode + " mode");
+  }
   this.finished = true;
   delayBreakEnd();
-  var self = this;
-  self.reset();
-  var startupScene = self.nav.getStartupScene();
-  var scene = new Scene(startupScene, self.stats, self.nav, {debugMode:self.debugMode, secondaryMode:false});
-  scene.resetPage();
-
+  this.reset();
+  var startupScene = this.nav.getStartupScene();
+  if (this.secondaryMode == "stats") {
+    this.redirect_scene(startupScene);
+  } else {
+    var self = this;
+    clearScreen(function() {
+      self.goto_scene(startupScene);
+    })
+  }
 };
 
 /* Subscribe options, in JSON format.
@@ -2102,6 +2118,7 @@ Only Coming Soon pages use "allowContinue"
 "message" is the message we'll show to justify subscribing
 the default message is: "we'll notify you when our next game is ready!" */
 Scene.prototype.subscribe = function scene_subscribe(data) {
+  this.paragraph();
   var options = {};
   if (data) {
     try {
@@ -3082,6 +3099,10 @@ Scene.prototype.delay_break = function(durationInSeconds) {
 
 // *delay_ending 1200 $2.99 $0.99
 Scene.prototype.delay_ending = function(data) {
+  // Steam doesn't do delay breaks and especially not skiponce
+  if (typeof window != "undefined" && !!window.isSteamApp) {
+    return this.ending();
+  }
   var args = data.split(/ /);
   var durationInSeconds = args[0];
   var fullPriceGuess = args[1];
@@ -3341,7 +3362,11 @@ Scene.prototype.evaluateExpr = function evaluateExpr(stack, parenthetical) {
 
     // Since this isn't a singleton, it must be an operator
     operator = Scene.operators[token.value];
-    if (!operator) throw new Error(this.lineMsg() + "Invalid expression at char "+token.pos+", expected OPERATOR, was: " + token.name + " [" + token.value + "]");
+    if (!operator) {
+      throw new Error(this.lineMsg() + "Invalid expression at char "+token.pos+", expected OPERATOR"+
+        (parenthetical?" or " + parenthetical : "")+
+        ", was: " + token.name + " [" + token.value + "]");
+    }
 
     if (token.value === '%') {
       this.warning("this is a bare % sign, which should be replaced with %+, %-, or modulo if you're really advanced.");
@@ -3778,6 +3803,7 @@ Scene.prototype.achievement = function scene_achievement(data) {
   }
   var title = parsed[4];
   if (/(\$\{)/.test(title)) throw new Error(this.lineMsg()+"Invalid *achievement. ${} not permitted in achievement title: " + title);
+  if (/(\@\{)/.test(title)) throw new Error(this.lineMsg()+"Invalid *achievement. @{} not permitted in achievement title: " + title);
   if (/(\[)/.test(title)) throw new Error(this.lineMsg()+"Invalid *achievement. [] not permitted in achievement title: " + title);
   if (title.length > 50) throw new Error(this.lineMsg()+"Invalid *achievement. Title must be 50 characters or fewer: " + title);
 
@@ -3789,6 +3815,7 @@ Scene.prototype.achievement = function scene_achievement(data) {
   }
   var preEarnedDescription = trim(line);
   if (/(\$\{)/.test(preEarnedDescription)) throw new Error(this.lineMsg()+"Invalid *achievement. ${} not permitted in achievement description: " + preEarnedDescription);
+  if (/(\@\{)/.test(preEarnedDescription)) throw new Error(this.lineMsg()+"Invalid *achievement. @{} not permitted in achievement description: " + preEarnedDescription);
   if (/(\[)/.test(preEarnedDescription)) throw new Error(this.lineMsg()+"Invalid *achievement. [] not permitted in achievement description: " + preEarnedDescription);
   if (preEarnedDescription.length > 200) throw new Error(this.lineMsg()+"Invalid *achievement. Pre-earned description must be 200 characters or fewer: " + preEarnedDescription);
 
@@ -3806,6 +3833,7 @@ Scene.prototype.achievement = function scene_achievement(data) {
   if (indent) {
     postEarnedDescription = trim(line);
     if (/(\$\{)/.test(postEarnedDescription)) throw new Error(this.lineMsg()+"Invalid *achievement. ${} not permitted in achievement description: " + postEarnedDescription);
+    if (/(\@\{)/.test(postEarnedDescription)) throw new Error(this.lineMsg()+"Invalid *achievement. @{} not permitted in achievement description: " + postEarnedDescription);
     if (/(\[)/.test(postEarnedDescription)) throw new Error(this.lineMsg()+"Invalid *achievement. [] not permitted in achievement description: " + postEarnedDescription);
     if (postEarnedDescription.length > 200) throw new Error(this.lineMsg()+"Invalid *achievement. Post-earned description must be 200 characters or fewer: " + postEarnedDescription);
   } else {
@@ -3864,7 +3892,7 @@ Scene.prototype.warning = function scene_warning(message) {
 Scene.prototype.feedback = function scene_feedback() {
   if (typeof window == "undefined" || this.randomtest) return;
   this.paragraph();
-  this.printLine("On a scale from 1 to 10, how likely are you to recommend this game to a friend?[n/][n/]");
+  this.printLine("On a scale from 1 to 10, how likely are you to recommend this game to a friend?");
   this.paragraph();
   var options = [{name:"10 (Most likely)"}];
   for (var i = 9; i > 1; i--) {
@@ -3966,7 +3994,11 @@ Scene.operators = {
     "+": function add(v1,v2,line) { return num(v1,line) + num(v2,line); },
     "-": function subtract(v1,v2,line) { return num(v1,line) - num(v2,line); },
     "*": function multiply(v1,v2,line) { return num(v1,line) * num(v2,line); },
-    "/": function divide(v1,v2,line) { return num(v1,line) / num(v2,line); },
+    "/": function divide(v1,v2,line) {
+      v2 = num(v2, line);
+      if (v2 === 0) throw new Error("line "+line+": can't divide by zero");
+      return num(v1,line) / num(v2,line);
+    },
     "%": function modulo(v1,v2,line) { return num(v1,line) % num(v2,line); },
     "^": function exponent(v1,v2,line) { return Math.pow(num(v1,line), num(v2,line)); },
     "&": function concatenate(v1,v2) { return [v1,v2].join(""); },

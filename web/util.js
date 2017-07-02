@@ -44,6 +44,7 @@ _global = this;
   _global.isSafari = /Safari/.test(userAgent);
   _global.isIE = /(MSIE|Trident)/.test(userAgent);
   _global.isIPad = /iPad/.test(userAgent);
+  _global.isIPhone = /iPhone/.test(userAgent);
   _global.isKindleFire = /Kindle Fire/.test(userAgent);
   _global.isWinStoreApp = "ms-appx:" == protocol;
   _global.isCef = !!_global.cefQuery;
@@ -842,6 +843,7 @@ function num(x, line) {
     if (!line) line = "UNKNOWN";
     var x_num = parseFloat(x);
     if (isNaN(x_num)) throw new Error("line "+line+": Not a number: " + x);
+    if (!isFinite(x_num)) throw new Error("line "+line+": Not finite " + x);
     return x_num;
 }
 
@@ -950,4 +952,23 @@ function parseDateStringInCurrentTimezone(YYYY_MM_DD, line) {
   var dayOfMonth = parseInt(result[3],10);
   var shortMonthString = shortMonthStrings[oneBasedMonthNumber];
   return new Date(shortMonthString + " " + dayOfMonth + ", " + fullYear);
+}
+
+function matchBracket(line, brackets, startIndex) {
+  var openBracket = brackets[0];
+  var closeBracket = brackets[1];
+  var brackets = 0;
+  for (var i = startIndex; i < line.length; i++) {
+    var c = line.charAt(i);
+    if (c === openBracket) {
+      brackets++;
+    } else if (c === closeBracket) {
+      if (brackets) {
+        brackets--;
+      } else {
+        return i;
+      }
+    }
+  }
+  return -1;
 }

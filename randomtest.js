@@ -156,6 +156,11 @@ if (typeof importScripts != "undefined") {
         console.log(lineBuffer.join(""));
         lineBuffer = [];
       };
+      printParagraph = function printParagraph(msg) {
+        if (msg === null || msg === undefined || msg === "") return;
+        println(msg);
+        console.log("");
+      };
 
       Scene.prototype.printLine = oldPrintLine;
     }
@@ -228,7 +233,7 @@ function chooseIndex(options, choiceLine, sceneName) {
 }
 
 var printed = [];
-printx = println = function printx(msg, parent) {
+printx = println = printParagraph = function printx(msg, parent) {
   //printed.push(msg);
 }
 
@@ -260,6 +265,11 @@ if (showText) {
     var logMsg = lineBuffer.join("");
     console.log(logMsg);
     lineBuffer = [];
+  };
+  printParagraph = function printParagraph(msg) {
+    if (msg === null || msg === undefined || msg === "") return;
+    println(msg);
+    console.log("");
   };
 } else {
   oldPrintLine = Scene.prototype.printLine;
@@ -381,6 +391,7 @@ Scene.prototype.tokenizeExpr = function cached_tokenizeExpr(str) {
 // }
 
 Scene.prototype.ending = function () {
+  this.paragraph();
   this.reset();
   this.finished = true;
 }

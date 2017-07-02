@@ -29,6 +29,13 @@ function println(msg, parent) {
     printed.push(msg);
     printed.push("<br>");
 }
+function printParagraph(msg, parent) {
+    if (msg === "") return;
+    printed.push("<p>");
+    printed.push(msg);
+    printed.push("</p>");
+}
+_global = this;
 
 isRhino = typeof(java) != "undefined";
 
@@ -46,6 +53,7 @@ printDiscount = function() {};
 
 isRegistered = function() {return false;};
 isRegisterAllowed = function() {return false;};
+isFullScreenAdvertisingSupported = function() {return false;};
 isRestorePurchasesSupported = function() {return false;};
 areSaveSlotsSupported = function() {return false;};
 isAdvertisingSupported = function() {return false;};
