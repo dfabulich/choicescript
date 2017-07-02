@@ -54,6 +54,8 @@ Scene.prototype.verifyImage = function webVerifyImage(fileName) {
   knownImages[fileName] = 1;
 }
 
+Scene.prototype.feedback = function webFeedback() {};
+
 Scene.prototype.testFinish = function commandLineTestFinish(buttonName) {
   var nextSceneName;
   for (var i = 0; i < sceneList.length; i++) {

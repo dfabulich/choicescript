@@ -255,7 +255,9 @@ if (fullGame) {
   }());
 }
 
-(function(){
+
+
+var exitCode = (function(){
   for (var i = 0; i < list.length; i++) {
     print(list[i]);
     if (isRhino) java.lang.Thread.sleep(100); // sleep to allow print statements to flush :-(
@@ -278,7 +280,8 @@ if (fullGame) {
       if (isRhino) {
         java.lang.System.exit(1);
       } else {
-        process.exit(1);
+        process.exitCode = 1;
+        return 1;
       }
     }
     if (uncovered) {
@@ -287,6 +290,7 @@ if (fullGame) {
   }
 }());
 
+if (exitCode) return;
 
 var allLinesTested = true;
 for (var i = 0; i < uncoveredScenes.length; i++) {
