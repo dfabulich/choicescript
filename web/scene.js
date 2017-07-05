@@ -729,6 +729,13 @@ Scene.prototype.resetCheckedPurchases = function resetCheckedPurchases() {
 Scene.prototype.resetPage = function resetPage() {
     var self = this;
     this.resetCheckedPurchases();
+
+	// Modify url for Annotator uniqueness
+	unloadHypothesis();
+	window.history.pushState({}, "", "?"+this.name+"-"+this.lineNum); //Doesn't work locally in firefox
+	//window.location.href = window.location.href.split("?")[0] + "?" + this.name+"-"+this.lineNum; // Causes reload.
+	loadHypothesis();
+	
     clearScreen(function() {
       // save in the background, eventually
       self.save("");
