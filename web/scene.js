@@ -18,13 +18,16 @@
  */
 function Scene(name, stats, nav, options) {
     if (!name) name = "";
-    if (!stats) stats = {};
+    if (!stats) stats = {implicit_control_flow:false};
+    if (stats["implicit_control_flow"] === undefined) stats["implicit_control_flow"] = false;
     // the name of the scene
     this.name = name;
 
     // the permanent statistics and the temporary values
     this.stats = stats;
-    this.temps = {choice_reuse:"allow", choice_user_restored:false};
+    // implicit_control_flow controls whether goto is necessary to leave options (true means no)
+    // _choiceEnds stores the line numbers to jump to when choice #options end.
+    this.temps = {choice_reuse:"allow", choice_user_restored:false, _choiceEnds:{}};
 
     // the navigator determines which scene comes next
     this.nav = nav;
@@ -101,26 +104,21 @@ Scene.prototype.printLoop = function printLoop() {
         } else if (indent < this.indent) {
             this.dedent(indent);
         }
-        if (this.temps.fakeChoiceLines && this.temps.fakeChoiceLines[this.lineNum]) {
-          this.rollbackLineCoverage();
-          this.lineNum = this.temps.fakeChoiceEnd;
-          this.rollbackLineCoverage();
-          delete this.temps.fakeChoiceEnd;
-          delete this.temps.fakeChoiceLines;
-          continue;
+        // Ability to end a choice #option without goto is guarded by implicit_control_flow variable
+        if (this.temps._choiceEnds[this.lineNum] && 
+                (this.stats["implicit_control_flow"] || this.temps._fakeChoiceDepth > 0)) {
+            // Skip to the end of the choice if we hit the end of an #option
+            this.rollbackLineCoverage();
+            this.lineNum = this.temps._choiceEnds[this.lineNum];
+            this.rollbackLineCoverage();
+            if (this.temps._fakeChoiceDepth > 0) {
+                this.temps._fakeChoiceDepth--;
+            }
+            continue;
         }
         this.indent = indent;
         if (/^\s*#/.test(line)) {
-            if (this.temps.fakeChoiceEnd) {
-                this.rollbackLineCoverage();
-                this.lineNum = this.temps.fakeChoiceEnd;
-                this.rollbackLineCoverage();
-                delete this.temps.fakeChoiceEnd;
-                delete this.temps.fakeChoiceLines;
-                continue;
-            } else {
-                throw new Error(this.lineMsg() + "It is illegal to fall out of a *choice statement; you must *goto or *finish before the end of the indented block.");
-            }
+            throw new Error(this.lineMsg() + "It is illegal to fall out of a *choice statement; you must *goto or *finish before the end of the indented block.");
         }
         if (!this.runCommand(line)) {
             this.prevLine = "text";
@@ -498,7 +496,7 @@ Scene.prototype.checkSum = function checkSum(crc) {
     if (this.temps.choice_crc != crc) {
       // The scene has changed; restart the scene
       var userRestored = this.temps.choice_user_restored || false;
-      this.temps = {choice_reuse:"allow", choice_user_restored:userRestored, choice_crc: crc};
+      this.temps = {choice_reuse:"allow", choice_user_restored:userRestored, choice_crc: crc, _choiceEnds:{}};
       this.lineNum = 0;
       this.indent = 0;
     }
@@ -679,21 +677,23 @@ Scene.prototype.choice = function choice(data) {
       self.standardResolution(option);
     });
     this.finished = true;
-    if (this.fakeChoice) {
-      this.temps.fakeChoiceEnd = this.lineNum;
-      var fakeChoiceLines = {};
-      for (i = 0; i < options.length; i++) {
-        fakeChoiceLines[options[i].line-1] = 1;
+    if (this.temps._fakeChoiceDepth > 0 || this.stats["implicit_control_flow"]) {
+      if (!this.temps._choiceEnds) {
+        this.temps._choiceEnds = {};
       }
-      this.temps.fakeChoiceLines = fakeChoiceLines;
+      for (i = 0; i < options.length; i++) {
+        this.temps._choiceEnds[options[i].line-1] = this.lineNum;
+      }
     }
     this.lineNum = startLineNum;
 };
 
 Scene.prototype.fake_choice = function fake_choice(data) {
-    this.fakeChoice = true;
-    this.choice(data, true);
-    delete this.fakeChoice;
+    if (this.temps._fakeChoiceDepth === undefined) {
+        this.temps._fakeChoiceDepth = 0;
+    }
+    this.temps._fakeChoiceDepth++;
+    this.choice(data);
 };
 
 Scene.prototype.standardResolution = function(option) {
@@ -1260,6 +1260,11 @@ Scene.prototype.setVar = function setVar(variable, value) {
         }
         this.stats[variable] = value;
         if (this.saveSlot == "temp") tempStatWrites[variable] = value;
+        // Implicit control flow flag is ideally set just once in startup.
+        // Removing these lines makes this not possible with quicktest.
+        if (variable == "implicit_control_flow" && this.nav) {
+            this.nav.startingStats["implicit_control_flow"] = value;
+        }
     } else {
         this.temps[variable] = value;
     }
@@ -1287,6 +1292,7 @@ Scene.prototype.parseOptions = function parseOptions(startIndent, choicesRemaini
     // then the nextIndent is 4 for "spaceship"
     var nextIndent = null;
     var options = [];
+    var choiceEnds = [];
     var line;
     var currentChoice = choicesRemaining[0];
     if (!currentChoice) currentChoice = "choice";
@@ -1337,7 +1343,8 @@ Scene.prototype.parseOptions = function parseOptions(startIndent, choicesRemaini
             if (choicesRemaining.length>1 && !suboptionsEncountered) {
                 throw new Error(this.lineMsg() + "invalid indent, there were subchoices remaining: [" + choicesRemaining.join(",") + "]");
             }
-            if (bodyExpected && !this.fakeChoice) {
+            if (bodyExpected && 
+                    (this.temps._fakeChoiceDepth === undefined || this.temps._fakeChoiceDepth < 1)) {
                 throw new Error(this.lineMsg() + "Expected choice body");
             }
             if (!atLeastOneSelectableOption) this.conflictingOptions("line " + (startingLine+1) + ": No selectable options");
@@ -1348,6 +1355,9 @@ Scene.prototype.parseOptions = function parseOptions(startIndent, choicesRemaini
             prevOption = options[options.length-1];
             if (!prevOption.endLine) prevOption.endLine = this.lineNum;
             this.lineNum--;
+            for (i = 0; i < choiceEnds.length; i++) {
+                this.temps._choiceEnds[choiceEnds[i]] = this.lineNum;
+            }
             this.rollbackLineCoverage();
             return options;
         }
@@ -1417,6 +1427,7 @@ Scene.prototype.parseOptions = function parseOptions(startIndent, choicesRemaini
             } else if ("if" == command) {
               ifResult = this.parseOptionIf(data, command);
               if (ifResult) {
+                choiceEnds.push(this.lineNum);
                 inlineIf = ifResult.condition;
                 if (ifResult.result) {
                   line = ifResult.line;
@@ -1500,7 +1511,8 @@ Scene.prototype.parseOptions = function parseOptions(startIndent, choicesRemaini
         }
         if (!unselectable) atLeastOneSelectableOption = true;
     }
-    if (bodyExpected && !this.fakeChoice) {
+    if (bodyExpected && 
+            (this.temps._fakeChoiceDepth === undefined || this.temps._fakeChoiceDepth < 1)) {
         throw new Error(this.lineMsg() + "Expected choice body");
     }
     prevOption = options[options.length-1];
@@ -3297,7 +3309,9 @@ Scene.prototype.skipTrueBranch = function skipTrueBranch(inElse) {
 };
 
 Scene.prototype["else"] = Scene.prototype.elsif = Scene.prototype.elseif = function scene_else(data, inChoice) {
-    if (inChoice) {
+    // Authors can avoid using goto to get out of an if branch with:  *set implicit_control_flow true
+    // This avoids the error message at the end of the function.
+    if (inChoice || this.stats["implicit_control_flow"]) {
       this.skipTrueBranch(true);
       return;
     }
