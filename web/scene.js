@@ -18,15 +18,16 @@
  */
 function Scene(name, stats, nav, options) {
     if (!name) name = "";
-    if (!stats) stats = {};
+    if (!stats) stats = {implicit_flow_control:false};
+    if (stats["implicit_flow_control"] === undefined) stats["implicit_flow_control"] = false;
     // the name of the scene
     this.name = name;
 
     // the permanent statistics and the temporary values
     this.stats = stats;
     // implicit_flow_control controls whether goto is necessary to leave options (true means no)
-    // __choiceEnds stores the line numbers to jump to when choice #options end.
-    this.temps = {choice_reuse:"allow", choice_user_restored:false,implicit_flow_control:false, __choiceEnds:{}};
+    // _choiceEnds stores the line numbers to jump to when choice #options end.
+    this.temps = {choice_reuse:"allow", choice_user_restored:false, _choiceEnds:{}};
 
     // the navigator determines which scene comes next
     this.nav = nav;
@@ -104,10 +105,10 @@ Scene.prototype.printLoop = function printLoop() {
             this.dedent(indent);
         }
         // Ability to end a choice #option without goto is guarded by implicit_flow_control variable
-        if (this.temps.__choiceEnds[this.lineNum] && (this.temps["implicit_flow_control"] || this.fakeChoice)) {
+        if (this.temps._choiceEnds[this.lineNum] && (this.stats["implicit_flow_control"] || this.fakeChoice)) {
             // Skip to the end of the choice if we hit the end of an #option
             this.rollbackLineCoverage();
-            this.lineNum = this.temps.__choiceEnds[this.lineNum];
+            this.lineNum = this.temps._choiceEnds[this.lineNum];
             this.paragraph();
             this.rollbackLineCoverage();
             continue;
@@ -682,12 +683,12 @@ Scene.prototype.choice = function choice(data) {
       self.standardResolution(option);
     });
     this.finished = true;
-    if (this.fakeChoice || this.temps["implicit_flow_control"]) {
-      if (!this.temps.__choiceEnds) {
-        this.temps.__choiceEnds = {};
+    if (this.fakeChoice || this.stats["implicit_flow_control"]) {
+      if (!this.temps._choiceEnds) {
+        this.temps._choiceEnds = {};
       }
       for (i = 0; i < options.length; i++) {
-        this.temps.__choiceEnds[options[i].line-1] = this.lineNum;
+        this.temps._choiceEnds[options[i].line-1] = this.lineNum;
       }
     }
     this.lineNum = startLineNum;
@@ -1352,7 +1353,7 @@ Scene.prototype.parseOptions = function parseOptions(startIndent, choicesRemaini
             if (!prevOption.endLine) prevOption.endLine = this.lineNum;
             this.lineNum--;
             for (i = 0; i < choiceEnds.length; i++) {
-                this.temps.__choiceEnds[choiceEnds[i]] = this.lineNum;
+                this.temps._choiceEnds[choiceEnds[i]] = this.lineNum;
             }
             this.rollbackLineCoverage();
             return options;
@@ -3298,7 +3299,7 @@ Scene.prototype.skipTrueBranch = function skipTrueBranch(inElse) {
 Scene.prototype["else"] = Scene.prototype.elsif = Scene.prototype.elseif = function scene_else(data, inChoice) {
     // Authors can avoid using goto to get out of an if branch with:  *set implicit_flow_control true
     // This avoids the error message at the end of the function.
-    if (inChoice || this.temps["implicit_flow_control"]) {
+    if (inChoice || this.stats["implicit_flow_control"]) {
       this.skipTrueBranch(true);
       return;
     }

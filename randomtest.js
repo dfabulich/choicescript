@@ -458,11 +458,11 @@ Scene.prototype.choice = function choice(data, fakeChoice) {
       };
       this.temps.fakeChoiceLines = fakeChoiceLines;
     }
-    if (!this.temps.__choiceEnds) {
-        this.temps.__choiceEnds = {};
+    if (!this.temps._choiceEnds) {
+        this.temps._choiceEnds = {};
     }
     for (i = 0; i < options.length; i++) {
-        this.temps.__choiceEnds[options[i].line-1] = this.lineNum;
+        this.temps._choiceEnds[options[i].line-1] = this.lineNum;
     }
     this.paragraph();
     var optionName = this.replaceVariables(item.ultimateOption.name);
