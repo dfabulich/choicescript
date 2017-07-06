@@ -208,6 +208,12 @@ function autotester(sceneText, nav, sceneName, extraLabels) {
       }
       
       this.finished = true;
+      if (!this.temps._choiceEnds) {
+        this.temps.choiceEnds = {};
+      }
+      for (i = 0; i < options.length; i++) {
+        this.temps.choiceEnds[options[i].line-1] = this.lineNum;
+      }
       
       function flattenOptions(list, options, flattenedOption) {
         if (!flattenedOption) flattenedOption = {};
