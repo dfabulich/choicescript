@@ -458,6 +458,12 @@ Scene.prototype.choice = function choice(data, fakeChoice) {
       };
       this.temps.fakeChoiceLines = fakeChoiceLines;
     }
+    if (!this.temps.__choiceEnds) {
+        this.temps.__choiceEnds = {};
+    }
+    for (i = 0; i < options.length; i++) {
+        this.temps.__choiceEnds[options[i].line-1] = this.lineNum;
+    }
     this.paragraph();
     var optionName = this.replaceVariables(item.ultimateOption.name);
     if (showChoices) this.randomLog("*choice " + (choiceLine+1)+'#'+(index+1)+' (line '+item.ultimateOption.line+') #' + optionName);

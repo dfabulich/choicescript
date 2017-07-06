@@ -24,7 +24,9 @@ function Scene(name, stats, nav, options) {
 
     // the permanent statistics and the temporary values
     this.stats = stats;
-    this.temps = {choice_reuse:"allow", choice_user_restored:false};
+    // implicit_flow_control controls whether goto is necessary to leave options (true means no)
+    // __choiceEnds stores the line numbers to jump to when choice #options end.
+    this.temps = {choice_reuse:"allow", choice_user_restored:false,implicit_flow_control:false, __choiceEnds:{}};
 
     // the navigator determines which scene comes next
     this.nav = nav;
@@ -101,13 +103,14 @@ Scene.prototype.printLoop = function printLoop() {
         } else if (indent < this.indent) {
             this.dedent(indent);
         }
-        if (this.temps.fakeChoiceLines && this.temps.fakeChoiceLines[this.lineNum]) {
-          this.rollbackLineCoverage();
-          this.lineNum = this.temps.fakeChoiceEnd;
-          this.rollbackLineCoverage();
-          delete this.temps.fakeChoiceEnd;
-          delete this.temps.fakeChoiceLines;
-          continue;
+        // Ability to end a choice #option without goto is guarded by implicit_flow_control variable
+        if (this.temps.__choiceEnds[this.lineNum] && (this.temps["implicit_flow_control"] || this.fakeChoice)) {
+            // Skip to the end of the choice if we hit the end of an #option
+            this.rollbackLineCoverage();
+            this.lineNum = this.temps.__choiceEnds[this.lineNum];
+            this.paragraph();
+            this.rollbackLineCoverage();
+            continue;
         }
         this.indent = indent;
         if (/^\s*#/.test(line)) {
@@ -679,13 +682,13 @@ Scene.prototype.choice = function choice(data) {
       self.standardResolution(option);
     });
     this.finished = true;
-    if (this.fakeChoice) {
-      this.temps.fakeChoiceEnd = this.lineNum;
-      var fakeChoiceLines = {};
-      for (i = 0; i < options.length; i++) {
-        fakeChoiceLines[options[i].line-1] = 1;
+    if (this.fakeChoice || this.temps["implicit_flow_control"]) {
+      if (!this.temps.__choiceEnds) {
+        this.temps.__choiceEnds = {};
       }
-      this.temps.fakeChoiceLines = fakeChoiceLines;
+      for (i = 0; i < options.length; i++) {
+        this.temps.__choiceEnds[options[i].line-1] = this.lineNum;
+      }
     }
     this.lineNum = startLineNum;
 };
@@ -1286,6 +1289,7 @@ Scene.prototype.parseOptions = function parseOptions(startIndent, choicesRemaini
     // then the nextIndent is 4 for "spaceship"
     var nextIndent = null;
     var options = [];
+    var choiceEnds = [];
     var line;
     var currentChoice = choicesRemaining[0];
     if (!currentChoice) currentChoice = "choice";
@@ -1347,6 +1351,9 @@ Scene.prototype.parseOptions = function parseOptions(startIndent, choicesRemaini
             prevOption = options[options.length-1];
             if (!prevOption.endLine) prevOption.endLine = this.lineNum;
             this.lineNum--;
+            for (i = 0; i < choiceEnds.length; i++) {
+                this.temps.__choiceEnds[choiceEnds[i]] = this.lineNum;
+            }
             this.rollbackLineCoverage();
             return options;
         }
@@ -1416,6 +1423,7 @@ Scene.prototype.parseOptions = function parseOptions(startIndent, choicesRemaini
             } else if ("if" == command) {
               ifResult = this.parseOptionIf(data, command);
               if (ifResult) {
+                choiceEnds.push(this.lineNum);
                 inlineIf = ifResult.condition;
                 if (ifResult.result) {
                   line = ifResult.line;
@@ -3288,7 +3296,9 @@ Scene.prototype.skipTrueBranch = function skipTrueBranch(inElse) {
 };
 
 Scene.prototype["else"] = Scene.prototype.elsif = Scene.prototype.elseif = function scene_else(data, inChoice) {
-    if (inChoice) {
+    // Authors can avoid using goto to get out of an if branch with:  *set implicit_flow_control true
+    // This avoids the error message at the end of the function.
+    if (inChoice || this.temps["implicit_flow_control"]) {
       this.skipTrueBranch(true);
       return;
     }
