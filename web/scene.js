@@ -18,14 +18,14 @@
  */
 function Scene(name, stats, nav, options) {
     if (!name) name = "";
-    if (!stats) stats = {implicit_flow_control:false};
-    if (stats["implicit_flow_control"] === undefined) stats["implicit_flow_control"] = false;
+    if (!stats) stats = {implicit_control_flow:false};
+    if (stats["implicit_control_flow"] === undefined) stats["implicit_control_flow"] = false;
     // the name of the scene
     this.name = name;
 
     // the permanent statistics and the temporary values
     this.stats = stats;
-    // implicit_flow_control controls whether goto is necessary to leave options (true means no)
+    // implicit_control_flow controls whether goto is necessary to leave options (true means no)
     // _choiceEnds stores the line numbers to jump to when choice #options end.
     this.temps = {choice_reuse:"allow", choice_user_restored:false, _choiceEnds:{}};
 
@@ -104,8 +104,8 @@ Scene.prototype.printLoop = function printLoop() {
         } else if (indent < this.indent) {
             this.dedent(indent);
         }
-        // Ability to end a choice #option without goto is guarded by implicit_flow_control variable
-        if (this.temps._choiceEnds[this.lineNum] && (this.stats["implicit_flow_control"] || this.fakeChoice)) {
+        // Ability to end a choice #option without goto is guarded by implicit_control_flow variable
+        if (this.temps._choiceEnds[this.lineNum] && (this.stats["implicit_control_flow"] || this.fakeChoice)) {
             // Skip to the end of the choice if we hit the end of an #option
             this.rollbackLineCoverage();
             this.lineNum = this.temps._choiceEnds[this.lineNum];
@@ -123,7 +123,7 @@ Scene.prototype.printLoop = function printLoop() {
                 delete this.temps.fakeChoiceLines;
                 continue;
             } else {
-                throw new Error(this.lineMsg() + "It is illegal to fall out of a *choice statement; you must *goto or *finish before the end of the indented block.");
+                throw new Error(this.lineMsg() + "It is illegal to fall BLAT out of a *choice statement; you must *goto or *finish before the end of the indented block." + this.temps._choiceEnds[this.lineNum] + "/" + this.stats["implicit_control_flow"]);
             }
         }
         if (!this.runCommand(line)) {
@@ -683,7 +683,7 @@ Scene.prototype.choice = function choice(data) {
       self.standardResolution(option);
     });
     this.finished = true;
-    if (this.fakeChoice || this.stats["implicit_flow_control"]) {
+    if (this.fakeChoice || this.stats["implicit_control_flow"]) {
       if (!this.temps._choiceEnds) {
         this.temps._choiceEnds = {};
       }
@@ -3351,9 +3351,9 @@ Scene.prototype.skipTrueBranch = function skipTrueBranch(inElse) {
 };
 
 Scene.prototype["else"] = Scene.prototype.elsif = Scene.prototype.elseif = function scene_else(data, inChoice) {
-    // Authors can avoid using goto to get out of an if branch with:  *set implicit_flow_control true
+    // Authors can avoid using goto to get out of an if branch with:  *set implicit_control_flow true
     // This avoids the error message at the end of the function.
-    if (inChoice || this.stats["implicit_flow_control"]) {
+    if (inChoice || this.stats["implicit_control_flow"]) {
       this.skipTrueBranch(true);
       return;
     }
