@@ -18,7 +18,7 @@
  */
 function SceneNavigator(sceneList) {
     this.setSceneList(sceneList);
-    this.startingStats = {};
+    this.startingStats = {implicit_flow_control:false};
 }
 
 SceneNavigator.prototype.setSceneList = function setSceneList(sceneList) {
