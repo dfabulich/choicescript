@@ -123,7 +123,7 @@ Scene.prototype.printLoop = function printLoop() {
                 delete this.temps.fakeChoiceLines;
                 continue;
             } else {
-                throw new Error(this.lineMsg() + "It is illegal to fall BLAT out of a *choice statement; you must *goto or *finish before the end of the indented block." + this.temps._choiceEnds[this.lineNum] + "/" + this.stats["implicit_control_flow"]);
+                throw new Error(this.lineMsg() + "It is illegal to fall out of a *choice statement; you must *goto or *finish before the end of the indented block.");
             }
         }
         if (!this.runCommand(line)) {
@@ -862,7 +862,6 @@ Scene.prototype.params = function scene_params(data) {
         this.temps["param_" + nextParamNum] = paramVal;
         nextParamNum++;
     }
-    // TODO:  Gosub arguments as well
 };
 
 Scene.prototype["return"] = function scene_return() {
@@ -3357,7 +3356,7 @@ Scene.prototype["else"] = Scene.prototype.elsif = Scene.prototype.elseif = funct
       this.skipTrueBranch(true);
       return;
     }
-    throw new Error(this.lineMsg() + "It is illegal to fall in to an *else statement; you must *goto or *finish before the end of the indented block.");
+    throw new Error(this.lineMsg() + "It is illegal to fall in to an *else statement BLAT; you must *goto or *finish before the end of the indented block.");
 };
 
 // break the string up into a stack of tokens, defined in Scene.tokens below

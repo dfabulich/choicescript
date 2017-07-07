@@ -30,7 +30,7 @@ function autotester(sceneText, nav, sceneName, extraLabels) {
     buttonName = this.replaceVariables(buttonName);
     if (this.testFinish) this.testFinish();
   }
-  
+
   // Don't test for *bugs; *if cheating makes *bugs fake-reachable
   Scene.prototype.bug = function test_bug() {
     this.finished = true;
@@ -179,6 +179,12 @@ function autotester(sceneText, nav, sceneName, extraLabels) {
       }
       var choiceLine = this.lineNum;
       var options = this.parseOptions(this.indent, groups);
+      if (!this.temps._choiceEnds) {
+        this.temps._choiceEnds = {};
+      }
+      for (i = 0; i < options.length; i++) {
+        this.temps._choiceEnds[options[i].line-1] = this.lineNum;
+      }
       var flattenedOptions = [];
       flattenOptions(flattenedOptions, options);
       
@@ -208,12 +214,6 @@ function autotester(sceneText, nav, sceneName, extraLabels) {
       }
       
       this.finished = true;
-      if (!this.temps._choiceEnds) {
-        this.temps._choiceEnds = {};
-      }
-      for (i = 0; i < options.length; i++) {
-        this.temps._choiceEnds[options[i].line-1] = this.lineNum;
-      }
       
       function flattenOptions(list, options, flattenedOption) {
         if (!flattenedOption) flattenedOption = {};
@@ -330,6 +330,13 @@ function autotester(sceneText, nav, sceneName, extraLabels) {
   Scene.prototype.gosub = function scene_gosub(label, inChoice) {
     if (!seen[label.toLowerCase()]) this.oldGosub(label);
   }
+
+  // Params can't be filled with reasonable values (we don't know the types,
+  // let alone additional input constraints), so just treat as return.
+  // Randomtest will test gosubs with a good mix of parameters anyway.
+  Scene.prototype.params = function scene_params(data) {
+      this.finished = true;
+  };
   
   Scene.prototype.ending = function test_ending() {
     this.finished = true;
