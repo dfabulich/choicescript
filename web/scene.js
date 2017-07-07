@@ -1316,6 +1316,11 @@ Scene.prototype.setVar = function setVar(variable, value) {
         }
         this.stats[variable] = value;
         if (this.saveSlot == "temp") tempStatWrites[variable] = value;
+        // Implicit control flow flag is ideally set just once in startup.
+        // Removing these lines makes this not possible with quicktest.
+        if (variable == "implicit_control_flow" && this.nav) {
+            this.nav.startingStats["implicit_control_flow"] = value;
+        }
     } else {
         this.temps[variable] = value;
     }
