@@ -105,14 +105,15 @@ Scene.prototype.printLoop = function printLoop() {
             this.dedent(indent);
         }
         // Ability to end a choice #option without goto is guarded by implicit_control_flow variable
-        if (this.temps._choiceEnds[this.lineNum] && (this.stats["implicit_control_flow"] || this.fakeChoiceDepth > 0)) {
+        if (this.temps._choiceEnds[this.lineNum] && 
+                (this.stats["implicit_control_flow"] || this.temps._fakeChoiceDepth > 0)) {
             // Skip to the end of the choice if we hit the end of an #option
             this.rollbackLineCoverage();
             this.lineNum = this.temps._choiceEnds[this.lineNum];
             this.paragraph();
             this.rollbackLineCoverage();
-            if (this.fakeChoiceDepth > 0) {
-                this.fakeChoiceDepth--;
+            if (this.temps._fakeChoiceDepth > 0) {
+                this.temps._fakeChoiceDepth--;
             }
             continue;
         }
@@ -664,6 +665,7 @@ Scene.prototype.runCommand = function runCommand(line) {
 // if multiple groups are specified, allow the user to make multiple choices simultaneously
 //   all multi-dimensional choices must be valid (otherwise throw a parse error)
 Scene.prototype.choice = function choice(data) {
+    alert(this.temps._fakeChoiceDepth + " realChoice");
     var startLineNum = this.lineNum;
     var groups = data.split(/ /);
     for (var i = 0; i < groups.length; i++) {
@@ -677,7 +679,7 @@ Scene.prototype.choice = function choice(data) {
       self.standardResolution(option);
     });
     this.finished = true;
-    if (this.fakeChoiceDepth > 0 || this.stats["implicit_control_flow"]) {
+    if (this.temps._fakeChoiceDepth > 0 || this.stats["implicit_control_flow"]) {
       if (!this.temps._choiceEnds) {
         this.temps._choiceEnds = {};
       }
@@ -689,10 +691,10 @@ Scene.prototype.choice = function choice(data) {
 };
 
 Scene.prototype.fake_choice = function fake_choice(data) {
-    if (this.fakeChoiceDepth === undefined) {
-        this.fakeChoiceDepth = 0;
+    if (this.temps._fakeChoiceDepth === undefined) {
+        this.temps._fakeChoiceDepth = 0;
     }
-    this.fakeChoiceDepth++
+    this.temps._fakeChoiceDepth++;
     this.choice(data);
 };
 
@@ -1395,7 +1397,8 @@ Scene.prototype.parseOptions = function parseOptions(startIndent, choicesRemaini
             if (choicesRemaining.length>1 && !suboptionsEncountered) {
                 throw new Error(this.lineMsg() + "invalid indent, there were subchoices remaining: [" + choicesRemaining.join(",") + "]");
             }
-            if (bodyExpected && this.fakeChoiceDepth < 1) {
+            if (bodyExpected && 
+                    (this.temps._fakeChoiceDepth === undefined || this.temps._fakeChoiceDepth < 1)) {
                 throw new Error(this.lineMsg() + "Expected choice body");
             }
             if (!atLeastOneSelectableOption) this.conflictingOptions("line " + (startingLine+1) + ": No selectable options");
@@ -1562,7 +1565,8 @@ Scene.prototype.parseOptions = function parseOptions(startIndent, choicesRemaini
         }
         if (!unselectable) atLeastOneSelectableOption = true;
     }
-    if (bodyExpected && this.fakeChoiceDepth < 1) {
+    if (bodyExpected && 
+            (this.temps._fakeChoiceDepth === undefined || this.temps._fakeChoiceDepth < 1)) {
         throw new Error(this.lineMsg() + "Expected choice body");
     }
     prevOption = options[options.length-1];
