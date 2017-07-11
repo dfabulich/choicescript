@@ -3352,7 +3352,7 @@ Scene.prototype["else"] = Scene.prototype.elsif = Scene.prototype.elseif = funct
       this.skipTrueBranch(true);
       return;
     }
-    throw new Error(this.lineMsg() + "It is illegal to fall in to an *else statement BLAT; you must *goto or *finish before the end of the indented block.");
+    throw new Error(this.lineMsg() + "It is illegal to fall in to an *else statement; you must *goto or *finish before the end of the indented block.");
 };
 
 // break the string up into a stack of tokens, defined in Scene.tokens below
