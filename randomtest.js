@@ -450,14 +450,6 @@ Scene.prototype.choice = function choice(data, fakeChoice) {
     var index = chooseIndex(flattenedOptions, choiceLine, this.name);
 
     var item = flattenedOptions[index];
-    if (this.fakeChoice) {
-      this.temps.fakeChoiceEnd = this.lineNum;
-      var fakeChoiceLines = {};
-      for (var i = 0; i < options.length; i++) {
-        fakeChoiceLines[options[i].line-1] = 1;
-      };
-      this.temps.fakeChoiceLines = fakeChoiceLines;
-    }
     if (!this.temps._choiceEnds) {
         this.temps._choiceEnds = {};
     }
