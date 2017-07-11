@@ -167,7 +167,7 @@ function autotester(sceneText, nav, sceneName, extraLabels) {
   }
   
   
-  Scene.prototype.choice = function choice(data, fakeChoice) {
+  Scene.prototype.choice = function choice(data) {
       var groups = ["choice"];
       if (data) {
         groups = data.split(/ /);
@@ -192,14 +192,6 @@ function autotester(sceneText, nav, sceneName, extraLabels) {
           var item = flattenedOptions[index];
           this.printLine(item.ultimateOption.name);
           var scene = this.clone();
-          if (this.fakeChoice) {
-            scene.temps.fakeChoiceEnd = this.lineNum;
-            var fakeChoiceLines = {};
-            for (var i = 0; i < options.length; i++) {
-              fakeChoiceLines[options[i].line-1] = 1;
-            };
-            scene.temps.fakeChoiceLines = fakeChoiceLines;
-          }
           scene.testOption = item;
           scene.testChoiceLine = choiceLine;
           scene.testPath.push(',');

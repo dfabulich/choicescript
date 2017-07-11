@@ -118,7 +118,7 @@ Scene.prototype.printLoop = function printLoop() {
         }
         this.indent = indent;
         if (/^\s*#/.test(line)) {
-            throw new Error(this.lineMsg() + "It is illegal to fall out of a *choice statement; you must *goto or *finish before the end of the indented block." + this.temps._choiceEnds[this.lineNum] + "/" + this.fakeChoiceDepth);
+            throw new Error(this.lineMsg() + "It is illegal to fall out of a *choice statement; you must *goto or *finish before the end of the indented block.");
         }
         if (!this.runCommand(line)) {
             this.prevLine = "text";
@@ -693,7 +693,7 @@ Scene.prototype.fake_choice = function fake_choice(data) {
         this.fakeChoiceDepth = 0;
     }
     this.fakeChoiceDepth++
-    this.choice(data, true);
+    this.choice(data);
 };
 
 Scene.prototype.standardResolution = function(option) {

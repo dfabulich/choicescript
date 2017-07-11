@@ -439,7 +439,7 @@ Scene.prototype.purchase = function random_purchase(data) {
   if (typeof this.temps["choice_purchased_"+product] === "undefined") throw new Error(this.lineMsg() + "Didn't check_purchases on this page");
 };
 
-Scene.prototype.choice = function choice(data, fakeChoice) {
+Scene.prototype.choice = function choice(data) {
     var groups = ["choice"];
     if (data) groups = data.split(/ /);
     var choiceLine = this.lineNum;
