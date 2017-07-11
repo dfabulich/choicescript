@@ -105,17 +105,20 @@ Scene.prototype.printLoop = function printLoop() {
             this.dedent(indent);
         }
         // Ability to end a choice #option without goto is guarded by implicit_control_flow variable
-        if (this.temps._choiceEnds[this.lineNum] && (this.stats["implicit_control_flow"] || this.fakeChoice)) {
+        if (this.temps._choiceEnds[this.lineNum] && (this.stats["implicit_control_flow"] || this.fakeChoiceDepth > 0)) {
             // Skip to the end of the choice if we hit the end of an #option
             this.rollbackLineCoverage();
             this.lineNum = this.temps._choiceEnds[this.lineNum];
             this.paragraph();
             this.rollbackLineCoverage();
+            if (this.fakeChoiceDepth > 0) {
+                this.fakeChoiceDepth--;
+            }
             continue;
         }
         this.indent = indent;
         if (/^\s*#/.test(line)) {
-            throw new Error(this.lineMsg() + "It is illegal to fall out of a *choice statement; you must *goto or *finish before the end of the indented block.");
+            throw new Error(this.lineMsg() + "It is illegal to fall out of a *choice statement; you must *goto or *finish before the end of the indented block." + this.temps._choiceEnds[this.lineNum] + "/" + this.fakeChoiceDepth);
         }
         if (!this.runCommand(line)) {
             this.prevLine = "text";
@@ -674,7 +677,7 @@ Scene.prototype.choice = function choice(data) {
       self.standardResolution(option);
     });
     this.finished = true;
-    if (this.fakeChoice || this.stats["implicit_control_flow"]) {
+    if (this.fakeChoiceDepth > 0 || this.stats["implicit_control_flow"]) {
       if (!this.temps._choiceEnds) {
         this.temps._choiceEnds = {};
       }
@@ -686,9 +689,11 @@ Scene.prototype.choice = function choice(data) {
 };
 
 Scene.prototype.fake_choice = function fake_choice(data) {
-    this.fakeChoice = true;
+    if (this.fakeChoiceDepth === undefined) {
+        this.fakeChoiceDepth = 0;
+    }
+    this.fakeChoiceDepth++
     this.choice(data, true);
-    delete this.fakeChoice;
 };
 
 Scene.prototype.standardResolution = function(option) {
@@ -1390,7 +1395,7 @@ Scene.prototype.parseOptions = function parseOptions(startIndent, choicesRemaini
             if (choicesRemaining.length>1 && !suboptionsEncountered) {
                 throw new Error(this.lineMsg() + "invalid indent, there were subchoices remaining: [" + choicesRemaining.join(",") + "]");
             }
-            if (bodyExpected && !this.fakeChoice) {
+            if (bodyExpected && this.fakeChoiceDepth < 1) {
                 throw new Error(this.lineMsg() + "Expected choice body");
             }
             if (!atLeastOneSelectableOption) this.conflictingOptions("line " + (startingLine+1) + ": No selectable options");
@@ -1557,7 +1562,7 @@ Scene.prototype.parseOptions = function parseOptions(startIndent, choicesRemaini
         }
         if (!unselectable) atLeastOneSelectableOption = true;
     }
-    if (bodyExpected && !this.fakeChoice) {
+    if (bodyExpected && this.fakeChoiceDepth < 1) {
         throw new Error(this.lineMsg() + "Expected choice body");
     }
     prevOption = options[options.length-1];
