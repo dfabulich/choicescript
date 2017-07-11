@@ -665,7 +665,6 @@ Scene.prototype.runCommand = function runCommand(line) {
 // if multiple groups are specified, allow the user to make multiple choices simultaneously
 //   all multi-dimensional choices must be valid (otherwise throw a parse error)
 Scene.prototype.choice = function choice(data) {
-    alert(this.temps._fakeChoiceDepth + " realChoice");
     var startLineNum = this.lineNum;
     var groups = data.split(/ /);
     for (var i = 0; i < groups.length; i++) {
