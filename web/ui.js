@@ -780,8 +780,8 @@ function printOptions(groups, options, callback) {
       return false;
   };
 
-  if (!options) throw new Error(this.lineMsg()+"undefined options");
-  if (!options.length) throw new Error(this.lineMsg()+"no options");
+  if (!options) throw new Error("undefined options");
+  if (!options.length) throw new Error("no options");
   // global num will be used to assign accessKeys to the options
   var globalNum = 1;
   var currentOptions = options;

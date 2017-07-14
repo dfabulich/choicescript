@@ -2804,11 +2804,10 @@ Scene.prototype.deobfuscatePassword = function deobfuscatePassword(password) {
 };
 
 Scene.prototype.stat_chart = function stat_chart() {
+  this.paragraph();
   var rows = this.parseStatChart();
   var target = this.target;
   if (!target) target = document.getElementById('text');
-
-  if (this.prevLine == "text") println("", target);
 
   var barWidth = 0;
   var standardFontSize = 0;
