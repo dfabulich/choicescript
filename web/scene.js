@@ -1230,6 +1230,14 @@ Scene.prototype.getVar = function getVar(variable) {
     if (variable == "choice_restore_purchases_allowed") return isRestorePurchasesSupported();
     if (variable == "choice_save_allowed") return areSaveSlotsSupported();
     if (variable == "choice_time_stamp") return Math.floor(new Date()/1000);
+    if (variable == "choice_background_color") return returnBackgroundColor();
+    if (variable == "choice_nightmode") {
+      if (returnBackgroundColor() == "black") {
+        return true
+      } else {
+        return false
+      };
+    };
     if ("undefined" === typeof this.temps[variable]) {
         if ("undefined" === typeof this.stats[variable]) {
             throw new Error(this.lineMsg() + "Non-existent variable '"+variable+"'");

@@ -340,6 +340,19 @@ function changeBackgroundColor(color) {
   if (initStore()) store.set("preferredBackground", color);
 }
 
+function returnBackgroundColor(classNameToTestFor) {
+    var classNames = document.body.className.split(' ');
+    for (var i = 0; i < classNames.length; i++) {
+        if (classNames[i].replace(/mode$/, "") !== classNames[i]) {
+          if (classNames[i] == "nightmode") {
+            return "black";
+          } else {
+            return classNames[i].replace(/mode$/, "");
+          }
+        }
+    }
+    return "sepia";
+}
 
 function spell(num) {
   if (num > 99) return num;
