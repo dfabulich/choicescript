@@ -798,17 +798,12 @@ Scene.prototype["goto"] = function scene_goto(line) {
 };
 
 Scene.prototype.gosub = function scene_gosub(data) {
-    label = /\w+/.exec(data)[0];
-    rest = data.substring(label.length+1);
-    args = [];
-    while (more = /(\w+)(.*)$/.exec(rest)) {
-        if (stringFinder = /^\s*("[^"]*")(.*)$/.exec(rest)) {
-            args.push(this.evaluateValueExpr(stringFinder[1]));
-            rest = stringFinder[2];
-        } else {
-            args.push(this.evaluateValueExpr(more[1]));
-            rest = more[2];
-        }
+    var label = /\S+/.exec(data)[0];
+    var rest = data.substring(label.length+1);
+    var args = [];
+    var stack = this.tokenizeExpr(rest);
+    while (stack.length) {
+      args.push(this.evaluateValueToken(stack.shift(), stack));
     }
     if (!this.temps.choice_substack) {
       this.temps.choice_substack = [];
@@ -956,28 +951,33 @@ Scene.prototype.reset = function reset() {
 };
 
 Scene.prototype.parseGotoScene = function parseGotoScene(data) {
-  var sceneName, label, param = [];
+  var sceneName, label, param = [], stack;
+
   if (/[\[\{]/.test(data)) {
-    var stack = this.tokenizeExpr(data);
+    stack = this.tokenizeExpr(data);
     sceneName = this.evaluateReference(stack, {toLowerCase: false});
     // Labels are required for arguments to avoid ambiguity
     if (stack.length) {
       label = this.evaluateReference(stack);
     }
-    while (stack.length > 0) {
+    while (stack.length) {
       // Arguments when treating gosub_scene like a function call
-      param.push(this.evaluateValueExpr(stack.shift()));
+      param.push(this.evaluateValueToken(stack.shift(), stack));
     }
   } else {
-    var words = data.split(/ /);
-    sceneName = words.shift();
-    // Labels are required for arguments to avoid ambiguity
-    if (words.length) {
-      label = words.shift();
-    }
-    while (words.length > 0) {
-      // Arguments when treating gosub_scene like a function call
-      param.push(this.evaluateValueExpr(words.shift()));
+    // scenes and labels can contain hyphens and other non-expression punctuation
+    // so we'll try to extract the first two words as the scene and label
+    var match = /(\S+)\s+(\S+)\s*(.*)/.exec(data);
+    if (match) {
+      sceneName = match[1];
+      label = match[2];
+      stack = this.tokenizeExpr(match[3]);
+      while (stack.length) {
+        // Arguments when treating gosub_scene like a function call
+        param.push(this.evaluateValueToken(stack.shift(), stack));
+      }
+    } else {
+      sceneName = data;
     }
   }
   return {sceneName:sceneName, label:label, param:param};
