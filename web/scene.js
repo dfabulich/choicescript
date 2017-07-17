@@ -838,6 +838,7 @@ Scene.prototype.params = function scene_params(data) {
     // All parameters, even those not named, exposed as param_1, param_2 etc.
     var words = /\w+/.exec(data);
     var nextParamNum = 1;
+    this.temps.param_count = this.temps.param.length;
     while (words) {
         var varName = words[0];
         this.validateVariable(varName);
