@@ -864,6 +864,12 @@ Scene.prototype["return"] = function scene_return() {
       this.indent = stackFrame.indent;
     } else if (this.stats.choice_subscene_stack && this.stats.choice_subscene_stack.length) {
       stackFrame = this.stats.choice_subscene_stack.pop();
+      if (stackFrame.name == this.name) {
+        this.temps = stackFrame.temps;
+        this.lineNum = stackFrame.lineNum-1;
+        this.indent = stackFrame.indent;
+        return;
+      }
       this.finished = true;
       this.skipFooter = true;
       var scene = new Scene(stackFrame.name, this.stats, this.nav, {debugMode:this.debugMode, secondaryMode:this.secondaryMode, saveSlot:this.saveSlot});
@@ -987,6 +993,13 @@ Scene.prototype.parseGotoScene = function parseGotoScene(data) {
 //
 Scene.prototype.goto_scene = function gotoScene(data) {
     var result = this.parseGotoScene(data);
+
+    if (result.sceneName == this.name) {
+      this["goto"](result.label);
+      this.temps = {choice_reuse:"allow", choice_user_restored:false, _choiceEnds:{}};
+      this.temps.param = result.param;
+      return;
+    }
 
     this.finished = true;
     this.skipFooter = true;
