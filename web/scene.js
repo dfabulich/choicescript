@@ -1599,7 +1599,14 @@ Scene.prototype.page_break = function page_break(buttonName) {
 // *line_break
 // single line break in the middle of a paragraph
 Scene.prototype.line_break = function line_break() {
-    this.accumulatedParagraph.push('[n/]');
+    // We want to prevent a huge <p><br></p> between blocks
+    // so if there's existing text we'll just toss in a [n/]
+    // and if there's no text yet, we'll directly insert a <br>
+    if (this.accumulatedParagraph.length) {
+      this.accumulatedParagraph.push('[n/]');
+    } else {
+      println();
+    }
 };
 
 // *image
