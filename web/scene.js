@@ -1605,6 +1605,7 @@ Scene.prototype.line_break = function line_break() {
 // *image
 // display named image
 Scene.prototype.image = function image(data, invert) {
+    this.paragraph();
     data = data || "";
     data = this.replaceVariables(data);
     var match = /(\S+) (\S+)(.*)/.exec(data);
