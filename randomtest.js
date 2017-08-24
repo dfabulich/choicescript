@@ -17,8 +17,7 @@
  * either express or implied.
  */
 
-// usage: randomtest iterations gameName randomSeed delay trial
-// e.g.   randomtest 10000 mygame 0 false false
+// usage: randomtest num=10000 game=mygame seed=0 delay=false trial=false
 
 var isRhino = false;
 var iterations = 10;
@@ -31,17 +30,43 @@ var showText = false;
 var highlightGenderPronouns = false;
 var showChoices = true;
 var avoidUsedOptions = true;
+var recordBalance = false;
 var slurps = {}
 function parseArgs(args) {
-  if (args[0]) iterations = args[0];
-  if (args[1]) gameName = args[1];
-  if (args[2]) randomSeed = args[2];
-  if (args[3]) delay = args[3] && args[3] !== "false";
-  if (args[4]) isTrial = args[4] && args[4] !== "false";
-  if (args[5]) showText = args[5] && args[5] !== "false";
-  if (args[6]) avoidUsedOptions = args[6] && args[6] !== "false";
-  if (args[7]) showChoices = args[7] && args[7] !== "false";
+  for (var i = 0; i < args.length; i++) {
+    var parts = args[i].split("=");
+    if (parts.length !== 2) throw new Error("Couldn't parse argument " + (i+1) + ": " + args[i]);
+    var name = parts[0];
+    var value = parts[1];
+    if (name === "num") {
+      iterations = value;
+    } else if (name === "game") {
+      gameName = value;
+    } else if (name === "seed") {
+      randomSeed = value;
+    } else if (name === "delay") {
+      delay = (value !== "false");
+    } else if (name === "trial") {
+      isTrial = (value !== "false");
+    } else if (name === "showText") {
+      showText = (value !== "false");
+    } else if (name === "avoidUsedOptions") {
+      avoidUsedOptions = (value !== "false");
+    } else if (name === "showChoices") {
+      showChoices = (value !== "false");
+    } else if (name === "showCoverage") {
+      showCoverage = (value !== "false");
+    } else if (name === "recordBalance") {
+      recordBalance = (value !== "false");
+    }
+  }
   if (showText) showCoverage = false;
+  if (recordBalance) {
+    showText = false;
+    showChoices = false;
+    showCoverage = false;
+    avoidUsedOptions = false;
+  }
 }
 
 var wordCount = 0;
@@ -136,6 +161,7 @@ if (typeof importScripts != "undefined") {
     showChoices = event.data.showChoices;
     highlightGenderPronouns = event.data.highlightGenderPronouns;
     avoidUsedOptions = event.data.avoidUsedOptions;
+    recordBalance = event.data.recordBalance;
     if (event.data.sceneContent) {
       for (scene in event.data.sceneContent) {
         slurps['web/'+gameName+'/scenes/'+scene] = event.data.sceneContent[scene];
@@ -295,6 +321,38 @@ Scene.prototype.randomLog = function randomLog(msg) {
 }
 
 Scene.prototype.randomtest = true;
+
+var balanceValues = {};
+function findBalancedValue(values, percentage) {
+  var targetPosition = values.length * percentage / 100;
+  values.sort();
+  var prevValue = values[0];
+  var prevPrevValue = values[0];
+  for (var i = 1; i < values.length; i++) {
+    if (values[i] == prevValue) continue;
+    if (i >= targetPosition) {
+      return (prevValue + values[i]) / 2;
+    }
+    prevPrevValue = prevValue;
+    prevValue = values[i];
+  }
+  return (prevPrevValue + prevValue) / 2;
+}
+
+Scene.prototype.recordBalance = function(value, operator, rate, id) {
+  if (!recordBalance) return 50;
+  if (!balanceValues[this.name]) balanceValues[this.name] = {};
+  if (balanceValues[this.name][id] && balanceValues[this.name][id].length > 999) {
+    if (operator == ">" || operator == ">=") rate = 100 - rate;
+    var statName = 'auto' + '_' + this.name + '_' + id;
+    var result = findBalancedValue(balanceValues[this.name][id], rate);
+    this.nav.startingStats[statName] = this.stats[statName] = result;
+    return result;
+  }
+  if (!balanceValues[this.name][id]) balanceValues[this.name][id] = [];
+  balanceValues[this.name][id].push(num(value, this.line));
+  throw new Error("record balance");
+}
 
 Scene.prototype.save_game = noop;
 
@@ -624,6 +682,7 @@ function randomtest() {
   randomSeed *= 1;
   for (i = 0; i < iterations; i++) {
     console.log("*****Seed " + (i+randomSeed));
+    nav.resetStats(stats);
     timeout = null;
     Math.seedrandom(i+randomSeed);
     var scene = new Scene(nav.getStartupScene(), stats, nav, false);
@@ -636,6 +695,10 @@ function randomtest() {
       }
       println(); // flush buffer
     } catch (e) {
+      if (e.message == "record balance") {
+        iterations++;
+        continue;
+      }
       console.log("RANDOMTEST FAILED: " + e);
       if (isRhino) {
         java.lang.System.exit(1);
@@ -646,7 +709,6 @@ function randomtest() {
         break;
       }
     }
-    nav.resetStats(stats);
   }
 
   if (!processExit) {
@@ -664,6 +726,36 @@ function randomtest() {
     console.log("RANDOMTEST PASSED");
     var duration = (new Date().getTime() - start)/1000;
     console.log("Time: " + duration + "s")
+    if (recordBalance) {
+      (function() {
+        for (var sceneName in balanceValues) {
+          for (var id in balanceValues[sceneName]) {
+            var values = balanceValues[sceneName][id].sort();
+            var histogram = [{value:values[0], count:1}];
+            for (var i = 1; i < values.length; i++) {
+              if (values[i] == histogram[histogram.length-1].value) {
+                histogram[histogram.length-1].count++;
+              } else {
+                histogram.push({value:values[i], count:1});
+              }
+            }
+            console.log(sceneName + " " + id + " observed values ("+values.length+")");
+            for (i = 0; i < histogram.length; i++) {
+              if (histogram[i].count > 1) {
+                console.log("  " + histogram[i].value + " x" + histogram[i].count);
+              } else {
+                console.log("  " + histogram[i].value);
+              }
+            }
+          }
+        }
+        for (var statName in stats) {
+          if (/^auto_.+?_.+$/.test(statName)) {
+            console.log("*create " + statName + " " + stats[statName]);
+          }
+        }
+      })();
+    }
   }
 }
 if (!delay) randomtest();

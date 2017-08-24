@@ -3317,12 +3317,15 @@ Scene.prototype.tokenizeExpr = function tokenizeExpr(str) {
                 matched = true;
                 str = str.substr(token.length);
                 pos += token.length;
+                var item = {name:tokenType.name, value:token, pos:pos};
                 if ("WHITESPACE" == tokenType.name) {
                     break;
                 } else if ("CURLY_QUOTE" == tokenType.name) {
                   throw new Error(this.lineMsg()+"Invalid use of curly smart quote: " + token + "\nUse straight quotes \" instead")
+                } else if ("FUNCTION" == tokenType.name) {
+                  item.func = /^\w+/.exec(token)[0];
                 }
-                stack.push({name:tokenType.name, value:token, pos:pos});
+                stack.push(item);
                 break;
             }
         }
@@ -3351,7 +3354,7 @@ Scene.prototype.evaluateExpr = function evaluateExpr(stack, parenthetical) {
 
     if (!stack.length) {
         if (parenthetical) {
-            throw new Error(this.lineMsg() + "Invalid expression, expected final closing parenthesis");
+            throw new Error(this.lineMsg() + "Invalid expression, expected " + parenthetical);
         }
         return value1;
     }
@@ -3375,7 +3378,11 @@ Scene.prototype.evaluateExpr = function evaluateExpr(stack, parenthetical) {
       this.warning("For more details on modulo, see: https://forum.choiceofgames.com/t/21176");
     }
 
-    value2 = this.evaluateValueToken(getToken(), stack);
+    if (stack[0].func == "auto") {
+      value2 = this.autobalance(stack, token, value1);
+    } else {
+      value2 = this.evaluateValueToken(getToken(), stack);
+    }
 
     // and do the operator
     result = operator(value1, value2, this.lineNum+1, this);
@@ -3387,10 +3394,10 @@ Scene.prototype.evaluateExpr = function evaluateExpr(stack, parenthetical) {
             if (parenthetical == token.name) {
                 return result;
             } else {
-                throw new Error(this.lineMsg() + "Invalid expression at char "+token.pos+", expected closing parenthesis, was: " + token.name + " [" + token.value + "]");
+                throw new Error(this.lineMsg() + "Invalid expression at char "+token.pos+", expected "+parenthetical+", was: " + token.name + " [" + token.value + "]");
             }
         } else {
-            throw new Error(this.lineMsg() + "Invalid expression, expected final closing parenthesis");
+            throw new Error(this.lineMsg() + "Invalid expression, expected " + parenthetical);
         }
     } else {
         // if not parenthetical, expect no more tokens
@@ -3415,10 +3422,9 @@ Scene.prototype.evaluateValueToken = function evaluateValueToken(token, stack) {
         value = this.evaluateExpr(stack, "CLOSE_CURLY");
         return this.getVar(value);
     } else if ("FUNCTION" == name) {
-        var functionName = /^\w+/.exec(token.value)[0];
-        if (!this.functions[functionName]) throw new Error(this.lineMsg + "Unknown function " + functionName);
+        if (!this.functions[token.func]) throw new Error(this.lineMsg + "Unknown function " + token.func);
         value = this.evaluateExpr(stack, "CLOSE_PARENTHESIS");
-        return this.functions[functionName].call(this, value);
+        return this.functions[token.func].call(this, value);
     } else if ("NUMBER" == name) {
         return token.value;
     } else if ("STRING" == name) {
@@ -3513,8 +3519,42 @@ Scene.prototype.functions = {
   },
   length: function(value) {
     return String(value).length;
+  },
+  auto: function() {
+    throw new Error(this.lineMsg()+"Invalid expression, auto() must come after a < or > symbol");
   }
 };
+
+Scene.prototype.autobalance = function autobalance(stack, operatorToken, value) {
+  if (operatorToken.name !== "INEQUALITY") {
+    throw new Error(this.lineMsg()+"Invalid expression, auto() must come after a < or > symbol");
+  }
+  stack.shift(); // remove auto function
+
+  if (stack.length < 4 ||
+    stack[0].name !== "NUMBER" ||
+    stack[1].name !== "COMMA" ||
+    !(stack[2].name == "VAR" || stack[2].name == "NUMBER") ||
+    stack[3].name !== "CLOSE_PARENTHESIS"
+  ) {
+    throw new Error(this.lineMsg()+"Invalid expression, auto() requires (percentage, id)");
+  }
+  var rateString = stack.shift().value;
+  var rate = parseFloat(rateString);
+  if (isNaN(rate) || rate < 1 || rate > 99) {
+    throw new Error(this.lineMsg()+"the first auto() parameter should be a number between 1 and 99: " + rateString);
+  }
+  stack.shift(); // comma
+  var id = stack.shift().value;
+  stack.shift(); // close parenthesis
+  var result = this.stats['auto' + '_' + this.name + '_' + id];
+  if (typeof result != "undefined") {
+    return result;
+  } else if (this.recordBalance) {
+    return this.recordBalance(value, operatorToken.value, rate, id);
+  }
+  return 50;
+}
 
 Scene.prototype.evaluateValueExpr = function evaluateValueExpr(expr) {
     var stack = this.tokenizeExpr(expr);
@@ -3966,7 +4006,7 @@ Scene.tokens = [
     {name:"CLOSE_CURLY", test:function(str){ return Scene.regexpMatch(str,/^\}/); } },
     {name:"OPEN_SQUARE", test:function(str){ return Scene.regexpMatch(str,/^\[/); } },
     {name:"CLOSE_SQUARE", test:function(str){ return Scene.regexpMatch(str,/^\]/); } },
-    {name:"FUNCTION", test:function(str){ return Scene.regexpMatch(str,/^(not|round|timestamp|log|length)\s*\(/); } },
+    {name:"FUNCTION", test:function(str){ return Scene.regexpMatch(str,/^(not|round|timestamp|log|length|auto)\s*\(/); } },
     {name:"NUMBER", test:function(str){ return Scene.regexpMatch(str,/^\d+(\.\d+)?\b/); } },
     {name:"STRING", test:function(str, line) {
             var i;
@@ -3989,7 +4029,8 @@ Scene.tokens = [
     {name:"FAIRMATH", test:function(str){ return Scene.regexpMatch(str,/^%[\+\-]/); } },
     {name:"OPERATOR", test:function(str){ return Scene.regexpMatch(str,/^[\+\-\*\/\&\%\^\#]/); } },
     {name:"INEQUALITY", test:function(str){ return Scene.regexpMatch(str,/^[\!<>]\=?/); } },
-    {name:"EQUALITY", test:function(str){ return Scene.regexpMatch(str,/^=/); } }
+    {name:"EQUALITY", test:function(str){ return Scene.regexpMatch(str,/^=/); } },
+    {name:"COMMA", test:function(str){ return Scene.regexpMatch(str,/^,/); } }
     //
 ];
 Scene.operators = {
