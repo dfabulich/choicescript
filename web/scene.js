@@ -147,7 +147,7 @@ Scene.prototype.printLine = function printLine(line) {
     line = this.replaceVariables(line.replace(/^ */, ""));
     this.accumulatedParagraph.push(line);
     // insert extra space unless the line ends with hyphen or dash
-    if (!/[-\u2011-\u2014]$/.test(line)) this.accumulatedParagraph.push(' ');
+    if (!/([-\u2011-\u2014]|\[c\/\])$/.test(line)) this.accumulatedParagraph.push(' ');
 };
 
 Scene.prototype.replaceVariables = function (line) {

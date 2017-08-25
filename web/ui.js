@@ -54,6 +54,7 @@ function replaceBbCode(msg) {
       .replace(/>/g, '&gt;')
       .replace(/"/g, '&quot;')
       .replace(/\[n\/\]/g, '<br>')
+      .replace(/\[c\/\]/g, '')
       .replace(/\[b\]/g, '<b>')
       .replace(/\[\/b\]/g, '</b>')
       .replace(/\[i\]/g, '<i>')
