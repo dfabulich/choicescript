@@ -1625,6 +1625,7 @@ Scene.prototype.image = function image(data, invert) {
     } else {
       source = data;
     }
+    if (source === "") throw new Error(this.lineMsg()+"*image requires the file name of an image");
     alignment = alignment || "center";
     if (!/(right|left|center|none)/.test(alignment)) throw new Error(this.lineMsg()+"Invalid alignment, expected right, left, center, or none: " + data);
     printImage(source, alignment, alt, invert);
