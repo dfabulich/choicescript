@@ -341,6 +341,9 @@ function changeBackgroundColor(color) {
   if (initStore()) store.set("preferredBackground", color);
 }
 
+function isNightMode() {
+  return document.body.classList.contains("nightmode");
+}
 
 function spell(num) {
   if (num > 99) return num;
