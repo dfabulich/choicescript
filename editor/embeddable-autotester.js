@@ -261,7 +261,11 @@ function autotester(sceneText, nav, sceneName, extraLabels) {
   		return new Date(o.getTime());	// Date
   	}
   	// Generic objects
-  	r = new o.constructor(); // specific to dojo.declare()'d classes!
+    if (typeof o.constructor === "function") {
+      r = new o.constructor(); // specific to dojo.declare()'d classes!
+    } else {
+      r = {};
+    }
   	for(i in o){
   		if(!(i in r) || r[i] != o[i]){
   			r[i] = dojoClone(o[i]);

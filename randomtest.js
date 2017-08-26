@@ -413,7 +413,10 @@ Scene.prototype.nextNonBlankLine = function cached_nextNonBlankLine(includingThi
 cachedTokenizedExpressions = {};
 Scene.prototype.oldTokenizeExpr = Scene.prototype.tokenizeExpr;
 Scene.prototype.tokenizeExpr = function cached_tokenizeExpr(str) {
-  var cached = cachedTokenizedExpressions[str];
+  var cached;
+  if (cachedTokenizedExpressions.hasOwnProperty(str)) {
+    cached = cachedTokenizedExpressions[str];
+  }
   if (cached) return cloneStack(cached);
   cached = this.oldTokenizeExpr(str);
   cachedTokenizedExpressions[str] = cloneStack(cached);
