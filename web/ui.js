@@ -54,6 +54,7 @@ function replaceBbCode(msg) {
       .replace(/>/g, '&gt;')
       .replace(/"/g, '&quot;')
       .replace(/\[n\/\]/g, '<br>')
+      .replace(/\[c\/\]/g, '')
       .replace(/\[b\]/g, '<b>')
       .replace(/\[\/b\]/g, '</b>')
       .replace(/\[i\]/g, '<i>')
@@ -340,6 +341,7 @@ function changeBackgroundColor(color) {
   if (initStore()) store.set("preferredBackground", color);
 }
 
+<<<<<<< HEAD
 function returnBackgroundColor(classNameToTestFor) {
     var classNames = document.body.className.split(' ');
     for (var i = 0; i < classNames.length; i++) {
@@ -352,6 +354,10 @@ function returnBackgroundColor(classNameToTestFor) {
         }
     }
     return "sepia";
+=======
+function isNightMode() {
+  return document.body.classList.contains("nightmode");
+>>>>>>> dfabulich/master
 }
 
 function spell(num) {
