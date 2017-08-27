@@ -797,11 +797,25 @@ Scene.prototype["goto"] = function scene_goto(line) {
     }
 };
 
-Scene.prototype.gosub = function scene_gosub(label) {
+Scene.prototype.gosub = function scene_gosub(data) {
+    var label = /\S+/.exec(data)[0];
+    var rest = data.substring(label.length+1);
+    var args = [];
+    var stack = this.tokenizeExpr(rest);
+    while (stack.length) {
+      args.push(this.evaluateValueToken(stack.shift(), stack));
+    }
     if (!this.temps.choice_substack) {
       this.temps.choice_substack = [];
     }
     this.temps.choice_substack.push({lineNum: this.lineNum, indent: this.indent});
+    // Works exactly the same as gosub_scene, putting args in this.temps.param.
+    // This means there's no notion of scope - param acts more like "registers" that
+    // get clobbered the next time a sub is called.
+    // This may be more intuitive to non-programmers than idea of scope?  Especially
+    // if temp normally doesn't follow scoping rules.  gosub_scene can serve this function anyway.
+    // The params can be retrieved and put in named temps with "params" command.
+    this.temps.param = args;
     this["goto"](label);
 };
 
@@ -813,6 +827,35 @@ Scene.prototype.gosub_scene = function scene_gosub_scene(data) {
     this.goto_scene(data);
 };
 
+Scene.prototype.params = function scene_params(data) {
+    // Name the parameters passed by gosub/gosub_scene.
+    // Rules should be the same as for "create."
+    // All parameters, even those not named, exposed as param_1, param_2 etc.
+    var words = /\w+/.exec(data);
+    var nextParamNum = 1;
+    this.temps.param_count = this.temps.param.length;
+    while (words) {
+        var varName = words[0];
+        this.validateVariable(varName);
+        if (this.temps.param.length < 1) {
+            throw new Error(this.lineMsg() + "No parameter passed for " + varName);
+        }
+        var paramVal = this.temps.param.shift();
+        this.temps[varName] = paramVal;
+        this.temps["param_" + nextParamNum] = paramVal;
+        nextParamNum++;
+        data = data.substring(varName.length+1);
+        words = /\w+/.exec(data);
+    }
+    // All remaining params are anonymous, but you still have to say "params"
+    // if you want any of them.
+    while (this.temps.param.length > 0) {
+        var paramVal = this.temps.param.shift();
+        this.temps["param_" + nextParamNum] = paramVal;
+        nextParamNum++;
+    }
+};
+
 Scene.prototype["return"] = function scene_return() {
     var stackFrame;
     if (this.temps.choice_substack && this.temps.choice_substack.length) {
@@ -821,6 +864,12 @@ Scene.prototype["return"] = function scene_return() {
       this.indent = stackFrame.indent;
     } else if (this.stats.choice_subscene_stack && this.stats.choice_subscene_stack.length) {
       stackFrame = this.stats.choice_subscene_stack.pop();
+      if (stackFrame.name == this.name) {
+        this.temps = stackFrame.temps;
+        this.lineNum = stackFrame.lineNum-1;
+        this.indent = stackFrame.indent;
+        return;
+      }
       this.finished = true;
       this.skipFooter = true;
       var scene = new Scene(stackFrame.name, this.stats, this.nav, {debugMode:this.debugMode, secondaryMode:this.secondaryMode, saveSlot:this.saveSlot});
@@ -908,32 +957,49 @@ Scene.prototype.reset = function reset() {
 };
 
 Scene.prototype.parseGotoScene = function parseGotoScene(data) {
-  var sceneName, label;
+  var sceneName, label, param = [], stack;
+
   if (/[\[\{]/.test(data)) {
-    var stack = this.tokenizeExpr(data);
+    stack = this.tokenizeExpr(data);
     sceneName = this.evaluateReference(stack, {toLowerCase: false});
+    // Labels are required for arguments to avoid ambiguity
     if (stack.length) {
       label = this.evaluateReference(stack);
     }
-    if (stack.length) {
-      throw new Error(this.lineMsg() + "Invalid *goto_scene command; nothing should appear after the label " + label);
+    while (stack.length) {
+      // Arguments when treating gosub_scene like a function call
+      param.push(this.evaluateValueToken(stack.shift(), stack));
     }
   } else {
-    var words = data.split(/ /);
-    sceneName = words[0];
-    if (words.length > 2) {
-      throw new Error(this.lineMsg() + "Invalid *goto_scene command; nothing should appear after the label " + words[1]);
-    } else if (words.length == 2) {
-      label = words[1];
+    // scenes and labels can contain hyphens and other non-expression punctuation
+    // so we'll try to extract the first two words as the scene and label
+    var match = /(\S+)\s+(\S+)\s*(.*)/.exec(data);
+    if (match) {
+      sceneName = match[1];
+      label = match[2];
+      stack = this.tokenizeExpr(match[3]);
+      while (stack.length) {
+        // Arguments when treating gosub_scene like a function call
+        param.push(this.evaluateValueToken(stack.shift(), stack));
+      }
+    } else {
+      sceneName = data;
     }
   }
-  return {sceneName:sceneName, label:label};
+  return {sceneName:sceneName, label:label, param:param};
 };
 
 // *goto_scene foo
 //
 Scene.prototype.goto_scene = function gotoScene(data) {
     var result = this.parseGotoScene(data);
+
+    if (result.sceneName == this.name) {
+      this["goto"](result.label);
+      this.temps = {choice_reuse:"allow", choice_user_restored:false, _choiceEnds:{}};
+      this.temps.param = result.param;
+      return;
+    }
 
     this.finished = true;
     this.skipFooter = true;
@@ -942,6 +1008,7 @@ Scene.prototype.goto_scene = function gotoScene(data) {
     scene.prevLine = this.prevLine;
     scene.accumulatedParagraph = this.accumulatedParagraph;
     if (typeof result.label != "undefined") scene.targetLabel = {label:result.label, origin:this.name, originLine:this.lineNum};
+    if (typeof result.param != "undefined") scene.temps.param = result.param;
     scene.execute();
 };
 
@@ -4127,5 +4194,5 @@ Scene.validCommands = {"comment":1, "goto":1, "gotoref":1, "label":1, "looplimit
     "restart":1,"more_games":1,"delay_ending":1,"end_trial":1,"login":1,"achieve":1,"scene_list":1,"title":1,
     "bug":1,"link_button":1,"check_registration":1,"sound":1,"author":1,"gosub_scene":1,"achievement":1,
     "check_achievements":1,"redirect_scene":1,"print_discount":1,"purchase_discount":1,"track_event":1,
-    "timer":1,"youtube":1,"product":1,"text_image":1
+    "timer":1,"youtube":1,"product":1,"text_image":1,"params":1
     };
