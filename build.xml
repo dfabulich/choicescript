@@ -133,17 +133,19 @@ either express or implied.
     <property name="avoidUsedOptions" value="true" />
     <property name="showChoices" value="true" />
     <property name="seed" value="0" />
+    <property name="recordBalance" value="false" />
     <echo>Executing randomtest, writing to ${output}</echo>
     <rhino output="${output}">
       <arg value="randomtest.js" />
-      <arg value="${num}" />
-      <arg value="${game}" />
-      <arg value="${seed}" /> <!--seed-->
-      <arg value="false" /> <!--delay-->
-      <arg value="${trial}" />
-      <arg value="${showText}" />
-      <arg value="${avoidUsedOptions}" />
-      <arg value="${showChoices}" />
+      <arg value="num=${num}" />
+      <arg value="game=${game}" />
+      <arg value="seed=${seed}" /> <!--seed-->
+      <arg value="delay=false" /> <!--delay-->
+      <arg value="trial=${trial}" />
+      <arg value="showText=${showText}" />
+      <arg value="avoidUsedOptions=${avoidUsedOptions}" />
+      <arg value="showChoices=${showChoices}" />
+      <arg value="recordBalance=${recordBalance}" />
     </rhino>
   </target>
   

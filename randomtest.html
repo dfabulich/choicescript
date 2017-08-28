@@ -12,6 +12,7 @@
 <p><input type="checkbox" id="highlightGenderPronouns"> Highlight gender pronouns</p>
 <p><input type="checkbox" id="showCoverage"> Show line coverage statistics after test</p>
 <p><input type="checkbox" id="autoScroll"> Automatically scroll to the bottom</p>
+<p style="display:none"><input type="checkbox" id="recordBalance"> Record data for auto() balancing</p>
 <button id="start">Start Randomtest</button>
 <script>
 
@@ -19,6 +20,20 @@
 var scope = window.opener ? window.opener.parent : parent.window;
 var thisProject = scope.cside.getActiveProject();
 
+var uncheckWithBalance = ["avoidUsedOptions", "highlightGenderPronouns", "showChoices", "showCoverage", "showText"];
+document.getElementById("recordBalance").addEventListener("click", function() {
+  if (document.getElementById("recordBalance").checked) {
+    for (var i = 0; i < uncheckWithBalance.length; i++) {
+      document.getElementById(uncheckWithBalance[i]).checked = false;
+    }
+  }
+});
+var uncheckBalance = function() {
+  document.getElementById("recordBalance").checked = false;
+}
+for (var i = 0; i < uncheckWithBalance.length; i++) {
+  document.getElementById(uncheckWithBalance[i]).addEventListener("click", uncheckBalance);
+}
 var worker = new Worker("randomtest.js");
 var messages = [];
 var highlightGenderPronouns;
@@ -96,6 +111,8 @@ if (queryArgs.showText) document.getElementById("showText").checked = queryArgs.
 if (queryArgs.highlightGenderPronouns) document.getElementById("highlightGenderPronouns").checked = queryArgs.highlightGenderPronouns;
 if (queryArgs.showCoverage) document.getElementById("showCoverage").checked = queryArgs.showCoverage;
 if (typeof queryArgs.showChoices != "undefined") document.getElementById("showChoices").checked = !!queryArgs.showChoices;
+if (queryArgs.autoScroll) document.getElementById("autoScroll").checked = queryArgs.autoScroll;
+if (queryArgs.recordBalance) document.getElementById("recordBalance").checked = queryArgs.recordBalance;
 
 document.getElementById("start").onclick = function() {
   if (document.getElementById("autoScroll").checked) queryArgs.autoScroll = true;
@@ -106,8 +123,9 @@ document.getElementById("start").onclick = function() {
   var showCoverage = document.getElementById("showCoverage").checked;
   var showChoices = document.getElementById("showChoices").checked;
   highlightGenderPronouns = document.getElementById("highlightGenderPronouns").checked;
+  var recordBalance = document.getElementById("recordBalance").checked;
   document.body.innerHTML = "";
-  worker.postMessage({iterations:iterations, randomSeed:randomSeed, showText:showText, showCoverage:showCoverage, highlightGenderPronouns:highlightGenderPronouns, showChoices:showChoices, avoidUsedOptions:avoidUsedOptions, projectPath: thisProject.getPath()});
+  worker.postMessage({iterations:iterations, randomSeed:randomSeed, showText:showText, showCoverage:showCoverage, highlightGenderPronouns:highlightGenderPronouns, showChoices:showChoices, avoidUsedOptions:avoidUsedOptions, recordBalance:recordBalance, projectPath: thisProject.getPath()});
 }
 </script>
 </body>

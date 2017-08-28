@@ -54,6 +54,7 @@ function replaceBbCode(msg) {
       .replace(/>/g, '&gt;')
       .replace(/"/g, '&quot;')
       .replace(/\[n\/\]/g, '<br>')
+      .replace(/\[c\/\]/g, '')
       .replace(/\[b\]/g, '<b>')
       .replace(/\[\/b\]/g, '</b>')
       .replace(/\[i\]/g, '<i>')
@@ -340,6 +341,9 @@ function changeBackgroundColor(color) {
   if (initStore()) store.set("preferredBackground", color);
 }
 
+function isNightMode() {
+  return document.body.classList.contains("nightmode");
+}
 
 function spell(num) {
   if (num > 99) return num;
