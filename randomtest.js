@@ -681,7 +681,7 @@ function randomtestAsync(i, showCoverage) {
 function randomtest() {
   var start = new Date().getTime();
   randomSeed *= 1;
-  for (i = 0; i < iterations; i++) {
+  for (var i = 0; i < iterations; i++) {
     console.log("*****Seed " + (i+randomSeed));
     nav.resetStats(stats);
     timeout = null;
@@ -715,7 +715,7 @@ function randomtest() {
   if (!processExit) {
     if (showText) console.log("Word count: " + wordCount);
     if (showCoverage) {
-      for (i = 0; i < sceneNames.length; i++) {
+      for (var i = 0; i < sceneNames.length; i++) {
         var sceneName = sceneNames[i];
         var sceneLines = slurpFileLines('web/'+gameName+'/scenes/'+sceneName+'.txt');
         var sceneCoverage = coverage[sceneName];
