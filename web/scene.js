@@ -1738,9 +1738,9 @@ Scene.prototype.youtube = function youtube(slug) {
 Scene.prototype.link = function link(data) {
     var result = /^(\S+)\s*(.*)/.exec(data);
     if (!result) throw new Error(this.lineMsg() + "invalid line; this line should have an URL: " + data);
-    var href = result[1];
+    var href = result[1].replace(/\]/g, "%5D");
     var anchorText = trim(result[2]) || href;
-    printLink(this.target, href, anchorText);
+    this.printLine("[url="+href+"]"+anchorText+"[/url]");
     this.prevLine = "text";
     this.screenEmpty = false;
 };
