@@ -525,6 +525,7 @@ Scene.prototype.execute = function execute() {
         return;
     }
     if (this.nav) this.nav.repairStats(stats);
+    if (!this.temps._choiceEnds) this.temps._choiceEnds = {};
     doneLoading();
     if (typeof this.targetLabel != "undefined") {
       var label = this.targetLabel.label.toLowerCase();
