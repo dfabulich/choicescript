@@ -2278,6 +2278,7 @@ Scene.prototype.restore_game = function restore_game(data) {
         clearScreen(function() {
           fetchEmail(function(defaultEmail){
             self.printLine("Please type your email address to identify yourself.");
+            self.paragraph();
             promptEmailAddress(this.target, defaultEmail, "allowContinue", function(cancel, email) {
               if (cancel) {
                 self.finished = false;
@@ -2309,6 +2310,7 @@ Scene.prototype.restore_game = function restore_game(data) {
         clearScreen(function() {
           fetchEmail(function(defaultEmail){
             self.printLine("Please type your email address to identify yourself.");
+            self.paragraph();
             promptEmailAddress(this.target, defaultEmail, "allowContinue", function(cancel, email) {
               if (cancel) {
                 self.finished = false;
