@@ -194,14 +194,18 @@ if (typeof importScripts != "undefined") {
   args.shift();
   args.shift();
   parseArgs(args);
-  var fs = require('fs');
-  var path = require('path');
-  eval(fs.readFileSync("web/scene.js", "utf-8"));
-  eval(fs.readFileSync("web/navigator.js", "utf-8"));
-  eval(fs.readFileSync("web/util.js", "utf-8"));
-  eval(fs.readFileSync("headless.js", "utf-8"));
-  eval(fs.readFileSync("seedrandom.js", "utf-8"));
-  eval(fs.readFileSync("web/"+gameName+"/"+"mygame.js", "utf-8"));
+  fs = require('fs');
+  path = require('path');
+  vm = require('vm');
+  load = function(file) {
+    vm.runInThisContext(fs.readFileSync(file), file);
+  };
+  load("web/scene.js");
+  load("web/navigator.js");
+  load("web/util.js");
+  load("headless.js");
+  load("seedrandom.js");
+  load("web/"+gameName+"/"+"mygame.js");
 } else if (typeof args == "undefined") {
   isRhino = true;
   args = arguments;
