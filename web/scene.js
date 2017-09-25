@@ -1013,6 +1013,7 @@ Scene.prototype.goto_scene = function gotoScene(data) {
       }
       this.temps = {choice_reuse:"allow", choice_user_restored:false, _choiceEnds:{}};
       this.temps.param = result.param;
+      this.initialCommands = true;
       return;
     }
 
@@ -2168,7 +2169,13 @@ Scene.prototype.ending = function ending() {
       printFollowButtons();
       self.renderOptions([""], options, function(option) {
         if (option.restart) {
-          self.restart();
+          clearScreen(function() {
+            self.restart();
+            if (self.name === "startup") {
+              self.finished = false;
+              self.resetPage();
+            }
+          });
           return;
         } else if (option.moreGames) {
           self.more_games("now");
@@ -2191,17 +2198,13 @@ Scene.prototype.restart = function restart() {
   if (this.secondaryMode && this.secondaryMode != "stats") {
     throw new Error(this.lineMsg() + "Cannot *restart in " + this.secondaryMode + " mode");
   }
-  this.finished = true;
   delayBreakEnd();
   this.reset();
   var startupScene = this.nav.getStartupScene();
   if (this.secondaryMode == "stats") {
     this.redirect_scene(startupScene);
   } else {
-    var self = this;
-    clearScreen(function() {
-      self.goto_scene(startupScene);
-    })
+    this.goto_scene(startupScene);
   }
 };
 
