@@ -1006,7 +1006,11 @@ Scene.prototype.goto_scene = function gotoScene(data) {
     var result = this.parseGotoScene(data);
 
     if (result.sceneName == this.name) {
-      this["goto"](result.label);
+      if (typeof result.label === "undefined") {
+        this.lineNum = 0;
+      } else {
+        this["goto"](result.label);
+      }
       this.temps = {choice_reuse:"allow", choice_user_restored:false, _choiceEnds:{}};
       this.temps.param = result.param;
       return;
