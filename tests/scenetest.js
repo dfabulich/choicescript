@@ -720,6 +720,21 @@ test("fake", function() {
     scene.standardResolution(options[0]);
     doh.is("<p>Foo! baz </p>", printed.join(""), "printed");
 })
+test("fakeFollowedByBlank", function() {
+    printed = [];
+    var text = "*fake_choice\n  #foo\n    Foo!\n  #bar\n    Bar!\n\nbaz";
+    var scene = new Scene();
+    scene.loadLines(text);
+    var options, groups;
+    scene.renderOptions = function(_groups, _options) {
+        options = _options;
+        groups = _groups;
+    };
+    scene.execute();
+    doh.is([{"name":"foo","line":2,"group":"choice","endLine":3},{"name":"bar","line":4,"group":"choice","endLine":5}], options, "options");
+    scene.standardResolution(options[0]);
+    doh.is("<p>Foo! </p><p>baz </p>", printed.join(""), "printed");
+})
 test("fakeNoBody", function() {
     printed = [];
     var text = "*fake_choice\n  #foo\n  #bar\nbaz";
