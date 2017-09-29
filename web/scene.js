@@ -508,7 +508,7 @@ Scene.prototype.checkSum = function checkSum(crc) {
 Scene.prototype.loadLines = function loadLines(str) {
     var crc = crc32(str);
     this.checkSum(crc);
-    this.lines = str.split('\n');
+    this.lines = str.split(/\r?\n/);
     this.parseLabels();
     this.loaded = true;
 };
