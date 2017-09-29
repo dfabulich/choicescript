@@ -477,12 +477,12 @@ Scene.prototype.finish = Scene.prototype.autofinish = function random_finish(but
       throw new Error(this.lineMsg() + "Trying to go to scene " + nextSceneName + " but that scene requires purchase");
     }
     this.finished = true;
+    this.paragraph();
     // if there are no more scenes, then just halt
     if (!nextSceneName) {
         return;
     }
     var scene = new Scene(nextSceneName, this.stats, this.nav, this.debugMode);
-    this.paragraph();
     if (buttonText === undefined || buttonText === "") buttonText = "Next Chapter";
     println("*finish " + buttonText);
     println("");
