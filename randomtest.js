@@ -295,6 +295,9 @@ if (showText) {
   };
   printParagraph = function printParagraph(msg) {
     if (msg === null || msg === undefined || msg === "") return;
+    msg = String(msg)
+      .replace(/\[n\/\]/g, '\n')
+      .replace(/\[c\/\]/g, '');
     println(msg);
     console.log("");
   };
