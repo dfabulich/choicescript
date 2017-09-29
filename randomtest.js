@@ -480,6 +480,7 @@ Scene.prototype.finish = Scene.prototype.autofinish = function random_finish(but
     }
     var scene = new Scene(nextSceneName, this.stats, this.nav, this.debugMode);
     this.paragraph();
+    if (buttonText === undefined || buttonText === "") buttonText = "Next Chapter";
     println("*finish " + buttonText);
     println("");
     scene.resetPage();
