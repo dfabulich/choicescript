@@ -276,6 +276,7 @@ function debughelp() {
 function noop() {}
 Scene.prototype.page_break = function randomtest_page_break(buttonText) {
   this.paragraph();
+  buttonText = this.replaceVariables(buttonText);
   println("*page_break " + buttonText);
   println("");
   this.resetCheckedPurchases();
@@ -484,6 +485,7 @@ Scene.prototype.finish = Scene.prototype.autofinish = function random_finish(but
     }
     var scene = new Scene(nextSceneName, this.stats, this.nav, this.debugMode);
     if (buttonText === undefined || buttonText === "") buttonText = "Next Chapter";
+    buttonText = this.replaceVariables(buttonText);
     println("*finish " + buttonText);
     println("");
     scene.resetPage();
