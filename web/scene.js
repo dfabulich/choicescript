@@ -508,7 +508,7 @@ Scene.prototype.checkSum = function checkSum(crc) {
 Scene.prototype.loadLines = function loadLines(str) {
     var crc = crc32(str);
     this.checkSum(crc);
-    this.lines = str.split('\n');
+    this.lines = str.split(/\r?\n/);
     this.parseLabels();
     this.loaded = true;
 };
@@ -525,6 +525,7 @@ Scene.prototype.execute = function execute() {
         return;
     }
     if (this.nav) this.nav.repairStats(stats);
+    if (!this.temps._choiceEnds) this.temps._choiceEnds = {};
     doneLoading();
     if (typeof this.targetLabel != "undefined") {
       var label = this.targetLabel.label.toLowerCase();
@@ -716,6 +717,16 @@ Scene.prototype.nextNonBlankLine = function nextNonBlankLine(includingThisOne) {
     }
     return line;
 };
+
+Scene.prototype.previousNonBlankLineNum = function previousNonBlankLineNum() {
+  var line;
+  var i = this.lineNum - 1;
+  while(isDefined(line = this.lines[i]) && !trim(line)) {
+    i--;
+  }
+  return i;
+};
+
 
 Scene.prototype.resetCheckedPurchases = function resetCheckedPurchases() {
   for (var temp in this.temps) {
@@ -995,9 +1006,14 @@ Scene.prototype.goto_scene = function gotoScene(data) {
     var result = this.parseGotoScene(data);
 
     if (result.sceneName == this.name) {
-      this["goto"](result.label);
+      if (typeof result.label === "undefined") {
+        this.lineNum = 0;
+      } else {
+        this["goto"](result.label);
+      }
       this.temps = {choice_reuse:"allow", choice_user_restored:false, _choiceEnds:{}};
       this.temps.param = result.param;
+      this.initialCommands = true;
       return;
     }
 
@@ -1420,8 +1436,8 @@ Scene.prototype.parseOptions = function parseOptions(startIndent, choicesRemaini
             }
             this.rollbackLineCoverage();
             prevOption = options[options.length-1];
-            if (!prevOption.endLine) prevOption.endLine = this.lineNum;
-            this.lineNum--;
+            this.lineNum = this.previousNonBlankLineNum();
+            if (!prevOption.endLine) prevOption.endLine = this.lineNum+1;
             for (i = 0; i < choiceEnds.length; i++) {
                 this.temps._choiceEnds[choiceEnds[i]] = this.lineNum;
             }
@@ -1743,9 +1759,9 @@ Scene.prototype.youtube = function youtube(slug) {
 Scene.prototype.link = function link(data) {
     var result = /^(\S+)\s*(.*)/.exec(data);
     if (!result) throw new Error(this.lineMsg() + "invalid line; this line should have an URL: " + data);
-    var href = result[1];
+    var href = result[1].replace(/\]/g, "%5D");
     var anchorText = trim(result[2]) || href;
-    printLink(this.target, href, anchorText);
+    this.printLine("[url="+href+"]"+anchorText+"[/url]");
     this.prevLine = "text";
     this.screenEmpty = false;
 };
@@ -2158,7 +2174,13 @@ Scene.prototype.ending = function ending() {
       printFollowButtons();
       self.renderOptions([""], options, function(option) {
         if (option.restart) {
-          self.restart();
+          clearScreen(function() {
+            self.restart();
+            if (self.name === "startup") {
+              self.finished = false;
+              self.resetPage();
+            }
+          });
           return;
         } else if (option.moreGames) {
           self.more_games("now");
@@ -2181,17 +2203,13 @@ Scene.prototype.restart = function restart() {
   if (this.secondaryMode && this.secondaryMode != "stats") {
     throw new Error(this.lineMsg() + "Cannot *restart in " + this.secondaryMode + " mode");
   }
-  this.finished = true;
   delayBreakEnd();
   this.reset();
   var startupScene = this.nav.getStartupScene();
   if (this.secondaryMode == "stats") {
     this.redirect_scene(startupScene);
   } else {
-    var self = this;
-    clearScreen(function() {
-      self.goto_scene(startupScene);
-    })
+    this.goto_scene(startupScene);
   }
 };
 
@@ -2265,6 +2283,7 @@ Scene.prototype.restore_game = function restore_game(data) {
         clearScreen(function() {
           fetchEmail(function(defaultEmail){
             self.printLine("Please type your email address to identify yourself.");
+            self.paragraph();
             promptEmailAddress(this.target, defaultEmail, "allowContinue", function(cancel, email) {
               if (cancel) {
                 self.finished = false;
@@ -2296,6 +2315,7 @@ Scene.prototype.restore_game = function restore_game(data) {
         clearScreen(function() {
           fetchEmail(function(defaultEmail){
             self.printLine("Please type your email address to identify yourself.");
+            self.paragraph();
             promptEmailAddress(this.target, defaultEmail, "allowContinue", function(cancel, email) {
               if (cancel) {
                 self.finished = false;
@@ -3018,7 +3038,7 @@ Scene.prototype.parseStatChart = function parseStatChart() {
         if (indent <= startIndent) {
             // it's over!
             this.rollbackLineCoverage();
-            this.lineNum--;
+            this.lineNum = this.previousNonBlankLineNum();
             this.rollbackLineCoverage();
             return rows;
         }
@@ -3319,15 +3339,6 @@ Scene.prototype["if"] = function scene_if(line) {
 
 // TODO Rename this function to just skipBranch
 Scene.prototype.skipTrueBranch = function skipTrueBranch(inElse) {
-  var self = this;
-  function prevNonBlankLine() {
-    var line;
-    var i = self.lineNum - 1;
-    while(isDefined(line = self.lines[i]) && !trim(line)) {
-      i--;
-    }
-    return i;
-  }
   var startIndent = this.indent;
   var nextIndent = null;
   while (isDefined(line = this.lines[++this.lineNum])) {
@@ -3344,7 +3355,7 @@ Scene.prototype.skipTrueBranch = function skipTrueBranch(inElse) {
           // check to see if this is an *else or *elseif
           if (indent == startIndent) parsed = /^\s*\*(\w+)(.*)/.exec(line);
           if (!parsed || inElse) {
-              this.lineNum = prevNonBlankLine();
+              this.lineNum = this.previousNonBlankLineNum();
               this.rollbackLineCoverage();
               this.indent = indent;
               return;
@@ -3365,7 +3376,7 @@ Scene.prototype.skipTrueBranch = function skipTrueBranch(inElse) {
               this.lineNum = this.lineNum; // code coverage
               this["if"](data);
           } else {
-              this.lineNum = prevNonBlankLine();
+              this.lineNum = this.previousNonBlankLineNum();
               this.rollbackLineCoverage();
               this.indent = this.getIndent(this.nextNonBlankLine());
           }

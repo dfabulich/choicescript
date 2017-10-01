@@ -53,6 +53,8 @@ function replaceBbCode(msg) {
       .replace(/</g, '&lt;')
       .replace(/>/g, '&gt;')
       .replace(/"/g, '&quot;')
+      .replace(/\[url\=(.*?)\]/g, '<a href="$1">')
+      .replace(/\[\/url\]/g, '</a>')
       .replace(/\[n\/\]/g, '<br>')
       .replace(/\[c\/\]/g, '')
       .replace(/\[b\]/g, '<b>')

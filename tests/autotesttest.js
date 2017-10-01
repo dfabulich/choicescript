@@ -210,7 +210,7 @@ test("repeatedStatChart", function() {
     +"\n"
     +"\nAll done"
   ;
-  autotestScene(scene,  [1,1,1,1,1,1,0,1,1,1,1,0,1,1,1,0]);
+  autotestScene(scene,  [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0]);
 })
 test("afterFakeChoice", function() {
   var scene = ""

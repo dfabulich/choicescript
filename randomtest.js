@@ -197,14 +197,18 @@ if (typeof importScripts != "undefined") {
   args.shift();
   args.shift();
   parseArgs(args);
-  var fs = require('fs');
-  var path = require('path');
-  eval(fs.readFileSync("web/scene.js", "utf-8"));
-  eval(fs.readFileSync("web/navigator.js", "utf-8"));
-  eval(fs.readFileSync("web/util.js", "utf-8"));
-  eval(fs.readFileSync("headless.js", "utf-8"));
-  eval(fs.readFileSync("seedrandom.js", "utf-8"));
-  eval(fs.readFileSync("web/"+gameName+"/"+"mygame.js", "utf-8"));
+  fs = require('fs');
+  path = require('path');
+  vm = require('vm');
+  load = function(file) {
+    vm.runInThisContext(fs.readFileSync(file), file);
+  };
+  load("web/scene.js");
+  load("web/navigator.js");
+  load("web/util.js");
+  load("headless.js");
+  load("seedrandom.js");
+  load("web/"+gameName+"/"+"mygame.js");
 } else if (typeof args == "undefined") {
   isRhino = true;
   args = arguments;
@@ -275,6 +279,7 @@ function debughelp() {
 function noop() {}
 Scene.prototype.page_break = function randomtest_page_break(buttonText) {
   this.paragraph();
+  buttonText = this.replaceVariables(buttonText);
   println("*page_break " + buttonText);
   println("");
   this.resetCheckedPurchases();
@@ -294,6 +299,9 @@ if (showText) {
   };
   printParagraph = function printParagraph(msg) {
     if (msg === null || msg === undefined || msg === "") return;
+    msg = String(msg)
+      .replace(/\[n\/\]/g, '\n')
+      .replace(/\[c\/\]/g, '');
     println(msg);
     console.log("");
   };
@@ -473,12 +481,14 @@ Scene.prototype.finish = Scene.prototype.autofinish = function random_finish(but
       throw new Error(this.lineMsg() + "Trying to go to scene " + nextSceneName + " but that scene requires purchase");
     }
     this.finished = true;
+    this.paragraph();
     // if there are no more scenes, then just halt
     if (!nextSceneName) {
         return;
     }
     var scene = new Scene(nextSceneName, this.stats, this.nav, this.debugMode);
-    this.paragraph();
+    if (buttonText === undefined || buttonText === "") buttonText = "Next Chapter";
+    buttonText = this.replaceVariables(buttonText);
     println("*finish " + buttonText);
     println("");
     scene.resetPage();
