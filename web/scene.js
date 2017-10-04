@@ -994,6 +994,7 @@ Scene.prototype.parseGotoScene = function parseGotoScene(data) {
         param.push(this.evaluateValueToken(stack.shift(), stack));
       }
     } else {
+      if (data === "") throw new Error(this.lineMsg() + "missing scene name");
       sceneName = data;
     }
   }
