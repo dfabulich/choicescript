@@ -250,14 +250,16 @@ function loadScenes(game, sceneNum) {
           if (/[\[\{]/.test(data)) {
             // print warning?
           } else {
-            var match = /(\S+)\s+(\S+)\s*(.*)/.exec(data);
+            var match = /(\S+)\s*(\S*)\s*(.*)/.exec(data);
             if (match) {
-              if (match[3]) {
+              if (match[3] !== "") {
                 // parameters; print warning?
               } else {
                 addFile(match[1]+".txt");
-                if (!gotoSceneLabels[match[1]]) gotoSceneLabels[match[1]] = [];
-                gotoSceneLabels[match[1]].push({origin:sceneName, originLine:j, label:match[2]});
+                if (match[2] !== "") {
+                  if (!gotoSceneLabels[match[1]]) gotoSceneLabels[match[1]] = [];
+                  gotoSceneLabels[match[1]].push({origin:sceneName, originLine:j, label:match[2]});
+                }
               }
             }
           }
