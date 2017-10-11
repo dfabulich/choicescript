@@ -82,6 +82,11 @@ a {
   max-width: 100%;
 }
 
+/*credits*/
+#main.container img {
+  max-width: 100%;
+}
+
 .statBar {
   background-color: #949291;
   height: 2em;
