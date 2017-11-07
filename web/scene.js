@@ -3473,6 +3473,10 @@ Scene.prototype.evaluateExpr = function evaluateExpr(stack, parenthetical) {
       this.warning("For more details on modulo, see: https://forum.choiceofgames.com/t/21176");
     }
 
+    if (!stack[0]) {
+      throw new Error(this.lineMsg() + "Invalid expression at char "+token.pos+", expected something after a "+token.value);
+    }
+
     if (stack[0].func == "auto") {
       value2 = this.autobalance(stack, token, value1);
     } else {
