@@ -1141,6 +1141,13 @@ test("errorMissingOperator", function() {
     doh.is([{"value":"3","name":"NUMBER","pos":1},{"value":"3","name":"NUMBER","pos":3}], stack, "stack");
     doh.assertError(Error, scene, "evaluateExpr", stack, "Invalid expression");
 })
+test("errorMissingValueAfterOperator", function() {
+    var scene = new Scene();
+    var stack = scene.tokenizeExpr("3 =");
+    //print(toJson(stack))
+    doh.is([{"name":"NUMBER","value":"3","pos":1},{"name":"EQUALITY","value":"=","pos":3}], stack, "stack");
+    doh.assertError(Error, scene, "evaluateExpr", stack, "Invalid expression");
+})
 test("errorEmptyStack", function() {
     var scene = new Scene();
     doh.assertError(Error, scene, "evaluateExpr", [], "Invalid expression");
