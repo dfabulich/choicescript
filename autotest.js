@@ -19,13 +19,13 @@
 
  // autotest.js mygame [sceneName1] [sceneName2] [sceneName3]
 var list;
-var gameName;
+var projectPath;
 if (typeof java == "undefined") {
   list = process.argv;
   list.shift();
   list.shift();
-  gameName = list.shift();
-  if (!gameName) gameName = "mygame";
+  projectPath = list.shift();
+  if (!projectPath) projectPath = "mygame";
   fs = require('fs');
   vm = require('vm');
   path = require('path');
@@ -36,20 +36,20 @@ if (typeof java == "undefined") {
   load("web/navigator.js");
   load("web/util.js");
   load("headless.js");
-  load("web/"+gameName+"/"+"mygame.js");
+  load("web/mygame/mygame.js");
   load("editor/embeddable-autotester.js");
   print = function print(str) {
     console.log(str);
   };
 } else {
   list = arguments;
-  gameName = list.shift();
-  if (!gameName) gameName = "mygame";
+  projectPath = list.shift();
+  if (!projectPath) projectPath = "mygame";
   load("web/scene.js");
   load("web/navigator.js");
   load("web/util.js");
   load("headless.js");
-  load("web/"+gameName+"/"+"mygame.js");
+  load("web/mygame/mygame.js");
   load("editor/embeddable-autotester.js");
   if (typeof(console) == "undefined") console = {log: print};
 }
@@ -72,13 +72,13 @@ if (!list.length || (list.length == 1 && !list[0])) {
   for (var i = 0; i < nav._sceneList.length; i++) {
     addFile(nav._sceneList[i]+".txt");
   }
-  if (fileExists("web/"+gameName+"/scenes/choicescript_stats.txt")) {
+  if (fileExists(projectPath+"choicescript_stats.txt")) {
     list.push("choicescript_stats.txt");
   }
-  if (fileExists("web/"+gameName+"/scenes/choicescript_screenshots.txt")) {
+  if (fileExists(projectPath+"choicescript_screenshots.txt")) {
     list.push("choicescript_screenshots.txt");
   }
-  if (fileExists("web/"+gameName+"/scenes/choicescript_upgrade.txt")) {
+  if (fileExists(projectPath+"choicescript_upgrade.txt")) {
     list.push("choicescript_upgrade.txt");
   }
 } else {
@@ -99,7 +99,7 @@ var uncovered;
 
 var sceneFileSets = {};
 verifyFileName = function verifyFileName(dir, name) {
-  var filePath = "web/"+gameName+"/"+dir+"/"+name;
+  var filePath = projectPath+name;
   if (!fileExists(filePath)) throw new Error("File does not exist: " + name);
   var canonicalName, fileName, i;
   if (isRhino) {
@@ -110,7 +110,7 @@ verifyFileName = function verifyFileName(dir, name) {
   } else {
     if (!sceneFileSets[dir]) {
       sceneFileSets[dir] = {};
-      var sceneFiles = fs.readdirSync("web/"+gameName+"/"+dir);
+      var sceneFiles = fs.readdirSync(projectPath);
       for (i = sceneFiles.length - 1; i >= 0; i--) {
         sceneFileSets[dir][sceneFiles[i]] = 1;
       }
@@ -139,6 +139,8 @@ Scene.prototype.verifySceneFile = function commandLineVerifySceneFile(sceneName)
 };
 
 Scene.prototype.verifyImage = function commandLineVerifyImage(name) {
+  if (/^data:image/.test(name))
+    return;
   try {
     verifyFileName(".", name);
   } catch (e) {
@@ -213,7 +215,7 @@ if (fullGame) {
         var fileName = list[i];
         var sceneName = fileName.replace(/\.txt$/, "");
         verifyFileName("scenes", fileName);
-        var sceneText = slurpFile("web/"+gameName+"/scenes/"+fileName, true /*throwOnError*/);
+        var sceneText = slurpFile(projectPath+fileName, true /*throwOnError*/);
         var sceneLines = sceneText.split("\n");
         for (var j = 0; j < sceneLines.length; j++) {
           var line = sceneLines[j];
@@ -267,7 +269,7 @@ var exitCode = (function(){
       var fileName = list[i];
       var sceneName = fileName.replace(/\.txt$/, "");
       verifyFileName("scenes", fileName);
-      var sceneText = slurpFile("web/"+gameName+"/scenes/"+fileName, true /*throwOnError*/);
+      var sceneText = slurpFile(projectPath+fileName, true /*throwOnError*/);
       if (i === 0) {
         var match = /^\*title (.*)/m.exec(sceneText);
         if (match) {
