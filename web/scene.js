@@ -2994,7 +2994,7 @@ Scene.prototype.stat_chart = function stat_chart() {
       div.appendChild(span0);
       span = document.createElement("span");
       span.setAttribute("style", "float: right");
-      printx(row.opposed_label+": "+(100-value)+"%\u00a0\u00a0", span);
+      printx(this.replaceVariables(row.opposed_label)+": "+(100-value)+"%\u00a0\u00a0", span);
       div.appendChild(span);
       statValue = document.createElement("div");
       setClass(statValue, "statValue");
