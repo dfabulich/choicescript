@@ -1662,10 +1662,15 @@ Scene.prototype.verifyOptionsMatch = function verifyOptionsMatch(prev, current) 
 
 // render the prompt and the radio buttons
 Scene.prototype.renderOptions = function renderOptions(groups, options, callback) {
-    for (var i = 0; i < options.length; i++) {
-      var option = options[i];
-      option.name = this.replaceVariables(option.name);
+    var self = this;
+    function replaceVars(options) {
+      for (var i = 0; i < options.length; i++) {
+        var option = options[i];
+        option.name = self.replaceVariables(option.name);
+        if (option.suboptions) replaceVars(option.suboptions);
+      }
     }
+    replaceVars(options);
     this.paragraph();
     printOptions(groups, options, callback);
 
