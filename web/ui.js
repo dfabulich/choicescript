@@ -160,6 +160,9 @@ function showMenu() {
       {name:"Change the background color.", group:"choice", background:true},
       {name:"Change the animation between pages.", group:"choice", animation:true},
     ];
+    if (parent && parent.cside) {
+      options.push({name:"Clear game data.", group:"choice", clearData:true});
+    }
     printOptions([""], options, function(option) {
       if (option.resume) {
         return clearScreen(function() {
@@ -188,6 +191,8 @@ function showMenu() {
         textOptionsMenu({color:1});
       } else if (option.animation) {
         textOptionsMenu({animation:1});
+      } else if (option.clearData) {
+        textOptionsMenu({clearData:1});
       }
     });
     curl();
@@ -248,6 +253,8 @@ function textOptionsMenu(categories) {
       text.innerHTML = "<p>Change the background color.</p>";
     } else if (categories.animation) {
       text.innerHTML = "<p>Change the animation between pages.</p>";
+    } else if (categories.clearData) {
+      text.innerHTML = "<p>Clear CSIDE's game data for all games? This means everything: achievements, aesthetic preferences and the rest.</p><p>The game tab will be reset.</p>";
     }
     options = [
       {name:"Return to the game.", group:"choice", resume:true},
@@ -273,6 +280,9 @@ function textOptionsMenu(categories) {
       {name: "Animate between pages.", group:"choice", animation:1},
       {name: "Don't animate between pages.", group:"choice", animation:2}
     );
+    if (categories.clearData) options.push(
+      {name: "Clear data.", group:"choice", clearData:true}
+    );
     printOptions([""], options, function(option) {
       if (option.resume) {
         return clearScreen(function() {
@@ -286,6 +296,11 @@ function textOptionsMenu(categories) {
       } else if (option.animation) {
         window.animateEnabled = option.animation !== 2;
         if (initStore()) store.set("preferredAnimation", parseFloat(option.animation));
+      } else if (option.clearData) {
+        if (initStore()) store.store.clear();
+        return clearScreen(function() {
+          location.reload();
+        });
       } else {
         changeFontSize(option.bigger);
       }
