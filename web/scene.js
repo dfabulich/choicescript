@@ -1662,10 +1662,15 @@ Scene.prototype.verifyOptionsMatch = function verifyOptionsMatch(prev, current) 
 
 // render the prompt and the radio buttons
 Scene.prototype.renderOptions = function renderOptions(groups, options, callback) {
-    for (var i = 0; i < options.length; i++) {
-      var option = options[i];
-      option.name = this.replaceVariables(option.name);
+    var self = this;
+    function replaceVars(options) {
+      for (var i = 0; i < options.length; i++) {
+        var option = options[i];
+        option.name = self.replaceVariables(option.name);
+        if (option.suboptions) replaceVars(option.suboptions);
+      }
     }
+    replaceVars(options);
     this.paragraph();
     printOptions(groups, options, callback);
 
@@ -2999,7 +3004,7 @@ Scene.prototype.stat_chart = function stat_chart() {
       div.appendChild(span0);
       span = document.createElement("span");
       span.setAttribute("style", "float: right");
-      printx(row.opposed_label+": "+(100-value)+"%\u00a0\u00a0", span);
+      printx(this.replaceVariables(row.opposed_label)+": "+(100-value)+"%\u00a0\u00a0", span);
       div.appendChild(span);
       statValue = document.createElement("div");
       setClass(statValue, "statValue");
@@ -3915,16 +3920,18 @@ Scene.prototype.achievement = function scene_achievement(data) {
   var achievementName = parsed[1];
   if (!/^[a-z][a-z0-9_]+$/.test(achievementName)) throw new Error(this.lineMsg()+"Invalid achievement name: " +achievementName);
 
-
   if (this.nav.achievements.hasOwnProperty(achievementName)) {
     // this achievement already exists...
-    if (!this.nav.achievements[achievementName].lineNumber) {
+    var preExisting = this.nav.achievements[achievementName];
+    if (!preExisting.lineNumber || preExisting.lineNumber == (this.lineNum+1)) {
+      // restarting/randomtest will naturally re-run *achievements; ignore those
       // blow away pre-existing mygame.js achievements
       this.nav.achievements = {};
       this.nav.achievementList = [];
-    } else if (this.nav.achievements[achievementName].lineNumber != (this.lineNum+1)) {
+      this.achievementTotal = 0;
+      this.seenAchievementTitles = {};
+    } else {
       // don't allow redefining achievements
-      // restarting/randomtest will naturally re-run *achievements; ignore those
       throw new Error(this.lineMsg()+"Achievement "+achievementName+" already defined on line " + this.nav.achievements[achievementName].lineNumber);
     }
   }
