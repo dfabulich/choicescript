@@ -611,6 +611,10 @@ function curl() {
     }
   }
 
+  // The firstFocus 'jump' breaks CSIDE's UI if the
+  // first element is bigger than the iframe's viewport.
+  if (parent && parent.cside) { focusFirst = function(){};}
+
   // TODO force a reflow before curling the page
   var container2 = document.getElementById('container2');
   if (!container2) {
