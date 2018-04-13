@@ -1599,9 +1599,9 @@ Scene.prototype.parseOptions = function parseOptions(startIndent, choicesRemaini
             (this.temps._fakeChoiceDepth === undefined || this.temps._fakeChoiceDepth < 1)) {
         throw new Error(this.lineMsg() + "Expected choice body");
     }
+    if (!atLeastOneSelectableOption) this.conflictingOptions("line " + (startingLine+1) + ": No selectable options");
     prevOption = options[options.length-1];
     if (!prevOption.endLine) prevOption.endLine = this.lineNum;
-    if (!atLeastOneSelectableOption) this.conflictingOptions("line " + (startingLine+1) + ": No selectable options");
     return options;
 };
 
