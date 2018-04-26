@@ -1775,6 +1775,7 @@ Scene.prototype.link_button = function linkButton(data) {
     if (!result) throw new Error(this.lineMsg() + "invalid line; this line should have an URL: " + data);
     var href = result[1];
     var anchorText = trim(result[2]) || href;
+    this.paragraph();
     var target = this.target;
     if (!target) target = document.getElementById('text');
     printButton(anchorText, target, false, function() {
@@ -2148,6 +2149,7 @@ Scene.prototype.more_games = function more_games(now) {
     return;
   }
   var self = this;
+  this.paragraph();
   var target = this.target;
   if (!target) target = document.getElementById('text');
   var button = printButton("Play More Games Like This", target, false,
@@ -3191,6 +3193,7 @@ Scene.prototype.delay_break = function(durationInSeconds) {
     target = document.createElement("p");
     document.getElementById('text').appendChild(target);
   }
+  this.paragraph();
   var self = this;
   delayBreakStart(function(delayStart) {
     window.blockRestart = true;
