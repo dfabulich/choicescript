@@ -4128,7 +4128,7 @@ Scene.tokens = [
             throw new Error("line "+line+": Invalid string, open quote with no close quote: " + str);
         }
     },
-    {name:"CURLY_QUOTE", test:function(str){ return Scene.regexpMatch(str,/^[\u201c|\u201d]/); } },
+    {name:"CURLY_QUOTE", test:function(str){ return Scene.regexpMatch(str,/^[\u201c\u201d]/); } },
     {name:"WHITESPACE", test:function(str){ return Scene.regexpMatch(str,/^\s+/); } },
     {name:"NAMED_OPERATOR", test:function(str){ return Scene.regexpMatch(str,/^(and|or|modulo)\b/); } },
     {name:"VAR", test:function(str){ return Scene.regexpMatch(str,/^\w*/); } },
