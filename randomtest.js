@@ -43,7 +43,9 @@ function parseArgs(args) {
       iterations = value;
     } else if (name === "game") {
       gameName = value;
-    } else if (name === "seed") {
+    } else if (name === "project") {
+      projectPath = value;
+    }  else if (name === "seed") {
       randomSeed = value;
     } else if (name === "delay") {
       delay = (value !== "false");
@@ -694,7 +696,9 @@ function randomtestAsync(i, showCoverage) {
 function randomtest() {
   var start = new Date().getTime();
   randomSeed *= 1;
+  var percentage = iterations / 100;
   for (var i = 0; i < iterations; i++) {
+    if (process.send) process.send(i / percentage);
     console.log("*****Seed " + (i+randomSeed));
     nav.resetStats(stats);
     timeout = null;
@@ -771,5 +775,6 @@ function randomtest() {
       })();
     }
   }
+  if (process.disconnect) process.disconnect(); // Close IPC channel, so we can exit.
 }
 if (!delay) randomtest();
