@@ -2557,16 +2557,12 @@ Scene.prototype.save_game = function save_game(destinationSceneName) {
     saveName.type="text";
     saveName.name="saveName";
     saveName.setAttribute("placeholder", "Type a name for your saved game");
-    saveName.setAttribute("style", "font-size: 25px; width: 90%;");
+    saveName.setAttribute("style", "display:block; font-size: 25px; width: 90%; margin: 1rem 0");
     form.appendChild(saveName);
 
     var hideEmailForm = false;
     // hideEmailForm = _global.automaticCloudStorage;
-    if (hideEmailForm) {
-      println("", form);
-    } else {
-      println("", form);
-      println("", form);
+    if (!hideEmailForm) {
       println("Please login to the choiceofgames.com save system with your email address below.", form);
 
       var emailInput = document.createElement("input");
@@ -2575,11 +2571,8 @@ Scene.prototype.save_game = function save_game(destinationSceneName) {
       emailInput.name="email";
       emailInput.value=defaultEmail;
       emailInput.setAttribute("placeholder", "you@example.com");
-      emailInput.setAttribute("style", "font-size: 25px; width: 90%;");
+      emailInput.setAttribute("style", "display:block; font-size: 25px; width: 90%; margin: 1rem 0");
       form.appendChild(emailInput);
-
-      println("", form);
-      println("", form);
 
       var subscribeLabel = document.createElement("label");
       subscribeLabel.setAttribute("for", "subscribeBox");
@@ -2593,7 +2586,6 @@ Scene.prototype.save_game = function save_game(destinationSceneName) {
       form.appendChild(subscribeLabel);
     }
 
-    println("", form);
     var target = this.target;
     if (!target) target = document.getElementById('text');
     target.appendChild(form);
