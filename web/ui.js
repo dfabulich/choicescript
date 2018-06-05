@@ -836,8 +836,6 @@ function printOptions(groups, options, callback) {
       currentOptions = currentOptions[0].suboptions;
   }
 
-  form.appendChild(document.createElement("br"));
-
   var touchStartHandler = function (e) {
     if (e.touches.length > 1) return;
     var target = e.target;
@@ -2218,8 +2216,6 @@ function printInput(target, inputType, callback, minimum, maximum, step) {
         return false;
     };
 
-    form.appendChild(document.createElement("br"));
-    form.appendChild(document.createElement("br"));
     printButton("Next", form, true);
 
 }
@@ -2347,7 +2343,7 @@ function loginForm(target, optional, errorMessage, callback) {
           ((isWeb && window.facebookAppId)?"<label for=facebook><input type=radio name=choice value=facebook id=facebook> Sign in with Facebook.</label>":"")+
           ((isWeb && window.googleAppId)?"<label for=google><input type=radio name=choice value=google id=google> Sign in with Google.</label>":"")+
           (optional ? "<label for=no><input type=radio name=choice value=no id=no> Cancel.</label>" : "") +
-          "</div><br>";
+          "</div>";
 
         var labels = form.getElementsByTagName("label");
         setClass(labels[labels.length-1], "lastChild");
