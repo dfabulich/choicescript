@@ -698,7 +698,9 @@ function randomtest() {
   randomSeed *= 1;
   var percentage = iterations / 100;
   for (var i = 0; i < iterations; i++) {
-    if (process.send) process.send(i / percentage);
+    if (typeof process != "undefined")
+      if (typeof process.send != "undefined")
+        process.send(i / percentage);
     console.log("*****Seed " + (i+randomSeed));
     nav.resetStats(stats);
     timeout = null;
