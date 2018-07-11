@@ -2203,16 +2203,16 @@ Scene.prototype.ending = function ending() {
 };
 
 Scene.prototype.restart = function restart() {
-  if (this.secondaryMode && this.secondaryMode != "stats") {
-    throw new Error(this.lineMsg() + "Cannot *restart in " + this.secondaryMode + " mode");
-  }
   delayBreakEnd();
-  this.reset();
-  var startupScene = this.nav.getStartupScene();
-  if (this.secondaryMode == "stats") {
-    this.redirect_scene(startupScene);
+  if (this.secondaryMode) {
+    if (this.secondaryMode == "stats") {
+      this.reset();
+      this.redirect_scene(this.nav.getStartupScene());
+    } else {
+      throw new Error(this.lineMsg() + "Cannot *restart in " + this.secondaryMode + " mode");
+    }
   } else {
-    this.goto_scene(startupScene);
+    restartGame();
   }
 };
 
