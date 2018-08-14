@@ -390,7 +390,7 @@ Scene.prototype.loadSceneFast = function loadSceneFast(url) {
 };
 
 Scene.prototype.loadLinesFast = function loadLinesFast(crc, lines, labels) {
-  this.checkSum(crc);
+  this.crc = crc;
   this.lines = lines;
   this.labels = labels;
   this.loading = false;
@@ -491,23 +491,35 @@ Scene.prototype.loadScene = function loadScene(url) {
     }
 };
 
-Scene.prototype.checkSum = function checkSum(crc) {
+Scene.prototype.checkSum = function checkSum() {
   if (this.temps.choice_crc) {
-    if (this.temps.choice_crc != crc) {
-      // The scene has changed; restart the scene
-      var userRestored = this.temps.choice_user_restored || false;
-      this.temps = {choice_reuse:"allow", choice_user_restored:userRestored, choice_crc: crc, _choiceEnds:{}};
-      this.lineNum = 0;
-      this.indent = 0;
+    if (!this.randomtest && !this.quicktest && this.temps.choice_crc != this.crc && this.lineNum) {
+      // The scene has changed; restart the scene from backup
+      if (typeof alertify !== 'undefined') {
+        if (!initStore()) {
+          alertify.log(this.name + ".txt has updated. Restarting chapter.");
+        } else {
+          alertify.log("The game has updated. Restarting chapter.");
+        }
+      }
+      var self = this;
+      safeTimeout(function() {
+        clearScreen(function() {
+          loadAndRestoreGame("backup", self.name);
+        });
+      }, 0);
+      return false;
+    } else {
+      return true;
     }
   } else {
-    this.temps.choice_crc = crc;
+    this.temps.choice_crc = this.crc;
+    return true;
   }
 };
 
 Scene.prototype.loadLines = function loadLines(str) {
-    var crc = crc32(str);
-    this.checkSum(crc);
+    this.crc = crc32(str);
     this.lines = str.split(/\r?\n/);
     this.parseLabels();
     this.loaded = true;
@@ -524,6 +536,9 @@ Scene.prototype.execute = function execute() {
         }
         return;
     }
+    if (!this.checkSum()) {
+      return;
+    }
     if (this.nav) this.nav.repairStats(stats);
     if (!this.temps._choiceEnds) this.temps._choiceEnds = {};
     doneLoading();
@@ -536,6 +551,11 @@ Scene.prototype.execute = function execute() {
       } else {
           throw new Error(this.targetLabel.origin + " line " + (this.targetLabel.originLine+1) + ": "+this.name+" doesn't contain label " + label);
       }
+    }
+    // this backup slot will only be used when the scene crc changes during upgrades
+    if (!this.lineNum) {
+      var subsceneStack = this.stats.choice_subscene_stack || [];
+      if (!subsceneStack.length) this.save("backup");
     }
     this.printLoop();
 };

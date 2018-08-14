@@ -674,15 +674,19 @@ function loadAndRestoreGame(slot, forcedScene) {
     safeCall(null, function() {
       var state = null;
       if (ok && value && ""+value) {
+        console.log("successfully loaded slot " + slot);
         state = jsonParse(value);
       } else if (window.Persist.type == "androidStorage" && document.cookie) {
         return upgradeAndroidCookies(slot,forcedScene);
+      } else if (slot == "backup") {
+        console.log("loadAndRestoreGame couldn't find backup");
+        return loadAndRestoreGame("", forcedScene);
       }
       restoreGame(state, forcedScene);
     });
   }
   if (!slot) slot = "";
-  if (window.pseudoSave && pseudoSave[""]) return valueLoaded(true, pseudoSave[""]);
+  if (window.pseudoSave && pseudoSave[slot]) return valueLoaded(true, pseudoSave[slot]);
   if (!initStore()) return restoreGame(null, forcedScene);
   window.store.get("state"+slot, valueLoaded);
 }
