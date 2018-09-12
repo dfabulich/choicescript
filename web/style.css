@@ -126,6 +126,10 @@ table {
   /* width will be determined at runtime, 0-100% */
 }
 
+.choice {
+  margin: 1rem 0;
+}
+
 .choice label{
     position: relative; /* so the .shuttle can be positioned absolutely within it */
     transition-property: background-color, color;
