@@ -155,7 +155,7 @@ function compile(){
       scene.loadLines(scene_data);
       var sceneName = knownScenes[i].replace(/\.txt/gi,"");
       sceneName = sceneName.replace(/ /g, "_");
-      scene_object = scene_object + "\"" + sceneName + "\": {\"crc\":" + scene.temps.choice_crc + ", \"lines\":" + toJson(scene.lines)+ ", \"labels\":" + toJson(scene.labels) + "}";
+      scene_object = scene_object + "\"" + sceneName + "\": {\"crc\":" + scene.crc + ", \"lines\":" + toJson(scene.lines)+ ", \"labels\":" + toJson(scene.labels) + "}";
       if ((i + 1) != knownScenes.length) {
         scene_object += ",";
       }
