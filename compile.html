@@ -102,7 +102,7 @@ var compiledResult = compile();
 var blob = new Blob([compiledResult], {type: "text/html"});
 var bloburl = URL.createObjectURL(blob);
 console.log("Export Complete!");
-document.write("Click <a download='mygame_complete' href='" + bloburl + "'>here</a> to download your compiled game.");
+document.write("Click <a download='mygame_complete.html' href='" + bloburl + "'>here</a> to download your compiled game.");
 </script>
 </body>
 </html>
