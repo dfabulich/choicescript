@@ -1279,6 +1279,9 @@ Scene.prototype.create = function create(line) {
     if ("VAR" == token.name && !/^true|false$/i.test(token.value)) complexError();
     if ("STRING" == token.name && /(\$|@)!?!?{/.test(token.value)) throw new Error(this.lineMsg() + "Invalid create instruction, value must be a simple string without ${} or @{}: " + line);
     var value = this.evaluateExpr(stack);
+    if (!this.created) this.created = {};
+    if (this.created[variable]) throw new Error(this.lineMsg() + "Invalid create. " + variable + " was previously created on line " + this.created[variable]);
+    this.created[variable] = this.lineNum + 1;
     this.stats[variable] = value;
     if (this.nav) this.nav.startingStats[variable] = value;
 };
