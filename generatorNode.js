@@ -27,7 +27,7 @@ while (i--) {
   scene.loadLines(str);
   
   var writer = fs.createWriteStream(outputDir + '/' + list[i].replace(/ /g, "_") + ".json");
-  writer.write("{\"crc\":" + scene.temps.choice_crc + ", \"lines\":" + toJson(scene.lines)+ ", \"labels\":" + toJson(scene.labels) + "}", "utf-8");
+  writer.write("{\"crc\":" + scene.crc + ", \"lines\":" + toJson(scene.lines)+ ", \"labels\":" + toJson(scene.labels) + "}", "utf-8");
   
   writer.end();
 }
