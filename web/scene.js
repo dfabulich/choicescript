@@ -1028,7 +1028,7 @@ Scene.prototype.goto_scene = function gotoScene(data) {
 
     if (result.sceneName == this.name) {
       if (typeof result.label === "undefined") {
-        this.lineNum = 0;
+        this.lineNum = -1; // the printLoop will increment the line number to 0
       } else {
         this["goto"](result.label);
       }
