@@ -60,7 +60,9 @@ function replaceBbCode(msg) {
       .replace(/\[b\]/g, '<b>')
       .replace(/\[\/b\]/g, '</b>')
       .replace(/\[i\]/g, '<i>')
-      .replace(/\[\/i\]/g, '</i>');
+      .replace(/\[\/i\]/g, '</i>')
+      .replace(/\u2022(.*)/, '<ul>•$1</ul>')
+      .replace(/\u2022([^\u2022]*)/g, '<li>$1</li>')
 }
 
 function println(msg, parent) {
