@@ -2017,7 +2017,7 @@ Scene.prototype.validateVariable = function validateVariable(variable) {
     if (!/^\w+$/.test(variable)) {
         throw new Error(this.lineMsg()+"Invalid variable name: '" + variable + "'");
     }
-    if (/^(and|or|true|false)$/.test(variable)) throw new Error(this.lineMsg()+"Invalid variable name, '" + variable + "' is a reserved word");
+    if (/^(and|or|true|false|scene|scenename)$/i.test(variable)) throw new Error(this.lineMsg()+"Invalid variable name, '" + variable + "' is a reserved word");
     if (/^choice_/.test(variable)) throw new Error(this.lineMsg()+"Invalid variable name, variables may not start with 'choice_'; this is a reserved prefix");
 };
 
