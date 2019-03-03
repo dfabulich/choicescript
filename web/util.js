@@ -731,6 +731,7 @@ function restartGame(shouldPrompt) {
     submitAnyDirtySaves();
     clearCookie(function() {}, 'temp');
     clearCookie(function() {
+      window.nextCurlStyle = "back";
       window.nav.resetStats(window.stats);
       clearScreen(restoreGame);
     }, "");
