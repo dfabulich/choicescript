@@ -117,6 +117,7 @@ function showAchievements(hideNextButton) {
   if (!button) return;
   if (button.innerHTML == "Return to the Game") {
     return clearScreen(function() {
+      window.nextCurlStyle = "back";
       setButtonTitles();
       loadAndRestoreGame();
     });
@@ -129,6 +130,7 @@ function showAchievements(hideNextButton) {
       printAchievements(document.getElementById("text"));
       if (!hideNextButton) printButton("Next", main, false, function() {
         clearScreen(function() {
+          window.nextCurlStyle = "back";
           setButtonTitles();
           loadAndRestoreGame();
         });
