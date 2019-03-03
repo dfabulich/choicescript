@@ -89,6 +89,7 @@ function showStats() {
       return clearScreen(function() {
         setButtonTitles();
         loadAndRestoreGame();
+        window.nextCurlStyle = "back";
       });
     }
     var currentScene = window.stats.scene;
@@ -116,6 +117,7 @@ function showAchievements(hideNextButton) {
   if (!button) return;
   if (button.innerHTML == "Return to the Game") {
     return clearScreen(function() {
+      window.nextCurlStyle = "back";
       setButtonTitles();
       loadAndRestoreGame();
     });
@@ -128,6 +130,7 @@ function showAchievements(hideNextButton) {
       printAchievements(document.getElementById("text"));
       if (!hideNextButton) printButton("Next", main, false, function() {
         clearScreen(function() {
+          window.nextCurlStyle = "back";
           setButtonTitles();
           loadAndRestoreGame();
         });
@@ -232,6 +235,7 @@ function textOptionsMenu(categories) {
     if (button.innerHTML == "Menu") return showMenu();
     if (button.innerHTML == "Return to the Game") {
       return clearScreen(function() {
+        window.nextCurlStyle = "back";
         setButtonTitles();
         loadAndRestoreGame();
       });
@@ -278,6 +282,7 @@ function textOptionsMenu(categories) {
     printOptions([""], options, function(option) {
       if (option.resume) {
         return clearScreen(function() {
+          window.nextCurlStyle = "back";
           setButtonTitles();
           loadAndRestoreGame();
         });
@@ -575,6 +580,11 @@ function clearScreen(code) {
 
 // in the iOS app, display a page curl animation
 function curl() {
+  console.log('curl');
+  var back = window.nextCurlStyle === "back";
+  if (back) {
+    window.nextCurlStyle = undefined;
+  }
   var focusFirst = function() {
     var text = document.getElementById("text");
     if (text.firstElementChild) {
@@ -631,10 +641,16 @@ function curl() {
 
     slideoutStyle.innerHTML = "@keyframes containerslideout { "+
       "from { transform: "+container1.style.transform+"; } " +
-      "to   { transform: "+container1.style.transform+" translateX(-105%); } }\n"+
+      "to   { transform: "+container1.style.transform+" translateX("+(back ? "" : "-")+"105%); } }\n"+
       "@-webkit-keyframes containerslideout { "+
       "from { -webkit-transform: "+container1.style.webkitTransform+"; } " +
-      "to   { -webkit-transform: "+container1.style.webkitTransform+" translateX(-105%); } }"+
+      "to   { -webkit-transform: " + container1.style.webkitTransform + " translateX(" + (back ? "" : "-") + "105%); } }" +
+      "@keyframes containerslidein { " +
+      "from { transform: translateX(" + (back ? "-" : "") + "100%); } " +
+      "to   { transform: none; } }\n" +
+      "@-webkit-keyframes containerslidein { " +
+      "from { -webkit-transform: translateX(" + (back ? "-" : "") + "100%); } " +
+      "to   { transform: none; } }\n" +
       timingFunction;
 
     // double rAF so we start after container1 is transformed and scrolled to the top
@@ -661,9 +677,9 @@ function curl() {
                 -6.4041738958415664 * Math.exp(
                   -7.2908241330981340 * fraction));
               container1.style.transform = container1.style.webkitTransform =
-                oldContainer1Transform + " translateX(-" + (105 * fraction) + "%)";
+                oldContainer1Transform + " translateX(" + (back ? "" : "-") + (105 * fraction) + "%)";
               container2.style.transform = container2.style.webkitTransform =
-                "translateX(" + (100 - 100 * fraction) + "%)";
+                "translateX(" + (back ? "-" : "")  + (100 - 100 * fraction) + "%)";
               if (frames < totalSteps) {
                 frames++;
                 requestAnimationFrame(rafSlide);

@@ -43,26 +43,6 @@ a {
   -webkit-transition-timing-function: ease-in;
 }
 
-@keyframes containerslidein {
-  from {
-    transform: translateX(100%);
-  }
-
-  to {
-    transform: none;
-  }
-}
-
-@-webkit-keyframes containerslidein {
-  from {
-    -webkit-transform: translateX(100%);
-  }
-
-  to {
-    -webkit-transform: none;
-  }
-}
-
 .tempfocus:focus {
   outline: none;
 }

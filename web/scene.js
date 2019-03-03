@@ -946,6 +946,7 @@ Scene.prototype.finish = function finish(buttonName) {
       if (window.isAndroidApp && window.statsMode.get()) return;
       printButton(buttonName || "Next", main, false,
         function() {
+          window.nextCurlStyle = "back";
           clearScreen(loadAndRestoreGame);
         }
       );
@@ -4110,6 +4111,10 @@ Scene.prototype.track_event = function track_event(data) {
   }
 }
 
+Scene.prototype.next_curl_goes_back = function next_curl_goes_back() {
+  window.nextCurlStyle = "back";
+}
+
 Scene.prototype.lineMsg = function lineMsg() {
     return this.name + " line " + (this.lineNum+1) + ": ";
 };
@@ -4235,5 +4240,6 @@ Scene.validCommands = {"comment":1, "goto":1, "gotoref":1, "label":1, "looplimit
     "restart":1,"more_games":1,"delay_ending":1,"end_trial":1,"login":1,"achieve":1,"scene_list":1,"title":1,
     "bug":1,"link_button":1,"check_registration":1,"sound":1,"author":1,"gosub_scene":1,"achievement":1,
     "check_achievements":1,"redirect_scene":1,"print_discount":1,"purchase_discount":1,"track_event":1,
-    "timer":1,"youtube":1,"product":1,"text_image":1,"params":1
+    "timer":1,"youtube":1,"product":1,"text_image":1,"params":1,
+    "next_curl_goes_back":1
     };
