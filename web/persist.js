@@ -790,7 +790,7 @@ return r;},version:'0.2.1',enabled:false};me.enabled=alive.call(me);return me;}(
 
       test: function() {
         try {
-          return window.isIosApp ? true : false;
+          return (window.isIosApp || /CoGnibus/.test(navigator.userAgent)) ? true : false;
         } catch (e) {
           return false;
         }
@@ -811,12 +811,14 @@ return r;},version:'0.2.1',enabled:false};me.enabled=alive.call(me);return me;}(
           });
 
           var url = scheme + "://" + path;
-          var iframe = document.createElement("IFRAME");
-          iframe.setAttribute("src", url);
-          iframe.setAttribute("style", "display:none");
-          document.documentElement.appendChild(iframe);
-          iframe.parentNode.removeChild(iframe);
-          iframe = null;
+          setTimeout(function() {
+            var iframe = document.createElement("IFRAME");
+            iframe.setAttribute("src", url);
+            iframe.setAttribute("style", "display:none");
+            document.documentElement.appendChild(iframe);
+            iframe.parentNode.removeChild(iframe);
+            iframe = null;
+          }, 0);
         },
 
         get: function(key, fn, scope) {
@@ -825,6 +827,10 @@ return r;},version:'0.2.1',enabled:false};me.enabled=alive.call(me);return me;}(
           key = this.key(key);
 
           var nonce = "storageget" + key + (+new Date);
+          var i = 0;
+          while (window[nonce]) {
+            nonce = "storageget" + key + (+new Date) + String(i++);
+          }
           window[nonce] = function(value) {
             delete window[nonce];
             fn.call(scope || this, true, value);
@@ -838,6 +844,10 @@ return r;},version:'0.2.1',enabled:false};me.enabled=alive.call(me);return me;}(
 
           // set value
           var nonce = "storageset" + key + (+new Date);
+          var i = 0;
+          while (window[nonce]) {
+            nonce = "storageget" + key + (+new Date) + String(i++);
+          }
           window[nonce] = function() {
             delete window[nonce];
             if (fn) fn.call(scope || this, true, val);
@@ -863,6 +873,10 @@ return r;},version:'0.2.1',enabled:false};me.enabled=alive.call(me);return me;}(
 
           // delete value
           var nonce = "storagerem" + key + (+new Date);
+          var i = 0;
+          while (window[nonce]) {
+            nonce = "storageget" + key + (+new Date) + String(i++);
+          }
           window[nonce] = function() {
             delete window[nonce];
             if (fn) fn.call(scope || this, (val !== null), val);

@@ -38,7 +38,9 @@ _global = this;
   try {
     isWinOldApp = window.external.IsWinOldApp();
   } catch (ignored) {}
-  _global.isWeb = !_global.isWinOldApp && /^https?:/.test(url);
+  _global.isOmnibusApp = /CoGnibus/.test(userAgent);
+  _global.isIosApp = _global.isIosApp || _global.isOmnibusApp;
+  _global.isWeb = !_global.isIosApp && !_global.isWinOldApp && /^https?:/.test(url);
   _global.isAndroid = /Android/.test(userAgent);
   _global.isSecureWeb = /^https:?$/.test(protocol);
   _global.isSafari = /Safari/.test(userAgent);
@@ -274,14 +276,15 @@ function logout(callback) {
   xhrAuthRequest("GET", "logout", callback);
   recordLogin(false);
   window.knownPurchases = null;
+  window.registered = false;
   if (typeof FB != "undefined" && FB.logout) FB.logout();
   if (typeof gapi != "undefined" && gapi.auth && gapi.auth.signOut) gapi.auth.signOut();
 }
 
-function recordLogin(registered, email, callback) {
+function recordLogin(registered, loginId, email, callback) {
   if (initStore()) {
     if (registered) recordEmail(email);
-    window.store.set("login", registered, function() {safeCall(null, callback);});
+    window.store.set("login", loginId || 0, function() {safeCall(null, callback);});
     window.registered = registered;
   } else {
     safeTimeout(callback, 0);
@@ -728,6 +731,7 @@ function restartGame(shouldPrompt) {
   }
   function actuallyRestart(result) {
     if (!result) return;
+    delayBreakEnd();
     submitAnyDirtySaves();
     clearCookie(function() {}, 'temp');
     clearCookie(function() {
@@ -812,8 +816,10 @@ function getCookieByName(cookieName, ck) {
 
 function parseQueryString(str) {
   if (!str) return null;
+  str = String(str).substring(1);
+  if (!str) return null;
   var map = {};
-  var pairs = String(str).substring(1).split("&");
+  var pairs = str.split("&");
   var i = pairs.length;
   while (i--) {
     var pair = pairs[i];
@@ -822,6 +828,7 @@ function parseQueryString(str) {
   }
   return map;
 }
+
 function trim(str) {
     if (str === null || str === undefined) return null;
     var result = str.replace(/^\s+/g, "");
@@ -975,4 +982,187 @@ function matchBracket(line, brackets, startIndex) {
     }
   }
   return -1;
+}
+
+function isStoreSceneCacheRequired() {
+  if (!(initStore() &&
+    _global.purchases &&
+    _global.checkPurchase &&
+    _global.hashes &&
+    !_global.isOmnibusApp &&
+    hashes.scenes
+  )) return false;
+  var empty = true;
+  for (var scene in purchases) {
+    if (/^fake:/.test(scene)) continue;
+    empty = false;
+    break;
+  }
+  return !empty;
+}
+
+function updateSinglePaidSceneCache(sceneName, callback) {
+  sceneName = sceneName.replace(/ /g, "_");
+  var fileName = sceneName + ".txt.json";
+  if (initStore() && _global.hashes && hashes.scenes && hashes.scenes[fileName]) {
+    var xhr = new XMLHttpRequest();
+    var url = "scenes/" + fileName + "?hash="+hashes.scenes[fileName];
+    xhr.open("GET", url);
+    xhr.onload = function() {
+      if (xhr.status === 404) {
+        try {
+          if (JSON.parse(xhr.responseText).error === "hash doesn't match") {
+            return awaitAppUpdate(function() {
+              callback("strange");
+            })
+          }
+        } catch (e) {
+          if (window.console) console.error(e, e.stack);
+        }
+      }
+      if (xhr.status !== 200) return callback(xhr.status);
+      var result;
+      try {
+        result = jsonParse(xhr.responseText);
+      } catch (e) {
+        if (window.console) console.error(e, e.stack);
+      }
+      if (!result) return callback("network");
+      window.store.set("cache_scene_"+sceneName, xhr.responseText, function() {
+        window.store.set("cache_scene_hash_"+sceneName, hashes.scenes[fileName], function() {
+          callback(null, result);
+        });
+      });
+    };
+    xhr.onerror = function() {
+      callback("network");
+    }
+    console.log("updateSinglePaidSceneCache", url);
+    xhr.send();
+  }
+}
+
+function updateAllPaidSceneCaches() {
+  if (!isStoreSceneCacheRequired()) return;
+  var flipped = {};
+  for (var scene in purchases) {
+    if (/^fake:/.test(scene)) continue;
+    scene = scene.replace(/ /g, "_");
+    if (!flipped[purchases[scene]]) flipped[purchases[scene]] = [];
+    flipped[purchases[scene]].push(scene);
+  }
+  var products = [];
+  for (var product in flipped) {
+    products.push(product);
+  }
+  if (!products.length) return;
+  checkPurchase(products.join(" "), function(ok, result) {
+    if (!ok || !result) return;
+    var sceneList = [];
+    var push = Array.prototype.push;
+    for (var product in flipped) {
+      if (result[product]) {
+        push.apply(sceneList, flipped[product]);
+      }
+    }
+    if (!sceneList.length) return;
+    for (var i = 0; i < sceneList.length; i++) {
+      (function(i) {
+        var scene = sceneList[i];
+        var fileName = scene + ".txt.json";
+        window.store.get("cache_scene_hash_"+scene, function(ok, result) {
+          if (!ok || result !== hashes.scenes[fileName]) {
+            updateSinglePaidSceneCache(scene, function() {});
+          }
+        });
+      })(i);
+    }
+  })
+}
+
+function checkForAppUpdates() {
+  if (navigator.serviceWorker) {
+    navigator.serviceWorker.getRegistration().then(function(reg) {
+      if (reg) reg.update();
+    });
+  } else {
+    if (_global.applicationCache && applicationCache.status) {
+      applicationCache.update();
+    }
+  }
+}
+
+function refreshIfAppUpdateReady() {
+  if (navigator.serviceWorker) {
+    if (window.controllerchanged) {
+      return window.location.reload();
+    }
+    navigator.serviceWorker.getRegistration().then(function(reg) {
+      if (reg.waiting) {
+        reg.waiting.postMessage('skipWaiting');
+        return window.location.reload();
+      }
+    });
+  } else if (_global.applicationCache && applicationCache.status == 4) {
+    window.location.reload();
+  }
+}
+
+function awaitAppUpdate(callback) {
+
+  var appCacheExists = (_global.applicationCache && applicationCache.status);
+  var serviceWorkerExists = (navigator.serviceWorker && navigator.serviceWorker.controller);
+  if (!appCacheExists && !serviceWorkerExists) return callback();
+
+  var calledBack = false;
+  var maybeCallback = function() {
+    if (calledBack) return;
+    calledBack = true;
+    callback();
+  }
+
+  if (serviceWorkerExists) {
+    if (window.controllerchanged) return maybeCallback();
+    setTimeout(maybeCallback, 10000);
+    navigator.serviceWorker.getRegistration().then(function(reg) {
+      if (!reg) return maybeCallback();
+      if (reg.waiting) {
+        reg.waiting.postMessage('skipWaiting');
+        return maybeCallback();
+      }
+      var watchStateChange = function() {
+        if (this.state == 'installed') {
+          if (reg.waiting) reg.waiting.postMessage('skipWaiting');
+          maybeCallback();
+        }
+      };
+      if (reg.installing) reg.installing.addEventListener('statechange', watchStateChange);
+      reg.update();
+      reg.addEventListener('updatefound', function() {
+        reg.installing.addEventListener('statechange', watchStateChange);
+      })
+    });
+  } else {
+    if (applicationCache.status == 4) return maybeCallback();
+    setTimeout(maybeCallback, 10000);
+    var updateready = function() {
+      applicationCache.removeEventListener('updateready', updateready);
+      maybeCallback();
+    }
+    applicationCache.update();
+    applicationCache.addEventListener('updateready', updateready);
+  }
+}
+
+function remoteConfig(variable, callback) {
+  if (!_global.isIosApp || !_global.isOmnibusApp) {
+    safeTimeout(function() {callback(null);}, 0);
+    return;
+  }
+  var nonce = "remoteConfig" + variable + (+new Date);
+  window[nonce] = function(value) {
+    delete window[nonce];
+    callback(value);
+  }
+  callIos("remoteconfig", variable + " " + nonce);
 }

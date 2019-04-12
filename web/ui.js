@@ -61,7 +61,7 @@ function replaceBbCode(msg) {
       .replace(/\[\/b\]/g, '</b>')
       .replace(/\[i\]/g, '<i>')
       .replace(/\[\/i\]/g, '</i>')
-      .replace(/\u2022(.*)/, '<ul>•$1</ul>')
+      .replace(/\u2022([\s\S]*)/, '<ul>•$1</ul>')
       .replace(/\u2022([^\u2022]*)/g, '<li>$1</li>')
 }
 
@@ -160,8 +160,10 @@ function showMenu() {
       {name:"Email me when new games are available.", group:"choice", subscribe:true},
       {name:"Make the text bigger or smaller.", group:"choice", fontSizeMenu:true},
       {name:"Change the background color.", group:"choice", background:true},
-      {name:"Change the animation between pages.", group:"choice", animation:true},
     ];
+    if (window.animationProperty) options.push(
+      {name:"Change the animation between pages.", group:"choice", animation:true}
+    );
     printOptions([""], options, function(option) {
       if (option.resume) {
         return clearScreen(function() {
@@ -225,7 +227,7 @@ function setButtonTitles() {
 
 function textOptionsMenu(categories) {
   if (!categories) {
-    categories = {size:1, color:1, animation:1};
+    categories = {size:1, color:1, animation:window.animationProperty};
     if (document.getElementById('loading')) return;
     var button = document.getElementById("menuButton");
     if (!button) return;
@@ -707,12 +709,20 @@ function startLoading() {
         document.body.appendChild(loading);
       });
     }
+    callIos('startspinner');
 }
 
 function doneLoading() {
     var loading = document.getElementById('loading');
     if (loading) loading.parentNode.removeChild(loading);
     // TODO update header?
+    callIos('stopspinner');
+    if (window.doneLoadingCallback) {
+      var callback = doneLoadingCallback;
+      delete window.doneLoadingCallback;
+      // long delay to ensure the spinner is fully stopped before continuing
+      setTimeout(callback, 10);
+    }
 }
 
 function setClass(element, classString) {
@@ -725,7 +735,7 @@ function printFooter() {
   // We could put anything we want in the footer here, but perhaps we should avoid it.
   var statsButton = document.getElementById("statsButton");
   if (statsButton) {
-    if (window.stats.scene.secondaryMode == "stats") {
+    if (window.stats && stats.scene && stats.scene.secondaryMode == "stats") {
       statsButton.innerHTML = "Return to the Game";
     } else {
       statsButton.innerHTML = "Show Stats";
@@ -993,6 +1003,9 @@ function printOptionRadioButton(div, name, option, localChoiceNumber, globalChoi
 
 function printImage(source, alignment, alt, invert) {
   var img = document.createElement("img");
+  if (typeof hashes != 'undefined' && hashes[source]) {
+    source += "?hash=" + hashes[source];
+  }
   img.src = source;
   if (alt !== null && String(alt).length > 0) img.setAttribute("alt", alt);
   if (invert) {
@@ -1006,6 +1019,9 @@ function printImage(source, alignment, alt, invert) {
 function playSound(source) {
   for (var existingAudios = document.getElementsByTagName("audio"); existingAudios.length;) {
     existingAudios[0].parentNode.removeChild(existingAudios[0]);
+  }
+  if (typeof hashes != 'undefined' && hashes[source]) {
+    source += "?hash=" + hashes[source];
   }
   var audio = document.createElement("audio");
   if (audio.play) {
@@ -1427,6 +1443,9 @@ function cacheKnownPurchases(knownPurchases) {
   })
   if (window.isIosApp) {
     callIos("updateadfree", output.adfree);
+    if (window.isOmnibusApp) {
+      callIos("cachepurchases", knownPurchases);
+    }
   } else if (window.isAndroidApp) {
     androidBilling.updateAdfree(!!output.adfree);
   }
@@ -1435,7 +1454,7 @@ function cacheKnownPurchases(knownPurchases) {
 // Callback expects a map from product ids to booleans
 function checkPurchase(products, callback) {
   function publishPurchaseEvents(purchases) {
-    if (window.purchaseSubscriptions) {
+    if (purchases && window.purchaseSubscriptions) {
       for (var key in purchaseSubscriptions) {
         if (purchases[key]) purchaseSubscriptions[key].call();
       }
@@ -1475,6 +1494,7 @@ function checkPurchase(products, callback) {
   }
 
   function mergeKnownPurchases(purchases) {
+    window.checkPurchaseCallback = null;
     checkWebPurchases(function(ok, knownPurchases) {
       if (knownPurchases) {
         var productList = products.split(/ /);
@@ -1487,13 +1507,21 @@ function checkPurchase(products, callback) {
     });
   }
 
-  var i;
+  var i, oldCallback;
   if (window.isIosApp) {
-    window.checkPurchaseCallback = mergeKnownPurchases;
-    callIos("checkpurchase", products);
+    oldCallback = window.checkPurchaseCallback;
+    window.checkPurchaseCallback = function (purchases) {
+      if (oldCallback) oldCallback(purchases);
+      mergeKnownPurchases(purchases);
+    }
+    if (!oldCallback) callIos("checkpurchase", products);
   } else if (window.isAndroidApp && !window.isNookAndroidApp) {
-    window.checkPurchaseCallback = mergeKnownPurchases;
-    androidBilling.checkPurchase(products);
+    oldCallback = window.checkPurchaseCallback;
+    window.checkPurchaseCallback = function (purchases) {
+      if (oldCallback) oldCallback(purchases);
+      mergeKnownPurchases(purchases);
+    }
+    if (!oldCallback) androidBilling.checkPurchase(products);
   } else if (window.isWinOldApp) {
     safeTimeout(function() {
       var purchases = eval(window.external.CheckPurchase(products));
@@ -1572,6 +1600,9 @@ function restorePurchases(product, callback) {
       } else {
         asyncAlert("Restore completed. This product is not yet purchased.");
       }
+    } else {
+      refreshIfAppUpdateReady();
+      updateAllPaidSceneCaches();
     }
     callback(purchased);
   }
@@ -1580,24 +1611,148 @@ function restorePurchases(product, callback) {
     if (product) {
       checkPurchase(product, function(ok, purchases) {
         if (purchases[product]) {
-          callback("purchased");
-        } else {
-          clearScreen(function() {
-            var target = document.getElementById('text');
-            if (error) {
-              target.innerHTML="<p>Restore failed. Please try again later, or sign in to Choiceofgames.com to restore purchases.</p>";
-            } else {
-              target.innerHTML="<p>Restore completed. This product is not yet purchased. You may also sign in to Choiceofgames.com to restore purchases.</p>";
-            }
-            loginForm(document.getElementById('text'), /*optionality*/1, /*err*/null, webRestoreCallback);
-            curl();
-          });
+          return callback("purchased");
         }
+
+        if (window.isOmnibusApp && window.omnibusSupportsTransfer) {
+          var appBanner = document.querySelector("meta[name=apple-itunes-app]");
+          var appIdMatch = /app-id=(\d+)/.exec(appBanner.getAttribute("content"));
+          if (appIdMatch) {
+            var appId = appIdMatch[1];
+            if (appId !== "1363309257" && appId !== "1302297731") {
+              return omnibusRestore(appId);
+            }
+          }
+        }
+
+        clearScreen(function() {
+          var target = document.getElementById('text');
+          if (error) {
+            target.innerHTML="<p>Restore failed. Please try again later, or sign in to Choiceofgames.com to restore purchases.</p>";
+          } else {
+            target.innerHTML="<p>Restore completed. This product is not yet purchased. You may also sign in to Choiceofgames.com to restore purchases.</p>";
+          }
+          loginForm(document.getElementById('text'), /*optionality*/1, /*err*/null, webRestoreCallback);
+          curl();
+        });
       });
     } else {
       callback();
     }
   }
+  function omnibusRestore(appId) {
+    var omnibus = "Choice of Games";
+    var canonical = document.querySelector("link[rel=canonical]");
+    var canonicalHref = canonical && canonical.getAttribute("href");
+    if (/\/user-contributed\//.test(canonicalHref)) {
+      omnibus = "Hosted Games";
+    }
+    var appStore = "App Store";
+    var gameTitle = document.querySelector(".gameTitle").textContent;
+
+    clearScreen(function() {
+      printParagraph("Restore completed. "+appStore+" records indicate that "+
+        "you have not purchased this product using the \""+omnibus+"\" app, "+
+        "but you may have purchased the product in the \""+gameTitle+"\" app, "+
+        "or on our website at Choiceofgames.com.");
+
+      options = [
+        {name:"Restore purchases from Choiceofgames.com.", group:"choice", webRestore:true},
+        {name:"Restore purchases using the \""+gameTitle+"\" app.", group:"choice", transfer:true},
+      ];
+
+      printOptions([""], options, function(option) {
+        if (option.webRestore) {
+          clearScreen(function() {
+            printParagraph("Sign in to Choiceofgames.com to restore purchases.");
+            loginForm(document.getElementById('text'), /*optionality*/1, /*err*/null, webRestoreCallback);
+          });
+        } else {
+          var transferAttempted = false;
+          var transferPurchaseCallback = function(result) {
+            window.transferPurchaseCallback = null;
+            clearScreen(function() {
+
+              if (result === "launch_failed") {
+                if (!transferAttempted) {
+                  transferAttempted = true;
+                  printParagraph(
+                    "The \""+gameTitle+"\" app is not installed on your current device. To transfer "+
+                    "purchases from another app, you'll need to install the \""+gameTitle+"\" app and "+
+                    "this \""+omnibus+"\" app at the same time."
+                  );
+                } else {
+                  printParagraph(
+                    "The \""+gameTitle+"\" app is not responding. Try uninstalling and reinstalling "+
+                    "the \""+gameTitle+"\" app and trying again.");
+                  printParagraph("Sometimes purchases can fail to "+
+                    "restore for reasons outside our control. If you have already purchased "+
+                    "this product, please email a copy of your receipt to "+
+                    "[url=mailto:support-transfer-"+storeName+"-missing@choiceofgames.com]support-transfer-"+storeName+"-missing@choiceofgames.com[/url] and we'll find a way to help "+
+                    "you."
+                  );
+                }
+
+                printParagraph("[url=https://itunes.apple.com/app/id"+appId+
+                  "]Download "+gameTitle+" from the "+appStore+"[/url]");
+
+                printOptions([""], [
+                  {name:"I've installed the \""+gameTitle+
+                    "\" app. Try restoring purchases again.", group:"choice", retry:true},
+                  {name:"Cancel.", group:"choice"},
+                ], function (option) {
+                  if (option.retry) {
+                    window.transferPurchaseCallback = transferPurchaseCallback;
+                    callIos("transferpurchase");
+                  } else {
+                    callback(!"purchased");
+                  }
+                });
+                curl();
+              } else if (result === "done") {
+                checkPurchase(product, function(ok, purchases) {
+                  if (purchases[product]) {
+                    callback("purchased");
+                  } else {
+                    printParagraph("Restore completed. "+appStore+" records indicate that you have not purchased "+
+                    "this product in the \""+gameTitle+"\" app.");
+                    printParagraph("Sometimes purchases can fail to restore for reasons outside our control. If you "+
+                    "have already purchased this product, please email a copy of your receipt "+
+                    "to [url=mailto:support-transfer-"+storeName+"-failed@choiceofgames.com]support-transfer-"+storeName+"-failed@choiceofgames.com[/url] and we'll find a "+
+                    "way to help you.");
+                    var target = document.getElementById('text');
+                    printButton("Next", target, false, function() {
+                      callback(!"purchased");
+                    });
+                    curl();
+                  }
+                });
+              } else { // result === "error"
+                printParagraph("Restore failed. Please try again later. If this error "+
+                  "persists, please contact [url=mailto:support-transfer-"+storeName+"-error@choiceofgames.com]support-transfer-"+storeName+"-error@choiceofgames.com[/url] "+
+                  "and we'll find a way to help you.")
+                printOptions([""], [
+                  {name:"Try again now.", group:"choice", retry:true},
+                  {name:"Cancel.", group:"choice"},
+                ], function(option) {
+                  if (option.retry) {
+                    window.transferPurchaseCallback = transferPurchaseCallback;
+                    callIos("transferpurchase");
+                  } else {
+                    callback(!"purchased");
+                  }
+                });
+                curl();
+              }
+            });
+          }
+          window.transferPurchaseCallback = transferPurchaseCallback;
+          callIos("transferpurchase");
+        }
+      });
+    });
+  }
+
   if (window.isIosApp) {
     window.restoreCallback = secondaryRestore;
     callIos("restorepurchases");
@@ -1618,13 +1773,19 @@ function restorePurchases(product, callback) {
                 "Please refresh this page to try again, or contact " + getSupportEmail() + " for assistance.", 15000);
             }
           }
-          webRestoreCallback();
+          logout();
+          restorePurchases(product, callback);
         });
       } else {
         clearScreen(function() {
           var target = document.getElementById('text');
           target.innerHTML="<p>Please sign in to Choiceofgames.com to restore purchases.</p>";
-          if (window.steamRestore) {
+          var steamRestore = false;
+          var steamLink = document.getElementById('steamLink');
+          if (steamLink && steamLink.href && !/INSERTINSERTINSERT/.test(steamLink.href)) {
+            steamRestore = true;
+          }
+          if (steamRestore) {
             window.steamRestoreCallback = function(response) {
               window.steamRestoreCallback = null;
               if (response) cacheKnownPurchases(response);
@@ -1643,12 +1804,14 @@ function restorePurchases(product, callback) {
 // Callback expects a localized string, or "", or "free", or "guess"
 function getPrice(product, callback) {
   if (window.isIosApp) {
+    checkForAppUpdates();
     window.priceCallback = callback;
     callIos("price", product);
   } else if (window.isAndroidApp) {
     window.priceCallback = callback;
     androidBilling.getPrice(product);
   } else if (window.isWeb) {
+    checkForAppUpdates();
     if (window.productData && window.productData[product] && window.productData[product].amount) {
       safeTimeout(function () {
         callback.call(this, "$"+(productData[product].amount/100));
@@ -1690,14 +1853,40 @@ function getPrice(product, callback) {
 function purchase(product, callback) {
   var purchaseCallback = function() {
     window.purchaseCallback = null;
+    refreshIfAppUpdateReady();
+    updateAllPaidSceneCaches();
     safeCall(null, callback);
     if (window.purchaseSubscriptions && purchaseSubscriptions[product]) {
       purchaseSubscriptions[product].call();
     }
   };
+  var prerelease = window.releaseDate && window.isWeb && !window.isOmnibusApp && window.releaseDate > new Date();
   if (window.isIosApp) {
-    window.purchaseCallback = purchaseCallback;
-    callIos("purchase", product);
+    if (!window.purchaseRequiresLogin || window.registered) {
+      window.purchaseCallback = purchaseCallback;
+      return callIos("purchase", product);
+    } else {
+      clearScreen(function() {
+        var target = document.getElementById('text');
+        target.innerHTML="<p>Please sign in to Choiceofgames.com to purchase.</p>";
+        loginForm(target, /*optional*/1, /*err*/null, function(registered){
+          if (registered) {
+            if (window.knownPurchases && window.knownPurchases[product]) {
+              purchaseCallback();
+            } else {
+              clearScreen(function() {loadAndRestoreGame("", window.forcedScene);});
+              window.doneLoadingCallback = function() {
+                window.purchaseCallback = purchaseCallback;
+                callIos("purchase", product);
+              }
+            }
+          } else {
+            clearScreen(function() {loadAndRestoreGame("", window.forcedScene);});
+          }
+        });
+        curl();
+      });
+    }
   } else if (window.isAndroidApp) {
     window.purchaseCallback = purchaseCallback;
     var androidStackTrace = androidBilling.purchase(product);
@@ -1712,7 +1901,7 @@ function purchase(product, callback) {
   } else if (window.isCef) {
     cefQuerySimple("Purchase " + product);
     // no callback; we'll refresh on purchase
-  } else if (window.isWeb && product == window.appPurchase) {
+  } else if (window.isWeb && !prerelease && product == window.appPurchase) {
     var webStoreFallback = function() {
       window.appPurchase = null;
       purchase(product, callback);
@@ -1768,15 +1957,15 @@ function purchase(product, callback) {
                 } else if (/^card error: /.test(response.error)) {
                   var cardError = response.error.substring("card error: ".length);
                   asyncAlert(cardError);
-                  clearScreen(loadAndRestoreGame);
+                  clearScreen(function() {loadAndRestoreGame("", window.forcedScene);});
                 } else if ("purchase already in flight" == response.error) {
                   asyncAlert("Sorry, there was an error handling your purchase. Please wait five minutes and try again, or contact support@choiceofgames.com for assistance.");
-                  clearScreen(loadAndRestoreGame);
+                  clearScreen(function() {loadAndRestoreGame("", window.forcedScene);});
                 } else {
                   asyncAlert("Sorry, there was an error processing your card. (Your "+
                     "network connection may be down.) Please refresh the page and try again, or contact "+
                     "support@choiceofgames.com for assistance.");
-                  clearScreen(loadAndRestoreGame);
+                  clearScreen(function() {loadAndRestoreGame("", window.forcedScene);});
                 }
                 curl();
               }, "stripeToken", response.id, "product", fullProductName, "key", window.stripeKey);
@@ -1800,11 +1989,11 @@ function purchase(product, callback) {
           if (window.knownPurchases && window.knownPurchases[product]) {
             purchaseCallback();
           } else {
-            clearScreen(loadAndRestoreGame);
+            clearScreen(function() {loadAndRestoreGame("", window.forcedScene);});
             return stripe();
           }
         } else {
-          clearScreen(loadAndRestoreGame);
+          clearScreen(function() {loadAndRestoreGame("", window.forcedScene);});
         }
       });
       curl();
@@ -1887,8 +2076,8 @@ function registerNativeAchievement(name) {
 function achieve(name, title, description) {
   if (initStore()) window.store.set("achieved", toJson(nav.achieved));
   registerNativeAchievement(name);
-  // iOS shows a prominent banner; no need to show our own
-  if (window.isIosApp) return;
+  // Game Center shows a prominent banner; no need to show our own
+  if (window.isIosApp && !window.isOmnibusApp) return;
   var escapedTitle = title+"".replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
@@ -2391,7 +2580,7 @@ function loginForm(target, optional, errorMessage, callback) {
                 xhrAuthRequest("POST", "facebook-login", function(ok, response){
                   if (ok) {
                     loginDiv(ok, response.email);
-                    recordLogin(ok, response.email);
+                    recordLogin(ok, response.id, response.email);
                     cacheKnownPurchases(response.purchases);
                     safeCall(null, function() {callback("ok");});
                   } else {
@@ -2415,7 +2604,7 @@ function loginForm(target, optional, errorMessage, callback) {
               isRegistered(function(registered) {
                 if (!registered) xhrAuthRequest("POST", "google-login", function(ok, response){
                   loginDiv(ok, response.email);
-                  recordLogin(ok, response.email);
+                  recordLogin(ok, response.id, response.email);
                   cacheKnownPurchases(response.purchases);
                   if (ok) {
                     callback("ok");
@@ -2475,12 +2664,16 @@ function loginForm(target, optional, errorMessage, callback) {
                   if (ok) {
                     target.innerHTML = "";
                     loginDiv(ok, email);
-                    recordLogin(ok, email);
+                    recordLogin(ok, response.id, email);
                     cacheKnownPurchases(response.purchases);
                     // we need another click event so we can launch Stripe in a pop-up
-                    asyncAlert("You have registered successfully.", function() {
-                      safeCall(null, function() {callback("ok");});
-                    })
+                    if (window.isWeb) {
+                      asyncAlert("You have registered successfully.", function() {
+                        safeCall(null, function() {callback("ok");});
+                      });
+                    } else {
+                      return safeCall(null, function() {callback("ok");});
+                    }
                   } else if ("incorrect password" == response.error) {
                     target.innerHTML = "";
                     loginForm(target, optional, 'Sorry, the email address "'+email+'" is already in use. Please type your password below, or use a different email address.', callback);
@@ -2508,12 +2701,16 @@ function loginForm(target, optional, errorMessage, callback) {
                 if (ok) {
                   target.innerHTML = "";
                   loginDiv(ok, email);
-                  recordLogin(ok, email);
+                  recordLogin(ok, response.id, email);
                   cacheKnownPurchases(response.purchases);
                   // we need another click event so we can launch Stripe in a pop-up
-                  asyncAlert("You have registered successfully.", function() {
-                    safeCall(null, function() {callback("ok");});
-                  })
+                  if (window.isWeb) {
+                    asyncAlert("You have registered successfully.", function() {
+                      safeCall(null, function() {callback("ok");});
+                    });
+                  } else {
+                    return safeCall(null, function() {callback("ok");});
+                  }
                 } else if ("unknown email" == response.error) {
                   showMessage('Sorry, we can\'t find a record for the email address "'+email+'". Please try a different email address, or create a new account.');
                 } else if ("incorrect password" == response.error) {
@@ -2583,7 +2780,7 @@ function isRegistered(callback) {
   } else if (initStore()) {
     return window.store.get("login", function(ok, value) {
       safeTimeout(function() {
-        window.registered = ok && value && "false" != value;
+        window.registered = ok && value && "false" != value && "0" != value;
         callback(window.registered);
       }, 0);
     });
@@ -2801,6 +2998,9 @@ function loadPreferences() {
   } else {
     window.animationProperty = "animationName";
   }
+  if (window.isCef || document.getElementsByTagName("audio").length) {
+    delete window.animationProperty;
+  }
 }
 
 window.onerror=function(msg, file, line, stack) {
@@ -2846,6 +3046,9 @@ window.onerror=function(msg, file, line, stack) {
 window.onload=function() {
     if (window.alreadyLoaded) return;
     window.alreadyLoaded = true;
+    if (isStoreSceneCacheRequired()) {
+      setTimeout(updateAllPaidSceneCaches, 0);
+    }
     window.main = document.getElementById("main");
     var head = document.getElementsByTagName("head")[0];
     window.nav.setStartingStatsClone(window.stats);
@@ -2859,8 +3062,19 @@ window.onload=function() {
     stats.sceneName = window.nav.getStartupScene();
     var map = parseQueryString(window.location.search);
     if (!map) {
+      var hashMap = parseQueryString(window.location.hash);
+      var realHash = false;
+      for (var key in hashMap) {
+        if (/^utm_/.test(key)) continue;
+        realHash = true;
+        break;
+      }
+      if (realHash) map = hashMap;
+    }
+
+    if (!map) {
       if (window.androidQueryString) {
-        map = parseQueryString(window.androidQueryString);
+        map = parseQueryString(window.androidQueryString.get());
       } else if (window.forcedScreenshots) {
         map = {forcedScene:"screenshots"};
       }
@@ -2875,6 +3089,10 @@ window.onload=function() {
       } else if (map.achievements) {
         doneLoading();
         showAchievements("hideNextButton");
+      } else if (map.omnibusRestore) {
+        restorePurchases('adfree', function(purchased) {
+          callIos('close');
+        });
       } else if (map.forcedScene) {
         safeCall(null, function() {loadAndRestoreGame(window.slot, window.forcedScene);});
       } else if (map.persistence) {
@@ -3070,7 +3288,7 @@ if (window.isWeb) {
         safeTimeout(requester, 1);
       }
     }
-    safeTimeout(requester, 0);
+    if (window.isFile) safeTimeout(requester, 0);
   })();
 } else if (window.isAndroidApp) {
   document.getElementById("dynamic").innerHTML =
@@ -3113,38 +3331,38 @@ function fixChromeLinks() {
     }
   }, false);
 
-    var statsButton = document.getElementById("statsButton");
-    if (statsButton) {
-      statsButton.onclick = undefined;
-      statsButton.addEventListener("click", function() {
-        showStats();
-      }, false);
-    }
-
-    var achievementsButton = document.getElementById("achievementsButton");
-    if (achievementsButton) {
-      achievementsButton.onclick = undefined;
-      achievementsButton.addEventListener("click", function() {
-        showAchievements();
-      }, false);
-    }
-
-    var restartButton = document.getElementById("restartButton");
-    restartButton.onclick = undefined;
-    restartButton.addEventListener("click", function() {
-      restartGame("prompt");
+  var statsButton = document.getElementById("statsButton");
+  if (statsButton) {
+    statsButton.onclick = undefined;
+    statsButton.addEventListener("click", function() {
+      showStats();
     }, false);
+  }
 
-    var subscribeAnchor = document.getElementById("subscribeLink");
-    subscribeAnchor.onclick = undefined;
-    subscribeAnchor.addEventListener("click", function() {
-      subscribeLink();
+  var achievementsButton = document.getElementById("achievementsButton");
+  if (achievementsButton) {
+    achievementsButton.onclick = undefined;
+    achievementsButton.addEventListener("click", function() {
+      showAchievements();
     }, false);
+  }
 
-    var supportAnchor = document.getElementById("supportEmail");
-    supportAnchor.addEventListener("click", function(event) {
-      event.preventDefault();
-    }, false);
+  var restartButton = document.getElementById("restartButton");
+  restartButton.onclick = undefined;
+  restartButton.addEventListener("click", function() {
+    restartGame("prompt");
+  }, false);
+
+  var subscribeAnchor = document.getElementById("subscribeLink");
+  subscribeAnchor.onclick = undefined;
+  subscribeAnchor.addEventListener("click", function() {
+    subscribeLink();
+  }, false);
+
+  var supportAnchor = document.getElementById("supportEmail");
+  supportAnchor.addEventListener("click", function(event) {
+    event.preventDefault();
+  }, false);
 
   var menuButton = document.getElementById("menuButton");
   menuButton.onclick = undefined;
@@ -3272,18 +3490,20 @@ if (window.isWinStoreApp) {
 }
 
 function platformCode() {
-  if (window.isIosApp) return "ios";
-  if (window.isAndroidApp) return "android";
-  if (window.isMacApp) return "mac";
-  if (window.isWinStoreApp) return "windows";
-  if (window.isWinOldApp) return "csharp";
-  if (window.isChromeApp) return "chrome";
-  if (window.isWebOS) return "palm";
-  if (window.isSteamApp) return "steam";
-  if (window.isCef) return "cef";
-  if (window.isNode) return "dl";
-  if (window.isWeb) return "web";
-  return "unknown";
+  var platform = "unknown";
+  if (window.isIosApp) platform = "ios";
+  else if (window.isAndroidApp) platform = "android";
+  else if (window.isMacApp) platform = "mac";
+  else if (window.isWinStoreApp) platform = "windows";
+  else if (window.isWinOldApp) platform = "csharp";
+  else if (window.isChromeApp) platform = "chrome";
+  else if (window.isWebOS) platform = "palm";
+  else if (window.isSteamApp) platform = "steam";
+  else if (window.isCef) platform = "cef";
+  else if (window.isNode) platform = "dl";
+  else if (window.isWeb) platform = "web";
+  if (window.isOmnibusApp) platform = "omnibus-" + platform;
+  return platform;
 }
 
 function reinjectNavigator() {
