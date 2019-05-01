@@ -524,12 +524,28 @@ Scene.prototype.choice = function choice(data) {
     if (!this.temps._choiceEnds) {
         this.temps._choiceEnds = {};
     }
-    for (i = 0; i < options.length; i++) {
+    for (var i = 0; i < options.length; i++) {
         this.temps._choiceEnds[options[i].line-1] = this.lineNum;
     }
     this.paragraph();
-    var optionName = this.replaceVariables(item.ultimateOption.name);
-    if (showChoices) this.randomLog("*choice " + (choiceLine+1)+'#'+(index+1)+' (line '+item.ultimateOption.line+') #' + optionName);
+    if (showChoices) {
+      if (showText) {
+        this.randomLog("*choice " + (choiceLine+1)+'#'+(index+1)+' (line '+item.ultimateOption.line+')');
+        // it would be nice to handle choice groups here
+        for (var i = 0; i < flattenedOptions.length; i++) {
+          if (i > 0) {
+            this.printLine("[n/]");
+          } else {
+            this.printLine(" ");
+          }
+          this.printLine("\u2022 " + (i === index ? "\u2605 " : "") + flattenedOptions[i].ultimateOption.name);
+        }
+        this.paragraph();
+      } else {
+        var optionName = this.replaceVariables(item.ultimateOption.name);
+        this.randomLog("*choice " + (choiceLine+1)+'#'+(index+1)+' (line '+item.ultimateOption.line+') #' + optionName);
+      }
+    }
     var self = this;
     timeout = function() {println("");self.standardResolution(item.ultimateOption);}
     this.finished = true;
