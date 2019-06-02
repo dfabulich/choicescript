@@ -262,6 +262,7 @@ Scene.prototype.loadSceneFast = function loadSceneFast(url) {
     if (this.loading) return;
     this.loading = true;
     var result;
+    var self = this;
     if (window.cachedResults && window.cachedResults[this.name]) {
       result = window.cachedResults[this.name];
       return this.loadLinesFast(result.crc, result.lines, result.labels);
@@ -269,9 +270,8 @@ Scene.prototype.loadSceneFast = function loadSceneFast(url) {
       result = allScenes[this.name];
       if (!result) throw new Error("Couldn't load scene '" + this.name + "'\nThe file doesn't exist.");
       return this.loadLinesFast(result.crc, result.lines, result.labels);
-    } else if (typeof isIosApp != "undefined") {
+    } else if (typeof window != "undefined" && window.isIosApp && window.isFile && !window.isOmnibusApp) {
       startLoading();
-      var self = this;
       var startedWaiting = new Date().getTime();
 
       function retryScenes(command) {
@@ -294,12 +294,12 @@ Scene.prototype.loadSceneFast = function loadSceneFast(url) {
         } else if (window.downloadState == "failed" || (new Date().getTime() - startedWaiting) > 5000) {
           doneLoading();
           if (window.downloadRequired) {
-            println("We weren't able to download the latest version of the game.");
-            println("");
+            self.printLine("We weren't able to download the latest version of the game.");
+            self.paragraph();
             printButton("Try Again", main, false, retryScenes);
           } else {
-            println("We weren't able to download the latest version of the game. Please try downloading again. The latest version may contain important fixes.");
-            println("");
+            self.printLine("We weren't able to download the latest version of the game. Please try downloading again. The latest version may contain important fixes.");
+            self.paragraph();
             var retry = {name: "Try downloading again."};
             var ignore = {name: "Continue playing without the latest version."}
             printOptions([""], [retry, ignore], function(option) {
@@ -315,10 +315,55 @@ Scene.prototype.loadSceneFast = function loadSceneFast(url) {
         }
       }
       return awaitAllScenes();
+    } else if (window.purchases[self.name] && isStoreSceneCacheRequired()) {
+      var sceneName = this.name.replace(/ /g, "_");
+      return window.store.get("cache_scene_hash_"+sceneName, function(ok, hash) {
+        function keepScene(result) {
+          if (!window.cachedResults) window.cachedResults = {};
+          cachedResults[self.name] = result;
+          self.loadLinesFast(result.crc, result.lines, result.labels);
+        }
+        function loadPaidScene() {
+          startLoading();
+          updateSinglePaidSceneCache(self.name, function(err, result) {
+            doneLoading();
+            if (err) {
+              main.innerHTML = "<div id='text'><p>Our apologies; there was a " + err + " error while loading game data."+
+              "  Please refresh now; if that doesn't work, please click the Restart button and email "+getSupportEmail()+" with details.</p>"+
+              " <p><button class='next' onclick='window.location.reload();'>Refresh Now</button></p></div>";
+              curl();
+            } else {
+              keepScene(result);
+            }
+          })
+        }
+        if (ok && hash == hashes.scenes[sceneName + ".txt.json"]) {
+          window.store.get("cache_scene_"+sceneName, function(ok, text) {
+            if (ok && text) {
+              var parsed;
+              try {
+                parsed = jsonParse(text);
+              } catch (e) {
+                if (window.console) console.error(e, e.stack);
+              }
+              if (parsed) return keepScene(parsed);
+              loadPaidScene();
+            } else {
+              loadPaidScene();
+            }
+          })
+        } else {
+          loadPaidScene();
+        }
+      });
     }
     startLoading();
     if (!url) {
-        url = Scene.baseUrl + "/" + this.name.replace(/ /g, "_") + ".txt.json";
+        var fileName = this.name.replace(/ /g, "_") + ".txt.json";
+        url = Scene.baseUrl + "/" + fileName;
+        if (window.location.protocol == "https:" && window.hashes && window.hashes.scenes[fileName]) {
+          url += "?hash="+hashes.scenes[fileName];
+        }
     }
     var xhr = findXhr();
     xhr.open("GET", url, true);
@@ -1028,7 +1073,7 @@ Scene.prototype.goto_scene = function gotoScene(data) {
 
     if (result.sceneName == this.name) {
       if (typeof result.label === "undefined") {
-        this.lineNum = 0;
+        this.lineNum = -1; // the printLoop will increment the line number to 0
       } else {
         this["goto"](result.label);
       }
@@ -1146,7 +1191,7 @@ Scene.prototype.purchase = function purchase_button(data) {
       self.resetPage();
     } else {
       if (price == "guess") price = priceGuess;
-      var prerelease = (typeof window !== "undefined" && window.releaseDate && window.isWeb && window.releaseDate > new Date());
+      var prerelease = (typeof window !== "undefined" && window.releaseDate && window.isWeb && !window.isOmnibusApp && window.releaseDate > new Date());
       var buttonText;
       if (prerelease) {
         buttonText = "Pre-Order It";
@@ -1186,7 +1231,7 @@ Scene.prototype.purchase = function purchase_button(data) {
                     self.resetPage();
                   } else {
                     // refresh, in case we're on web showing a full-screen login. Not necessary on mobile? But, meh.
-                    if (!self.secondaryMode) clearScreen(loadAndRestoreGame);
+                    clearScreen(function() {loadAndRestoreGame("", window.forcedScene);});
                   }
                 });
             });
@@ -1331,7 +1376,7 @@ Scene.prototype.getVar = function getVar(variable) {
         return false;
       }
     }
-    if (variable == "choice_kindle") return false;
+    if (variable == "choice_kindle") return typeof isKindle !== "undefined" && !!isKindle;
     if (variable == "choice_randomtest") return !!this.randomtest;
     if (variable == "choice_quicktest") return false; // quicktest will explore "false" paths
     if (variable == "choice_restore_purchases_allowed") return isRestorePurchasesSupported();
@@ -1527,6 +1572,9 @@ Scene.prototype.parseOptions = function parseOptions(startIndent, choicesRemaini
               reuse = "allow";
               overrideDefaultReuseSetting = true;
               removeModifierCommand();
+            }
+            if ("random_weight" == command) {
+              removeModifierCommand(true /*stripParenthetical*/);
             }
 
             if ("print" == command) {
@@ -2022,7 +2070,7 @@ Scene.prototype.validateVariable = function validateVariable(variable) {
     if (!/^\w+$/.test(variable)) {
         throw new Error(this.lineMsg()+"Invalid variable name: '" + variable + "'");
     }
-    if (/^(and|or|true|false)$/.test(variable)) throw new Error(this.lineMsg()+"Invalid variable name, '" + variable + "' is a reserved word");
+    if (/^(and|or|true|false|scene|scenename)$/i.test(variable)) throw new Error(this.lineMsg()+"Invalid variable name, '" + variable + "' is a reserved word");
     if (/^choice_/.test(variable)) throw new Error(this.lineMsg()+"Invalid variable name, variables may not start with 'choice_'; this is a reserved prefix");
 };
 
@@ -2205,14 +2253,7 @@ Scene.prototype.ending = function ending() {
       printFollowButtons();
       self.renderOptions([""], options, function(option) {
         if (option.restart) {
-          clearScreen(function() {
-            self.restart();
-            if (self.name === "startup") {
-              self.finished = false;
-              self.resetPage();
-            }
-          });
-          return;
+          return restartGame();
         } else if (option.moreGames) {
           self.more_games("now");
           if (typeof curl != "undefined") curl();
@@ -3269,6 +3310,11 @@ Scene.prototype.delay_ending = function(data) {
         var emailMe = {name: "Email me when new games are available."};
         options.push(emailMe);
 
+        function restartNow() {
+          window.blockRestart = false;
+          restartGame();
+        }
+
         self.paragraph();
         printOptions([""], options, function(option) {
           if (option == playMoreGames) {
@@ -3277,23 +3323,15 @@ Scene.prototype.delay_ending = function(data) {
           } else if (option == emailMe) {
             subscribeLink();
           } else if (option == upgradeSkip) {
-            purchase("adfree", function() {
-              safeCall(self, function() {
-                self.restart();
-              });
-            });
+            purchase("adfree", restartNow);
           } else if (option == skipOnce) {
-            purchase("skiponce", function() {
-              safeCall(self, function() {
-                self.restart();
-              });
-            });
+            purchase("skiponce", restartNow);
           } else if (option == restorePurchasesOption) {
             restorePurchases("adfree", function() {
               clearScreen(loadAndRestoreGame);
             });
           } else {
-            self.restart();
+            return restartGame();
           }
         });
 
@@ -4115,6 +4153,28 @@ Scene.prototype.track_event = function track_event(data) {
   }
 }
 
+Scene.prototype.config = function config(data) {
+    var stack = this.tokenizeExpr(data);
+    var variable = this.evaluateReference(stack);
+    if ("undefined" === typeof this.temps[variable] && "undefined" === typeof this.stats[variable]) {
+      throw new Error(this.lineMsg() + "Non-existent variable '"+variable+"'");
+    }
+    if (stack.length === 0) throw new Error(this.lineMsg()+"Invalid set instruction, no expression specified: " + line);
+    var value = this.evaluateExpr(stack);
+    this.setVar(variable, value);
+    if ("undefined" !== typeof remoteConfig && !this.randomtest && !this.quicktest) {
+      this.finished = true;
+      this.skipFooter = true;
+      var self = this;
+      remoteConfig(variable, function(result) {
+        if (result !== null) self.setVar(variable, result);
+        self.finished = false;
+        self.skipFooter = false;
+        self.execute();
+      })
+    }
+};
+
 Scene.prototype.lineMsg = function lineMsg() {
     return this.name + " line " + (this.lineNum+1) + ": ";
 };
@@ -4240,5 +4300,5 @@ Scene.validCommands = {"comment":1, "goto":1, "gotoref":1, "label":1, "looplimit
     "restart":1,"more_games":1,"delay_ending":1,"end_trial":1,"login":1,"achieve":1,"scene_list":1,"title":1,
     "bug":1,"link_button":1,"check_registration":1,"sound":1,"author":1,"gosub_scene":1,"achievement":1,
     "check_achievements":1,"redirect_scene":1,"print_discount":1,"purchase_discount":1,"track_event":1,
-    "timer":1,"youtube":1,"product":1,"text_image":1,"params":1
+    "timer":1,"youtube":1,"product":1,"text_image":1,"params":1,"config":1
     };
