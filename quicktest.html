@@ -154,31 +154,102 @@ function loadScenes(game, sceneNum) {
   if (!game) game = {};
   var fileName = knownScenes[sceneNum];
   var sceneName = fileName.replace(/.txt$/, "");
-  var url = "web/mygame/scenes/" + fileName;
-  xhr = new XMLHttpRequest();
-  xhr.open("GET", url, false);
   var skip = false;
   var loadFailed = false;
-  try {
-    xhr.send();
-  } catch (x) {
-    if (/^choicescript_(stats|upgrade|screenshots)$/.test(sceneName)) {
-      skip = true;
+  var sceneText;
+  if ("file:" === window.location.protocol) {
+    if (!window.uploadedFiles) {
+      document.body.innerHTML = "<p>Please \"upload\" your scenes folder.</p>";
+      var input = document.createElement("input");
+      input.type = 'file';
+      input.webkitdirectory = true;
+      input.addEventListener('change', function searchForStartup(e) {
+        var numFiles = input.files.length;
+        var startupCandidates = [];
+        for (var i = 0; i < numFiles; i++) {
+          var file = input.files[i];
+          if (file.name === "startup.txt") {
+            startupCandidates.push(file);
+          }
+        }
+        if (!startupCandidates.length) {
+          return clearScreen(function() {
+            document.body.innerHTML = "<p>We couldn't find startup.txt in the folder you chose. Please try again.</p>";
+            document.body.appendChild(input);
+          });
+        }
+
+        if (startupCandidates.length > 1) {
+          document.body.innerHTML = "<p>There were multiple files called startup.txt in the folder you chose. Please try again.</p><ul>";
+          for (var i = 0; i < startupCandidates.length; i++) {
+              document.body.innerHTML += "<li>" + startupCandidates.webkitRelativePath;
+          }
+          document.body.innerHTML += "</ul>";
+        }
+
+        var startup = startupCandidates[0];
+        var rootDirTest = new RegExp("^" + startup.webkitRelativePath.replace(/\/startup.txt$/, "/[^/]+$"));
+        var sceneFiles = [];
+        for (var i = 0; i < numFiles; i++) {
+          var file = input.files[i];
+          if (rootDirTest.test(file.webkitRelativePath)) {
+            sceneFiles.push(file);
+          }
+        }
+        var _uploadedFiles = {};
+        document.body.innerHTML = "";
+        Promise.all([].map.call(sceneFiles, function(file) { return new Response(file).text();})).then(function(results) {
+          for (var i = 0; i < sceneFiles.length; i++) {
+            var file = sceneFiles[i];
+            _uploadedFiles[file.name] = results[i];
+          }
+          window.uploadedFiles = _uploadedFiles;
+          loadScenes(game, sceneNum);
+        });
+      });
+      document.body.appendChild(input);
+      return;
     } else {
-      if (window.location.protocol == "file:" && /Chrome/.test(navigator.userAgent)) {
-        doneLoading();
-        console.log("We're sorry, Google Chrome has blocked ChoiceScript from functioning.  (\"file:\" URLs cannot "+
-          "load files in Chrome.)  ChoiceScript works just fine in Chrome, but only on a published website like "+
-          "choiceofgames.com.  For the time being, please try another browser like Mozilla Firefox.");
-        success = false;
-        return;
+      if (uploadedFiles[fileName]) {
+        sceneText = uploadedFiles[fileName];
+      } else {
+        loadFailed = true;
+        for (var otherFileName in uploadedFiles) {
+          if (fileName.toLowerCase() === otherFileName.toLowerCase()) {
+            console.log("Couldn't find "+fileName+" in the uploaded folder, but we did find "+otherFileName+". Scene file names must match exactly, including capitalization.");
+            success = false;
+            break;
+          }
+        }
       }
+    }
+  } else {
+    var url = "web/mygame/scenes/" + fileName;
+    xhr = new XMLHttpRequest();
+    xhr.open("GET", url, false);
+    try {
+      xhr.send();
+    } catch (x) {
+      if (/^choicescript_(stats|upgrade|screenshots)$/.test(sceneName)) {
+        skip = true;
+      } else {
+        if (window.location.protocol == "file:" && /Chrome/.test(navigator.userAgent)) {
+          doneLoading();
+          console.log("We're sorry, Google Chrome has blocked ChoiceScript from functioning.  (\"file:\" URLs cannot "+
+            "load files in Chrome.)  ChoiceScript works just fine in Chrome, but only on a published website like "+
+            "choiceofgames.com.  For the time being, please try another browser like Mozilla Firefox.");
+          success = false;
+          return;
+        }
+        loadFailed = true;
+      }
+    }
+    if (xhr.status && xhr.status != 200) {
       loadFailed = true;
     }
-  }
-
-  if (xhr.status && xhr.status != 200) {
-    loadFailed = true;
+    if (!loadFailed) {
+      sceneText = xhr.responseText;
+    }
   }
 
   if (loadFailed) {
@@ -187,7 +258,7 @@ function loadScenes(game, sceneNum) {
     } else {
       doneLoading();
       console.log("QUICKTEST FAILED");
-      console.log("ERROR: couldn't open " + url);
+      console.log("ERROR: couldn't open " + fileName);
       success = false;
       return;
     }
@@ -229,8 +300,8 @@ function loadScenes(game, sceneNum) {
 
 
     try {
-      game[fileName] = xhr.responseText;
-      var sceneLines = xhr.responseText.split("\n");
+      game[fileName] = sceneText;
+      var sceneLines = sceneText.split("\n");
       for (var j = 0; j < sceneLines.length; j++) {
         var line = sceneLines[j];
         var words;

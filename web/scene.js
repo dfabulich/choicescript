@@ -450,13 +450,12 @@ Scene.prototype.loadLinesFast = function loadLinesFast(crc, lines, labels) {
 };
 
 // load the scene file from the specified URL (or from default URL by name)
-Scene.prototype.loadScene = function loadScene(url) {
+Scene.prototype.loadScene = function loadScene() {
     if (this.loading) return;
     this.loading = true;
+    if (window.isFile) return this.loadFile();
     startLoading();
-    if (!url) {
-        url = Scene.baseUrl + "/" + this.name + ".txt";
-    }
+    var url = Scene.baseUrl + "/" + this.name + ".txt";
     var xhr = findXhr();
     xhr.open("GET", url, true);
     var self = this;
@@ -535,6 +534,109 @@ Scene.prototype.loadScene = function loadScene(url) {
       }
     }
 };
+
+Scene.prototype.loadFile = function loadFile() {
+  var _this = this;
+  if (typeof uploadedFiles !== "object") {
+    clearScreen(function() {
+      var header = document.getElementById('header');
+      if (header) header.style.display = "none";
+      var makeYourOwnGames = document.getElementById('makeyourowngames');
+      if (makeYourOwnGames) makeYourOwnGames.style.display = "none";
+      _this.printLine("[b]Please \"Upload\" Your Scenes[/b]");
+      _this.paragraph();
+      _this.printLine("To begin, you'll need to grant permission to \"upload\" your scenes folder containing startup.txt.")
+      _this.paragraph();
+      _this.printLine("(We're not actually going to transfer your code over the Internet, " +
+        "but this web page needs permission to upload your scenes folder in order to access " +
+        "your code and run it. The power to access your code would also grant us the power to " +
+        "transfer your code elsewhere, but we're not going to do that. JavaScript programmers " +
+        "can read our JavaScript to verify that this is true.");
+      _this.paragraph();
+      _this.printLine("Use the button below to select your scenes folder.");
+      _this.paragraph();
+      var text = document.getElementById('text');
+      var input = document.createElement('input');
+      input.type = 'file';
+      input.webkitdirectory = true;
+      input.addEventListener('change', function searchForStartup(e) {
+        var numFiles = input.files.length;
+        var startupCandidates = [];
+        for (var i = 0; i < numFiles; i++) {
+          var file = input.files[i];
+          if (file.name === "startup.txt") {
+            startupCandidates.push(file);
+          }
+        }
+        if (!startupCandidates.length) {
+          return clearScreen(function() {
+            _this.printLine("We couldn't find startup.txt in the folder you chose. Please try again.")
+            _this.paragraph();
+            document.getElementById('text').appendChild(input);
+          });
+        }
+
+        if (startupCandidates.length > 1) {
+          return clearScreen(function() {
+            _this.printLine("There were multiple files called startup.txt in the folder you chose. Please try again.");
+            _this.paragraph();
+            for (var i = 0; i < startupCandidates.length; i++) {
+              _this.printLine("• " + startupCandidates.webkitRelativePath);
+            }
+            _this.paragraph();
+            document.getElementById('text').appendChild(input);
+          });
+        }
+
+        var startup = startupCandidates[0];
+        var rootDirTest = new RegExp("^" + startup.webkitRelativePath.replace(/\/startup.txt$/, "/[^/]+$"));
+        var sceneFiles = {};
+        for (var i = 0; i < numFiles; i++) {
+          var file = input.files[i];
+          if (rootDirTest.test(file.webkitRelativePath)) {
+            sceneFiles[file.name] = file;
+          }
+        }
+        window.uploadedFiles = sceneFiles;
+        if (header) header.style.display = "";
+        if (makeYourOwnGames) makeYourOwnGames.style.display = "";
+        clearScreen(function() {
+          _this.loadFile();
+        });
+      });
+      text.appendChild(input);
+      text.appendChild(document.createElement('br'));
+      curl();
+    });
+  } else {
+    var fileName = this.name + ".txt";
+    if (uploadedFiles[fileName]) {
+      startLoading();
+      new Response(uploadedFiles[fileName]).text().then(function(result) {
+        scene = result;
+        scene = scene.replace(/\r/g, "");
+        _this.loading = false;
+        _this.loadLines(scene);
+        if (_this.executing) {
+            safeCall(_this, function () {
+              doneLoading();
+              _this.execute();
+            });
+        }
+      });
+    } else {
+      for (var otherFileName in uploadedFiles) {
+        if (fileName.toLowerCase() === otherFileName.toLowerCase()) {
+          main.innerHTML = "<p>Couldn't find "+fileName+" in the uploaded folder, but we did find "+otherFileName+". Scene file names must match exactly, including capitalization.</p>"+
+          " <p><button onclick='window.location.reload();'>Refresh Now</button></p>";
+          return;
+        }
+      }
+      main.innerHTML = "<p>Couldn't find "+fileName+" in the uploaded folder.</p>"+
+        " <p><button onclick='window.location.reload();'>Refresh Now</button></p>";
+    }
+  }
+}
 
 Scene.prototype.checkSum = function checkSum() {
   if (this.temps.choice_crc) {
