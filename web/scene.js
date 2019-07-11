@@ -573,6 +573,7 @@ Scene.prototype.loadFile = function loadFile() {
             _this.printLine("We couldn't find startup.txt in the folder you chose. Please try again.")
             _this.paragraph();
             document.getElementById('text').appendChild(input);
+            curl();
           });
         }
 
@@ -585,6 +586,7 @@ Scene.prototype.loadFile = function loadFile() {
             }
             _this.paragraph();
             document.getElementById('text').appendChild(input);
+            curl();
           });
         }
 
@@ -629,11 +631,13 @@ Scene.prototype.loadFile = function loadFile() {
         if (fileName.toLowerCase() === otherFileName.toLowerCase()) {
           main.innerHTML = "<p>Couldn't find "+fileName+" in the uploaded folder, but we did find "+otherFileName+". Scene file names must match exactly, including capitalization.</p>"+
           " <p><button onclick='window.location.reload();'>Refresh Now</button></p>";
+          curl();
           return;
         }
       }
       main.innerHTML = "<p>Couldn't find "+fileName+" in the uploaded folder.</p>"+
         " <p><button onclick='window.location.reload();'>Refresh Now</button></p>";
+      curl();
     }
   }
 }
