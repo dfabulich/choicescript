@@ -52,7 +52,7 @@ function compile(){
       } else if (candidates.length > 1) {
         if (candidates.length > 1) {
           alert("There were multiple files called scene.js in the folder you chose. Please try again.\n" +
-            candidates.map(function(file) {return "• " + file.webkitRelativePath}).join("\n"));
+            candidates.map(function(file) {return "\u2022 " + file.webkitRelativePath}).join("\n"));
         }
       }
       rootDir = candidates[0].webkitRelativePath.replace(/\/scene.js$/, "/");

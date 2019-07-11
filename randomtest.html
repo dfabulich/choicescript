@@ -146,7 +146,7 @@ document.getElementById("start").onclick = function() {
 
       if (candidates.length > 1) {
         alert("There were multiple files called "+fileName+" in the folder you chose. Please try again.\n" +
-          candidates.map(function(file) {return "• " + file.webkitRelativePath}).join("\n"));
+          candidates.map(function(file) {return "\u2022 " + file.webkitRelativePath}).join("\n"));
         clicked = false;
         throw new Error();
       }

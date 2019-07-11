@@ -581,7 +581,7 @@ Scene.prototype.loadFile = function loadFile() {
             _this.printLine("There were multiple files called startup.txt in the folder you chose. Please try again.");
             _this.paragraph();
             for (var i = 0; i < startupCandidates.length; i++) {
-              _this.printLine("• " + startupCandidates.webkitRelativePath);
+              _this.printLine("\u2022 " + startupCandidates[i].webkitRelativePath);
             }
             _this.paragraph();
             document.getElementById('text').appendChild(input);
