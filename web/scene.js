@@ -547,12 +547,6 @@ Scene.prototype.loadFile = function loadFile() {
       _this.paragraph();
       _this.printLine("To begin, you'll need to grant permission to \"upload\" your scenes folder containing startup.txt.")
       _this.paragraph();
-      _this.printLine("(We're not actually going to transfer your code over the Internet, " +
-        "but this web page needs permission to upload your scenes folder in order to access " +
-        "your code and run it. The power to access your code would also grant us the power to " +
-        "transfer your code elsewhere, but we're not going to do that. JavaScript programmers " +
-        "can read our JavaScript to verify that this is true.");
-      _this.paragraph();
       _this.printLine("Use the button below to select your scenes folder.");
       _this.paragraph();
       var text = document.getElementById('text');
@@ -607,7 +601,13 @@ Scene.prototype.loadFile = function loadFile() {
         });
       });
       text.appendChild(input);
-      text.appendChild(document.createElement('br'));
+      _this.paragraph();
+      _this.printLine("(We're not actually going to transfer your code over the Internet, " +
+        "but this web page needs permission to upload your scenes folder in order to access " +
+        "your code and run it. The power to access your code would also grant us the power to " +
+        "transfer your code elsewhere, but we're not going to do that. JavaScript programmers " +
+        "can read our JavaScript to verify that this is true.)");
+      _this.paragraph();
       curl();
     });
   } else {
