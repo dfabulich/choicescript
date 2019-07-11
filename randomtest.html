@@ -13,8 +13,12 @@
 <p><input type="checkbox" id="showCoverage"> Show line coverage statistics after test</p>
 <p><input type="checkbox" id="autoScroll"> Automatically scroll to the bottom</p>
 <p style="display:none"><input type="checkbox" id="recordBalance"> Record data for auto() balancing</p>
+<p><input style="display:none" type="file" id="uploadDirectory" webkitdirectory> "Upload" choicescript folder (including randomtest.html, NOT just scenes)</p>
 <button id="start">Start Randomtest</button>
 <script>
+if ("file:" === window.location.protocol) {
+  document.getElementById("uploadDirectory").style.display = "";
+}
 var uncheckWithBalance = ["avoidUsedOptions", "highlightGenderPronouns", "showChoices", "showCoverage", "showText"];
 document.getElementById("recordBalance").addEventListener("click", function() {
   if (document.getElementById("recordBalance").checked) {
@@ -29,14 +33,9 @@ var uncheckBalance = function() {
 for (var i = 0; i < uncheckWithBalance.length; i++) {
   document.getElementById(uncheckWithBalance[i]).addEventListener("click", uncheckBalance);
 }
-var worker = new Worker("randomtest.js");
+var worker;
 var messages = [];
 var highlightGenderPronouns;
-worker.onmessage = function(x) {
-  var msg = x.data.msg;
-  messages.push(msg);
-  console.log(msg);
-}
 
 setInterval(function() {
   if (messages.length) {
@@ -109,7 +108,10 @@ if (typeof queryArgs.showChoices != "undefined") document.getElementById("showCh
 if (queryArgs.autoScroll) document.getElementById("autoScroll").checked = queryArgs.autoScroll;
 if (queryArgs.recordBalance) document.getElementById("recordBalance").checked = queryArgs.recordBalance;
 
+var clicked = false;
 document.getElementById("start").onclick = function() {
+  if (clicked) return;
+  clicked = true;
   iterations = document.getElementById("iterations").value;
   randomSeed = document.getElementById("seed").value*1;
   var avoidUsedOptions = document.getElementById("avoidUsedOptions").checked;
@@ -118,8 +120,75 @@ document.getElementById("start").onclick = function() {
   var showChoices = document.getElementById("showChoices").checked;
   highlightGenderPronouns = document.getElementById("highlightGenderPronouns").checked;
   var recordBalance = document.getElementById("recordBalance").checked;
-  document.body.innerHTML = "";
-  worker.postMessage({iterations:iterations, randomSeed:randomSeed, showText:showText, showCoverage:showCoverage, highlightGenderPronouns:highlightGenderPronouns, showChoices:showChoices, avoidUsedOptions:avoidUsedOptions, recordBalance:recordBalance});
+  var isFile = "file:" === window.location.protocol;
+  if (isFile) {
+    var numFiles = uploadDirectory.files.length;
+    var startupCandidates = [];
+    var randomtestJsCandidates = [];
+    var relativePathMap = {};
+    for (var i = 0; i < numFiles; i++) {
+      var file = uploadDirectory.files[i];
+      relativePathMap[file.webkitRelativePath] = file;
+      if (file.name === "startup.txt") {
+        startupCandidates.push(file);
+      }
+      if (file.name === "randomtest.js") {
+        randomtestJsCandidates.push(file);
+      }
+    }
+
+    function evaluateCandidates(fileName, candidates) {
+      if (!candidates.length) {
+        alert("We couldn't find "+fileName+" in the folder you chose. Please try again. (Note that randomtest requires access to the entire choicescript directory, not just the scenes folder");
+        clicked = false;
+        throw new Error();
+      }
+
+      if (candidates.length > 1) {
+        alert("There were multiple files called "+fileName+" in the folder you chose. Please try again.\n" +
+          candidates.map(function(file) {return "• " + file.webkitRelativePath}).join("\n"));
+        clicked = false;
+        throw new Error();
+      }
+    }
+
+    evaluateCandidates("randomtest.js", randomtestJsCandidates);
+    evaluateCandidates("startup.txt", startupCandidates);
+    var startup = startupCandidates[0];
+    var randomtestJs = randomtestJsCandidates[0];
+    var rootDirTest = new RegExp("^" + startup.webkitRelativePath.replace(/\/startup.txt$/, "/[^/]+$"));
+    var sceneFiles = [];
+    for (var i = 0; i < numFiles; i++) {
+      var file = uploadDirectory.files[i];
+      if (rootDirTest.test(file.webkitRelativePath)) {
+        sceneFiles.push(file);
+      }
+    }
+    var sceneContent = {};
+    document.body.innerHTML = "";
+    Promise.all([].map.call(sceneFiles, function(file) { return new Response(file).text();})).then(function(results) {
+      for (var i = 0; i < sceneFiles.length; i++) {
+        var file = sceneFiles[i];
+        sceneContent[file.name] = results[i];
+      }
+      var randomtestRoot = randomtestJs.webkitRelativePath.replace(/\/randomtest.js$/, "/");
+      var requiredFiles = ["web/scene.js", "web/navigator.js", "web/util.js", "web/mygame/mygame.js", "seedrandom.js", "randomtest.js"];
+      Promise.all(requiredFiles.map(function (file) {
+        return new Response(relativePathMap[randomtestRoot+file]).text()
+      })).then(function (results) {
+        worker = new Worker(URL.createObjectURL(new Blob([results.join('\n;\n')], {type: 'text/javascript'})));
+        worker.onmessage = function(x) {
+          var msg = x.data.msg;
+          messages.push(msg);
+          console.log(msg);
+        }
+        worker.postMessage({iterations:iterations, randomSeed:randomSeed, showText:showText, showCoverage:showCoverage, highlightGenderPronouns:highlightGenderPronouns, showChoices:showChoices, avoidUsedOptions:avoidUsedOptions, recordBalance:recordBalance, sceneContent:sceneContent});
+      });
+    });
+  } else {
+    document.body.innerHTML = "";
+    worker.postMessage({iterations:iterations, randomSeed:randomSeed, showText:showText, showCoverage:showCoverage, highlightGenderPronouns:highlightGenderPronouns, showChoices:showChoices, avoidUsedOptions:avoidUsedOptions, recordBalance:recordBalance});
+  }
 }
 </script>
 </body>

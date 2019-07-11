@@ -102,7 +102,9 @@ if (typeof importScripts != "undefined") {
     }
   };
 
-  importScripts("web/scene.js", "web/navigator.js", "web/util.js", "web/mygame/mygame.js", "seedrandom.js");
+  if (typeof Scene === 'undefined') {
+    importScripts("web/scene.js", "web/navigator.js", "web/util.js", "web/mygame/mygame.js", "seedrandom.js");
+  }
 
   _global = this;
 
