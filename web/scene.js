@@ -553,6 +553,7 @@ Scene.prototype.loadFile = function loadFile() {
       var input = document.createElement('input');
       input.type = 'file';
       input.webkitdirectory = true;
+      input.multiple = true;
       input.addEventListener('change', function searchForStartup(e) {
         var numFiles = input.files.length;
         var startupCandidates = [];
