@@ -46,7 +46,11 @@ Scene.prototype.verifyImage = function webVerifyImage(fileName) {
   try {
     xhr.send();
   } catch (e) {
-    throw new Error(this.lineMsg() + "File does not exist: " + fileName);
+    if ("file:" === window.location.protocol) {
+      warnings.push(this.lineMsg() + "WARNING 2019 July 17 temporarily not testing images: " + fileName);
+    } else {
+      throw new Error(this.lineMsg() + "File does not exist: " + fileName);
+    }
   }
   if (xhr.status && xhr.status != 200) {
     throw new Error(this.lineMsg() + "File does not exist: " + fileName);
