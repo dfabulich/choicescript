@@ -292,35 +292,35 @@ var exitCode = (function(){
   }
 }());
 
-if (exitCode) return;
-
-var allLinesTested = true;
-for (var i = 0; i < uncoveredScenes.length; i++) {
-  allLinesTested = false;
-  var uncoveredScene = uncoveredScenes[i];
-  uncoveredScene.lines.push("");
-  print(uncoveredScene.lines.join(" UNTESTED " + uncoveredScene.name + "\n"));
-}
-(function() {
-  if (nav.achievementList && nav.achievementList.length) {
-    for (var i = 0; i < nav.achievementList.length; i++) {
-      var name = nav.achievementList[i];
-      if (!nav.achieved[name]) {
-        print("UNUSED achievement: " + name);
+if (!exitCode) {
+  var allLinesTested = true;
+  for (var i = 0; i < uncoveredScenes.length; i++) {
+    allLinesTested = false;
+    var uncoveredScene = uncoveredScenes[i];
+    uncoveredScene.lines.push("");
+    print(uncoveredScene.lines.join(" UNTESTED " + uncoveredScene.name + "\n"));
+  }
+  (function() {
+    if (nav.achievementList && nav.achievementList.length) {
+      for (var i = 0; i < nav.achievementList.length; i++) {
+        var name = nav.achievementList[i];
+        if (!nav.achieved[name]) {
+          print("UNUSED achievement: " + name);
+        }
       }
     }
+  })();
+
+
+  if (!allLinesTested) print("SOME LINES UNTESTED");
+  if (typeof gameTitle === "undefined") {
+    print("MISSING *TITLE COMMAND");
+  } else if (gameTitle.length > 30) {
+    print("TITLE TOO LONG (" + gameTitle.length + " out of 30 characters): " + gameTitle);
   }
-})();
-
-
-if (!allLinesTested) print("SOME LINES UNTESTED");
-if (typeof gameTitle === "undefined") {
-  print("MISSING *TITLE COMMAND");
-} else if (gameTitle.length > 30) {
-  print("TITLE TOO LONG (" + gameTitle.length + " out of 30 characters): " + gameTitle);
+  if (!authorIncluded) print("MISSING *AUTHOR COMMAND");
+  for (var i = 0; i < warnings.length; i++) {
+    print(warnings[i]);
+  }
+  print("QUICKTEST PASSED");
 }
-if (!authorIncluded) print("MISSING *AUTHOR COMMAND");
-for (var i = 0; i < warnings.length; i++) {
-  print(warnings[i]);
-}
-print("QUICKTEST PASSED");
