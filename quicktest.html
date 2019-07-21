@@ -40,17 +40,21 @@ Scene.prototype.verifySceneFile = function webVerifySceneFile(name) {
 
 Scene.prototype.verifyImage = function webVerifyImage(fileName) {
   if (knownImages[fileName]) return;
+  if ("file:" === window.location.protocol) {
+    for (var otherImage in knownImages) {
+      if (fileName.toLowerCase() === otherImage.toLowerCase()) {
+        throw new Error(this.lineMsg() + "Couldn't find "+fileName+" in the uploaded folder, but we did find "+otherImage+". File names must match exactly, including capitalization.");
+      }
+    }
+    throw new Error(this.lineMsg() + "File does not exist: " + fileName);
+  }
   var xhr = new XMLHttpRequest();
   var url = "web/mygame/" + fileName;
   xhr.open("GET", url, false);
   try {
     xhr.send();
   } catch (e) {
-    if ("file:" === window.location.protocol) {
-      warnings.push(this.lineMsg() + "WARNING 2019 July 17 temporarily not testing images: " + fileName);
-    } else {
-      throw new Error(this.lineMsg() + "File does not exist: " + fileName);
-    }
+    throw new Error(this.lineMsg() + "File does not exist: " + fileName);
   }
   if (xhr.status && xhr.status != 200) {
     throw new Error(this.lineMsg() + "File does not exist: " + fileName);
@@ -163,7 +167,7 @@ function loadScenes(game, sceneNum) {
   var sceneText;
   if ("file:" === window.location.protocol) {
     if (!window.uploadedFiles) {
-      document.body.innerHTML = "<p>Please \"upload\" your scenes folder.</p>";
+      document.body.innerHTML = "<p>Please \"upload\" your choicescript folder (including quicktest.html, NOT just scenes).</p>";
       var input = document.createElement("input");
       input.type = 'file';
       input.webkitdirectory = true;
@@ -171,34 +175,45 @@ function loadScenes(game, sceneNum) {
       input.addEventListener('change', function searchForStartup(e) {
         var numFiles = input.files.length;
         var startupCandidates = [];
+        var quicktestHtmlCandidates = [];
         for (var i = 0; i < numFiles; i++) {
           var file = input.files[i];
           if (file.name === "startup.txt") {
             startupCandidates.push(file);
           }
-        }
-        if (!startupCandidates.length) {
-          return clearScreen(function() {
-            document.body.innerHTML = "<p>We couldn't find startup.txt in the folder you chose. Please try again.</p>";
-            document.body.appendChild(input);
-          });
+          if (file.name === "quicktest.html") {
+            quicktestHtmlCandidates.push(file);
+          }
         }
 
-        if (startupCandidates.length > 1) {
-          document.body.innerHTML = "<p>There were multiple files called startup.txt in the folder you chose. Please try again.</p><ul>";
-          for (var i = 0; i < startupCandidates.length; i++) {
-              document.body.innerHTML += "<li>" + startupCandidates.webkitRelativePath;
+        function evaluateCandidates(fileName, candidates) {
+          if (!candidates.length) {
+            alert("We couldn't find "+fileName+" in the folder you chose. Please try again. (Note that quicktest requires access to the entire choicescript directory, not just the scenes folder");
+            clicked = false;
+            throw new Error();
           }
-          document.body.innerHTML += "</ul>";
+
+          if (candidates.length > 1) {
+            alert("There were multiple files called "+fileName+" in the folder you chose. Please try again.\n" +
+              candidates.map(function(file) {return "\u2022 " + file.webkitRelativePath}).join("\n"));
+            clicked = false;
+            throw new Error();
+          }
         }
+
+        evaluateCandidates("quicktest.html", quicktestHtmlCandidates);
+        evaluateCandidates("startup.txt", startupCandidates);
 
         var startup = startupCandidates[0];
         var rootDirTest = new RegExp("^" + startup.webkitRelativePath.replace(/\/startup.txt$/, "/[^/]+$"));
+        var imageDirTest = new RegExp("^" + startup.webkitRelativePath.replace(/\/[^/]+\/startup.txt$/, "/[^/]+$"));
         var sceneFiles = [];
         for (var i = 0; i < numFiles; i++) {
           var file = input.files[i];
           if (rootDirTest.test(file.webkitRelativePath)) {
             sceneFiles.push(file);
+          } else if (imageDirTest.test(file.webkitRelativePath)) {
+            knownImages[file.name] = 1;
           }
         }
         var _uploadedFiles = {};
