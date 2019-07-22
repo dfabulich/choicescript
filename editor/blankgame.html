@@ -27,12 +27,18 @@ either express or implied.
 <meta name = "description" content = "This is a description of the game that search engines can see.">
 <link rel="canonical" href="/mygame/" />
 
+<script>window.version="DEVELOPMENT"</script>
+<script src="../web/persist.js"></script>
+<script src="../web/alertify.min.js"></script>
 <script src="../web/util.js"></script>
+<link href="../web/style.css" rel="stylesheet" type="text/css">
+<style id="dynamic"></style>
 <script src="../web/ui.js"></script>
 <script src="../web/scene.js"></script>
 <script src="../web/navigator.js"></script>
-<script>window.version="DEVELOPMENT"</script>
 <script src="../web/mygame/mygame.js"></script>
+<link href="../web/alertify.css" rel="stylesheet" type="text/css">
+
 <script>
   window.alreadyLoaded = true;
   window.onload = function() {
@@ -65,49 +71,37 @@ either express or implied.
   Scene.baseUrl = "../web/mygame/scenes";
   rootDir = "../web/"
 </script>
-<link href="../web/style.css" rel="stylesheet" type="text/css">
-<link rel="icon" type="image/vnd.microsoft.icon" href="../web/favicon.ico">
-<meta name="apple-mobile-web-app-capable" content="yes" />
-<link rel="apple-touch-icon-precomposed" href="mobile-icon.png"/>
-<link rel="SHORTCUT ICON" href="../web/favicon.ico"/>
-<script>
-
-
-
-
-
-
-
-</script>
-<!-- INSERT JS AD VARIABLES HERE -->
 </head>
-<body>
-<!-- INSERT JS AD ELEMENT HERE -->
-<div id="header"><h1 class="gameTitle">My First ChoiceScript Game</h1>
-  <p>
-      <!-- INSERT proper share links here
-      <span id="share"><span>Share on:</span>
-        <span><img height="16" width="16" src="../icons/stumbleupon.png">
-        <a href="http://www.stumbleupon.com/submit?url=http%3A%2F%2Fwww.choiceofgames.com/broadsides/&amp;title=Choice+of+Broadsides" class="spacedLink">StumbleUpon</a></span>
-        <span><img height="16" width="16" src="../icons/facebook.ico">
-        <a href="http://www.facebook.com/sharer.php?u=http://www.choiceofgames.com/broadsides/&amp;t=Multiple+Choice+Navy+Game+|+Choice+of+Broadsides"
-        onclick="window.open(&quot;http://www.facebook.com/sharer.php?u=http://www.choiceofgames.com/broadsides/&amp;t=Multiple+Choice+Navy+Game+|+Choice+of+Broadsides&quot;,&quot;sharer&quot;,&quot;toolbar=0,status=0,width=626,height=436&quot;);return false;" class="spacedLink">Facebook</a></span>
-        <span><img height="16" width="16" src="../icons/twitter.ico">
-        <a href="http://twitter.com/home?status=Check+out+&quot;Choice of Broadsides&quot;+http://bit.ly/choiceofbroadsides+from+@choiceofgames" class="spacedLink">Twitter</a></span>
-      </span> -->
+<body><div class="container" id="container1">
+<div id="advertisement">
+</div>
+<div id="header">
+  <div id="identity"><a href="#" id="email">you@example.com</a><a href="#" id="logout">Sign Out</a></div>
+
+  <h1 class="gameTitle"><!-- My First ChoiceScript Game --></h1>
+<h2 id="author" class="gameTitle"><!--by INSERTINSERTINSERT --></h2>
+
+  <p id="headerLinks">
+      <!-- <a href="credits.html" id="aboutLink" class="spacedLink">About</a> -->
     </p>
-  <!-- <p><button onclick="showStats()">Show Stats</button></p> -->
+  <p id="buttons">
+    <button id="statsButton" class="spacedLink" onclick="showStats()">Show Stats</button>
+    <button id="restartButton" class="spacedLink" onclick="restartGame('prompt')">Restart</button>
+    <button id="achievementsButton" onclick="showAchievements()" class="spacedLink" style="display: none">Achievements</button>
+    <button id="bugButton" onclick="reportBug()" class="spacedLink" style="display: none">Report Bug</button>
+    <button id="menuButton" onclick="textOptionsMenu()" class="spacedLink">Settings</button>
+  </p>
 </div>
 <div id="main">
 <div id="text">
-<script>document.write('<div id="loading"><p>Loading...</p><p><img src=\"../web/loader.gif\"></p></div>');</script>
 </div>
+<script>
+startLoading();
+</script>
+</div>
+<div id="mobileLinks" class="webOnly">
 </div>
 <noscript>
-<p>This is just an example game.</p>
 <p>This game requires JavaScript; please enable JavaScript and refresh this page.</p>
-<p>If you can't get the game to work, please write to us at <a href="mailto:support@choiceofgames.com">support@choiceofgames.com</a> for assistance.</p>
 </noscript>
-<!-- INSERT GOOGLE ANALYTICS STUFF HERE -->
-</body>
 </html>
