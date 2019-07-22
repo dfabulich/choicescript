@@ -33,16 +33,21 @@ const requestHandler = (request, response) => {
     requestFile += 'index.html';
   }
   const stream = fs.createReadStream(requestFile);
-  stream.on('error', e => {
+  const streamError = e => {
     if (e.code === 'ENOENT') {
       response.statusCode = 404;
       response.end('File not found');
+    } else if (e.code === 'EISDIR') {
+      response.statusCode = 301;
+      response.setHeader('Location', requestUrl.pathname + '/');
+      response.end();
     } else {
       response.statusCode = 500;
       response.end('Error loading file');
       console.log(e);
     }
-  });
+  };
+  stream.on('error', streamError);
   const mimeType = mimeTypes[path.extname(requestFile).toLowerCase()];
   if (mimeType) {
     response.setHeader('Content-Type', mimeType);
