@@ -78,7 +78,7 @@ function slurpFile(url, throwOnError) {
 	}
 	
 	if (success) {
-		return xhr.responseText;
+		return loadFailed ? "" : xhr.responseText;
 	}
 	else {
 		console.log("An unknown error occurred, please email dan at fabulich.com with details");
