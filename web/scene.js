@@ -619,13 +619,11 @@ Scene.prototype.loadFile = function loadFile() {
         scene = result;
         scene = scene.replace(/\r/g, "");
         _this.loading = false;
-        _this.loadLines(scene);
-        if (_this.executing) {
-            safeCall(_this, function () {
-              doneLoading();
-              _this.execute();
-            });
-        }
+        safeCall(_this, function() {
+          _this.loadLines(scene);
+          doneLoading();
+          _this.execute();
+        });
       });
     } else {
       for (var otherFileName in uploadedFiles) {
