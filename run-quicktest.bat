@@ -15,4 +15,5 @@
 ::software distributed under the License is distributed on an
 ::"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
 ::either express or implied.
-java -cp js.jar org.mozilla.javascript.tools.debugger.Main autotest.js %*
+@node quicktest
+@pause
