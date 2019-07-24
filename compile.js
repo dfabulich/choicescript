@@ -33,7 +33,7 @@ if (!rootDir) rootDir = "web/";
 
 function compile(){
   if (typeof window !== 'undefined' && "file:" === window.location.protocol && !window.slurpedFiles) {
-    window.loading.innerHTML = "<p>Please \"upload\" the web directory (NOT just the scenes folder)</p>";
+    window.loading.innerHTML = "<p>Please \"upload\" the choicescript folder (including compile.html).</p>";
     var input = document.createElement("input");
     input.type = "file";
     input.webkitdirectory = true;
@@ -48,7 +48,7 @@ function compile(){
         }
       }
       if (!candidates.length) {
-        alert("We couldn't find scene.js in the folder you chose. Please try again. (Note that compile.html requires access to the entire web directory, not just the scenes folder");
+        alert("We couldn't find scene.js in the folder you chose. Please try again. (Note that compile.html requires access to the entire choicescript directory, not just the mygame folder");
       } else if (candidates.length > 1) {
         if (candidates.length > 1) {
           alert("There were multiple files called scene.js in the folder you chose. Please try again.\n" +

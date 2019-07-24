@@ -167,7 +167,7 @@ function loadScenes(game, sceneNum) {
   var sceneText;
   if ("file:" === window.location.protocol) {
     if (!window.uploadedFiles) {
-      document.body.innerHTML = "<p>Please \"upload\" your choicescript folder (including quicktest.html, NOT just scenes).</p>";
+      document.body.innerHTML = "<p>Please \"upload\" your choicescript folder (including quicktest.html).</p>";
       var input = document.createElement("input");
       input.type = 'file';
       input.webkitdirectory = true;
@@ -188,7 +188,7 @@ function loadScenes(game, sceneNum) {
 
         function evaluateCandidates(fileName, candidates) {
           if (!candidates.length) {
-            alert("We couldn't find "+fileName+" in the folder you chose. Please try again. (Note that quicktest requires access to the entire choicescript directory, not just the scenes folder");
+            alert("We couldn't find "+fileName+" in the folder you chose. Please try again. (Note that quicktest requires access to the entire choicescript directory, not just the mygame folder");
             clicked = false;
             throw new Error();
           }

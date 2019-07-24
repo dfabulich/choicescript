@@ -543,11 +543,11 @@ Scene.prototype.loadFile = function loadFile() {
       if (header) header.style.display = "none";
       var makeYourOwnGames = document.getElementById('makeyourowngames');
       if (makeYourOwnGames) makeYourOwnGames.style.display = "none";
-      _this.printLine("[b]Please \"Upload\" Your Scenes[/b]");
+      _this.printLine("[b]Please \"Upload\" ChoiceScript[/b]");
       _this.paragraph();
-      _this.printLine("To begin, you'll need to grant permission to \"upload\" your scenes folder containing startup.txt.")
+      _this.printLine("To begin, you'll need to grant permission to \"upload\" your choicescript folder containing index.html.")
       _this.paragraph();
-      _this.printLine("Use the button below to select your scenes folder.");
+      _this.printLine("Use the button below to select your choicescript folder.");
       _this.paragraph();
       var text = document.getElementById('text');
       var input = document.createElement('input');
@@ -604,7 +604,7 @@ Scene.prototype.loadFile = function loadFile() {
       text.appendChild(input);
       _this.paragraph();
       _this.printLine("(We're not actually going to transfer your code over the Internet, " +
-        "but this web page needs permission to upload your scenes folder in order to access " +
+        "but this web page needs permission to upload your choicescript folder in order to access " +
         "your code and run it. The power to access your code would also grant us the power to " +
         "transfer your code elsewhere, but we're not going to do that. JavaScript programmers " +
         "can read our JavaScript to verify that this is true.)");
