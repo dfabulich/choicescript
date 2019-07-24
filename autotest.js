@@ -278,7 +278,7 @@ var exitCode = (function(){
       uncovered = autotester(sceneText, nav, sceneName, gotoSceneLabels[sceneName])[1];
     } catch (e) {
       print("QUICKTEST FAILED\n");
-      print(e);
+      print(e.message);
       if (isRhino) {
         java.lang.System.exit(1);
       } else {
