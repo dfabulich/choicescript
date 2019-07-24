@@ -195,6 +195,49 @@ if (typeof importScripts != "undefined") {
   args = process.argv;
   args.shift();
   args.shift();
+  if (!args.length) {
+    delay = true;
+    var readline = require('readline').createInterface({input: process.stdin, output: process.stdout});
+    var question = function(prompt, defaultAnswer) {
+      return new Promise(function (resolve) {
+        readline.question(prompt + " [" + defaultAnswer + "] ", function (answer) {
+          if (answer === "") answer = defaultAnswer;
+          resolve(answer)
+        })
+      });
+    }
+    var booleanQuestion = function(prompt, defaultAnswer) {
+      return question(prompt + " (y/n)", defaultAnswer ? "y" : "n").then(function (answer) {
+        var normalized = String(answer).toLowerCase();
+        if (!/[yn]/.test(normalized)) {
+          console.log('Please type "y" for yes or "n" for no.');
+          return booleanQuestion(prompt, defaultAnswer);
+        } else {
+          return normalized === "y";
+        }
+      });
+    }
+    question("How many times would you like to run randomtest?", 10).then(function(answer) {
+      iterations = answer;
+      return question("Starting seed number?", 0);
+    }).then(function (answer) {
+      seed = answer;
+      return booleanQuestion("Avoid used options? It's less random, but it finds bugs faster.", true);
+    }).then(function (answer) {
+      avoidUsedOptions = answer;
+      return booleanQuestion("Show full text?", false);
+    }).then(function (answer) {
+      showText = answer;
+      return booleanQuestion("Show selected choices?", true);
+    }).then(function (answer) {
+      showChoices = answer;
+      return booleanQuestion("After the test, show how many times each line was used?", false);
+    }).then(function (answer) {
+      showCoverage = answer;
+      readline.close();
+      randomtest();
+    });
+  }
   parseArgs(args);
   fs = require('fs');
   path = require('path');
