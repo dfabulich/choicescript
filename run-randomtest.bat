@@ -16,6 +16,5 @@
 ::"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
 ::either express or implied.
 @echo off
-echo Executing randomtest, writing to randomtest-output.txt
-node randomtest > randomtest-output.txt
+node randomtest
 pause
