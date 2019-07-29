@@ -206,7 +206,8 @@ function loadScenes(game, sceneNum) {
 
         var startup = startupCandidates[0];
         var rootDirTest = new RegExp("^" + startup.webkitRelativePath.replace(/\/startup.txt$/, "/[^/]+$"));
-        var imageDirTest = new RegExp("^" + startup.webkitRelativePath.replace(/\/[^/]+\/startup.txt$/, "/[^/]+$"));
+        var imageDir = startup.webkitRelativePath.replace(/\/[^/]+\/startup.txt$/, "/");
+        var imageDirTest = new RegExp("^" + imageDir);
         var sceneFiles = [];
         for (var i = 0; i < numFiles; i++) {
           var file = input.files[i];
@@ -214,6 +215,7 @@ function loadScenes(game, sceneNum) {
             sceneFiles.push(file);
           } else if (imageDirTest.test(file.webkitRelativePath)) {
             knownImages[file.name] = 1;
+            knownImages[file.webkitRelativePath.replace(imageDir, "")] = 1;
           }
         }
         var _uploadedFiles = {};
