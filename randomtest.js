@@ -327,31 +327,33 @@ Scene.prototype.page_break = function randomtest_page_break(buttonText) {
   this.resetCheckedPurchases();
 };
 
-if (showText) {
-  var lineBuffer = [];
+function configureShowText() {
+  if (showText) {
+    var lineBuffer = [];
 
-  printx = function printx(msg) {
-    lineBuffer.push(msg);
-  };
-  println = function println(msg) {
-    lineBuffer.push(msg);
-    var logMsg = lineBuffer.join("");
-    console.log(logMsg);
-    lineBuffer = [];
-  };
-  printParagraph = function printParagraph(msg) {
-    if (msg === null || msg === undefined || msg === "") return;
-    msg = String(msg)
-      .replace(/\[n\/\]/g, '\n')
-      .replace(/\[c\/\]/g, '');
-    println(msg);
-    console.log("");
-  };
-} else {
-  oldPrintLine = Scene.prototype.printLine;
-  Scene.prototype.printLine = function randomtest_printLine(line) {
-    if (!line) return null;
-    line = this.replaceVariables(line);
+    printx = function printx(msg) {
+      lineBuffer.push(msg);
+    };
+    println = function println(msg) {
+      lineBuffer.push(msg);
+      var logMsg = lineBuffer.join("");
+      console.log(logMsg);
+      lineBuffer = [];
+    };
+    printParagraph = function printParagraph(msg) {
+      if (msg === null || msg === undefined || msg === "") return;
+      msg = String(msg)
+        .replace(/\[n\/\]/g, '\n')
+        .replace(/\[c\/\]/g, '');
+      println(msg);
+      console.log("");
+    };
+  } else {
+    oldPrintLine = Scene.prototype.printLine;
+    Scene.prototype.printLine = function randomtest_printLine(line) {
+      if (!line) return null;
+      line = this.replaceVariables(line);
+    }
   }
 }
 
@@ -686,6 +688,7 @@ nav.setStartingStatsClone(stats);
 var processExit = false;
 var start;
 function randomtestAsync(i, showCoverage) {
+    configureShowText();
     if (i==0) start = new Date().getTime();
     function runTimeout(fn) {
       timeout = null;
@@ -750,6 +753,7 @@ function randomtestAsync(i, showCoverage) {
 }
 
 function randomtest() {
+  configureShowText();
   var start = new Date().getTime();
   randomSeed *= 1;
   for (var i = 0; i < iterations; i++) {
