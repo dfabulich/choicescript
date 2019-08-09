@@ -228,9 +228,11 @@ if (typeof importScripts != "undefined") {
       return booleanQuestion("Show full text?", false);
     }).then(function (answer) {
       showText = answer;
+      if (showText) return true;
       return booleanQuestion("Show selected choices?", true);
     }).then(function (answer) {
       showChoices = answer;
+      if (showText) return false;
       return booleanQuestion("After the test, show how many times each line was used?", false);
     }).then(function (answer) {
       showCoverage = answer;
