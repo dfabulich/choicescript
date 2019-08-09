@@ -234,6 +234,20 @@ if (typeof importScripts != "undefined") {
       return booleanQuestion("After the test, show how many times each line was used?", false);
     }).then(function (answer) {
       showCoverage = answer;
+      return booleanQuestion("Write output to a file (randomtest-output.txt)?", false);
+    }).then(function (answer) {
+      if (answer) {
+        var output = require('fs').createWriteStream('randomtest-output.txt', {encoding: 'utf8'});
+        console.log = function(msg) {
+          countWords(msg);
+          output.write(msg + '\n', 'utf8');
+        }
+        var oldError = console.error;
+        console.error = function(msg) {
+          oldError(msg);
+          output.write(msg + '\n', 'utf8');
+        }
+      }
       readline.close();
       randomtest();
     });
@@ -776,14 +790,8 @@ function randomtest() {
         continue;
       }
       console.log("RANDOMTEST FAILED: " + e);
-      if (isRhino) {
-        java.lang.System.exit(1);
-      } else if (typeof process != "undefined" && process.exit) {
-        process.exit(1);
-      } else {
-        processExit = true;
-        break;
-      }
+      processExit = true;
+      break;
     }
   }
 
