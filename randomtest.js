@@ -221,7 +221,7 @@ if (typeof importScripts != "undefined") {
       iterations = answer;
       return question("Starting seed number?", 0);
     }).then(function (answer) {
-      seed = answer;
+      randomSeed = answer;
       return booleanQuestion("Avoid used options? It's less random, but it finds bugs faster.", true);
     }).then(function (answer) {
       avoidUsedOptions = answer;
