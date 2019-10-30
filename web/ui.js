@@ -63,6 +63,8 @@ function replaceBbCode(msg) {
       .replace(/\[\/i\]/g, '</i>')
       .replace(/\u2022([\s\S]*)/, '<ul>•$1</ul>')
       .replace(/\u2022([^\u2022]*)/g, '<li>$1</li>')
+      .replace(/\[icon\=(.*?)\](.*?)\[\/icon\]/g, '<img src="$1" alt="$2" class="icon">') //trying to include syntax for in-line images
+      .replace(/\[texticon\=(.*?)\](.*?)\[\/icon\]/g, '<img src="$1" alt="$2" class="icon nighticon">') //trying to include syntax for nightmode in-line images
 }
 
 function println(msg, parent) {

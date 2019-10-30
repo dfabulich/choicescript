@@ -473,3 +473,19 @@ body.whitemode .next:hover {
   }
   
 }
+
+/*class icon for in-line images*/
+.icon {
+  height: 1.2em;
+  /*width: 1.2em; /*remove to accept unconventional rectangle icon?*/
+  margin: -0.2em 0;
+  vertical-align: middle 
+  /*This is a tweaked version of height/margin for near-perfect fitting of Font Awesome's placement and size.
+  height: 1em; margin: -0.06em 0 0.21em 0;*/
+}
+
+/*Icon Nightmode*/
+body.nightmode .nighticon {
+  -webkit-filter: invert(100%);
+  filter: invert(100%);
+}
