@@ -17,14 +17,15 @@
  * either express or implied.
  */
 
-_global = this;
+_global = typeof globalThis !== "undefined" ? globalThis : this;
 
 (function() {
-  var userAgent, url, protocol;
+  var userAgent, url, protocol, appMeta;
   if (typeof window !== "undefined") {
     userAgent = navigator.userAgent;
     url = window.location.href;
     protocol = window.location.protocol;
+    appMeta = window.document.querySelector("meta[name=apple-itunes-app]");
   }
   _global.isWebOS = /webOS/.test(userAgent);
   _global.isMobile = _global.isWebOS || /Mobile/.test(userAgent);
@@ -38,10 +39,12 @@ _global = this;
   try {
     isWinOldApp = window.external.IsWinOldApp();
   } catch (ignored) {}
-  _global.isOmnibusApp = /CoGnibus/.test(userAgent);
-  _global.isIosApp = _global.isIosApp || _global.isOmnibusApp;
-  _global.isWeb = !_global.isIosApp && !_global.isWinOldApp && /^https?:/.test(url);
   _global.isAndroid = /Android/.test(userAgent);
+  _global.isOmnibusApp = /CoGnibus/.test(userAgent);
+  _global.isIosApp = _global.isIosApp || (_global.isOmnibusApp && !_global.isAndroid);
+  _global.isAndroidApp = _global.isAndroidApp || (_global.isOmnibusApp && _global.isAndroid);
+  _global.isAmazonAndroidApp = _global.isAmazonAndroidApp || (_global.isAndroidApp && _global.flavor && _global.flavor.isAmazon());
+  _global.isWeb = !_global.isIosApp && !_global.isAndroidApp && !_global.isWinOldApp && /^https?:/.test(url);
   _global.isSecureWeb = /^https:?$/.test(protocol);
   _global.isSafari = /Safari/.test(userAgent);
   _global.isIE = /(MSIE|Trident)/.test(userAgent);
@@ -51,12 +54,16 @@ _global = this;
   _global.isWinStoreApp = "ms-appx:" == protocol;
   _global.isCef = !!_global.cefQuery;
   _global.isNode = typeof process !== "undefined";
+  _global.isHeartsChoice = appMeta && /1487052276/.test(appMeta.getAttribute("content"))
 })();
 
 _global.loadTime = new Date().getTime();
 
 function callIos(scheme, path) {
   if (!_global.isIosApp) return;
+  if (typeof webkit !== "undefined" && webkit.messageHandlers) {
+    return webkit.messageHandlers.choicescript.postMessage([scheme, path]);
+  }
   if (path) {
     path = encodeURIComponent(path).replace(/[!~*')(]/g, function(match) {
       return "%" + match.charCodeAt(0).toString(16);
@@ -312,11 +319,11 @@ function computeCookie(stats, temps, lineNum, indent) {
 }
 
 function writeCookie(value, slot, callback) {
-  if (!window.pseudoSave) window.pseudoSave = {};
+  if (!_global.pseudoSave) _global.pseudoSave = {};
   if (!slot) {
     slot = "";
   }
-  window.pseudoSave[slot] = value;
+  _global.pseudoSave[slot] = value;
   if (!initStore()) {
     if (callback) safeTimeout(callback, 0);
     return;
@@ -373,6 +380,19 @@ function fetchEmail(callback) {
   if (!initStore()) {
     safeTimeout(function(){callback("");}, 0);
     return;
+  }
+  if (window.recordedEmail) {
+    return safeTimeout(function() {
+      callback(window.recordedEmail);
+    })
+  }
+  if (window.isWeb) {
+    var cookieEmail = getCookieByName("login");
+    if (/@/.test(cookieEmail)) {
+      return recordEmail(cookieEmail, function() {
+        callback(cookieEmail);
+      });
+    }
   }
   // For some reason, this get seems to not respond sometimes
   // adding a fallback timeout
@@ -641,6 +661,74 @@ function mergeRemoteSaves(remoteSaveList, recordDirty, callback) {
   });
 }
 
+function getAppId() {
+  if (window.isIosApp) {
+    var appBanner = document.querySelector("meta[name=apple-itunes-app]");
+    return /app-id=(\d+)/.exec(appBanner.getAttribute("content"))[1];
+  } else if (window.isAndroidApp) {
+    var androidLink = document.getElementById('androidLink');
+    return /id=([\.\w]+)/.exec(androidLink.href)[1];
+  }
+}
+
+function submitReceipts(receipts, callback) {
+  console.log("submitReceipts: " + JSON.stringify(receipts));
+  if (!callback) callback = window.transferPurchaseCallback || function() {};
+  var appId = receipts.appId;
+  var count = 0;
+  var error;
+  function submitCallback(product) {
+    return function submitCallback(ok, response) {
+      if (!ok) {
+        console.log("failed: " + product + " " + JSON.stringify(response));
+        if (!error) callback("error");
+        error = true;
+      }
+      if (error) return;
+      count--;
+      if (!count) {
+        if (!receipts.avoidOverrides) cacheKnownPurchases(response);
+        callback("done");
+      }
+    }
+  }
+
+  if (window.isAndroidApp) {
+    var platform = window.isAmazonAndroidApp ? 'amazon' : 'google';
+    if (receipts.prePurchased && platform === 'google') {
+      for (var i = 0; i < receipts.prePurchased.length; i++) {
+        var product = receipts.prePurchased[i];
+        count++;
+        xhrAuthRequest("POST", "submit-device-receipt", submitCallback(product),
+          'platform', platform,
+          'company', receipts.company,
+          'game_id', window.storeName,
+          'app_package', appId,
+          'product_id', product,
+          'signature', encodeURIComponent(receipts.signature),
+          'receipt', encodeURIComponent(receipts.signedData)
+        );
+      }
+    }
+    if (receipts.iaps) {
+      for (var product in receipts.iaps) {
+        count++;
+        xhrAuthRequest("POST", "submit-device-receipt", submitCallback(product),
+          'platform', platform,
+          'company', receipts.company,
+          'game_id', window.storeName,
+          'app_package', appId,
+          'product_id', product,
+          'receipt', encodeURIComponent(receipts.iaps[product])
+        );
+      }
+    }
+    if (!count) safeTimeout(function() {callback("done");}, 0);
+  } else {
+    callback("error");
+  }
+}
+
 function delayBreakStart(callback) {
   var nowInSeconds = Math.floor(new Date().getTime() / 1000);
   if (!initStore()) {
@@ -677,10 +765,8 @@ function loadAndRestoreGame(slot, forcedScene) {
     safeCall(null, function() {
       var state = null;
       if (ok && value && ""+value) {
-        console.log("successfully loaded slot " + slot);
+        //console.log("successfully loaded slot " + slot);
         state = jsonParse(value);
-      } else if (window.Persist.type == "androidStorage" && document.cookie) {
-        return upgradeAndroidCookies(slot,forcedScene);
       } else if (slot == "backup") {
         console.log("loadAndRestoreGame couldn't find backup");
         return loadAndRestoreGame("", forcedScene);
@@ -689,32 +775,9 @@ function loadAndRestoreGame(slot, forcedScene) {
     });
   }
   if (!slot) slot = "";
-  if (window.pseudoSave && pseudoSave[slot]) return valueLoaded(true, pseudoSave[slot]);
+  if (_global.pseudoSave && pseudoSave[slot]) return valueLoaded(true, pseudoSave[slot]);
   if (!initStore()) return restoreGame(null, forcedScene);
   window.store.get("state"+slot, valueLoaded);
-}
-
-// we used to use cookies on some Android devices; now we use androidStorage
-function upgradeAndroidCookies(slot, forcedScene) {
-  var ck = document.cookie;
-  var components = ck.split("; ");
-  function upgradeComponent(i) {
-    if (!components[i]) {
-      loadAndRestoreGame(slot, forcedScene);
-      return;
-    }
-    var parts = components[i].split("=");
-    var key = parts[0];
-    var deletion = key + "=x; path=/; domain=localhost; expires=Thu, 01-Jan-1970 00:00:01 GMT";
-    document.cookie = deletion;
-    // key is in the format "storeName:actualKey"
-    key = unescape(key).substring(window.storeName.length + 1);
-    var value = unescape(parts[1]);
-    window.store.set(key, value, function() {
-      upgradeComponent(i+1);
-    });
-  }
-  safeCall(this, function() {upgradeComponent(0);});
 }
 
 function isStateValid(state) {
@@ -725,7 +788,7 @@ function isStateValid(state) {
 }
 
 function restartGame(shouldPrompt) {
-  if (window.blockRestart) {
+  if (_global.blockRestart) {
     asyncAlert("Please wait until the timer has run out.");
     return;
   }
@@ -735,7 +798,7 @@ function restartGame(shouldPrompt) {
     submitAnyDirtySaves();
     clearCookie(function() {}, 'temp');
     clearCookie(function() {
-      window.nav.resetStats(window.stats);
+      _global.nav.resetStats(_global.stats);
       clearScreen(restoreGame);
     }, "");
   }
@@ -764,13 +827,13 @@ function restoreGame(state, forcedScene, userRestored) {
       saveSlot = "temp";
     }
     if (!isStateValid(state)) {
-        var startupScene = forcedScene ? forcedScene : window.nav.getStartupScene();
-        scene = new Scene(startupScene, window.stats, window.nav, {debugMode:window.debug, secondaryMode:secondaryMode, saveSlot:saveSlot});
+        var startupScene = forcedScene ? forcedScene : _global.nav.getStartupScene();
+        scene = new Scene(startupScene, _global.stats, _global.nav, {debugMode:_global.debug, secondaryMode:secondaryMode, saveSlot:saveSlot});
     } else {
       if (forcedScene) state.stats.sceneName = forcedScene;
-      window.stats = state.stats;
+      _global.stats = state.stats;
       // Someday, inflate the navigator using the state object
-      scene = new Scene(state.stats.sceneName, state.stats, window.nav, {debugMode:state.debug || window.debug, secondaryMode:secondaryMode, saveSlot:saveSlot});
+      scene = new Scene(state.stats.sceneName, state.stats, _global.nav, {debugMode:state.debug || _global.debug, secondaryMode:secondaryMode, saveSlot:saveSlot});
       if (!forcedScene) {
         scene.temps = state.temps;
         scene.lineNum = state.lineNum;
@@ -989,7 +1052,7 @@ function isStoreSceneCacheRequired() {
     _global.purchases &&
     _global.checkPurchase &&
     _global.hashes &&
-    !_global.isOmnibusApp &&
+    !(_global.isOmnibusApp && _global.isIosApp) &&
     hashes.scenes
   )) return false;
   var empty = true;
@@ -1005,45 +1068,83 @@ function updateSinglePaidSceneCache(sceneName, callback) {
   sceneName = sceneName.replace(/ /g, "_");
   var fileName = sceneName + ".txt.json";
   if (initStore() && _global.hashes && hashes.scenes && hashes.scenes[fileName]) {
-    var xhr = new XMLHttpRequest();
-    var url = "scenes/" + fileName + "?hash="+hashes.scenes[fileName];
-    xhr.open("GET", url);
-    xhr.onload = function() {
-      if (xhr.status === 404) {
-        try {
-          if (JSON.parse(xhr.responseText).error === "hash doesn't match") {
-            return awaitAppUpdate(function() {
-              callback("strange");
-            })
+    function actualRequest(receiptsSent) {
+      var xhr = new XMLHttpRequest();
+      var canonical = document.querySelector("link[rel=canonical]");
+      var canonicalHref = canonical && canonical.getAttribute("href");
+      var url = canonicalHref + "scenes/" + fileName + "?hash="+hashes.scenes[fileName];
+      xhr.open("GET", url);
+      xhr.onload = function() {
+        var error;
+        if (xhr.status !== 200) {
+          try {
+            error = JSON.parse(xhr.responseText).error;
+          } catch (e) {}
+        }
+        if (xhr.status === 404) {
+          try {
+            if (error === "hash doesn't match") {
+              return awaitAppUpdate(function() {
+                callback("strange");
+              })
+            }
+          } catch (e) {
+            if (window.console) console.error(e, e.stack);
           }
+        }
+        if (xhr.status == 403 && _global.isOmnibusApp && _global.isAndroidApp) {
+          if (!receiptsSent) {
+            window.receiptRequestCallback = function(receipts) {
+              window.receiptRequestCallback = null;
+              submitReceipts(receipts, function() {actualRequest("receiptsSent");});
+            }
+            androidBilling.requestReceipts();
+            return;
+          } else if (error === "not registered" || error == "not purchased") {
+            return callback(error);
+          }
+        } else if (xhr.status !== 200) {
+          return callback(xhr.status);
+        }
+        var result;
+        try {
+          result = jsonParse(xhr.responseText);
         } catch (e) {
           if (window.console) console.error(e, e.stack);
         }
-      }
-      if (xhr.status !== 200) return callback(xhr.status);
-      var result;
-      try {
-        result = jsonParse(xhr.responseText);
-      } catch (e) {
-        if (window.console) console.error(e, e.stack);
-      }
-      if (!result) return callback("network");
-      window.store.set("cache_scene_"+sceneName, xhr.responseText, function() {
-        window.store.set("cache_scene_hash_"+sceneName, hashes.scenes[fileName], function() {
-          callback(null, result);
+        var ok = result && result.crc && result.lines && result.labels;
+        if (!ok) return callback("network");
+        window.store.set("cache_scene_"+sceneName, xhr.responseText, function() {
+          window.store.set("cache_scene_hash_"+sceneName, hashes.scenes[fileName], function() {
+            callback(null, result);
+          });
         });
-      });
-    };
-    xhr.onerror = function() {
-      callback("network");
+      };
+      xhr.onerror = function() {
+        callback("network");
+      }
+      console.log("updateSinglePaidSceneCache " + url);
+      xhr.send();
     }
-    console.log("updateSinglePaidSceneCache", url);
-    xhr.send();
+    actualRequest();
   }
 }
 
-function updateAllPaidSceneCaches() {
-  if (!isStoreSceneCacheRequired()) return;
+function updateAllPaidSceneCaches(receiptsSent) {
+  if (!isStoreSceneCacheRequired()) {
+    if (window.isOmnibusApp && window.isAndroidApp) {
+      window.receiptRequestCallback = submitReceipts;
+      androidBilling.requestReceipts();
+    }
+    return;
+  }
+  if (_global.isOmnibusApp && _global.isAndroidApp && !receiptsSent) {
+    window.receiptRequestCallback = function(receipts) {
+      submitReceipts(receipts, function() {updateAllPaidSceneCaches("receiptsSent");});
+    };
+    androidBilling.requestReceipts();
+    return;
+  }
   var flipped = {};
   for (var scene in purchases) {
     if (/^fake:/.test(scene)) continue;
@@ -1085,10 +1186,6 @@ function checkForAppUpdates() {
     navigator.serviceWorker.getRegistration().then(function(reg) {
       if (reg) reg.update();
     });
-  } else {
-    if (_global.applicationCache && applicationCache.status) {
-      applicationCache.update();
-    }
   }
 }
 
@@ -1103,16 +1200,13 @@ function refreshIfAppUpdateReady() {
         return window.location.reload();
       }
     });
-  } else if (_global.applicationCache && applicationCache.status == 4) {
-    window.location.reload();
   }
 }
 
 function awaitAppUpdate(callback) {
 
-  var appCacheExists = (_global.applicationCache && applicationCache.status);
   var serviceWorkerExists = (navigator.serviceWorker && navigator.serviceWorker.controller);
-  if (!appCacheExists && !serviceWorkerExists) return callback();
+  if (!serviceWorkerExists) return callback();
 
   var calledBack = false;
   var maybeCallback = function() {
@@ -1121,48 +1215,42 @@ function awaitAppUpdate(callback) {
     callback();
   }
 
-  if (serviceWorkerExists) {
-    if (window.controllerchanged) return maybeCallback();
-    setTimeout(maybeCallback, 10000);
-    navigator.serviceWorker.getRegistration().then(function(reg) {
-      if (!reg) return maybeCallback();
-      if (reg.waiting) {
-        reg.waiting.postMessage('skipWaiting');
-        return maybeCallback();
-      }
-      var watchStateChange = function() {
-        if (this.state == 'installed') {
-          if (reg.waiting) reg.waiting.postMessage('skipWaiting');
-          maybeCallback();
-        }
-      };
-      if (reg.installing) reg.installing.addEventListener('statechange', watchStateChange);
-      reg.update();
-      reg.addEventListener('updatefound', function() {
-        reg.installing.addEventListener('statechange', watchStateChange);
-      })
-    });
-  } else {
-    if (applicationCache.status == 4) return maybeCallback();
-    setTimeout(maybeCallback, 10000);
-    var updateready = function() {
-      applicationCache.removeEventListener('updateready', updateready);
-      maybeCallback();
+  if (window.controllerchanged) return maybeCallback();
+  setTimeout(maybeCallback, 10000);
+  navigator.serviceWorker.getRegistration().then(function(reg) {
+    if (!reg) return maybeCallback();
+    if (reg.waiting) {
+      reg.waiting.postMessage('skipWaiting');
+      return maybeCallback();
     }
-    applicationCache.update();
-    applicationCache.addEventListener('updateready', updateready);
-  }
+    var watchStateChange = function() {
+      if (this.state == 'installed') {
+        if (reg.waiting) reg.waiting.postMessage('skipWaiting');
+        maybeCallback();
+      }
+    };
+    if (reg.installing) reg.installing.addEventListener('statechange', watchStateChange);
+    reg.update();
+    reg.addEventListener('updatefound', function() {
+      reg.installing.addEventListener('statechange', watchStateChange);
+    })
+  });
 }
 
 function remoteConfig(variable, callback) {
-  if (!_global.isIosApp || !_global.isOmnibusApp) {
+  if (!_global.isOmnibusApp) {
     safeTimeout(function() {callback(null);}, 0);
     return;
   }
-  var nonce = "remoteConfig" + variable + (+new Date);
-  window[nonce] = function(value) {
-    delete window[nonce];
-    callback(value);
+  if (_global.isIosApp) {
+    var nonce = "remoteConfig" + variable + (+new Date);
+    window[nonce] = function(value) {
+      delete window[nonce];
+      callback(value);
+    }
+    callIos("remoteconfig", variable + " " + nonce);
+  } else {
+    var result = (_global.androidRemoteConfig && androidRemoteConfig.remoteConfig(variable)) || null;
+    return safeTimeout(function() {callback(result);}, 0);
   }
-  callIos("remoteconfig", variable + " " + nonce);
 }

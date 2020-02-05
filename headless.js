@@ -47,6 +47,7 @@ doneLoading = function() {};
 printFooter = function() {};
 printShareLinks = function() {};
 printLink = function() {};
+kindleButton = function() {};
 printImage = function() {};
 showPassword = function() {};
 printDiscount = function() {};
@@ -57,6 +58,7 @@ isFullScreenAdvertisingSupported = function() {return false;};
 isRestorePurchasesSupported = function() {return false;};
 areSaveSlotsSupported = function() {return false;};
 isAdvertisingSupported = function() {return false;};
+isPrerelease = function() {return false;};
 
 function fileExists(filePath) {
     if (isRhino) {
@@ -86,6 +88,7 @@ function mkdirs(filePath) {
             }
             fs.mkdirSync(filePath);
         }
+        
     }
 }
 

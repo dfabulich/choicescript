@@ -25,7 +25,7 @@ var gameName = "mygame";
 var randomSeed = 0;
 var delay = false;
 var showCoverage = true;
-var isTrial = false;
+var isTrial = null;
 var showText = false;
 var highlightGenderPronouns = false;
 var showChoices = true;
@@ -59,6 +59,9 @@ function parseArgs(args) {
     } else if (name === "recordBalance") {
       recordBalance = (value !== "false");
     }
+  }
+  if (isTrial === null) {
+    isTrial = !!process.env.TRIAL;
   }
   if (showText) showCoverage = false;
   if (recordBalance) {
@@ -239,15 +242,16 @@ if (typeof importScripts != "undefined") {
       return booleanQuestion("Write output to a file (randomtest-output.txt)?", false);
     }).then(function (answer) {
       if (answer) {
-        var output = require('fs').createWriteStream('randomtest-output.txt', {encoding: 'utf8'});
+        var fs = require('fs');
+        var output = fs.openSync('randomtest-output.txt', 'w');
         console.log = function(msg) {
           countWords(msg);
-          output.write(msg + '\n', 'utf8');
+          fs.writeSync(output, msg + '\n');
         }
         var oldError = console.error;
         console.error = function(msg) {
           oldError(msg);
-          output.write(msg + '\n', 'utf8');
+          fs.writeSync(output, msg + '\n');
         }
       }
       readline.close();
@@ -370,6 +374,20 @@ function configureShowText() {
       if (!line) return null;
       line = this.replaceVariables(line);
     }
+  }
+}
+
+var oldGoto = Scene.prototype["goto"];
+Scene.prototype["goto"] = function scene_goto(data) {
+  oldGoto.call(this, data);
+  if (!this.localCoverage) this.localCoverage = {};
+  if (this.localCoverage[this.lineNum]) {
+    this.localCoverage[this.lineNum]++;
+    if (this.localCoverage[this.lineNum] > this.looplimit_count) {
+      throw new Error(this.lineMsg() + "visited this line too many times");
+    }
+  } else {
+    this.localCoverage[this.lineNum] = 1;
   }
 }
 
@@ -792,8 +810,14 @@ function randomtest() {
         continue;
       }
       console.log("RANDOMTEST FAILED: " + e);
-      processExit = true;
-      break;
+      if (isRhino) {
+        java.lang.System.exit(1);
+      } else if (typeof process != "undefined" && process.exit) {
+        process.exit(1);
+      } else {
+        processExit = true;
+        break;
+      }
     }
   }
 

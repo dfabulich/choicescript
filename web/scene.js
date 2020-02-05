@@ -263,7 +263,7 @@ Scene.prototype.loadSceneFast = function loadSceneFast(url) {
     this.loading = true;
     var result;
     var self = this;
-    if (window.cachedResults && window.cachedResults[this.name]) {
+    if (typeof cachedResults != "undefined" && cachedResults && cachedResults[this.name]) {
       result = window.cachedResults[this.name];
       return this.loadLinesFast(result.crc, result.lines, result.labels);
     } else if (typeof allScenes != "undefined") {
@@ -328,6 +328,18 @@ Scene.prototype.loadSceneFast = function loadSceneFast(url) {
           updateSinglePaidSceneCache(self.name, function(err, result) {
             doneLoading();
             if (err) {
+              if (err === "not registered") {
+                logout();
+                loginDiv();
+                return clearScreen(function() {
+                  loginForm(main, 0/*optional*/,
+                    "Please sign in to access this part of the game.", function() {
+                      clearScreen(loadAndRestoreGame);
+                    });
+                });
+              } else if (err === "not purchased") {
+                err = "403x";
+              }
               main.innerHTML = "<div id='text'><p>Our apologies; there was a " + err + " error while loading game data."+
               "  Please refresh now; if that doesn't work, please click the Restart button and email "+getSupportEmail()+" with details.</p>"+
               " <p><button class='next' onclick='window.location.reload();'>Refresh Now</button></p></div>";
@@ -346,7 +358,7 @@ Scene.prototype.loadSceneFast = function loadSceneFast(url) {
               } catch (e) {
                 if (window.console) console.error(e, e.stack);
               }
-              if (parsed) return keepScene(parsed);
+              if (parsed && parsed.crc && parsed.lines && parsed.labels) return keepScene(parsed);
               loadPaidScene();
             } else {
               loadPaidScene();
@@ -1295,8 +1307,8 @@ Scene.prototype.purchase = function purchase_button(data) {
       self.finished = false;
       self.resetPage();
     } else {
-      if (price == "guess") price = priceGuess;
-      var prerelease = (typeof window !== "undefined" && window.releaseDate && window.isWeb && !window.isOmnibusApp && window.releaseDate > new Date());
+      if (price == "guess") price = priceGuess + " USD";
+      var prerelease = self.getVar('choice_prerelease');
       var buttonText;
       if (prerelease) {
         buttonText = "Pre-Order It";
@@ -1368,7 +1380,7 @@ Scene.prototype.purchase_discount = function purchase_discount(line) {
   if (!startsWithDollar.test(discountedPriceGuess)) {
     throw new Error(this.lineMsg() + "discounted price guess "+discountedPriceGuess+"doesn't start with dollar: " + line);
   }
-  var prerelease = (typeof window !== "undefined" && window.releaseDate && window.isWeb && window.releaseDate > new Date());
+  var prerelease = this.getVar('choice_prerelease');
   var discountText;
   if (prerelease) {
     discountText = "[b]Buy now before the price increases![/b]";
@@ -1466,6 +1478,9 @@ Scene.prototype.getVar = function getVar(variable) {
     if (variable == "choice_is_web") return typeof window != "undefined" && !!window.isWeb;
     if (variable == "choice_is_steam") return typeof window != "undefined" && !!window.isSteamApp;
     if (variable == "choice_is_ios_app") return typeof window != "undefined" && !!window.isIosApp;
+    if (variable == "choice_is_android_app") return typeof window != "undefined" && !!window.isAndroidApp;
+    if (variable == "choice_is_omnibus_app") return typeof window != "undefined" && !!window.isOmnibusApp;
+    if (variable == "choice_is_amazon_app") return typeof window != "undefined" && !!window.isAmazonApp;
     if (variable == "choice_is_advertising_supported") return typeof isAdvertisingSupported != "undefined" && !!isAdvertisingSupported();
     if (variable == "choice_is_trial") return !!(typeof isTrial != "undefined" && isTrial);
     if (variable == "choice_release_date") {
@@ -1474,13 +1489,7 @@ Scene.prototype.getVar = function getVar(variable) {
       }
       return "release day";
     }
-    if (variable == "choice_prerelease") {
-      if (typeof window != "undefined" && window.releaseDate) {
-        return new Date() < window.releaseDate.getTime();
-      } else {
-        return false;
-      }
-    }
+    if (variable == "choice_prerelease") return isPrerelease();
     if (variable == "choice_kindle") return typeof isKindle !== "undefined" && !!isKindle;
     if (variable == "choice_randomtest") return !!this.randomtest;
     if (variable == "choice_quicktest") return false; // quicktest will explore "false" paths
@@ -1923,6 +1932,10 @@ Scene.prototype.sound = function sound(source) {
     if (this.verifyImage) this.verifyImage(source);
 };
 
+Scene.prototype.kindle_image = function kindle_image() {
+  // Do nothing on non-Kindle devices; show only on Kindle
+};
+
 Scene.prototype.youtube = function youtube(slug) {
   if (typeof printYoutubeFrame !== "undefined") {
     printYoutubeFrame(slug);
@@ -1930,6 +1943,14 @@ Scene.prototype.youtube = function youtube(slug) {
     this.screenEmpty = false;
   }
 }
+
+Scene.prototype.kindle_search = Scene.prototype.kindle_product = function kindle_search(data) {
+  var result = /^\((.+)\) ([^\)]+)/.exec(data);
+  if (!result) throw new Error(this.lineMsg()+"Invalid arguments: " + data);
+  var query = result[1];
+  var buttonName = result[2];
+  if ("undefined" != typeof kindleButton) kindleButton(this.target, query, buttonName);
+};
 
 // *link
 // Display URL with anchor text
@@ -2010,7 +2031,10 @@ Scene.prototype.advertisement = function advertisement() {
 
 // *looplimit 5
 // The number of times a given line is allowed to be accessed
-Scene.prototype.looplimit = function looplimit() {}; // TODO looplimit
+Scene.prototype.looplimit_count = 1000;
+Scene.prototype.looplimit = function looplimit(count) {
+  this.looplimit_count = num(count, this.lineNum);
+};
 
 Scene.prototype.hide_reuse = function hide_reuse() {
   this.temps.choice_reuse = "hide";
@@ -2344,7 +2368,7 @@ Scene.prototype.ending = function ending() {
     var groups = [""];
     options = [];
     options.push({name:"Play again.", group:"choice", restart:true});
-    options.push({name:"Play more games like this.", group:"choice", moreGames:true});
+    if (!window.isOmnibusApp) options.push({name:"Play more games like this.", group:"choice", moreGames:true});
     options.push({name:"Share this game with friends.", group:"choice", share:true});
     options.push({name:"Email me when new games are available.", group:"choice", subscribe:true});
 
@@ -2383,6 +2407,7 @@ Scene.prototype.restart = function restart() {
   } else {
     restartGame();
   }
+  this.finished = true;
 };
 
 /* Subscribe options, in JSON format.
@@ -2804,6 +2829,7 @@ Scene.prototype.save_game = function save_game(destinationSceneName) {
         }
 
         var shouldSubscribe = subscribeBox.checked;
+        var subscribe = shouldSubscribe && window.isHeartsChoice ? "hc" : "cog";
         var email = trim(emailInput.value);
         if (!/^\S+@\S+\.\S+$/.test(email)) {
           messageText = document.createTextNode("Sorry, \""+email+"\" is not an email address.  Please type your email address again.");
@@ -2817,7 +2843,7 @@ Scene.prototype.save_game = function save_game(destinationSceneName) {
             saveCookie(function() {
               recordSave(slot, function() {
                 startLoading();
-                submitRemoteSave(slot, email, shouldSubscribe, function(ok) {
+                submitRemoteSave(slot, email, subscribe, function(ok) {
                   doneLoading();
                   if (!ok) {
                     asyncAlert("Couldn't upload your saved game to choiceofgames.com. You can try again later from the Restore menu.", function() {
@@ -4214,11 +4240,41 @@ Scene.prototype.feedback = function scene_feedback() {
     var value = "null";
     var numberMatch = /^(\d+)/.exec(option.name);
     if (numberMatch) value = numberMatch[1]*1;
-    if (window.storeName) xhrAuthRequest("POST", "feedback", function(ok, response) {
-      if (window.console) console.log("ok", ok, response);
-    }, "game", window.storeName, "platform", platformCode(), "rating", value);
-    self.finished = false;
-    self.resetPage();
+    if (!window.storeName) {
+      self.finished = false;
+      self.resetPage();
+      return;
+    }
+
+    var postFeedback = function() {
+      xhrAuthRequest("POST", "feedback", function(ok, response) {
+        if (window.console) console.log("ok", ok, response);
+      }, "game", window.storeName, "platform", platformCode(), "rating", value);
+      if (/^(9|10)/.test(option.name)) {
+        if (isReviewSupported()) {
+          return clearScreen(function() {
+            self.printLine("Great! ");
+            promptForReview();
+            self.screenEmpty = false;
+            self.prevLine = "text";
+            self.page_break();
+            printFooter();
+          });
+        }
+      }
+      self.finished = false;
+      self.resetPage();
+    }
+
+    isRegistered(function(registered) {
+      if (registered) {
+        postFeedback();
+      } else {
+        clearScreen(function() {
+          loginForm(main, 1/*optional*/, "Please sign in to have your vote counted!", postFeedback);
+        });
+      }
+    });
   });
   this.finished = true;
 };
@@ -4252,6 +4308,8 @@ Scene.prototype.track_event = function track_event(data) {
     ga('send', 'event', event.category, event.action, event.label, event.value);
   }
 }
+
+Scene.prototype.ai = function ai(data) {}
 
 Scene.prototype.config = function config(data) {
     var stack = this.tokenizeExpr(data);
@@ -4331,7 +4389,6 @@ Scene.operators = {
       if (v2 === 0) throw new Error("line "+line+": can't divide by zero");
       return num(v1,line) / num(v2,line);
     },
-    "%": function modulo(v1,v2,line) { return num(v1,line) % num(v2,line); },
     "^": function exponent(v1,v2,line) { return Math.pow(num(v1,line), num(v2,line)); },
     "&": function concatenate(v1,v2) { return [v1,v2].join(""); },
     "#": function charAt(v1,v2,line) {
@@ -4395,10 +4452,10 @@ Scene.validCommands = {"comment":1, "goto":1, "gotoref":1, "label":1, "looplimit
     "goto_scene":1, "fake_choice":1, "input_text":1, "ending":1, "share_this_game":1, "stat_chart":1,
     "subscribe":1, "show_password":1, "gosub":1, "return":1, "hide_reuse":1, "disable_reuse":1, "allow_reuse":1,
     "check_purchase":1,"restore_purchases":1,"purchase":1,"restore_game":1,"advertisement":1,
-    "feedback":1,
-    "save_game":1,"delay_break":1,"image":1,"link":1,"input_number":1,"goto_random_scene":1,
+    "kindle_search":1,"kindle_product":1,"feedback":1,
+    "save_game":1,"delay_break":1,"image":1,"kindle_image":1,"link":1,"input_number":1,"goto_random_scene":1,
     "restart":1,"more_games":1,"delay_ending":1,"end_trial":1,"login":1,"achieve":1,"scene_list":1,"title":1,
     "bug":1,"link_button":1,"check_registration":1,"sound":1,"author":1,"gosub_scene":1,"achievement":1,
     "check_achievements":1,"redirect_scene":1,"print_discount":1,"purchase_discount":1,"track_event":1,
-    "timer":1,"youtube":1,"product":1,"text_image":1,"params":1,"config":1
+    "timer":1,"youtube":1,"product":1,"text_image":1,"ai":1,"params":1,"config":1
     };
