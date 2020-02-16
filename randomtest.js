@@ -1,16 +1,16 @@
 /*
  * Copyright 2010 by Dan Fabulich.
- *
+ * 
  * Dan Fabulich licenses this file to you under the
  * ChoiceScript License, Version 1.0 (the "License"); you may
- * not use this file except in compliance with the License.
+ * not use this file except in compliance with the License. 
  * You may obtain a copy of the License at
- *
+ * 
  *  http://www.choiceofgames.com/LICENSE-1.0.txt
- *
+ * 
  * See the License for the specific language governing
  * permissions and limitations under the License.
- *
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
@@ -20,6 +20,8 @@
 // usage: randomtest num=10000 game=mygame seed=0 delay=false trial=false
 
 var projectPath = "";
+var outFileStream;
+var outFilePath;
 var isRhino = false;
 var iterations = 10;
 var gameName = "mygame";
@@ -45,7 +47,9 @@ function parseArgs(args) {
       gameName = value;
     } else if (name === "project") {
       projectPath = value;
-    }  else if (name === "seed") {
+    } else if (name === "output") {
+      outFilePath = value;
+    } else if (name === "seed") {
       randomSeed = value;
     } else if (name === "delay") {
       delay = (value !== "false");
@@ -85,7 +89,10 @@ function countWords(msg) {
 if (typeof console != "undefined") {
   var oldLog = console.log;
   console.log = function(msg) {
-    oldLog(msg);
+    if (outFileStream)
+      outFileStream.write(msg + '\n', 'utf8');
+    else
+      oldLog(msg);
     countWords(msg);
   };
 }
@@ -105,7 +112,9 @@ if (typeof importScripts != "undefined") {
     }
   };
 
-  importScripts("web/scene.js", "web/navigator.js", "web/util.js", "web/mygame/mygame.js", "seedrandom.js");
+  if (typeof Scene === 'undefined') {
+    importScripts("web/scene.js", "web/navigator.js", "web/util.js", "web/mygame/mygame.js", "seedrandom.js");
+  }
 
   _global = this;
 
@@ -198,10 +207,77 @@ if (typeof importScripts != "undefined") {
   args = process.argv;
   args.shift();
   args.shift();
+  if (!args.length) {
+    delay = true;
+    var readline = require('readline').createInterface({input: process.stdin, output: process.stdout});
+    var question = function(prompt, defaultAnswer) {
+      return new Promise(function (resolve) {
+        readline.question(prompt + " [" + defaultAnswer + "] ", function (answer) {
+          if (answer === "") answer = defaultAnswer;
+          resolve(answer)
+        })
+      });
+    }
+    var booleanQuestion = function(prompt, defaultAnswer) {
+      return question(prompt + " (y/n)", defaultAnswer ? "y" : "n").then(function (answer) {
+        var normalized = String(answer).toLowerCase();
+        if (!/[yn]/.test(normalized)) {
+          console.log('Please type "y" for yes or "n" for no.');
+          return booleanQuestion(prompt, defaultAnswer);
+        } else {
+          return normalized === "y";
+        }
+      });
+    }
+    question("How many times would you like to run randomtest?", 10).then(function(answer) {
+      iterations = answer;
+      return question("Starting seed number?", 0);
+    }).then(function (answer) {
+      randomSeed = answer;
+      return booleanQuestion("Avoid used options? It's less random, but it finds bugs faster.", true);
+    }).then(function (answer) {
+      avoidUsedOptions = answer;
+      return booleanQuestion("Show full text?", false);
+    }).then(function (answer) {
+      showText = answer;
+      if (showText) return true;
+      return booleanQuestion("Show selected choices?", true);
+    }).then(function (answer) {
+      showChoices = answer;
+      if (showText) return false;
+      return booleanQuestion("After the test, show how many times each line was used?", false);
+    }).then(function (answer) {
+      showCoverage = answer;
+      return booleanQuestion("Write output to a file (randomtest-output.txt)?", false);
+    }).then(function (answer) {
+      if (answer) {
+        var output = require('fs').createWriteStream('randomtest-output.txt', {encoding: 'utf8'});
+        console.log = function(msg) {
+          countWords(msg);
+          output.write(msg + '\n', 'utf8');
+        }
+        var oldError = console.error;
+        console.error = function(msg) {
+          oldError(msg);
+          output.write(msg + '\n', 'utf8');
+        }
+      }
+      readline.close();
+      randomtest();
+    });
+  }
   parseArgs(args);
   fs = require('fs');
   path = require('path');
   vm = require('vm');
+  if (outFilePath) {
+    if (fs.existsSync(outFilePath)) {
+      throw new Error("Specified output file already exists.");
+      process.exit(1);
+    }
+    outFileStream = fs.createWriteStream(outFilePath, {encoding: 'utf8'});
+    outFileStream.write("TESTING PROJECT AT:\n\t"+projectPath+"\n\nWRITING TO LOG FILE AT:\n\t"+outFilePath + '\n\nTEST OUTPUT FOLLOWS:\n', 'utf8');
+  }
   load = function(file) {
     vm.runInThisContext(fs.readFileSync(file), file);
   };
@@ -287,31 +363,33 @@ Scene.prototype.page_break = function randomtest_page_break(buttonText) {
   this.resetCheckedPurchases();
 };
 
-if (showText) {
-  var lineBuffer = [];
+function configureShowText() {
+  if (showText) {
+    var lineBuffer = [];
 
-  printx = function printx(msg) {
-    lineBuffer.push(msg);
-  };
-  println = function println(msg) {
-    lineBuffer.push(msg);
-    var logMsg = lineBuffer.join("");
-    console.log(logMsg);
-    lineBuffer = [];
-  };
-  printParagraph = function printParagraph(msg) {
-    if (msg === null || msg === undefined || msg === "") return;
-    msg = String(msg)
-      .replace(/\[n\/\]/g, '\n')
-      .replace(/\[c\/\]/g, '');
-    println(msg);
-    console.log("");
-  };
-} else {
-  oldPrintLine = Scene.prototype.printLine;
-  Scene.prototype.printLine = function randomtest_printLine(line) {
-    if (!line) return null;
-    line = this.replaceVariables(line);
+    printx = function printx(msg) {
+      lineBuffer.push(msg);
+    };
+    println = function println(msg) {
+      lineBuffer.push(msg);
+      var logMsg = lineBuffer.join("");
+      console.log(logMsg);
+      lineBuffer = [];
+    };
+    printParagraph = function printParagraph(msg) {
+      if (msg === null || msg === undefined || msg === "") return;
+      msg = String(msg)
+        .replace(/\[n\/\]/g, '\n')
+        .replace(/\[c\/\]/g, '');
+      println(msg);
+      console.log("");
+    };
+  } else {
+    oldPrintLine = Scene.prototype.printLine;
+    Scene.prototype.printLine = function randomtest_printLine(line) {
+      if (!line) return null;
+      line = this.replaceVariables(line);
+    }
   }
 }
 
@@ -610,7 +688,7 @@ Scene.prototype.choice = function choice(data) {
       this.execute();
     }
   }
-
+    
 
     var coverage = {};
 var sceneNames = [];
@@ -619,7 +697,7 @@ var sceneNames = [];
     if (!lineNum) lineNum = this.lineNum;
     coverage[this.name][lineNum]--;
   }
-
+  
   try {
     Scene.prototype.__defineGetter__("lineNum", function() { return this._lineNum; });
     Scene.prototype.__defineSetter__("lineNum", function(val) {
@@ -629,7 +707,7 @@ var sceneNames = [];
 	  coverage[this.name] = [];
 	}
 	sceneCoverage = coverage[this.name];
-
+	
         if (sceneCoverage[val]) {
             sceneCoverage[val]++;
         } else {
@@ -646,6 +724,7 @@ nav.setStartingStatsClone(stats);
 var processExit = false;
 var start;
 function randomtestAsync(i, showCoverage) {
+    configureShowText();
     if (i==0) start = new Date().getTime();
     function runTimeout(fn) {
       timeout = null;
@@ -704,19 +783,20 @@ function randomtestAsync(i, showCoverage) {
       scene.execute();
       if (timeout) return runTimeout(timeout);
     } catch (e) {
-      return fail(e);
+      return fail(e); 
     }
-
+  
 }
 
 function randomtest() {
+  configureShowText();
   var start = new Date().getTime();
   randomSeed *= 1;
   var percentage = iterations / 100;
   for (var i = 0; i < iterations; i++) {
     if (typeof process != "undefined")
       if (typeof process.send != "undefined")
-        process.send(i / percentage);
+        process.send({type: "progress", data: i / percentage});
     console.log("*****Seed " + (i+randomSeed));
     nav.resetStats(stats);
     timeout = null;
@@ -736,14 +816,9 @@ function randomtest() {
         continue;
       }
       console.log("RANDOMTEST FAILED: " + e);
-      if (isRhino) {
-        java.lang.System.exit(1);
-      } else if (typeof process != "undefined" && process.exit) {
-        process.exit(1);
-      } else {
-        processExit = true;
-        break;
-      }
+      process.exitCode = 1;
+      processExit = true;
+      break;
     }
   }
 

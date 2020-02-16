@@ -18,8 +18,11 @@
  */
 
  // autotest.js mygame [sceneName1] [sceneName2] [sceneName3]
+
 var list;
-var projectPath;
+var projectPath; // gameName
+var outFileStream;
+var outFilePath;
 if (typeof java == "undefined") {
   list = process.argv;
   list.shift();
@@ -29,6 +32,14 @@ if (typeof java == "undefined") {
   fs = require('fs');
   vm = require('vm');
   path = require('path');
+  if (outFilePath = list.shift()) {
+    if (fs.existsSync(outFilePath)) {
+      throw new Error("Specified output file already exists.");
+      process.exit(1);
+    }
+    outFileStream = fs.createWriteStream(outFilePath, {encoding: 'utf8'});
+    outFileStream.write("TESTING PROJECT AT:\n\t"+projectPath+"\n\nWRITING TO LOG FILE AT:\n\t"+outFilePath + '\n\nTEST OUTPUT FOLLOWS:\n', 'utf8');
+  }
   load = function(file) {
     vm.runInThisContext(fs.readFileSync(file), file);
   };
@@ -39,7 +50,10 @@ if (typeof java == "undefined") {
   load("web/mygame/mygame.js");
   load("editor/embeddable-autotester.js");
   print = function print(str) {
-    console.log(str);
+    if (outFileStream)
+      outFileStream.write(str + '\n', 'utf8');
+    else
+      console.log(str);
   };
 } else {
   list = arguments;
@@ -139,7 +153,7 @@ Scene.prototype.verifySceneFile = function commandLineVerifySceneFile(sceneName)
 };
 
 Scene.prototype.verifyImage = function commandLineVerifyImage(name) {
-  if (/^data:image/.test(name))
+  if (/^data:image/.test(name)) // allow data URI src
     return;
   try {
     verifyFileName(".", name);
@@ -266,6 +280,9 @@ var exitCode = (function(){
     print(list[i]);
     if (isRhino) java.lang.Thread.sleep(100); // sleep to allow print statements to flush :-(
     try {
+      if (typeof process != "undefined")
+        if (typeof process.send != "undefined")
+          process.send({type: "generic", data: "Quicktest Started"});
       var fileName = list[i];
       var sceneName = fileName.replace(/\.txt$/, "");
       verifyFileName("scenes", fileName);
@@ -280,7 +297,7 @@ var exitCode = (function(){
       uncovered = autotester(sceneText, nav, sceneName, gotoSceneLabels[sceneName])[1];
     } catch (e) {
       print("QUICKTEST FAILED\n");
-      print(e);
+      print(e.message);
       if (isRhino) {
         java.lang.System.exit(1);
       } else {
@@ -294,35 +311,41 @@ var exitCode = (function(){
   }
 }());
 
-if (exitCode) return;
-
-var allLinesTested = true;
-for (var i = 0; i < uncoveredScenes.length; i++) {
-  allLinesTested = false;
-  var uncoveredScene = uncoveredScenes[i];
-  uncoveredScene.lines.push("");
-  print(uncoveredScene.lines.join(" UNTESTED " + uncoveredScene.name + "\n"));
-}
-(function() {
-  if (nav.achievementList && nav.achievementList.length) {
-    for (var i = 0; i < nav.achievementList.length; i++) {
-      var name = nav.achievementList[i];
-      if (!nav.achieved[name]) {
-        print("UNUSED achievement: " + name);
+if (!exitCode) {
+  var allLinesTested = true;
+  for (var i = 0; i < uncoveredScenes.length; i++) {
+    allLinesTested = false;
+    var uncoveredScene = uncoveredScenes[i];
+    uncoveredScene.lines.push("");
+    print(uncoveredScene.lines.join(" UNTESTED " + uncoveredScene.name + "\n"));
+  }
+  (function() {
+    if (nav.achievementList && nav.achievementList.length) {
+      for (var i = 0; i < nav.achievementList.length; i++) {
+        var name = nav.achievementList[i];
+        if (!nav.achieved[name]) {
+          print("UNUSED achievement: " + name);
+        }
       }
     }
+  })();
+
+
+  if (!allLinesTested) print("SOME LINES UNTESTED");
+  if (typeof gameTitle === "undefined") {
+    print("MISSING *TITLE COMMAND");
+  } else if (gameTitle.length > 30) {
+    print("TITLE TOO LONG (" + gameTitle.length + " out of 30 characters): " + gameTitle);
   }
-})();
+  if (!authorIncluded) print("MISSING *AUTHOR COMMAND");
+  for (var i = 0; i < warnings.length; i++) {
+    print(warnings[i]);
+  }
+  print("QUICKTEST PASSED");
+}
 
 
-if (!allLinesTested) print("SOME LINES UNTESTED");
-if (typeof gameTitle === "undefined") {
-  print("MISSING *TITLE COMMAND");
-} else if (gameTitle.length > 30) {
-  print("TITLE TOO LONG (" + gameTitle.length + " out of 30 characters): " + gameTitle);
+console.log = function(msg) {
+  countWords(msg);
+  output.write(msg + '\n', 'utf8');
 }
-if (!authorIncluded) print("MISSING *AUTHOR COMMAND");
-for (var i = 0; i < warnings.length; i++) {
-  print(warnings[i]);
-}
-print("QUICKTEST PASSED");
