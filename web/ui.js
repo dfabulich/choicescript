@@ -65,6 +65,8 @@ function replaceBbCode(msg) {
       .replace(/\u2022([^\u2022]*)/g, '<li>$1</li>')
       .replace(/\[icon\=(.*?)\](.*?)\[\/icon\]/g, '<img src="$1" alt="$2" class="icon">') //trying to include syntax for in-line images
       .replace(/\[texticon\=(.*?)\](.*?)\[\/icon\]/g, '<img src="$1" alt="$2" class="icon nighticon">') //trying to include syntax for nightmode in-line images
+      .replace(/\[p\]/g, '<p>') //EXPERIMENTAL PARAGRAPH. For the purpose of inserting it into a text variable: ${[p]Standalone paragraph[/p] [n/][n/]Without the big linebreaks}
+      .replace(/\[\/p\]/g, '</p>') //SAME AS ABOVE
 }
 
 function println(msg, parent) {
