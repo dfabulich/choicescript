@@ -1462,6 +1462,9 @@ Scene.prototype.temp = function temp(line) {
       return;
     }
     var value = this.evaluateExpr(stack);
+    if (typeof this.stats[variable.toLowerCase()] !== 'undefined') {
+      this.warning("This is a temp, but we already ran *create " + variable);
+    }
     this.temps[variable.toLowerCase()] = value;
 };
 
