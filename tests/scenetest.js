@@ -865,19 +865,19 @@ test("modifiers", function() {
       {reuse:"disable",group:"choice",endLine:9,name:"A little of that.",line:7},
       {group:"choice",endLine:12,name:"Let me think about it a little longer.",line:10},
       {group:"choice",endLine:15,name:"What was the question?",line:13},
-      {group:"choice",endLine:19,name:"Nothing; I\'m done.",line:16}], options, "options");
+      {group:"choice",endLine:18,name:"Nothing; I\'m done.",line:16}], options, "options");
     scene.standardResolution(options[0]);
     doh.is([
       {reuse:"disable",group:"choice",endLine:9,name:"A little of that.",line:7},
       {group:"choice",endLine:12,name:"Let me think about it a little longer.",line:10},
       {group:"choice",endLine:15,name:"What was the question?",line:13},
-      {group:"choice",endLine:19,name:"Nothing; I'm done.",line:16}], options, "options2");
+      {group:"choice",endLine:18,name:"Nothing; I'm done.",line:16}], options, "options2");
     scene.standardResolution(options[0]);
     var expected = [
       {reuse:"disable",group:"choice",endLine:9,unselectable:true,name:"A little of that.",line:7},
       {group:"choice",endLine:12,name:"Let me think about it a little longer.",line:10},
       {group:"choice",endLine:15,name:"What was the question?",line:13},
-      {group:"choice",endLine:19,name:"Nothing; I\'m done.",line:16}
+      {group:"choice",endLine:18,name:"Nothing; I\'m done.",line:16}
     ];
     doh.is(expected, options, "options3");
     scene.standardResolution(options[1]);
@@ -925,19 +925,19 @@ test("hideByDefault", function() {
       {reuse:"disable",group:"choice",endLine:10,name:"A little of that.",line:8},
       {group:"choice",endLine:13,name:"Let me think about it a little longer.",line:11},
       {reuse:"hide",group:"choice",endLine:16,name:"What was the question?",line:14},
-      {reuse:"hide",group:"choice",endLine:20,name:"Nothing; I\'m done.",line:17}], options, "options");
+      {reuse:"hide",group:"choice",endLine:19,name:"Nothing; I\'m done.",line:17}], options, "options");
     scene.standardResolution(options[0]);
     doh.is([
       {reuse:"disable",group:"choice",endLine:10,name:"A little of that.",line:8},
       {group:"choice",endLine:13,name:"Let me think about it a little longer.",line:11},
       {reuse:"hide",group:"choice",endLine:16,name:"What was the question?",line:14},
-      {reuse:"hide",group:"choice",endLine:20,name:"Nothing; I\'m done.",line:17}], options, "options2");
+      {reuse:"hide",group:"choice",endLine:19,name:"Nothing; I\'m done.",line:17}], options, "options2");
     scene.standardResolution(options[0]);
     var beforeHiding = [
       {reuse:"disable",group:"choice",endLine:10,unselectable:true,name:"A little of that.",line:8},
       {group:"choice",endLine:13,name:"Let me think about it a little longer.",line:11},
       {reuse:"hide",group:"choice",endLine:16,name:"What was the question?",line:14},
-      {reuse:"hide",group:"choice",endLine:20,name:"Nothing; I\'m done.",line:17}
+      {reuse:"hide",group:"choice",endLine:19,name:"Nothing; I\'m done.",line:17}
     ];
     doh.is(beforeHiding, options, "options3");
     scene.standardResolution(options[1]); // Let me think
@@ -946,7 +946,7 @@ test("hideByDefault", function() {
     doh.is([
       {reuse:"disable",group:"choice",endLine:10,unselectable:true,name:"A little of that.",line:8},
       {group:"choice",endLine:13,name:"Let me think about it a little longer.",line:11},
-      {reuse:"hide",group:"choice",endLine:20,name:"Nothing; I\'m done.",line:17}], options, "options5");
+      {reuse:"hide",group:"choice",endLine:19,name:"Nothing; I\'m done.",line:17}], options, "options5");
     doh.is("<p>What do you want to do? </p><p>You do some of this. "
       +"What do you want to do? </p><p>You do some of that. "
       +"What do you want to do? </p><p>Very well. "
@@ -988,19 +988,19 @@ test("disableByDefault", function() {
       {reuse:"disable",group:"choice",endLine:10,name:"A little of that.",line:8},
       {group:"choice",endLine:13,name:"Let me think about it a little longer.",line:11},
       {reuse:"disable",group:"choice",endLine:16,name:"What was the question?",line:14},
-      {reuse:"disable",group:"choice",endLine:20,name:"Nothing; I\'m done.",line:17}], (options), "options");
+      {reuse:"disable",group:"choice",endLine:19,name:"Nothing; I\'m done.",line:17}], (options), "options");
     scene.standardResolution(options[0]);
     doh.is([
       {reuse:"disable",group:"choice",endLine:10,name:"A little of that.",line:8},
       {group:"choice",endLine:13,name:"Let me think about it a little longer.",line:11},
       {reuse:"disable",group:"choice",endLine:16,name:"What was the question?",line:14},
-      {reuse:"disable",group:"choice",endLine:20,name:"Nothing; I\'m done.",line:17}], (options), "options2");
+      {reuse:"disable",group:"choice",endLine:19,name:"Nothing; I\'m done.",line:17}], (options), "options2");
     scene.standardResolution(options[0]);
     var beforeHiding = [
       {reuse:"disable",group:"choice",endLine:10,unselectable:true,name:"A little of that.",line:8},
       {group:"choice",endLine:13,name:"Let me think about it a little longer.",line:11},
       {reuse:"disable",group:"choice",endLine:16,name:"What was the question?",line:14},
-      {reuse:"disable",group:"choice",endLine:20,name:"Nothing; I\'m done.",line:17}
+      {reuse:"disable",group:"choice",endLine:19,name:"Nothing; I\'m done.",line:17}
     ];
     doh.is(beforeHiding, (options), "options3");
     scene.standardResolution(options[1]); // Let me think
@@ -1010,7 +1010,7 @@ test("disableByDefault", function() {
       {reuse:"disable",group:"choice",endLine:10,unselectable:true,name:"A little of that.",line:8},
       {group:"choice",endLine:13,name:"Let me think about it a little longer.",line:11},
       {reuse:"disable",group:"choice",endLine:16,unselectable:true,name:"What was the question?",line:14},
-      {reuse:"disable",group:"choice",endLine:20,name:"Nothing; I\'m done.",line:17}], options, "options5");
+      {reuse:"disable",group:"choice",endLine:19,name:"Nothing; I\'m done.",line:17}], options, "options5");
     doh.is("<p>What do you want to do? </p><p>You do some of this. "
       +"What do you want to do? </p><p>You do some of that. "
       +"What do you want to do? </p><p>Very well. "

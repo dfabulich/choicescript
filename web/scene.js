@@ -1608,27 +1608,7 @@ Scene.prototype.parseOptions = function parseOptions(startIndent, choicesRemaini
         }
         if (indent <= startIndent) {
             // it's over!
-            // TODO is this error test valid?
-            if (choicesRemaining.length>1 && !suboptionsEncountered) {
-                throw new Error(this.lineMsg() + "invalid indent, there were subchoices remaining: [" + choicesRemaining.join(",") + "]");
-            }
-            if (bodyExpected && 
-                    (this.temps._fakeChoiceDepth === undefined || this.temps._fakeChoiceDepth < 1)) {
-                throw new Error(this.lineMsg() + "Expected choice body");
-            }
-            if (!atLeastOneSelectableOption) this.conflictingOptions("line " + (startingLine+1) + ": No selectable options");
-            if (expectedSubOptions) {
-                this.verifyOptionsMatch(expectedSubOptions, options);
-            }
-            this.rollbackLineCoverage();
-            prevOption = options[options.length-1];
-            this.lineNum = this.previousNonBlankLineNum();
-            if (!prevOption.endLine) prevOption.endLine = this.lineNum+1;
-            for (i = 0; i < choiceEnds.length; i++) {
-                this.temps._choiceEnds[choiceEnds[i]] = this.lineNum;
-            }
-            this.rollbackLineCoverage();
-            return options;
+            break;
         }
         if (indent < this.indent) {
             // TODO drift detection
@@ -1783,13 +1763,27 @@ Scene.prototype.parseOptions = function parseOptions(startIndent, choicesRemaini
         }
         if (!unselectable) atLeastOneSelectableOption = true;
     }
+
+    // TODO is this error test valid?
+    if (choicesRemaining.length>1 && !suboptionsEncountered) {
+        throw new Error(this.lineMsg() + "invalid indent, there were subchoices remaining: [" + choicesRemaining.join(",") + "]");
+    }
     if (bodyExpected && 
             (this.temps._fakeChoiceDepth === undefined || this.temps._fakeChoiceDepth < 1)) {
         throw new Error(this.lineMsg() + "Expected choice body");
     }
     if (!atLeastOneSelectableOption) this.conflictingOptions("line " + (startingLine+1) + ": No selectable options");
+    if (expectedSubOptions) {
+        this.verifyOptionsMatch(expectedSubOptions, options);
+    }
+    this.rollbackLineCoverage();
     prevOption = options[options.length-1];
-    if (!prevOption.endLine) prevOption.endLine = this.lineNum;
+    this.lineNum = this.previousNonBlankLineNum();
+    if (!prevOption.endLine) prevOption.endLine = this.lineNum+1;
+    for (i = 0; i < choiceEnds.length; i++) {
+        this.temps._choiceEnds[choiceEnds[i]] = this.lineNum;
+    }
+    this.rollbackLineCoverage();
     return options;
 };
 
