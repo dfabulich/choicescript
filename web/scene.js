@@ -1677,9 +1677,9 @@ Scene.prototype.parseOptions = function parseOptions(startIndent, choicesRemaini
             if ("print" == command) {
                 line = this.evaluateExpr(this.tokenizeExpr(data));
             } else if ("if" == command) {
+              choiceEnds.push(this.lineNum);
               ifResult = this.parseOptionIf(data, command);
               if (ifResult) {
-                choiceEnds.push(this.lineNum);
                 inlineIf = ifResult.condition;
                 if (ifResult.result) {
                   line = ifResult.line;

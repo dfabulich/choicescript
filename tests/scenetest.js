@@ -1,11 +1,67 @@
 doh = {
     is: function(expected, actual, message){
-        if (expected != actual) deepEqual(actual, expected, message);
+        var stringify = x => JSON.stringify(sortObjByKey(x), null, 2);
+        //stringify = x => x;
+        if (expected != actual) deepEqual(stringify(actual), stringify(expected), message);
     },
     assertError: function(type, obj, method, args, message) {
         raises(function() {obj[method].apply(obj, args)}, null, message);
     }
 };
+
+function sortObjByKey(value) {
+  return (typeof value === 'object') ?
+    (Array.isArray(value) ?
+      value.map(sortObjByKey) :
+      Object.keys(value).sort().reduce(
+        (o, key) => {
+          const v = value[key];
+          o[key] = sortObjByKey(v);
+          return o;
+        }, {})
+    ) :
+    value;
+}
+
+// https://github.com/MartinKolarik/dedent-js/blob/master/src/index.ts
+function dedent (templateStrings, ...values) {
+    let matches = [];
+    let strings = typeof templateStrings === 'string' ? [ templateStrings ] : templateStrings.slice();
+
+    // 1. Remove trailing whitespace.
+    strings[strings.length - 1] = strings[strings.length - 1].replace(/\r?\n([\t ]*)$/, '');
+
+    // 2. Find all line breaks to determine the highest common indentation level.
+    for (let i = 0; i < strings.length; i++) {
+        let match;
+
+        if (match = strings[i].match(/\n[\t ]+/g)) {
+            matches.push(...match);
+        }
+    }
+
+    // 3. Remove the common indentation from all strings.
+    if (matches.length) {
+        let size = Math.min(...matches.map(value => value.length - 1));
+        let pattern = new RegExp(`\n[\t ]{${size}}`, 'g');
+
+        for (let i = 0; i < strings.length; i++) {
+            strings[i] = strings[i].replace(pattern, '\n');
+        }
+    }
+
+    // 4. Remove leading whitespace.
+    strings[0] = strings[0].replace(/^\r?\n/, '');
+
+    // 5. Perform interpolation.
+    let string = strings[0];
+
+    for (let i = 0; i < values.length; i++) {
+        string += values[i] + strings[i + 1];
+    }
+
+    return string;
+}
 
 
 module("FullScene");
@@ -1590,4 +1646,55 @@ test("nothing selectable", function() {
     var actual = scene.computeRandomSelection(0, parsed, false);
     deepEqual(actual, null, "miscomputed");
     deepEqual(scene.stats.choice_grs, ["goodbye", "death"], "updated grs finished list, but shouldn't have");
+})
+
+module("Implicit Control Flow");
+
+test("basic", function() {
+    printed = [];
+    var text = dedent`
+        *choice
+          #foo
+            Foo!
+          #bar
+            Bar!
+        baz
+    `;
+    var scene = new Scene("test", {implicit_control_flow: true});
+    scene.loadLines(text);
+    var options, groups;
+    scene.renderOptions = function(_groups, _options) {
+        options = _options;
+        groups = _groups;
+    };
+    scene.execute();
+    doh.is([{"name":"foo","line":2,"group":"choice","endLine":3},{"name":"bar","line":4,"group":"choice","endLine":5}], options, "options");
+    scene.standardResolution(options[0]);
+    doh.is("<p>Foo! baz </p>", printed.join(""), "printed");
+})
+
+test("conditionals", function() {
+    printed = [];
+    var text = dedent`
+        *temp seen false
+        *choice
+            *if (not(seen))
+                #not seen
+                    *set seen true
+                    bar
+            *if (seen)
+                *selectable_if (true) #seen
+                    blah
+    `;
+    var scene = new Scene("test", {implicit_control_flow: true});
+    scene.loadLines(text);
+    var options, groups;
+    scene.renderOptions = function(_groups, _options) {
+        options = _options;
+        groups = _groups;
+    };
+    scene.execute();
+    doh.is([{"name":"not seen","group":"choice","line":4,"endLine":6}], options, "options");
+    scene.standardResolution(options[0]);
+    doh.is("<p>bar </p>", printed.join(""), "printed");
 })
