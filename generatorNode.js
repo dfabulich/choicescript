@@ -46,6 +46,7 @@ while (i--) {
   console.log(list[i]);
   var str = slurpFile(filePath);
   var scene = new Scene();
+  scene.name = list[i].replace('.txt', '');
   scene.loadLines(str);
   
   writer.write("{\"crc\":" + scene.crc + ", \"lines\":" + toJson(scene.lines)+ ", \"labels\":" + toJson(scene.labels) + "}", "utf-8");
