@@ -950,7 +950,7 @@ function printOptionRadioButton(div, name, option, localChoiceNumber, globalChoi
     var unselectable = false;
     if (!name) unselectable = option.unselectable;
     var disabledString = unselectable ? " disabled" : "";
-    var id = name + localChoiceNumber;
+    var id = name + localChoiceNumber + "-" + Math.random().toString(36).substring(2);
     if (!name) name = "choice";
     var radio;
     var div2 = document.createElement("div");
