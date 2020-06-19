@@ -3458,7 +3458,7 @@ Scene.prototype.delay_ending = function(data) {
           }
         });
 
-        var target = document.getElementById("0").parentElement;
+        var target = document.querySelector(".choice label");
 
         delayBreakStart(function(delayStart) {
           window.blockRestart = true;
