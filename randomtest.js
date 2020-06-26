@@ -399,7 +399,7 @@ Scene.prototype.check_purchase = function scene_checkPurchase(data) {
   for (var i = 0; i < products.length; i++) {
     this.temps["choice_purchased_"+products[i]] = !isTrial;
   }
-  this.temps.choice_purchase_supported = isTrial;
+  this.temps.choice_purchase_supported = !!isTrial;
   this.temps.choice_purchased_everything = !isTrial;
 }
 
