@@ -145,7 +145,6 @@ if (typeof importScripts != "undefined") {
   printFooter = function() {};
   printShareLinks = function() {};
   printLink = function() {};
-  printImage = function() {};
   showPassword = function() {};
 
   isRegistered = function() {return false;};
@@ -284,6 +283,10 @@ if (typeof importScripts != "undefined") {
       log: function(msg) { print(msg);}
     };
   }
+}
+
+printImage = function printImage(source, alignment, alt, invert) {
+  console.log('[IMAGE: ' + (alt || source) + ']');
 }
 
 clearScreen = function clearScreen(code) {
