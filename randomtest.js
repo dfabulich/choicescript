@@ -189,8 +189,6 @@ if (typeof importScripts != "undefined") {
         println(msg);
         console.log("");
       };
-
-      Scene.prototype.printLine = oldPrintLine;
     }
     randomtest();
   };
