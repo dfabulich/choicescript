@@ -95,7 +95,7 @@ if (typeof importScripts != "undefined") {
   console = {
     log: function(msg) {
       if (typeof msg == "string") {
-        postMessage({msg:msg});
+        postMessage({msg:msg.replace(/\n/g, '[n/]')});
         countWords(msg);
       } else if (msg.stack && msg.message) {
         postMessage({msg:msg.message, stack:msg.stack});
