@@ -142,7 +142,7 @@ Scene.prototype.dedent = function dedent(newDent) {};
 
 Scene.prototype.printLine = function printLine(line) {
     if (!line) return null;
-    line = this.replaceVariables(line.replace(/^ */, ""));
+    line = this.replaceVariables(line.replace(/^\s*/, ""));
     this.accumulatedParagraph.push(line);
     // insert extra space unless the line ends with hyphen or dash
     if (!/([-\u2011-\u2014]|\[c\/\])$/.test(line)) this.accumulatedParagraph.push(' ');
