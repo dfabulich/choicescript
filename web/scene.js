@@ -265,11 +265,11 @@ Scene.prototype.loadSceneFast = function loadSceneFast(url) {
     var self = this;
     if (typeof cachedResults != "undefined" && cachedResults && cachedResults[this.name]) {
       result = window.cachedResults[this.name];
-      return this.loadLinesFast(result.crc, result.lines, result.labels);
+      return safeTimeout(function() {self.loadLinesFast(result.crc, result.lines, result.labels);}, 0);
     } else if (typeof allScenes != "undefined") {
       result = allScenes[this.name];
       if (!result) throw new Error("Couldn't load scene '" + this.name + "'\nThe file doesn't exist.");
-      return this.loadLinesFast(result.crc, result.lines, result.labels);
+      return safeTimeout(function() {self.loadLinesFast(result.crc, result.lines, result.labels);}, 0);
     } else if (typeof window != "undefined" && window.isIosApp && window.isFile && !window.isOmnibusApp) {
       startLoading();
       var startedWaiting = new Date().getTime();
