@@ -384,8 +384,8 @@ Scene.prototype["goto"] = function scene_goto(data) {
   if (!this.localCoverage) this.localCoverage = {};
   if (this.localCoverage[this.lineNum]) {
     this.localCoverage[this.lineNum]++;
-    if (this.localCoverage[this.lineNum] > this.looplimit_count) {
-      throw new Error(this.lineMsg() + "visited this line too many times");
+    if (this.looplimit_count && this.localCoverage[this.lineNum] > this.looplimit_count) {
+      throw new Error(this.lineMsg() + "visited this line too many times (" + this.looplimit_count + ")");
     }
   } else {
     this.localCoverage[this.lineNum] = 1;
