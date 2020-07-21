@@ -44,8 +44,9 @@ test("basicChoice", function() {
     +"\n  #quz"
     +"\n    *finish"
   ;
-  autotestScene(scene,  [1,1,1,1,1,1,1,1,1,1,1,1,0]);
+  autotestScene(scene,  [1,1,1,1,1,1,1,1,1,1,1,0]);
 })
+
 test("gotoChoice", function() {
   var scene = ""
     +"\nFoo"
@@ -78,7 +79,7 @@ test("conditionalChoices", function() {
     +"\n  #quz"
     +"\n      *finish"
   ;
-  autotestScene(scene,  [1,1,1,1,1,1,1,1,1,1,1,1,1,1,0]);
+  autotestScene(scene,  [1,1,1,1,1,1,1,1,1,1,1,1,1,0]);
 })
 test("conditionalChoicesElse", function() {
   var scene = ""
@@ -95,7 +96,7 @@ test("conditionalChoicesElse", function() {
     +"\n  #quz"
     +"\n      *finish"
   ;
-  autotestScene(scene,  [1,1,1,1,1,1,1,1,1,1,1,1,1,1,0]);
+  autotestScene(scene,  [1,1,1,1,1,1,1,1,1,1,1,1,1,0]);
 })
 test("conditionalChoicesElseIf", function() {
   var scene = ""
@@ -112,7 +113,7 @@ test("conditionalChoicesElseIf", function() {
     +"\n  #quz"
     +"\n      *finish"
   ;
-  autotestScene(scene,  [1,1,1,1,1,1,1,1,1,1,1,1,1,1,0]);
+  autotestScene(scene,  [1,1,1,1,1,1,1,1,1,1,1,1,1,0]);
 })
 test("oneLineConditionalChoices", function() {
   var scene = ""
@@ -127,7 +128,7 @@ test("oneLineConditionalChoices", function() {
     +"\n  #quz"
     +"\n      *finish"
   ;
-  autotestScene(scene,  [1,1,1,1,1,1,1,1,1,1,1,1,0]);
+  autotestScene(scene,  [1,1,1,1,1,1,1,1,1,1,1,0]);
 })
 test("choiceInIfList", function() {
   var scene = ""
