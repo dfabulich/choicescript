@@ -454,6 +454,12 @@ function autotester(sceneText, nav, sceneName, extraLabels) {
   log("executing");
   scene.execute();
   
+  while(scene = sceneList.shift()) {
+    log (scene.testPath.join(''));
+    //log(sceneList.length);
+    scene.resume();
+  }
+
   if (extraLabels) {
     for (var i = 0; i < extraLabels.length; i++) {
       var extraLabel = extraLabels[i];
@@ -467,6 +473,11 @@ function autotester(sceneText, nav, sceneName, extraLabels) {
       scene.testPath = [sceneName,",","goto " + extraLabel.label];
       log (scene.testPath.join(''));
       scene.execute();
+      while(scene = sceneList.shift()) {
+        log (scene.testPath.join(''));
+        //log(sceneList.length);
+        scene.resume();
+      }
     }
   }
 
