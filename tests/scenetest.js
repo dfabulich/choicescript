@@ -1,11 +1,67 @@
 doh = {
     is: function(expected, actual, message){
-        if (expected != actual) deepEqual(actual, expected, message);
+        var stringify = x => JSON.stringify(sortObjByKey(x), null, 2);
+        //stringify = x => x;
+        if (expected != actual) deepEqual(stringify(actual), stringify(expected), message);
     },
     assertError: function(type, obj, method, args, message) {
         raises(function() {obj[method].apply(obj, args)}, null, message);
     }
 };
+
+function sortObjByKey(value) {
+  return (typeof value === 'object') ?
+    (Array.isArray(value) ?
+      value.map(sortObjByKey) :
+      Object.keys(value).sort().reduce(
+        (o, key) => {
+          const v = value[key];
+          o[key] = sortObjByKey(v);
+          return o;
+        }, {})
+    ) :
+    value;
+}
+
+// https://github.com/MartinKolarik/dedent-js/blob/master/src/index.ts
+function dedent (templateStrings, ...values) {
+    let matches = [];
+    let strings = typeof templateStrings === 'string' ? [ templateStrings ] : templateStrings.slice();
+
+    // 1. Remove trailing whitespace.
+    strings[strings.length - 1] = strings[strings.length - 1].replace(/\r?\n([\t ]*)$/, '');
+
+    // 2. Find all line breaks to determine the highest common indentation level.
+    for (let i = 0; i < strings.length; i++) {
+        let match;
+
+        if (match = strings[i].match(/\n[\t ]+/g)) {
+            matches.push(...match);
+        }
+    }
+
+    // 3. Remove the common indentation from all strings.
+    if (matches.length) {
+        let size = Math.min(...matches.map(value => value.length - 1));
+        let pattern = new RegExp(`\n[\t ]{${size}}`, 'g');
+
+        for (let i = 0; i < strings.length; i++) {
+            strings[i] = strings[i].replace(pattern, '\n');
+        }
+    }
+
+    // 4. Remove leading whitespace.
+    strings[0] = strings[0].replace(/^\r?\n/, '');
+
+    // 5. Perform interpolation.
+    let string = strings[0];
+
+    for (let i = 0; i < values.length; i++) {
+        string += values[i] + strings[i + 1];
+    }
+
+    return string;
+}
 
 
 module("FullScene");
@@ -865,19 +921,19 @@ test("modifiers", function() {
       {reuse:"disable",group:"choice",endLine:9,name:"A little of that.",line:7},
       {group:"choice",endLine:12,name:"Let me think about it a little longer.",line:10},
       {group:"choice",endLine:15,name:"What was the question?",line:13},
-      {group:"choice",endLine:19,name:"Nothing; I\'m done.",line:16}], options, "options");
+      {group:"choice",endLine:18,name:"Nothing; I\'m done.",line:16}], options, "options");
     scene.standardResolution(options[0]);
     doh.is([
       {reuse:"disable",group:"choice",endLine:9,name:"A little of that.",line:7},
       {group:"choice",endLine:12,name:"Let me think about it a little longer.",line:10},
       {group:"choice",endLine:15,name:"What was the question?",line:13},
-      {group:"choice",endLine:19,name:"Nothing; I'm done.",line:16}], options, "options2");
+      {group:"choice",endLine:18,name:"Nothing; I'm done.",line:16}], options, "options2");
     scene.standardResolution(options[0]);
     var expected = [
       {reuse:"disable",group:"choice",endLine:9,unselectable:true,name:"A little of that.",line:7},
       {group:"choice",endLine:12,name:"Let me think about it a little longer.",line:10},
       {group:"choice",endLine:15,name:"What was the question?",line:13},
-      {group:"choice",endLine:19,name:"Nothing; I\'m done.",line:16}
+      {group:"choice",endLine:18,name:"Nothing; I\'m done.",line:16}
     ];
     doh.is(expected, options, "options3");
     scene.standardResolution(options[1]);
@@ -925,19 +981,19 @@ test("hideByDefault", function() {
       {reuse:"disable",group:"choice",endLine:10,name:"A little of that.",line:8},
       {group:"choice",endLine:13,name:"Let me think about it a little longer.",line:11},
       {reuse:"hide",group:"choice",endLine:16,name:"What was the question?",line:14},
-      {reuse:"hide",group:"choice",endLine:20,name:"Nothing; I\'m done.",line:17}], options, "options");
+      {reuse:"hide",group:"choice",endLine:19,name:"Nothing; I\'m done.",line:17}], options, "options");
     scene.standardResolution(options[0]);
     doh.is([
       {reuse:"disable",group:"choice",endLine:10,name:"A little of that.",line:8},
       {group:"choice",endLine:13,name:"Let me think about it a little longer.",line:11},
       {reuse:"hide",group:"choice",endLine:16,name:"What was the question?",line:14},
-      {reuse:"hide",group:"choice",endLine:20,name:"Nothing; I\'m done.",line:17}], options, "options2");
+      {reuse:"hide",group:"choice",endLine:19,name:"Nothing; I\'m done.",line:17}], options, "options2");
     scene.standardResolution(options[0]);
     var beforeHiding = [
       {reuse:"disable",group:"choice",endLine:10,unselectable:true,name:"A little of that.",line:8},
       {group:"choice",endLine:13,name:"Let me think about it a little longer.",line:11},
       {reuse:"hide",group:"choice",endLine:16,name:"What was the question?",line:14},
-      {reuse:"hide",group:"choice",endLine:20,name:"Nothing; I\'m done.",line:17}
+      {reuse:"hide",group:"choice",endLine:19,name:"Nothing; I\'m done.",line:17}
     ];
     doh.is(beforeHiding, options, "options3");
     scene.standardResolution(options[1]); // Let me think
@@ -946,7 +1002,7 @@ test("hideByDefault", function() {
     doh.is([
       {reuse:"disable",group:"choice",endLine:10,unselectable:true,name:"A little of that.",line:8},
       {group:"choice",endLine:13,name:"Let me think about it a little longer.",line:11},
-      {reuse:"hide",group:"choice",endLine:20,name:"Nothing; I\'m done.",line:17}], options, "options5");
+      {reuse:"hide",group:"choice",endLine:19,name:"Nothing; I\'m done.",line:17}], options, "options5");
     doh.is("<p>What do you want to do? </p><p>You do some of this. "
       +"What do you want to do? </p><p>You do some of that. "
       +"What do you want to do? </p><p>Very well. "
@@ -988,19 +1044,19 @@ test("disableByDefault", function() {
       {reuse:"disable",group:"choice",endLine:10,name:"A little of that.",line:8},
       {group:"choice",endLine:13,name:"Let me think about it a little longer.",line:11},
       {reuse:"disable",group:"choice",endLine:16,name:"What was the question?",line:14},
-      {reuse:"disable",group:"choice",endLine:20,name:"Nothing; I\'m done.",line:17}], (options), "options");
+      {reuse:"disable",group:"choice",endLine:19,name:"Nothing; I\'m done.",line:17}], (options), "options");
     scene.standardResolution(options[0]);
     doh.is([
       {reuse:"disable",group:"choice",endLine:10,name:"A little of that.",line:8},
       {group:"choice",endLine:13,name:"Let me think about it a little longer.",line:11},
       {reuse:"disable",group:"choice",endLine:16,name:"What was the question?",line:14},
-      {reuse:"disable",group:"choice",endLine:20,name:"Nothing; I\'m done.",line:17}], (options), "options2");
+      {reuse:"disable",group:"choice",endLine:19,name:"Nothing; I\'m done.",line:17}], (options), "options2");
     scene.standardResolution(options[0]);
     var beforeHiding = [
       {reuse:"disable",group:"choice",endLine:10,unselectable:true,name:"A little of that.",line:8},
       {group:"choice",endLine:13,name:"Let me think about it a little longer.",line:11},
       {reuse:"disable",group:"choice",endLine:16,name:"What was the question?",line:14},
-      {reuse:"disable",group:"choice",endLine:20,name:"Nothing; I\'m done.",line:17}
+      {reuse:"disable",group:"choice",endLine:19,name:"Nothing; I\'m done.",line:17}
     ];
     doh.is(beforeHiding, (options), "options3");
     scene.standardResolution(options[1]); // Let me think
@@ -1010,7 +1066,7 @@ test("disableByDefault", function() {
       {reuse:"disable",group:"choice",endLine:10,unselectable:true,name:"A little of that.",line:8},
       {group:"choice",endLine:13,name:"Let me think about it a little longer.",line:11},
       {reuse:"disable",group:"choice",endLine:16,unselectable:true,name:"What was the question?",line:14},
-      {reuse:"disable",group:"choice",endLine:20,name:"Nothing; I\'m done.",line:17}], options, "options5");
+      {reuse:"disable",group:"choice",endLine:19,name:"Nothing; I\'m done.",line:17}], options, "options5");
     doh.is("<p>What do you want to do? </p><p>You do some of this. "
       +"What do you want to do? </p><p>You do some of that. "
       +"What do you want to do? </p><p>Very well. "
@@ -1590,4 +1646,55 @@ test("nothing selectable", function() {
     var actual = scene.computeRandomSelection(0, parsed, false);
     deepEqual(actual, null, "miscomputed");
     deepEqual(scene.stats.choice_grs, ["goodbye", "death"], "updated grs finished list, but shouldn't have");
+})
+
+module("Implicit Control Flow");
+
+test("basic", function() {
+    printed = [];
+    var text = dedent`
+        *choice
+          #foo
+            Foo!
+          #bar
+            Bar!
+        baz
+    `;
+    var scene = new Scene("test", {implicit_control_flow: true});
+    scene.loadLines(text);
+    var options, groups;
+    scene.renderOptions = function(_groups, _options) {
+        options = _options;
+        groups = _groups;
+    };
+    scene.execute();
+    doh.is([{"name":"foo","line":2,"group":"choice","endLine":3},{"name":"bar","line":4,"group":"choice","endLine":5}], options, "options");
+    scene.standardResolution(options[0]);
+    doh.is("<p>Foo! baz </p>", printed.join(""), "printed");
+})
+
+test("conditionals", function() {
+    printed = [];
+    var text = dedent`
+        *temp seen false
+        *choice
+            *if (not(seen))
+                #not seen
+                    *set seen true
+                    bar
+            *if (seen)
+                *selectable_if (true) #seen
+                    blah
+    `;
+    var scene = new Scene("test", {implicit_control_flow: true});
+    scene.loadLines(text);
+    var options, groups;
+    scene.renderOptions = function(_groups, _options) {
+        options = _options;
+        groups = _groups;
+    };
+    scene.execute();
+    doh.is([{"name":"not seen","group":"choice","line":4,"endLine":6}], options, "options");
+    scene.standardResolution(options[0]);
+    doh.is("<p>bar </p>", printed.join(""), "printed");
 })

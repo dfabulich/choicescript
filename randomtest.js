@@ -28,7 +28,7 @@ var gameName = "mygame";
 var randomSeed = 0;
 var delay = false;
 var showCoverage = true;
-var isTrial = false;
+var isTrial = null;
 var showText = false;
 var highlightGenderPronouns = false;
 var showChoices = true;
@@ -67,6 +67,9 @@ function parseArgs(args) {
       recordBalance = (value !== "false");
     }
   }
+  if (isTrial === null) {
+    isTrial = !!process.env.TRIAL;
+  }
   if (showText) showCoverage = false;
   if (recordBalance) {
     showText = false;
@@ -102,7 +105,7 @@ if (typeof importScripts != "undefined") {
   console = {
     log: function(msg) {
       if (typeof msg == "string") {
-        postMessage({msg:msg});
+        postMessage({msg:msg.replace(/\n/g, '[n/]')});
         countWords(msg);
       } else if (msg.stack && msg.message) {
         postMessage({msg:msg.message, stack:msg.stack});
@@ -153,7 +156,6 @@ if (typeof importScripts != "undefined") {
   printFooter = function() {};
   printShareLinks = function() {};
   printLink = function() {};
-  printImage = function() {};
   showPassword = function() {};
 
   isRegistered = function() {return false;};
@@ -198,8 +200,6 @@ if (typeof importScripts != "undefined") {
         println(msg);
         console.log("");
       };
-
-      Scene.prototype.printLine = oldPrintLine;
     }
     randomtest();
   };
@@ -251,15 +251,16 @@ if (typeof importScripts != "undefined") {
       return booleanQuestion("Write output to a file (randomtest-output.txt)?", false);
     }).then(function (answer) {
       if (answer) {
-        var output = require('fs').createWriteStream('randomtest-output.txt', {encoding: 'utf8'});
+        var fs = require('fs');
+        var output = fs.openSync('randomtest-output.txt', 'w');
         console.log = function(msg) {
           countWords(msg);
-          output.write(msg + '\n', 'utf8');
+          fs.writeSync(output, msg + '\n');
         }
         var oldError = console.error;
         console.error = function(msg) {
           oldError(msg);
-          output.write(msg + '\n', 'utf8');
+          fs.writeSync(output, msg + '\n');
         }
       }
       readline.close();
@@ -302,6 +303,10 @@ if (typeof importScripts != "undefined") {
       log: function(msg) { print(msg);}
     };
   }
+}
+
+printImage = function printImage(source, alignment, alt, invert) {
+  console.log('[IMAGE: ' + (alt || source) + ']');
 }
 
 clearScreen = function clearScreen(code) {
@@ -390,6 +395,23 @@ function configureShowText() {
       if (!line) return null;
       line = this.replaceVariables(line);
     }
+<<<<<<< HEAD
+=======
+  }
+}
+
+var oldGoto = Scene.prototype["goto"];
+Scene.prototype["goto"] = function scene_goto(data) {
+  oldGoto.call(this, data);
+  if (!this.localCoverage) this.localCoverage = {};
+  if (this.localCoverage[this.lineNum]) {
+    this.localCoverage[this.lineNum]++;
+    if (this.looplimit_count && this.localCoverage[this.lineNum] > this.looplimit_count) {
+      throw new Error(this.lineMsg() + "visited this line too many times (" + this.looplimit_count + ")");
+    }
+  } else {
+    this.localCoverage[this.lineNum] = 1;
+>>>>>>> a8dd65bb801d95509a138e703953f0b9030fa6e9
   }
 }
 
@@ -403,7 +425,7 @@ Scene.prototype.check_purchase = function scene_checkPurchase(data) {
   for (var i = 0; i < products.length; i++) {
     this.temps["choice_purchased_"+products[i]] = !isTrial;
   }
-  this.temps.choice_purchase_supported = isTrial;
+  this.temps.choice_purchase_supported = !!isTrial;
   this.temps.choice_purchased_everything = !isTrial;
 }
 

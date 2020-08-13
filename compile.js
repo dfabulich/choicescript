@@ -32,6 +32,62 @@ if (typeof process != "undefined") {
 if (!rootDir) rootDir = "web/";
 
 function compile(){
+  if (typeof window !== 'undefined' && "file:" === window.location.protocol && !window.slurpedFiles) {
+    window.loading.innerHTML = "<p>Please \"upload\" the choicescript folder (including compile.html).</p>";
+    var input = document.createElement("input");
+    input.type = "file";
+    input.webkitdirectory = true;
+    loading.appendChild(input);
+    input.addEventListener('change', function() {
+      var candidates = [];
+      var numFiles = input.files.length;
+      for (var i = 0; i < numFiles; i++) {
+        var file = input.files[i];
+        if (input.files[i].name == "scene.js") {
+          candidates.push(file);
+        }
+      }
+      if (!candidates.length) {
+        alert("We couldn't find scene.js in the folder you chose. Please try again. (Note that compile.html requires access to the entire choicescript directory, not just the mygame folder");
+      } else if (candidates.length > 1) {
+        if (candidates.length > 1) {
+          alert("There were multiple files called scene.js in the folder you chose. Please try again.\n" +
+            candidates.map(function(file) {return "\u2022 " + file.webkitRelativePath}).join("\n"));
+        }
+      }
+      rootDir = candidates[0].webkitRelativePath.replace(/\/scene.js$/, "/");
+      var rootDirTest = new RegExp("^" + rootDir + ".*\.(js|css|html|txt)");
+      loading.innerHTML = "";
+      var webFiles = [].filter.call(input.files, function(file) {
+        return rootDirTest.test(file.webkitRelativePath);
+      });
+      Promise.all(webFiles.map(function(file) {return new Response(file).text()})).then(function(results) {
+        window.slurpedFiles = {};
+        for (var i = 0; i < webFiles.length; i++) {
+          slurpedFiles[webFiles[i].webkitRelativePath] = results[i];
+        }
+        slurpFile = function(url, throwOnError) {
+          var parts = url.split('/');
+          var newParts = [];
+          for (var i = 0; i < parts.length; i++) {
+            if (".." === parts[i]) {
+              newParts.pop();
+            } else {
+              newParts.push(parts[i]);
+            }
+          }
+          url = newParts.join('/');
+          if (throwOnError && ! slurpedFiles[url]) {
+            throw new Error("Error: Could not open " + url);
+          }
+          return slurpedFiles[url];
+        }
+        var compiledResult = compile();
+        if (compiledResult) finish(compiledResult);
+      })
+    });
+    return;
+  }
 
   function safeSlurpFile(file) {
     try {
@@ -55,7 +111,7 @@ function compile(){
     console.log(doesMatch[1]);
     next_file = safeSlurpFile(rootDir+'mygame/' + doesMatch[1]);
     if (next_file != "undefined" && next_file !== null) {
-      jsStore = jsStore + next_file;
+      jsStore = jsStore + "\n;\n" + next_file;
     }
   }
   
@@ -147,7 +203,7 @@ function compile(){
   var scene_data = "";
   for (var i = 0; i < knownScenes.length; i++) {
       scene_data = safeSlurpFile(rootDir+'mygame/scenes/' + knownScenes[i]);
-      if (scene_data === null) {
+      if (scene_data === null || typeof scene_data === 'undefined') {
         if ("choicescript_upgrade.txt" === knownScenes[i]) continue;
         throw new Error("Couldn't find file " + 'mygame/scenes/' + knownScenes[i]);
       }

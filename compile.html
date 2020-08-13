@@ -78,7 +78,7 @@ function slurpFile(url, throwOnError) {
 	}
 	
 	if (success) {
-		return xhr.responseText;
+		return loadFailed ? "" : xhr.responseText;
 	}
 	else {
 		console.log("An unknown error occurred, please email dan at fabulich.com with details");
@@ -93,16 +93,19 @@ function doneLoading() {
 }
 
 </script>
-<script src=compile.js></script>
 </head>
 <body>
 <div id="loading">Loading...</div>
+<script src=compile.js></script>
 <script>
+function finish(compiledResult) {
+	var blob = new Blob([compiledResult], {type: "text/html"});
+	var bloburl = URL.createObjectURL(blob);
+	console.log("Export Complete!");
+	document.write("Click <a download='mygame_complete.html' href='" + bloburl + "'>here</a> to download your compiled game.");
+}
 var compiledResult = compile();
-var blob = new Blob([compiledResult], {type: "text/html"});
-var bloburl = URL.createObjectURL(blob);
-console.log("Export Complete!");
-document.write("Click <a download='mygame_complete.html' href='" + bloburl + "'>here</a> to download your compiled game.");
+if (compiledResult) finish(compiledResult);
 </script>
 </body>
 </html>

@@ -78,8 +78,18 @@ function parseAchievement(data, lines, lineNum) {
   return lineNum;
 }
 
+function parseCheckPurchase(data) {
+  var products = data.split(" ");
+  for (var i = 0; i < products.length; i++) {
+    var product = products[i];
+    if (!productMap[product]) {
+      purchases["fake:"+product] = product;
+    }
+  }
+}
+
 var lines = slurpFileLines("web/"+gameDir+"/scenes/startup.txt");
-var stats = {}, purchases = {};
+var stats = {}, purchases = {}, productMap = {};
 var scenes = ["startup"];
 var create = /^\*create +(\w+) +(.*)/;
 var result, variable, value;
@@ -98,7 +108,10 @@ for (var i = 0; i < lines.length; i++) {
   else if (command == "create") {
     var result = /^(\w*)(.*)/.exec(data);
     variable = result[1];
-    value = JSON.parse(result[2]);
+    value = result[2].trim();
+    if (/^true$/i.test(value)) value = "true";
+    if (/^false$/i.test(value)) value = "false";
+    value = JSON.parse(value);
     stats[variable.toLowerCase()] = value;
   } else if (command == "scene_list") {
     result = parseSceneList(lines, i);
@@ -107,8 +120,33 @@ for (var i = 0; i < lines.length; i++) {
     i = result.lineNum;
   } else if (command == "achievement") {
     i = parseAchievement(data, lines, i);
+  } else if (command == "product") {
+    // ignore products for now; we compute them from check_purchases
+    // *product this only has an effect on quicktest
   } else {
     break;
+  }
+}
+
+for (var scene in purchases) {
+  productMap[purchases[scene]] = scene;
+}
+
+var sceneDir = fs.readdirSync("web/"+gameDir+"/scenes");
+for (i = 0; i < sceneDir.length; i++) {
+  var lines = slurpFileLines("web/"+gameDir+"/scenes/" + sceneDir[i]);
+  for (var j = 0; j < lines.length; j++) {
+    var line = (""+lines[j]).trim();
+    if (!line) { continue; }
+    var result = /^\s*\*(\w+)(.*)/.exec(line);
+    if (!result) continue;
+    var command = result[1].toLowerCase();
+    var data = result[2].trim();
+    if (command == "check_purchase") {
+      parseCheckPurchase(data);
+    } else if (command == "delay_ending") {
+      purchases["fake:skiponce"] = "skiponce";
+    }
   }
 }
 
@@ -136,5 +174,7 @@ console.log(";\nachievements = ");
 logJson(achievements);
 console.log(";");
 
-
+console.log("nav.setStartingStatsClone(stats);");
+console.log("if (achievements.length) {\n  nav.loadAchievements(achievements);\n}");
+console.log("\nif (nav.loadProducts) nav.loadProducts([], purchases);\n");
 

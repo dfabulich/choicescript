@@ -279,7 +279,7 @@ function autotester(sceneText, nav, sceneName, extraLabels) {
   if (!Scene.prototype.oldRunCommand) Scene.prototype.oldRunCommand = Scene.prototype.runCommand;
   Scene.prototype.runCommand = function test_runCommand(line) {
     // skip commands that have already been covered
-    if (coverage[this._lineNum] > 1) {
+    if (!this.ignoreCoverage && coverage[this._lineNum] > 1) {
         if (/^\s*\*else/i.test(line)) {
           // else statements will have been covered by the "false" clones
           // but the fact that we're here means we must have fallen into an *else
@@ -454,6 +454,12 @@ function autotester(sceneText, nav, sceneName, extraLabels) {
   log("executing");
   scene.execute();
   
+  while(scene = sceneList.shift()) {
+    log (scene.testPath.join(''));
+    //log(sceneList.length);
+    scene.resume();
+  }
+
   if (extraLabels) {
     for (var i = 0; i < extraLabels.length; i++) {
       var extraLabel = extraLabels[i];
@@ -462,9 +468,16 @@ function autotester(sceneText, nav, sceneName, extraLabels) {
       scene.labels = originalScene.labels;
       scene.loaded = true;
       scene.targetLabel = extraLabel;
+      seen = {};
+      scene.ignoreCoverage = true;
       scene.testPath = [sceneName,",","goto " + extraLabel.label];
       log (scene.testPath.join(''));
       scene.execute();
+      while(scene = sceneList.shift()) {
+        log (scene.testPath.join(''));
+        //log(sceneList.length);
+        scene.resume();
+      }
     }
   }
 

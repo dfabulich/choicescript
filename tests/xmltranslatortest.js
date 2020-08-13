@@ -445,9 +445,9 @@ test("reuse", function() {
     "<text>Nothing; I'm done.</text>\n"+
     "<p>OK! </p>\n"+
     "<finish />\n"+
-    "<paragraph-break />\n"+
     "</option>\n"+
-    "</choice>\n";
+    "</choice>\n"+
+    "<paragraph-break />\n";
   translateScene(scene, expected);
 })
 test("restoreGameBasic", function() {
@@ -507,9 +507,9 @@ test("mixed conditional style", function() {
     +"<option reuse='allow'>\n"
     +"<text>Baz</text>\n"
     +"<p>Baz </p>\n"
-    +"<paragraph-break />\n"
     +"</option>\n"
     +"</if>\n"
-    +"</choice>\n";
+    +"</choice>\n"
+    +"<paragraph-break />\n";
   translateScene(scene, expected);
 })
