@@ -18,41 +18,26 @@
  */
 
  // autotest.js mygame [sceneName1] [sceneName2] [sceneName3]
-var list;
-var gameName;
-if (typeof java == "undefined") {
-  list = process.argv;
-  list.shift();
-  list.shift();
-  gameName = list.shift();
-  if (!gameName) gameName = "mygame";
-  fs = require('fs');
-  vm = require('vm');
-  path = require('path');
-  load = function(file) {
-    vm.runInThisContext(fs.readFileSync(file), file);
-  };
-  load("web/scene.js");
-  load("web/navigator.js");
-  load("web/util.js");
-  load("headless.js");
-  load("web/"+gameName+"/"+"mygame.js");
-  load("editor/embeddable-autotester.js");
-  print = function print(str) {
-    console.log(str);
-  };
-} else {
-  list = arguments;
-  gameName = list.shift();
-  if (!gameName) gameName = "mygame";
-  load("web/scene.js");
-  load("web/navigator.js");
-  load("web/util.js");
-  load("headless.js");
-  load("web/"+gameName+"/"+"mygame.js");
-  load("editor/embeddable-autotester.js");
-  if (typeof(console) == "undefined") console = {log: print};
-}
+var list = process.argv;
+list.shift();
+list.shift();
+var gameName = list.shift();
+if (!gameName) gameName = "mygame";
+fs = require('fs');
+vm = require('vm');
+path = require('path');
+load = function(file) {
+  vm.runInThisContext(fs.readFileSync(file), file);
+};
+load("web/scene.js");
+load("web/navigator.js");
+load("web/util.js");
+load("headless.js");
+load("web/"+gameName+"/"+"mygame.js");
+load("editor/embeddable-autotester.js");
+print = function print(str) {
+  console.log(str);
+};
 
 nav.setStartingStatsClone(stats);
 if (typeof purchases !== "undefined") {
@@ -299,6 +284,11 @@ if (!exitCode) {
     var uncoveredScene = uncoveredScenes[i];
     uncoveredScene.lines.push("");
     print(uncoveredScene.lines.join(" UNTESTED " + uncoveredScene.name + "\n"));
+  }
+  for (var sceneFile of fs.readdirSync("web/"+gameName+"/scenes")) {
+    if (/\.txt$/.test(sceneFile) && !list.includes(sceneFile)) {
+      print("UNTESTED " + sceneFile + "\n");
+    }
   }
   (function() {
     if (nav.achievementList && nav.achievementList.length) {
