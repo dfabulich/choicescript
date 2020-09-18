@@ -1,0 +1,24 @@
+name: merge-upstream
+
+on:
+  schedule:
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+
+jobs:
+  merge:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Merge Upstream
+        run: |
+          git config --global user.name 'CSIDE-Shell'
+          git config --global user.email '32689095+CSIDE-Shell@users.noreply.github.com'
+
+          git remote add upstream https://github.com/dfabulich/choicescript
+          git fetch upstream
+
+          git merge --no-edit upstream/master
+          git push origin master
