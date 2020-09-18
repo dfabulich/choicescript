@@ -18,55 +18,37 @@
  */
 
  // autotest.js mygame [sceneName1] [sceneName2] [sceneName3]
-
-var list;
-var projectPath; // gameName
-var outFileStream;
-var outFilePath;
-if (typeof java == "undefined") {
-  list = process.argv;
-  list.shift();
-  list.shift();
-  projectPath = list.shift();
-  if (!projectPath) projectPath = "mygame";
-  fs = require('fs');
-  vm = require('vm');
-  path = require('path');
-  if (outFilePath = list.shift()) {
-    if (fs.existsSync(outFilePath)) {
-      throw new Error("Specified output file already exists.");
-      process.exit(1);
-    }
-    outFileStream = fs.createWriteStream(outFilePath, {encoding: 'utf8'});
-    outFileStream.write("TESTING PROJECT AT:\n\t"+projectPath+"\n\nWRITING TO LOG FILE AT:\n\t"+outFilePath + '\n\nTEST OUTPUT FOLLOWS:\n', 'utf8');
+var list = process.argv;
+list.shift();
+list.shift();
+projectPath = list.shift();
+if (!projectPath) projectPath = "mygame";
+fs = require('fs');
+vm = require('vm');
+path = require('path');
+if (outFilePath = list.shift()) {
+  if (fs.existsSync(outFilePath)) {
+    throw new Error("Specified output file already exists.");
+    process.exit(1);
   }
-  load = function(file) {
-    vm.runInThisContext(fs.readFileSync(file), file);
-  };
-  load("web/scene.js");
-  load("web/navigator.js");
-  load("web/util.js");
-  load("headless.js");
-  load("web/mygame/mygame.js");
-  load("editor/embeddable-autotester.js");
-  print = function print(str) {
-    if (outFileStream)
-      outFileStream.write(str + '\n', 'utf8');
-    else
-      console.log(str);
-  };
-} else {
-  list = arguments;
-  projectPath = list.shift();
-  if (!projectPath) projectPath = "mygame";
-  load("web/scene.js");
-  load("web/navigator.js");
-  load("web/util.js");
-  load("headless.js");
-  load("web/mygame/mygame.js");
-  load("editor/embeddable-autotester.js");
-  if (typeof(console) == "undefined") console = {log: print};
+  outFileStream = fs.createWriteStream(outFilePath, {encoding: 'utf8'});
+  outFileStream.write("TESTING PROJECT AT:\n\t"+projectPath+"\n\nWRITING TO LOG FILE AT:\n\t"+outFilePath + '\n\nTEST OUTPUT FOLLOWS:\n', 'utf8');
 }
+load = function(file) {
+  vm.runInThisContext(fs.readFileSync(file), file);
+};
+load("web/scene.js");
+load("web/navigator.js");
+load("web/util.js");
+load("headless.js");
+load("web/mygame/mygame.js");
+load("editor/embeddable-autotester.js");
+print = function print(str) {
+  if (outFileStream)
+    outFileStream.write(str + '\n', 'utf8');
+  else
+    console.log(str);
+};
 
 nav.setStartingStatsClone(stats);
 if (typeof purchases !== "undefined") {
@@ -318,6 +300,11 @@ if (!exitCode) {
     var uncoveredScene = uncoveredScenes[i];
     uncoveredScene.lines.push("");
     print(uncoveredScene.lines.join(" UNTESTED " + uncoveredScene.name + "\n"));
+  }
+  for (var sceneFile of fs.readdirSync(projectPath)) {
+    if (/\.txt$/.test(sceneFile) && !list.includes(sceneFile)) {
+      print("UNTESTED " + sceneFile + "\n");
+    }
   }
   (function() {
     if (nav.achievementList && nav.achievementList.length) {
