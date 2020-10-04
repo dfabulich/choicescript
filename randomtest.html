@@ -131,7 +131,6 @@ document.getElementById("start").onclick = function() {
   highlightGenderPronouns = document.getElementById("highlightGenderPronouns").checked;
   var recordBalance = document.getElementById("recordBalance").checked;
   document.body.innerHTML = "";
-  worker.postMessage({iterations:iterations, randomSeed:randomSeed, showText:showText, showCoverage:showCoverage, highlightGenderPronouns:highlightGenderPronouns, showChoices:showChoices, avoidUsedOptions:avoidUsedOptions, recordBalance:recordBalance, projectPath: thisProject.getPath()});
   var isFile = "file:" === window.location.protocol;
   if (isFile) {
     var numFiles = uploadDirectory.files.length;
@@ -194,7 +193,7 @@ document.getElementById("start").onclick = function() {
           messages.push(msg);
           console.log(msg);
         }
-        worker.postMessage({iterations:iterations, randomSeed:randomSeed, showText:showText, showCoverage:showCoverage, highlightGenderPronouns:highlightGenderPronouns, showChoices:showChoices, avoidUsedOptions:avoidUsedOptions, recordBalance:recordBalance, sceneContent:sceneContent});
+        worker.postMessage({iterations:iterations, randomSeed:randomSeed, showText:showText, showCoverage:showCoverage, highlightGenderPronouns:highlightGenderPronouns, showChoices:showChoices, avoidUsedOptions:avoidUsedOptions, recordBalance:recordBalance, sceneContent:sceneContent, projectPath: thisProject.getPath() });
       });
     });
   } else {
@@ -205,7 +204,7 @@ document.getElementById("start").onclick = function() {
       messages.push(msg);
       console.log(msg);
     }
-    worker.postMessage({iterations:iterations, randomSeed:randomSeed, showText:showText, showCoverage:showCoverage, highlightGenderPronouns:highlightGenderPronouns, showChoices:showChoices, avoidUsedOptions:avoidUsedOptions, recordBalance:recordBalance});
+    worker.postMessage({iterations:iterations, randomSeed:randomSeed, showText:showText, showCoverage:showCoverage, highlightGenderPronouns:highlightGenderPronouns, showChoices:showChoices, avoidUsedOptions:avoidUsedOptions, recordBalance:recordBalance, projectPath: thisProject.getPath() });
   }
 }
 </script>

@@ -180,7 +180,7 @@ if (typeof importScripts != "undefined") {
     recordBalance = event.data.recordBalance;
     if (event.data.sceneContent) {
       for (scene in event.data.sceneContent) {
-        slurps[thisProject.getPath()+scene] = event.data.sceneContent[scene];
+        slurps[projectPath+scene] = event.data.sceneContent[scene];
       }
     }
 
@@ -395,8 +395,6 @@ function configureShowText() {
       if (!line) return null;
       line = this.replaceVariables(line);
     }
-<<<<<<< HEAD
-=======
   }
 }
 
@@ -411,7 +409,6 @@ Scene.prototype["goto"] = function scene_goto(data) {
     }
   } else {
     this.localCoverage[this.lineNum] = 1;
->>>>>>> a8dd65bb801d95509a138e703953f0b9030fa6e9
   }
 }
 
