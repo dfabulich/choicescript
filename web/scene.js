@@ -1072,7 +1072,12 @@ Scene.prototype["return"] = function scene_return() {
       scene.lineNum = stackFrame.lineNum;
       scene.indent = stackFrame.indent;
       scene.accumulatedParagraph = this.accumulatedParagraph;
-      scene.execute();
+      if (this.randomtest) {
+        // pop the stack in randomtest to avoid overflow
+        clearScreen(function() {scene.execute()});
+      } else {
+        scene.execute();
+      }
     } else if (!this.temps.choice_substack && !this.stats.choice_subscene_stack) {
       throw new Error(this.lineMsg() + "invalid return; gosub has not yet been called");
     } else {
