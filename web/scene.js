@@ -105,7 +105,7 @@ Scene.prototype.printLoop = function printLoop() {
             this.dedent(indent);
         }
         // Ability to end a choice #option without goto is guarded by implicit_control_flow variable
-        if (this.temps._choiceEnds[this.lineNum] && 
+        if (this.temps._choiceEnds[this.lineNum] &&
                 (this.stats["implicit_control_flow"] || this.temps._fakeChoiceDepth > 0)) {
             // Skip to the end of the choice if we hit the end of an #option
             this.rollbackLineCoverage();
@@ -421,7 +421,7 @@ Scene.prototype.loadSceneFast = function loadSceneFast(url) {
         } else if (xhr.responseText === "") {
           throw new Error("Couldn't load " + url + "\nThe file is probably missing or empty.");
         }
-        
+
         if (!window.cachedResults) window.cachedResults = {};
         cachedResults[self.name] = result;
         self.loadLinesFast(result.crc, result.lines, result.labels);
@@ -964,14 +964,14 @@ Scene.prototype.save = function save(slot) {
         }
         tempStatWrites = {};
       }
-      
+
       saveCookie(function() {}, slot, this.stats, this.temps, this.lineNum, this.indent, this.debugMode, this.nav);
     }
 };
 
 // *goto labelName
 // Go to the line labeled with the label command *label labelName
-// 
+//
 // goto by reference
 //   *create foo "labelName"
 //   *goto {foo}
@@ -1083,7 +1083,7 @@ Scene.prototype["return"] = function scene_return() {
     } else {
       throw new Error(this.lineMsg() + "invalid return; we've already returned from the last gosub");
     }
-    
+
 };
 
 // *gotoref expression
@@ -1360,7 +1360,7 @@ Scene.prototype.purchase = function purchase_button(data) {
           }
         );
       }
-      
+
       self.skipFooter = false;
       self.finished = false;
       self.execute();
@@ -1773,7 +1773,7 @@ Scene.prototype.parseOptions = function parseOptions(startIndent, choicesRemaini
     if (choicesRemaining.length>1 && !suboptionsEncountered) {
         throw new Error(this.lineMsg() + "invalid indent, there were subchoices remaining: [" + choicesRemaining.join(",") + "]");
     }
-    if (bodyExpected && 
+    if (bodyExpected &&
             (this.temps._fakeChoiceDepth === undefined || this.temps._fakeChoiceDepth < 1)) {
         throw new Error(this.lineMsg() + "Expected choice body");
     }
@@ -2839,7 +2839,7 @@ Scene.prototype.save_game = function save_game(destinationSceneName) {
           message.appendChild(messageText);
           return;
         }
-        
+
         recordEmail(email, function() {
           clearScreen(function() {
             saveCookie(function() {
