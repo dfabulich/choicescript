@@ -1293,12 +1293,53 @@ Scene.prototype.check_purchase = function scene_checkPurchase(data) {
   });
 };
 
-Scene.prototype.purchase = function purchase_button(data) {
-  var result = /^(\w+)\s+(\S+)\s+(.*)/.exec(data);
-  if (!result) throw new Error(this.lineMsg() + "invalid line; can't parse purchaseable product: " + data);
-  var product = result[1];
-  var priceGuess = trim(result[2]);
-  var label = trim(result[3]);
+Scene.prototype.parsePurchase = function parsePurchase(data) {
+  if (/^\{/.test(data)) {
+    var parsed;
+    try {
+      parsed = JSON.parse(data);
+    } catch (e) {
+      throw new Error(this.lineMsg() + "Couldn't parse purchase JSON: " + e)
+    }
+    if (!parsed.product) {
+      throw new Error(this.lineMsg() + "JSON missing product");
+    }
+    if (!parsed['goto']) {
+      throw new Error(this.lineMsg() + "JSON missing goto");
+    }
+    if (parsed.priceGuess && parsed.discount) {
+      throw new Error(this.lineMsg() + "JSON has both top-level priceGuess and discount; there should be one or the other");
+    }
+    if (!(parsed.priceGuess || parsed.discount)) {
+      throw new Error(this.lineMsg() + "JSON has neither top-level priceGuess nor discount; there should be one or the other");
+    }
+    if (parsed.discount) {
+      if (!parsed.discount.end) throw new Error(this.lineMsg() + "JSON discount doesn't include end");
+      parsed.discount.end = parseDateStringInCurrentTimezone(parsed.discount.end, this.lineNum + 1);
+      if (!parsed.discount.lowPrice) throw new Error(this.lineMsg() + "JSON discount doesn't include lowPrice");
+      if (!/^\$/.test(parsed.discount.lowPrice)) throw new Error(this.lineMsg() + "lowPrice " + fullPriceGuess + "doesn't start with dollar");
+      if (!parsed.discount.fullPrice) throw new Error(this.lineMsg() + "JSON discount doesn't include fullPrice");
+      if (!/^\$/.test(parsed.discount.fullPrice)) throw new Error(this.lineMsg() + "fullPrice " + fullPriceGuess + "doesn't start with dollar");
+    }
+    if (!parsed.title) parsed.title = "It";
+    return parsed;
+  } else {
+    var result = /^(\w+)\s+(\S+)\s+(.*)/.exec(data);
+    if (!result) throw new Error(this.lineMsg() + "invalid line; can't parse purchaseable product: " + data);
+    return {product: result[1], priceGuess: result[2], label: result[3], title: "It"};
+  }
+}
+
+Scene.prototype.purchase = function purchase(data) {
+  var parsed = this.parsePurchase(data);
+  if (parsed.discount) {
+    this.buyButtonDiscount(parsed.product, parsed.discount.end, parsed.discount.fullPrice, parsed.discount.lowPrice, parsed['goto'], parsed.title);
+  } else {
+    this.buyButton(parsed.product, parsed.priceGuess, parsed['goto'], parsed.title);
+  }
+}
+
+Scene.prototype.buyButton = function(product, priceGuess, label, title) {
   if (!this.nav.products[product] && product != "adfree") {
     throw new Error(this.lineMsg() + "The product " + product + " wasn't declared in a *product command");
   }
@@ -1316,9 +1357,9 @@ Scene.prototype.purchase = function purchase_button(data) {
       var prerelease = self.getVar('choice_prerelease');
       var buttonText;
       if (prerelease) {
-        buttonText = "Pre-Order It";
+        buttonText = "Pre-Order " + title;
       } else {
-        buttonText = "Buy It Now";
+        buttonText = "Buy "+title+" Now";
       }
       if (price != "hide") {
         buttonText += " for " + price;
@@ -1385,6 +1426,11 @@ Scene.prototype.purchase_discount = function purchase_discount(line) {
   if (!startsWithDollar.test(discountedPriceGuess)) {
     throw new Error(this.lineMsg() + "discounted price guess "+discountedPriceGuess+"doesn't start with dollar: " + line);
   }
+  var title = "It";
+  this.buyButtonDiscount(product, expectedEndDate, fullPriceGuess, discountedPriceGuess, label, title);
+}
+
+Scene.prototype.buyButtonDiscount = function buyButtonDiscount(product, expectedEndDate, fullPriceGuess, discountedPriceGuess, label, title) {
   var prerelease = this.getVar('choice_prerelease');
   var discountText;
   if (prerelease) {
@@ -1401,7 +1447,7 @@ Scene.prototype.purchase_discount = function purchase_discount(line) {
   } else {
     priceGuess = fullPriceGuess;
   }
-  this.purchase([product, priceGuess, label].join(" "));
+  this.buyButton(product, priceGuess, label, title);
 }
 
 Scene.prototype.print_discount = function print_Discount(line) {
