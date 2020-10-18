@@ -1294,40 +1294,45 @@ Scene.prototype.check_purchase = function scene_checkPurchase(data) {
 };
 
 Scene.prototype.parsePurchase = function parsePurchase(data) {
+  var result;
   if (/^\{/.test(data)) {
-    var parsed;
     try {
-      parsed = JSON.parse(data);
+      result = JSON.parse(data);
     } catch (e) {
       throw new Error(this.lineMsg() + "Couldn't parse purchase JSON: " + e)
     }
-    if (!parsed.product) {
+    if (!result.product) {
       throw new Error(this.lineMsg() + "JSON missing product");
     }
-    if (!parsed['goto']) {
+    if (!result['goto']) {
       throw new Error(this.lineMsg() + "JSON missing goto");
     }
-    if (parsed.priceGuess && parsed.discount) {
+    if (result.priceGuess && result.discount) {
       throw new Error(this.lineMsg() + "JSON has both top-level priceGuess and discount; there should be one or the other");
     }
-    if (!(parsed.priceGuess || parsed.discount)) {
+    if (!(result.priceGuess || result.discount)) {
       throw new Error(this.lineMsg() + "JSON has neither top-level priceGuess nor discount; there should be one or the other");
     }
-    if (parsed.discount) {
-      if (!parsed.discount.end) throw new Error(this.lineMsg() + "JSON discount doesn't include end");
-      parsed.discount.end = parseDateStringInCurrentTimezone(parsed.discount.end, this.lineNum + 1);
-      if (!parsed.discount.lowPrice) throw new Error(this.lineMsg() + "JSON discount doesn't include lowPrice");
-      if (!/^\$/.test(parsed.discount.lowPrice)) throw new Error(this.lineMsg() + "lowPrice " + fullPriceGuess + "doesn't start with dollar");
-      if (!parsed.discount.fullPrice) throw new Error(this.lineMsg() + "JSON discount doesn't include fullPrice");
-      if (!/^\$/.test(parsed.discount.fullPrice)) throw new Error(this.lineMsg() + "fullPrice " + fullPriceGuess + "doesn't start with dollar");
+    if (result.discount) {
+      if (!result.discount.end) throw new Error(this.lineMsg() + "JSON discount doesn't include end");
+      result.discount.end = parseDateStringInCurrentTimezone(result.discount.end, this.lineNum + 1);
+      if (!result.discount.lowPrice) throw new Error(this.lineMsg() + "JSON discount doesn't include lowPrice");
+      if (!/^\$/.test(result.discount.lowPrice)) throw new Error(this.lineMsg() + "lowPrice " + fullPriceGuess + "doesn't start with dollar");
+      if (!result.discount.fullPrice) throw new Error(this.lineMsg() + "JSON discount doesn't include fullPrice");
+      if (!/^\$/.test(result.discount.fullPrice)) throw new Error(this.lineMsg() + "fullPrice " + fullPriceGuess + "doesn't start with dollar");
     }
-    if (!parsed.title) parsed.title = "It";
-    return parsed;
+    if (!result.title) result.title = "It";
   } else {
-    var result = /^(\w+)\s+(\S+)\s+(.*)/.exec(data);
-    if (!result) throw new Error(this.lineMsg() + "invalid line; can't parse purchaseable product: " + data);
-    return {product: result[1], priceGuess: result[2], label: result[3], title: "It"};
+    var parsed = /^(\w+)\s+(\S+)\s+(.*)/.exec(data);
+    if (!parsed) throw new Error(this.lineMsg() + "invalid line; can't parse purchaseable product: " + data);
+    result = {product: parsed[1], priceGuess: parsed[2], "goto": parsed[3], title: "It"};
   }
+  var product = result.product;
+  if (!this.nav.products[product] && product != "adfree") {
+    throw new Error(this.lineMsg() + "The product " + product + " wasn't declared in a *product command");
+  }
+  if (typeof this.temps["choice_purchased_" + product] === "undefined") throw new Error(this.lineMsg() + "Didn't check_purchases on this page");
+  return result;
 }
 
 Scene.prototype.purchase = function purchase(data) {
@@ -1340,10 +1345,6 @@ Scene.prototype.purchase = function purchase(data) {
 }
 
 Scene.prototype.buyButton = function(product, priceGuess, label, title) {
-  if (!this.nav.products[product] && product != "adfree") {
-    throw new Error(this.lineMsg() + "The product " + product + " wasn't declared in a *product command");
-  }
-  if (typeof this.temps["choice_purchased_"+product] === "undefined") throw new Error(this.lineMsg() + "Didn't check_purchases on this page");
   this.finished = true;
   this.skipFooter = true;
   var self = this;
