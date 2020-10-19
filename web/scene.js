@@ -105,7 +105,7 @@ Scene.prototype.printLoop = function printLoop() {
             this.dedent(indent);
         }
         // Ability to end a choice #option without goto is guarded by implicit_control_flow variable
-        if (this.temps._choiceEnds[this.lineNum] && 
+        if (this.temps._choiceEnds[this.lineNum] &&
                 (this.stats["implicit_control_flow"] || this.temps._fakeChoiceDepth > 0)) {
             // Skip to the end of the choice if we hit the end of an #option
             this.rollbackLineCoverage();
@@ -1293,16 +1293,58 @@ Scene.prototype.check_purchase = function scene_checkPurchase(data) {
   });
 };
 
-Scene.prototype.purchase = function purchase_button(data) {
-  var result = /^(\w+)\s+(\S+)\s+(.*)/.exec(data);
-  if (!result) throw new Error(this.lineMsg() + "invalid line; can't parse purchaseable product: " + data);
-  var product = result[1];
-  var priceGuess = trim(result[2]);
-  var label = trim(result[3]);
+Scene.prototype.parsePurchase = function parsePurchase(data) {
+  var result;
+  if (/^\{/.test(data)) {
+    try {
+      result = JSON.parse(data);
+    } catch (e) {
+      throw new Error(this.lineMsg() + "Couldn't parse purchase JSON: " + e)
+    }
+    if (!result.product) {
+      throw new Error(this.lineMsg() + "JSON missing product");
+    }
+    if (!result['goto']) {
+      throw new Error(this.lineMsg() + "JSON missing goto");
+    }
+    if (result.priceGuess && result.discount) {
+      throw new Error(this.lineMsg() + "JSON has both top-level priceGuess and discount; there should be one or the other");
+    }
+    if (!(result.priceGuess || result.discount)) {
+      throw new Error(this.lineMsg() + "JSON has neither top-level priceGuess nor discount; there should be one or the other");
+    }
+    if (result.discount) {
+      if (!result.discount.end) throw new Error(this.lineMsg() + "JSON discount doesn't include end");
+      result.discount.end = parseDateStringInCurrentTimezone(result.discount.end, this.lineNum + 1);
+      if (!result.discount.lowPrice) throw new Error(this.lineMsg() + "JSON discount doesn't include lowPrice");
+      if (!/^\$/.test(result.discount.lowPrice)) throw new Error(this.lineMsg() + "lowPrice " + fullPriceGuess + "doesn't start with dollar");
+      if (!result.discount.fullPrice) throw new Error(this.lineMsg() + "JSON discount doesn't include fullPrice");
+      if (!/^\$/.test(result.discount.fullPrice)) throw new Error(this.lineMsg() + "fullPrice " + fullPriceGuess + "doesn't start with dollar");
+    }
+    if (!result.title) result.title = "It";
+  } else {
+    var parsed = /^(\w+)\s+(\S+)\s+(.*)/.exec(data);
+    if (!parsed) throw new Error(this.lineMsg() + "invalid line; can't parse purchaseable product: " + data);
+    result = {product: parsed[1], priceGuess: parsed[2], "goto": parsed[3], title: "It"};
+  }
+  var product = result.product;
   if (!this.nav.products[product] && product != "adfree") {
     throw new Error(this.lineMsg() + "The product " + product + " wasn't declared in a *product command");
   }
-  if (typeof this.temps["choice_purchased_"+product] === "undefined") throw new Error(this.lineMsg() + "Didn't check_purchases on this page");
+  if (typeof this.temps["choice_purchased_" + product] === "undefined") throw new Error(this.lineMsg() + "Didn't check_purchases on this page");
+  return result;
+}
+
+Scene.prototype.purchase = function purchase(data) {
+  var parsed = this.parsePurchase(data);
+  if (parsed.discount) {
+    this.buyButtonDiscount(parsed.product, parsed.discount.end, parsed.discount.fullPrice, parsed.discount.lowPrice, parsed['goto'], parsed.title);
+  } else {
+    this.buyButton(parsed.product, parsed.priceGuess, parsed['goto'], parsed.title);
+  }
+}
+
+Scene.prototype.buyButton = function(product, priceGuess, label, title) {
   this.finished = true;
   this.skipFooter = true;
   var self = this;
@@ -1316,9 +1358,9 @@ Scene.prototype.purchase = function purchase_button(data) {
       var prerelease = self.getVar('choice_prerelease');
       var buttonText;
       if (prerelease) {
-        buttonText = "Pre-Order It";
+        buttonText = "Pre-Order " + title;
       } else {
-        buttonText = "Buy It Now";
+        buttonText = "Buy "+title+" Now";
       }
       if (price != "hide") {
         buttonText += " for " + price;
@@ -1385,6 +1427,11 @@ Scene.prototype.purchase_discount = function purchase_discount(line) {
   if (!startsWithDollar.test(discountedPriceGuess)) {
     throw new Error(this.lineMsg() + "discounted price guess "+discountedPriceGuess+"doesn't start with dollar: " + line);
   }
+  var title = "It";
+  this.buyButtonDiscount(product, expectedEndDate, fullPriceGuess, discountedPriceGuess, label, title);
+}
+
+Scene.prototype.buyButtonDiscount = function buyButtonDiscount(product, expectedEndDate, fullPriceGuess, discountedPriceGuess, label, title) {
   var prerelease = this.getVar('choice_prerelease');
   var discountText;
   if (prerelease) {
@@ -1401,7 +1448,7 @@ Scene.prototype.purchase_discount = function purchase_discount(line) {
   } else {
     priceGuess = fullPriceGuess;
   }
-  this.purchase([product, priceGuess, label].join(" "));
+  this.buyButton(product, priceGuess, label, title);
 }
 
 Scene.prototype.print_discount = function print_Discount(line) {
@@ -1773,7 +1820,7 @@ Scene.prototype.parseOptions = function parseOptions(startIndent, choicesRemaini
     if (choicesRemaining.length>1 && !suboptionsEncountered) {
         throw new Error(this.lineMsg() + "invalid indent, there were subchoices remaining: [" + choicesRemaining.join(",") + "]");
     }
-    if (bodyExpected && 
+    if (bodyExpected &&
             (this.temps._fakeChoiceDepth === undefined || this.temps._fakeChoiceDepth < 1)) {
         throw new Error(this.lineMsg() + "Expected choice body");
     }
