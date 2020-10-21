@@ -256,7 +256,7 @@ function loadScenes(game, sceneNum) {
       }
     }
   } else {
-    var url = "web/mygame/scenes/" + fileName;
+    var url = thisProject.getPath() + fileName;
     xhr = new XMLHttpRequest();
     xhr.open("GET", url, false);
     try {
