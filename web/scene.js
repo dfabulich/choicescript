@@ -1946,33 +1946,42 @@ Scene.prototype.line_break = function line_break() {
 };
 
 // *image
-// display named image //CJW edited to compensate for data uri images
 Scene.prototype.image = function image(data, invert) {
-    this.paragraph();
-    data = data || "";
-    data = this.replaceVariables(data);
-    var args = data.split(" ");
-    var source, alignment;
-    var alt = null;
-    if (args.length > 2) {
-      var source = args[0];
-      var alignment = args[1];
-      var alt = trim(args[2]);
+  this.paragraph();
+  data = data || "";
+  /* Don't apply the regex match to data:image values, it's far too slow */
+  var dataImage = false;
+  var dataImageVal;
+  if (data.match(/data:image/)) {
+    var dataImageEnd = data.indexOf(" ");
+    if (dataImageEnd >= 0) {
+      dataImageVal = data.substring(0, dataImageEnd);
+      data = ("CSIDE_DATA_IMG.png" + data.slice(dataImageEnd));
+    } else {
+      dataImageVal = data;
+      data = "CSIDE_DATA_IMG.png";
     }
-    else if (args.length > 1) {
-      var source = args[0];
-      var alignment = args[1];
-    }
-    else {
-      var source = data;
-    }
-    if (source === "") throw new Error(this.lineMsg()+"*image requires the file name of an image");
-    alignment = alignment || "center";
-    if (!/(right|left|center|none)/.test(alignment)) throw new Error(this.lineMsg()+"Invalid alignment, expected right, left, center, or none: " + data);
-    printImage(source, alignment, alt, invert);
-    if (this.verifyImage) this.verifyImage(source);
-    if (alignment == "none") this.prevLine = "text";
-    this.screenEmpty = false;
+    dataImage = true;
+  }
+  data = this.replaceVariables(data);
+  var match = /(\S+) (\S+)(.*)/.exec(data);
+  var source, alignment;
+  var alt = null;
+  if (match) {
+    var source = match[1];
+    var alignment = match[2];
+    var alt = trim(match[3]);
+  } else {
+    source = data;
+  }
+  if (source === "") throw new Error(this.lineMsg()+"*image requires the file name of an image");
+  if (source === "CSIDE_DATA_IMG.png") source = dataImageVal;
+  alignment = alignment || "center";
+  if (!/(right|left|center|none)/.test(alignment)) throw new Error(this.lineMsg()+"Invalid alignment, expected right, left, center, or none: " + data);
+  printImage(source, alignment, alt, invert);
+  if (this.verifyImage && !dataImage) this.verifyImage(source);
+  if (alignment == "none") this.prevLine = "text";
+  this.screenEmpty = false;
 };
 
 Scene.prototype.text_image = function textImage(data) {
