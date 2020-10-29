@@ -719,6 +719,10 @@ Scene.prototype.execute = function execute() {
       var subsceneStack = this.stats.choice_subscene_stack || [];
       if (!subsceneStack.length) this.save("backup");
     }
+    if (this.redirectingFromStats) {
+      this.save("");
+      delete this.redirectingFromStats;
+    }
     this.printLoop();
 };
 
@@ -1213,6 +1217,7 @@ Scene.prototype.goto_scene = function gotoScene(data) {
     scene.accumulatedParagraph = this.accumulatedParagraph;
     if (typeof result.label != "undefined") scene.targetLabel = {label:result.label, origin:this.name, originLine:this.lineNum};
     if (typeof result.param != "undefined") scene.temps.param = result.param;
+    if (this.redirectingFromStats) scene.redirectingFromStats = true;
     scene.execute();
 };
 
@@ -1232,6 +1237,8 @@ Scene.prototype.redirect_scene = function redirectScene(data) {
   var self = this;
   redirectFromStats(sceneName, label, this.lineNum, function() {
     delete self.secondaryMode;
+    delete self.saveSlot;
+    self.redirectingFromStats = true;
     self.goto_scene(data);
   });
 };
