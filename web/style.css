@@ -15,6 +15,8 @@ body {
   transition-duration: 2s;
   -webkit-transition-property: background-color, color;
   -webkit-transition-duration: 2s;
+  /* Fix iPadOS 13+ Desktop-class browsing https://stackoverflow.com/a/64998974/54829 */
+  -webkit-text-size-adjust: none;
 }
 
 a {
