@@ -1,4 +1,7 @@
 function autotester(sceneText, nav, sceneName, extraLabels) {
+  if (sceneText.length > 1.9 * 1000 * 1000) {
+    throw new Error(sceneName + ": this scene is too large. It may crash on some devices")
+  }
   function log(msg) {
     if (typeof(console) != "undefined") console.log(msg)
   }
