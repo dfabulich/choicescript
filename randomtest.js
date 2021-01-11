@@ -441,8 +441,17 @@ Scene.prototype.recordBalance = function(value, operator, rate, id) {
   }
   if (!balanceValues[this.name][id]) balanceValues[this.name][id] = [];
   balanceValues[this.name][id].push(num(value, this.line));
-  throw new Error("record balance");
+  throw new Error("skip run");
 }
+
+Scene.prototype.abort = function randomtest_abort(param) {
+  this.paragraph();
+  this.finished = true;
+  if (param === 'skip') {
+    println("SKIPPED RUN");
+    throw new Error("skip run");
+  }
+};
 
 Scene.prototype.save_game = noop;
 
@@ -802,7 +811,7 @@ function randomtest() {
       }
       println(); // flush buffer
     } catch (e) {
-      if (e.message == "record balance") {
+      if (e.message == "skip run") {
         iterations++;
         continue;
       }
