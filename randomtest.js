@@ -448,7 +448,6 @@ Scene.prototype.abort = function randomtest_abort(param) {
   this.paragraph();
   this.finished = true;
   if (param === 'skip') {
-    println("SKIPPED RUN");
     throw new Error("skip run");
   }
 };
@@ -812,6 +811,7 @@ function randomtest() {
       println(); // flush buffer
     } catch (e) {
       if (e.message == "skip run") {
+        println("SKIPPED RUN " + i);
         iterations++;
         continue;
       }
