@@ -90,12 +90,12 @@ function autotester(sceneText, nav, sceneName, extraLabels) {
   
   var inputCallback;
 
-  printInput = function printInput(target, inputType, callback, minimum) {
+  printInput = function printInput(target, inputOptions, callback, minimum) {
     inputCallback = function() {
-      if (inputType == "text") {
-        callback("blah blah");
-      } else {
+      if (inputOptions.numeric) {
         callback(minimum);
+      } else {
+        callback("blah blah");
       }
     }
   }

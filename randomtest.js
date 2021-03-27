@@ -555,7 +555,15 @@ Scene.prototype.ending = function () {
 Scene.prototype.restart = Scene.prototype.ending;
 
 Scene.prototype.input_text = function(line) {
-   this.set(line + " \"blah blah\"");
+  var parsed = this.parseInputText(line);
+  var input = "blah blah";
+  if (parsed.inputOptions.allow_blank) {
+    if (!Math.floor(Math.random() * 4)) {
+      input = "";
+    }
+    this.randomLog("*input_text " + (this.lineNum + 1) + " " + input);
+  }
+  this.set(parsed.variable + " \""+input+"\"");
 }
 
 Scene.prototype.input_number = function(data) {

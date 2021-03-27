@@ -2462,7 +2462,7 @@ function kindleButton(target, query, buttonName) {
   );
 }
 
-function printInput(target, inputType, callback, minimum, maximum, step) {
+function printInput(target, inputOptions, callback, minimum, maximum, step) {
     if (!target) target = document.getElementById('text');
     var form = document.createElement("form");
     target.appendChild(form);
@@ -2470,13 +2470,13 @@ function printInput(target, inputType, callback, minimum, maximum, step) {
     form.action="#";
 
 
-    if (inputType == "textarea") {
+    if (inputOptions.long) {
       var input = document.createElement("textarea");
       input.setAttribute("rows", 4);
     } else {
       var input = document.createElement("input");
-      input.setAttribute("type", inputType);
-      if (inputType == "number") {
+      if (inputOptions.numeric) {
+        input.setAttribute("type", "number");
         input.setAttribute("min", minimum);
         input.setAttribute("max", maximum);
         step = step || "any";
@@ -2492,9 +2492,7 @@ function printInput(target, inputType, callback, minimum, maximum, step) {
 
     form.onsubmit = function(e) {
         preventDefault(e);
-        if (!input.value) {
-            // TODO optional value?
-            // TODO configurable error message?
+        if (!input.value && !inputOptions.allow_blank) {
             asyncAlert("Don't just leave it blank!  Type something!");
             return;
         }
