@@ -257,6 +257,8 @@ function loadScenes(game, sceneNum) {
     }
   } else {
     var url = thisProject.getPath() + fileName;
+    if (scope.cside.getPlatform() != "web-dropbox")
+      url = "file://" + url;
     xhr = new XMLHttpRequest();
     xhr.open("GET", url, false);
     try {
