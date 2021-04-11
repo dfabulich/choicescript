@@ -1831,7 +1831,7 @@ Scene.prototype.parseOptions = function parseOptions(startIndent, choicesRemaini
             (this.temps._fakeChoiceDepth === undefined || this.temps._fakeChoiceDepth < 1)) {
         throw new Error(this.lineMsg() + "Expected choice body");
     }
-    if (!atLeastOneSelectableOption) this.conflictingOptions("line " + (startingLine+1) + ": No selectable options");
+    if (!atLeastOneSelectableOption) this.conflictingOptions(this.lineMsg() + "No selectable options");
     if (expectedSubOptions) {
         this.verifyOptionsMatch(expectedSubOptions, options);
     }
@@ -2132,26 +2132,38 @@ Scene.prototype.print = function scene_print(expr) {
     this.printLine(value);
 };
 
+Scene.prototype.parseInputText = function parseInputText(line) {
+  var stack = this.tokenizeExpr(line);
+  var variable = this.evaluateReference(stack);
+  if ("undefined" === typeof this.temps[variable] && "undefined" === typeof this.stats[variable]) {
+    throw new Error(this.lineMsg() + "Non-existent variable '" + variable + "'");
+  }
+
+  var inputOptions = { long: false, allow_blank: false };
+  for (var i = 0; i < stack.length; i++) {
+    var token = stack[i];
+    if (token.name !== "VAR") {
+      throw new Error(this.lineMsg() + "Couldn't understand this input_text line");
+    }
+    var option = token.value;
+    if (typeof inputOptions[option] === "undefined") {
+      throw new Error(this.lineMsg() + "Couldn't understand this input_text option: " + option);
+    }
+    inputOptions[option] = true;
+  }
+  return {variable:variable, inputOptions:inputOptions};
+}
+
 // *input_text var
 // record text typed by the user and store it in the specified variable
 Scene.prototype.input_text = function input_text(line) {
-    var stack = this.tokenizeExpr(line);
-    var variable = this.evaluateReference(stack);
-    if ("undefined" === typeof this.temps[variable] && "undefined" === typeof this.stats[variable]) {
-      throw new Error(this.lineMsg() + "Non-existent variable '"+variable+"'");
-    }
+    var result = this.parseInputText(line);
+    var variable = result.variable;
 
-    var inputType = "text";
-    if (stack.length == 1 && stack[0].name == "VAR" && stack[0].value == "long") {
-      inputType = "textarea";
-    }
-    if ("undefined" === typeof this.temps[variable] && "undefined" === typeof this.stats[variable]) {
-      throw new Error(this.lineMsg() + "Non-existent variable '"+variable+"'");
-    }
     this.finished = true;
     this.paragraph();
     var self = this;
-    printInput(this.target, inputType, function(value) {
+    printInput(this.target, result.inputOptions, function(value) {
       safeCall(self, function() {
         value = trim(String(value));
         value = value.replace(/\n/g, "[n/]");
@@ -2209,7 +2221,7 @@ Scene.prototype.input_number = function input_number(data) {
     this.finished = true;
     this.paragraph();
     var self = this;
-    printInput(this.target, "number", function(value) {
+    printInput(this.target, {numeric: true}, function(value) {
       safeCall(self, function() {
         var numValue = parseFloat(""+value);
         if (isNaN(numValue)) {
