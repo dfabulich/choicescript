@@ -1146,7 +1146,7 @@ Scene.prototype.finish = function finish(buttonName) {
         });
       }
     );
-    if (this.debugMode) println(toJson(this.stats));
+    if (this.debugMode) println(computeCookie(this.stats, this.temps, this.lineNum, this.indent));
 };
 
 Scene.prototype.autofinish = function autofinish(buttonName) {
@@ -1910,7 +1910,7 @@ Scene.prototype.renderOptions = function renderOptions(groups, options, callback
     this.paragraph();
     printOptions(groups, options, callback);
 
-    if (this.debugMode) println(toJson(this.stats));
+    if (this.debugMode) println(computeCookie(this.stats, this.temps, this.lineNum, this.indent));
 
     if (this.finished) printFooter();
 };
@@ -1931,7 +1931,7 @@ Scene.prototype.page_break = function page_break(buttonName) {
         self.resetPage();
       }
     );
-    if (this.debugMode) println(toJson(this.stats));
+    if (this.debugMode) println(computeCookie(this.stats, this.temps, this.lineNum, this.indent));
 };
 
 // *line_break
@@ -2154,7 +2154,7 @@ Scene.prototype.input_text = function input_text(line) {
         self.resetPage();
       });
     });
-    if (this.debugMode) println(toJson(this.stats));
+    if (this.debugMode) println(computeCookie(this.stats, this.temps, this.lineNum, this.indent));
 };
 
 // *input_number var min max
@@ -2227,7 +2227,7 @@ Scene.prototype.input_number = function input_number(data) {
         self.resetPage();
       });
     }, minimum, maximum, intRequired);
-    if (this.debugMode) println(toJson(this.stats));
+    if (this.debugMode) println(computeCookie(this.stats, this.temps, this.lineNum, this.indent));
 };
 
 // *script code

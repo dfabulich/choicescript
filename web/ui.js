@@ -3041,7 +3041,8 @@ function reportBug() {
   alertify.prompt(prompt, function(ok, body) {
     var statMsg = "(unknown)";
     try {
-        statMsg = toJson(window.stats, '\n');
+        var scene = window.stats.scene;
+        statMsg = computeCookie(scene.stats, scene.temps, scene.lineNum, scene.indent);
     } catch (ex) {}
     body += "\n\nGame: " + window.storeName;
     if (window.stats && window.stats.scene) {
@@ -3173,13 +3174,18 @@ window.onerror=function(msg, file, line, stack) {
     if (ok) {
         var statMsg = "(unknown)";
         try {
-            statMsg = toJson(window.stats, '\n');
+          var scene = window.stats.scene;
+          statMsg = computeCookie(scene.stats, scene.temps, scene.lineNum, scene.indent);
         } catch (ex) {}
         var body = "What were you doing when the error occured?\n\nError: " + msg;
-        if (window.stats && window.stats.scene && window.stats.scene.name) body += "\nScene: " + window.stats.scene.name;
-        if (file) body += "\nFile: " + file;
-        if (line) body += "\nLine: " + line;
-        if (stack) body += "\nStack: " + stack;
+        body += "\n\nGame: " + window.storeName;
+        if (window.stats && window.stats.scene) {
+          body += "\nScene: " + window.stats.scene.name;
+          body += "\nLine: " + (window.stats.scene.lineNum + 1);
+        }
+        if (file) body += "\nJS File: " + file;
+        if (line) body += "\nJS Line: " + line;
+        if (stack) body += "\nJS Stack: " + stack;
         body += "\nUser Agent: " + navigator.userAgent;
         body += "\nLoad time: " + window.loadTime;
         if (window.Persist) body += "\nPersist: " + window.Persist.type;
@@ -3187,6 +3193,7 @@ window.onerror=function(msg, file, line, stack) {
         if (window.currentVersion) {
           body += "\ncurrentVersion=" + window.currentVersion;
         }
+        if (window.nav && window.nav.bugLog) body += "\n\n" + window.nav.bugLog.join("\n");
         var supportEmailHref = "mailto:support-external@choiceofgames.com";
         try {
           supportEmailHref="mailto:"+getSupportEmail();
