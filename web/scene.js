@@ -274,7 +274,7 @@ Scene.prototype.loadSceneFast = function loadSceneFast(url) {
       startLoading();
       var startedWaiting = new Date().getTime();
 
-      function retryScenes(command) {
+      function retryScenes(event, command) {
         if (!command) command = "retryscenes";
         clearScreen(function() {
           startLoading();
@@ -306,7 +306,7 @@ Scene.prototype.loadSceneFast = function loadSceneFast(url) {
               if (option == retry) {
                 retryScenes();
               } else {
-                retryScenes("requestscenesforce");
+                retryScenes(null, "requestscenesforce");
               }
             });
           }
@@ -341,7 +341,7 @@ Scene.prototype.loadSceneFast = function loadSceneFast(url) {
                 err = "403x";
               }
               main.innerHTML = "<div id='text'><p>Our apologies; there was a " + err + " error while loading game data."+
-              "  Please refresh now; if that doesn't work, please click the Restart button and email "+getSupportEmail()+" with details.</p>"+
+              "  Please refresh now; if that doesn't work, please click the Restart button and email "+getSupportEmail()+" with details, including the error number.</p>"+
               " <p><button class='next' onclick='window.location.reload();'>Refresh Now</button></p></div>";
               curl();
             } else {
@@ -412,11 +412,13 @@ Scene.prototype.loadSceneFast = function loadSceneFast(url) {
           if (window.console) console.error(e, e.stack);
         }
         if (window.isWeb && (xhr.status != 200 || !result)) {
+          doneLoading();
           var status = xhr.status;
           if (status == 200 || !status) status = "network";
-          main.innerHTML = "<p>Our apologies; there was a " + status + " error while loading game data."+
+          main.innerHTML = "<div id='text'><p>Our apologies; there was a " + status + " error while loading game data."+
           "  Please refresh your browser now; if that doesn't work, please click the Restart button and email "+getSupportEmail()+" with details.</p>"+
-          " <p><button onclick='window.location.reload();'>Refresh Now</button></p>";
+          " <p><button onclick='window.location.reload();'>Refresh Now</button></p></div>";
+          curl();
           return;
         } else if (xhr.responseText === "") {
           throw new Error("Couldn't load " + url + "\nThe file is probably missing or empty.");
