@@ -1046,26 +1046,19 @@ function printYoutubeFrame(slug) {
 
 function moreGames() {
     if (window.isIosApp) {
-      window.location.href = "itms-apps://itunes.com/apps/choiceofgames";
+      window.location.href = "https://choiceofgames.app.link/jBm199qZXL/";
     } else if (window.isAndroidApp) {
       if (window.isNookAndroidApp) {
         asyncAlert("Please search the Nook App Store for \"Choice of Games\" for more games like this!");
         return;
       }
       if (window.isAmazonAndroidApp) {
-        var androidLink = document.getElementById('androidLink');
-        if (androidLink && androidLink.href) {
-          androidUrl = androidLink.href;
-          var package = /id=([\.\w]+)/.exec(androidUrl)[1];
-          window.location.href = "http://www.amazon.com/gp/mas/dl/android?p="+package+"&showAll=1&t=choofgam-20&ref=moreGames";
-        } else {
-          window.location.href = "http://www.amazon.com/gp/mas/dl/android?p=com.choiceofgames.dragon&showAll=1&t=choofgam-20&ref=moreGames";
-        }
+        window.location.href = "https://www.amazon.com/gp/mas/dl/android?p=com.choiceofgames.omnibus&t=choofgam-20&ref=moreGames";
       } else {
-        window.location.href = "market://search?q=pub:%22Choice+of+Games+LLC";
+        window.location.href = "https://play.google.com/store/apps/details?id=com.choiceofgames.omnibus&referrer=utm_medium%3Dweb%26utm_source%3Dmoregames";
       }
     } else if (window.isSteamApp) {
-      window.location.href = "https://www.choiceofgames.com/steam-curation.php";
+      window.location.href = "https://store.steampowered.com/curator/7026798-Choice-of-Games/";
     } else {
       try {
         if (window.isChromeApp) {
@@ -1108,16 +1101,9 @@ function printShareLinks(target, now) {
         mobileMesg = "  <li><a href='choiceofgamesnook://"+window.nookEan+"'>Rate this app</a> in the Nook App Store</li>\n";
       }
     } else if (androidLink) {
-      androidUrl = androidLink.href;
+      androidUrl = getAndroidReviewLink();
       if (androidUrl) {
-        if (window.isAmazonAndroidApp) {
-          var package = /id=([\.\w]+)/.exec(androidUrl)[1];
-          androidUrl = "http://www.amazon.com/gp/mas/dl/android?p="+package+"&t=choofgam-20&ref=rate";
-          mobileMesg = "  <li><a href='"+androidUrl+"'>Rate this app</a> in the Amazon Appstore</li>\n";
-        } else {
-          mobileMesg = "  <li><a href='"+androidUrl+"'>Rate this app</a> in the Google Play Store</li>\n";
-        }
-
+        mobileMesg = "  <li><a href='"+androidUrl+"'>Rate this app</a> in the Google Play Store</li>\n";
       }
     }
   } else if (/webOS/.test(navigator.userAgent) && window.isFile) {
@@ -1228,14 +1214,9 @@ function promptForReview() {
       return false;
     });
   } else if (window.isAndroidApp) {
-    href = document.getElementById('androidLink').href;
-    if (window.isNookAndroidApp) {
-      printMessage("the Nook App Store");
-      href = "choiceofgamesnook://"+window.nookEan;
-    } else if (window.isAmazonAndroidApp) {
+    href = getAndroidReviewLink();
+    if (window.isAmazonAndroidApp) {
       printMessage("Amazon's Appstore");
-      var package = /id=([\.\w]+)/.exec(href)[1];
-      href = "http://www.amazon.com/gp/mas/dl/android?p="+package+"&t=choofgam-20&ref=rate";
     } else {
       printMessage("the Google Play Store");
     }
@@ -1244,6 +1225,31 @@ function promptForReview() {
   }
   
   printLink(target, href, anchorText);
+}
+
+function getAndroidReviewLink() {
+  var href = document.getElementById('androidLink').href;
+  var package = /id=([\.\w]+)/.exec(href)[1];
+  // TODO legacy hosted
+  if (window.isOmnibusApp) {
+    var omnibus;
+    if (/^org\.hostedgames/.test(package)) {
+      omnibus = "org.hostedgames.omnibus";
+    } else if (/^com\.heartschoice/.test(package)) {
+      omnibus = "com.heartschoice.o";
+    } else {
+      omnibus = "com.choiceofgames.omnibus";
+    }
+    if (window.isAmazonAndroidApp) {
+      return "http://www.amazon.com/gp/mas/dl/android?p="+omnibus+"&t=choofgam-20&ref=rate"
+    } else {
+      return "https://play.google.com/store/apps/details?id="+omnibus+"&referrer=utm_medium%3Dweb%26utm_source%3D"+window.storeName+"Game";
+    }
+  } else if (window.isAmazonAndroidApp) {
+    return "http://www.amazon.com/gp/mas/dl/android?p="+package+"&t=choofgam-20&ref=rate";
+  } else {
+    return href;
+  }
 }
 
 function isFollowEnabled() {
