@@ -4328,6 +4328,12 @@ Scene.prototype.feedback = function scene_feedback() {
       self.resetPage();
     }
 
+    if (value == "null") {
+      self.finished = false;
+      self.resetPage();
+      return;
+    }
+
     isRegistered(function(registered) {
       if (registered) {
         postFeedback();
