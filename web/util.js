@@ -852,6 +852,7 @@ function restoreGame(state, forcedScene, userRestored) {
 function redirectScene(sceneName, label, originLine) {
   var scene = new Scene(sceneName, window.stats, window.nav, {debugMode:window.debug});
   if (label) scene.targetLabel = {label:label, origin:"choicescript_stats", originLine:originLine};
+  scene.redirectingFromStats = true;
   clearScreen(function() {scene.execute();});
 }
 

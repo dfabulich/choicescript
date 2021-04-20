@@ -1226,18 +1226,11 @@ Scene.prototype.goto_scene = function gotoScene(data) {
 // *redirect_scene foo
 Scene.prototype.redirect_scene = function redirectScene(data) {
   if (this.secondaryMode != "stats") throw new Error(this.lineMsg() + "The *redirect_scene command can only be used from the stats screen.");
-  var args = trim(data).split(/ /);
-  var sceneName, label;
-  if (args.length == 1) {
-    sceneName = data;
-  } else {
-    sceneName = args[0];
-    label = args[1];
-  }
+  var result = this.parseGotoScene(data);
   this.finished = true;
   this.skipFooter = true;
   var self = this;
-  redirectFromStats(sceneName, label, this.lineNum, function() {
+  redirectFromStats(result.sceneName, result.label, this.lineNum, function() {
     delete self.secondaryMode;
     delete self.saveSlot;
     self.redirectingFromStats = true;
