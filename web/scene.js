@@ -4165,20 +4165,19 @@ Scene.prototype.achievement = function scene_achievement(data) {
   var achievementName = parsed[1];
   if (!/^[a-z][a-z0-9_]+$/.test(achievementName)) throw new Error(this.lineMsg()+"Invalid achievement name: " +achievementName);
 
+  if (!this.parsedAnAchievment && Object.keys(this.nav.achievements).length > 0) {
+    // blow away pre-existing mygame.js achievements
+    this.nav.achievements = {};
+    this.nav.achievementList = [];
+    this.achievementTotal = 0;
+    this.seenAchievementTitles = {};
+  }
+
+  this.parsedAnAchievment = true;
+
   if (this.nav.achievements.hasOwnProperty(achievementName)) {
-    // this achievement already exists...
     var preExisting = this.nav.achievements[achievementName];
-    if (!preExisting.lineNumber || preExisting.lineNumber == (this.lineNum+1)) {
-      // restarting/randomtest will naturally re-run *achievements; ignore those
-      // blow away pre-existing mygame.js achievements
-      this.nav.achievements = {};
-      this.nav.achievementList = [];
-      this.achievementTotal = 0;
-      this.seenAchievementTitles = {};
-    } else {
-      // don't allow redefining achievements
-      throw new Error(this.lineMsg()+"Achievement "+achievementName+" already defined on line " + this.nav.achievements[achievementName].lineNumber);
-    }
+    throw new Error(this.lineMsg()+"Achievement "+achievementName+" already defined on line " + this.nav.achievements[achievementName].lineNumber);
   }
 
   var lineNumber = this.lineNum+1;
