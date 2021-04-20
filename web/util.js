@@ -264,7 +264,10 @@ function xhrAuthRequest(method, endpoint, callback) {
     } catch (e) {
       ok = false;
     }
-    if (!ok && !response.error) response.error = "unknown error";
+    if (!ok) {
+      if (!response.error) response.error = "unknown error";
+      response.status = xhr.status;
+    }
     if (callback) safeCall(null, function() {callback(ok, response);});
   };
   xhr.send(params);
@@ -673,7 +676,11 @@ function getAppId() {
 
 function submitReceipts(receipts, callback) {
   console.log("submitReceipts: " + JSON.stringify(receipts));
-  if (!callback) callback = window.transferPurchaseCallback || function() {};
+  if (!callback) callback = function(error) {
+    if (window.transferPurchaseCallback) {
+      window.transferPurchaseCallback(error || "done");
+    }
+  };
   var appId = receipts.appId;
   var count = 0;
   var error;
@@ -681,14 +688,21 @@ function submitReceipts(receipts, callback) {
     return function submitCallback(ok, response) {
       if (!ok) {
         console.log("failed: " + product + " " + JSON.stringify(response));
-        if (!error) callback("error");
+        if (!error) {
+          var match = /^receipt transaction already processed: (\d+) current login (\d+)$/.exec(response.error);
+          if (match) {
+            callback("409-" + match[1] + "-" + match[2]);
+          } else {
+            callback("" + response.status + "r");
+          }
+        }
         error = true;
       }
       if (error) return;
       count--;
       if (!count) {
         if (!receipts.avoidOverrides) cacheKnownPurchases(response);
-        callback("done");
+        callback();
       }
     }
   }
@@ -723,7 +737,7 @@ function submitReceipts(receipts, callback) {
         );
       }
     }
-    if (!count) safeTimeout(function() {callback("done");}, 0);
+    if (!count) safeTimeout(function() {callback();}, 0);
   } else {
     callback("error");
   }
@@ -1097,7 +1111,13 @@ function updateSinglePaidSceneCache(sceneName, callback) {
           if (!receiptsSent) {
             window.receiptRequestCallback = function(receipts) {
               window.receiptRequestCallback = null;
-              submitReceipts(receipts, function() {actualRequest("receiptsSent");});
+              submitReceipts(receipts, function(error) {
+                if (error) {
+                  return callback(error);
+                } else {
+                  actualRequest("receiptsSent");
+                }
+              });
             }
             androidBilling.requestReceipts();
             return;
