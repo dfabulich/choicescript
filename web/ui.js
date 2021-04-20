@@ -1497,10 +1497,7 @@ function cacheKnownPurchases(knownPurchases) {
     if (email) window.store.set("knownPurchases"+email.replace(/[^A-z0-9]/g, "_"), JSON.stringify(window.knownPurchases));
   })
   if (window.isIosApp) {
-    callIos("updateadfree", output.adfree);
-    if (window.isOmnibusApp) {
-      callIos("cachepurchases", knownPurchases);
-    }
+    callIos("cachepurchases", knownPurchases);
   } else if (window.isAndroidApp) {
     if (window.isOmnibusApp) {
       androidBilling.cachePurchases(JSON.stringify(knownPurchases));
@@ -1642,7 +1639,7 @@ function checkPurchase(products, callback) {
 }
 
 function isWebPurchaseSupported() {
-  return window.isSecureWeb && isWebSavePossible() && window.stripeKey;
+  return window.isSecureWeb && isWebSavePossible() && !!window.stripeKey;
 }
 
 function isRestorePurchasesSupported() {
@@ -1693,8 +1690,16 @@ function restorePurchases(product, callback) {
                 doneLoading();
                 if (ok) {
                   cacheKnownPurchases(response);
+                  webRestoreCallback();
+                } else {
+                  if (response.error === "not registered") {
+                    logout();
+                    secondaryRestore("error");
+                  } else {
+                    asyncAlert("There was an error restoring purchases. (Your network connection may be down.) Please try again later.");
+                    callback();
+                  }
                 }
-                webRestoreCallback();
               });
             } else {
               var target = document.getElementById('text');
@@ -1739,8 +1744,30 @@ function restorePurchases(product, callback) {
       printOptions([""], options, function(option) {
         if (option.webRestore) {
           clearScreen(function() {
-            printParagraph("Sign in to Choiceofgames.com to restore purchases.");
-            loginForm(document.getElementById('text'), /*optionality*/1, /*err*/null, webRestoreCallback);
+            isRegistered(function (registered) {
+              if (registered) {
+                startLoading();
+                xhrAuthRequest("GET", "get-purchases", function(ok, response) {
+                  doneLoading();
+                  if (ok) {
+                    cacheKnownPurchases(response);
+                    webRestoreCallback();
+                  } else {
+                    if (response.error === "not registered") {
+                      logout();
+                      printParagraph("Sign in to Choiceofgames.com to restore purchases.");
+                      loginForm(document.getElementById('text'), /*optionality*/1, /*err*/null, webRestoreCallback);
+                    } else {
+                      asyncAlert("There was an error restoring purchases. (Your network connection may be down.) Please try again later.");
+                      callback();
+                    }
+                  }
+                });
+              } else {
+                printParagraph("Sign in to Choiceofgames.com to restore purchases.");
+                loginForm(document.getElementById('text'), /*optionality*/1, /*err*/null, webRestoreCallback);
+              }
+            });
           });
         } else {
           var transferAttempted = false;
@@ -3218,7 +3245,7 @@ window.onload=function() {
           if (window.isIosApp) {
             callIos('close');
           } else {
-            (window.closer.close());
+            setTimeout(function() {window.closer.close()}, 0);
           }
         });
       } else if (map.forcedScene) {
