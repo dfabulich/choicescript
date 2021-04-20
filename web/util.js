@@ -143,11 +143,7 @@ function isDefined(x) {
 }
 
 function jsonStringifyAscii(obj) {
-  var stringified = JSON.stringify(obj, function replacer(key, value) {
-    if (key == "scene") return undefined;
-    return value;
-  });
-  var output = stringified.replace(/(.)/g, function(x) {
+  var output = JSON.stringify(obj).replace(/(.)/g, function(x) {
     var code = x.charCodeAt(0);
     if (code > 127 || code < 32) {
      var outCode = code.toString(16);
