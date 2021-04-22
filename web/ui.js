@@ -1639,7 +1639,7 @@ function checkPurchase(products, callback) {
 }
 
 function isWebPurchaseSupported() {
-  return window.isSecureWeb && isWebSavePossible() && !!window.stripeKey;
+  return isWebSavePossible() && !!window.stripeKey;
 }
 
 function isRestorePurchasesSupported() {
