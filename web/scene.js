@@ -669,7 +669,7 @@ Scene.prototype.checkSum = function checkSum() {
       var self = this;
       safeTimeout(function() {
         clearScreen(function() {
-          loadAndRestoreGame("backup", self.name);
+          loadAndRestoreGame("backup");
         });
       }, 0);
       return false;
