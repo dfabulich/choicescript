@@ -3626,6 +3626,8 @@ Scene.prototype.skipTrueBranch = function skipTrueBranch(inElse) {
           } else if (/^else?if$/.test(command)) {
               this.lineNum = this.lineNum; // code coverage
               this["if"](data);
+          } else if ("comment" == command) {
+              continue;
           } else {
               this.lineNum = this.previousNonBlankLineNum();
               this.rollbackLineCoverage();
