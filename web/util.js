@@ -597,7 +597,9 @@ function getRemoteSaves(email, callback) {
       result = jsonParse(result);
       var remoteSaveList = [];
       for (var i = 0; i < result.length; i++) {
+        if (!result[i]) continue;
         var save = result[i].json;
+        if (!save) continue;
         save.timestamp = result[i].timestamp;
         remoteSaveList.push(save);
       }
