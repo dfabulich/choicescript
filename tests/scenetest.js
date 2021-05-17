@@ -593,6 +593,13 @@ test("errorDrift", function() {
     //TODO drift detection
     //doh.assertError(Error, scene, "execute", null, "drifting");
 })
+test("ignoreCommentsICF", function() {
+    printed = [];
+    var scene = new Scene("test", { implicit_control_flow: true })
+    scene.loadLines("*if false\n  false\n*comment blah\n*elseif true\n  true\n\nend");
+    scene.execute();
+    doh.is("<p>true </p><p>end </p>", printed.join(""), "Wrong printed value");
+})
 
 module("Complex Choice");
 

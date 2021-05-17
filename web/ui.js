@@ -1065,26 +1065,19 @@ function printYoutubeFrame(slug) {
 
 function moreGames() {
     if (window.isIosApp) {
-      window.location.href = "itms-apps://itunes.com/apps/choiceofgames";
+      window.location.href = "https://choiceofgames.app.link/jBm199qZXL/";
     } else if (window.isAndroidApp) {
       if (window.isNookAndroidApp) {
         asyncAlert("Please search the Nook App Store for \"Choice of Games\" for more games like this!");
         return;
       }
       if (window.isAmazonAndroidApp) {
-        var androidLink = document.getElementById('androidLink');
-        if (androidLink && androidLink.href) {
-          androidUrl = androidLink.href;
-          var package = /id=([\.\w]+)/.exec(androidUrl)[1];
-          window.location.href = "http://www.amazon.com/gp/mas/dl/android?p="+package+"&showAll=1&t=choofgam-20&ref=moreGames";
-        } else {
-          window.location.href = "http://www.amazon.com/gp/mas/dl/android?p=com.choiceofgames.dragon&showAll=1&t=choofgam-20&ref=moreGames";
-        }
+        window.location.href = "https://www.amazon.com/gp/mas/dl/android?p=com.choiceofgames.omnibus&t=choofgam-20&ref=moreGames";
       } else {
-        window.location.href = "market://search?q=pub:%22Choice+of+Games+LLC";
+        window.location.href = "https://play.google.com/store/apps/details?id=com.choiceofgames.omnibus&referrer=utm_medium%3Dweb%26utm_source%3Dmoregames";
       }
     } else if (window.isSteamApp) {
-      window.location.href = "https://www.choiceofgames.com/steam-curation.php";
+      window.location.href = "https://store.steampowered.com/curator/7026798-Choice-of-Games/";
     } else {
       try {
         if (window.isChromeApp) {
@@ -1127,16 +1120,9 @@ function printShareLinks(target, now) {
         mobileMesg = "  <li><a href='choiceofgamesnook://"+window.nookEan+"'>Rate this app</a> in the Nook App Store</li>\n";
       }
     } else if (androidLink) {
-      androidUrl = androidLink.href;
+      androidUrl = getAndroidReviewLink();
       if (androidUrl) {
-        if (window.isAmazonAndroidApp) {
-          var package = /id=([\.\w]+)/.exec(androidUrl)[1];
-          androidUrl = "http://www.amazon.com/gp/mas/dl/android?p="+package+"&t=choofgam-20&ref=rate";
-          mobileMesg = "  <li><a href='"+androidUrl+"'>Rate this app</a> in the Amazon Appstore</li>\n";
-        } else {
-          mobileMesg = "  <li><a href='"+androidUrl+"'>Rate this app</a> in the Google Play Store</li>\n";
-        }
-
+        mobileMesg = "  <li><a href='"+androidUrl+"'>Rate this app</a> in the Google Play Store</li>\n";
       }
     }
   } else if (/webOS/.test(navigator.userAgent) && window.isFile) {
@@ -1247,14 +1233,9 @@ function promptForReview() {
       return false;
     });
   } else if (window.isAndroidApp) {
-    href = document.getElementById('androidLink').href;
-    if (window.isNookAndroidApp) {
-      printMessage("the Nook App Store");
-      href = "choiceofgamesnook://"+window.nookEan;
-    } else if (window.isAmazonAndroidApp) {
+    href = getAndroidReviewLink();
+    if (window.isAmazonAndroidApp) {
       printMessage("Amazon's Appstore");
-      var package = /id=([\.\w]+)/.exec(href)[1];
-      href = "http://www.amazon.com/gp/mas/dl/android?p="+package+"&t=choofgam-20&ref=rate";
     } else {
       printMessage("the Google Play Store");
     }
@@ -1263,6 +1244,31 @@ function promptForReview() {
   }
   
   printLink(target, href, anchorText);
+}
+
+function getAndroidReviewLink() {
+  var href = document.getElementById('androidLink').href;
+  var package = /id=([\.\w]+)/.exec(href)[1];
+  // TODO legacy hosted
+  if (window.isOmnibusApp) {
+    var omnibus;
+    if (/^org\.hostedgames/.test(package)) {
+      omnibus = "org.hostedgames.omnibus";
+    } else if (/^com\.heartschoice/.test(package)) {
+      omnibus = "com.heartschoice.o";
+    } else {
+      omnibus = "com.choiceofgames.omnibus";
+    }
+    if (window.isAmazonAndroidApp) {
+      return "http://www.amazon.com/gp/mas/dl/android?p="+omnibus+"&t=choofgam-20&ref=rate"
+    } else {
+      return "https://play.google.com/store/apps/details?id="+omnibus+"&referrer=utm_medium%3Dweb%26utm_source%3D"+window.storeName+"Game";
+    }
+  } else if (window.isAmazonAndroidApp) {
+    return "http://www.amazon.com/gp/mas/dl/android?p="+package+"&t=choofgam-20&ref=rate";
+  } else {
+    return href;
+  }
 }
 
 function isFollowEnabled() {
@@ -1510,10 +1516,7 @@ function cacheKnownPurchases(knownPurchases) {
     if (email) window.store.set("knownPurchases"+email.replace(/[^A-z0-9]/g, "_"), JSON.stringify(window.knownPurchases));
   })
   if (window.isIosApp) {
-    callIos("updateadfree", output.adfree);
-    if (window.isOmnibusApp) {
-      callIos("cachepurchases", knownPurchases);
-    }
+    callIos("cachepurchases", knownPurchases);
   } else if (window.isAndroidApp) {
     if (window.isOmnibusApp) {
       androidBilling.cachePurchases(JSON.stringify(knownPurchases));
@@ -1655,7 +1658,7 @@ function checkPurchase(products, callback) {
 }
 
 function isWebPurchaseSupported() {
-  return window.isSecureWeb && isWebSavePossible() && window.stripeKey;
+  return isWebSavePossible() && !!window.stripeKey;
 }
 
 function isRestorePurchasesSupported() {
@@ -1706,8 +1709,16 @@ function restorePurchases(product, callback) {
                 doneLoading();
                 if (ok) {
                   cacheKnownPurchases(response);
+                  webRestoreCallback();
+                } else {
+                  if (response.error === "not registered") {
+                    logout();
+                    secondaryRestore("error");
+                  } else {
+                    asyncAlert("There was an error restoring purchases. (Your network connection may be down.) Please try again later.");
+                    callback();
+                  }
                 }
-                webRestoreCallback();
               });
             } else {
               var target = document.getElementById('text');
@@ -1752,8 +1763,30 @@ function restorePurchases(product, callback) {
       printOptions([""], options, function(option) {
         if (option.webRestore) {
           clearScreen(function() {
-            printParagraph("Sign in to Choiceofgames.com to restore purchases.");
-            loginForm(document.getElementById('text'), /*optionality*/1, /*err*/null, webRestoreCallback);
+            isRegistered(function (registered) {
+              if (registered) {
+                startLoading();
+                xhrAuthRequest("GET", "get-purchases", function(ok, response) {
+                  doneLoading();
+                  if (ok) {
+                    cacheKnownPurchases(response);
+                    webRestoreCallback();
+                  } else {
+                    if (response.error === "not registered") {
+                      logout();
+                      printParagraph("Sign in to Choiceofgames.com to restore purchases.");
+                      loginForm(document.getElementById('text'), /*optionality*/1, /*err*/null, webRestoreCallback);
+                    } else {
+                      asyncAlert("There was an error restoring purchases. (Your network connection may be down.) Please try again later.");
+                      callback();
+                    }
+                  }
+                });
+              } else {
+                printParagraph("Sign in to Choiceofgames.com to restore purchases.");
+                loginForm(document.getElementById('text'), /*optionality*/1, /*err*/null, webRestoreCallback);
+              }
+            });
           });
         } else {
           var transferAttempted = false;
@@ -3027,7 +3060,8 @@ function reportBug() {
   alertify.prompt(prompt, function(ok, body) {
     var statMsg = "(unknown)";
     try {
-        statMsg = toJson(window.stats, '\n');
+        var scene = window.stats.scene;
+        statMsg = computeCookie(scene.stats, scene.temps, scene.lineNum, scene.indent);
     } catch (ex) {}
     body += "\n\nGame: " + window.storeName;
     if (window.stats && window.stats.scene) {
@@ -3159,13 +3193,18 @@ window.onerror=function(msg, file, line, stack) {
     if (ok) {
         var statMsg = "(unknown)";
         try {
-            statMsg = toJson(window.stats, '\n');
+          var scene = window.stats.scene;
+          statMsg = computeCookie(scene.stats, scene.temps, scene.lineNum, scene.indent);
         } catch (ex) {}
         var body = "What were you doing when the error occured?\n\nError: " + msg;
-        if (window.stats && window.stats.scene && window.stats.scene.name) body += "\nScene: " + window.stats.scene.name;
-        if (file) body += "\nFile: " + file;
-        if (line) body += "\nLine: " + line;
-        if (stack) body += "\nStack: " + stack;
+        body += "\n\nGame: " + window.storeName;
+        if (window.stats && window.stats.scene) {
+          body += "\nScene: " + window.stats.scene.name;
+          body += "\nLine: " + (window.stats.scene.lineNum + 1);
+        }
+        if (file) body += "\nJS File: " + file;
+        if (line) body += "\nJS Line: " + line;
+        if (stack) body += "\nJS Stack: " + stack;
         body += "\nUser Agent: " + navigator.userAgent;
         body += "\nLoad time: " + window.loadTime;
         if (window.Persist) body += "\nPersist: " + window.Persist.type;
@@ -3173,6 +3212,7 @@ window.onerror=function(msg, file, line, stack) {
         if (window.currentVersion) {
           body += "\ncurrentVersion=" + window.currentVersion;
         }
+        if (window.nav && window.nav.bugLog) body += "\n\n" + window.nav.bugLog.join("\n");
         var supportEmailHref = "mailto:support-external@choiceofgames.com";
         try {
           supportEmailHref="mailto:"+getSupportEmail();
@@ -3231,7 +3271,7 @@ window.onload=function() {
           if (window.isIosApp) {
             callIos('close');
           } else {
-            (window.closer.close());
+            setTimeout(function() {window.closer.close()}, 0);
           }
         });
       } else if (map.forcedScene) {

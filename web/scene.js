@@ -274,7 +274,7 @@ Scene.prototype.loadSceneFast = function loadSceneFast(url) {
       startLoading();
       var startedWaiting = new Date().getTime();
 
-      function retryScenes(command) {
+      function retryScenes(event, command) {
         if (!command) command = "retryscenes";
         clearScreen(function() {
           startLoading();
@@ -306,7 +306,7 @@ Scene.prototype.loadSceneFast = function loadSceneFast(url) {
               if (option == retry) {
                 retryScenes();
               } else {
-                retryScenes("requestscenesforce");
+                retryScenes(null, "requestscenesforce");
               }
             });
           }
@@ -341,7 +341,7 @@ Scene.prototype.loadSceneFast = function loadSceneFast(url) {
                 err = "403x";
               }
               main.innerHTML = "<div id='text'><p>Our apologies; there was a " + err + " error while loading game data."+
-              "  Please refresh now; if that doesn't work, please click the Restart button and email "+getSupportEmail()+" with details.</p>"+
+              "  Please refresh now; if that doesn't work, please click the Restart button and email "+getSupportEmail()+" with details, including the error number.</p>"+
               " <p><button class='next' onclick='window.location.reload();'>Refresh Now</button></p></div>";
               curl();
             } else {
@@ -412,11 +412,13 @@ Scene.prototype.loadSceneFast = function loadSceneFast(url) {
           if (window.console) console.error(e, e.stack);
         }
         if (window.isWeb && (xhr.status != 200 || !result)) {
+          doneLoading();
           var status = xhr.status;
           if (status == 200 || !status) status = "network";
-          main.innerHTML = "<p>Our apologies; there was a " + status + " error while loading game data."+
+          main.innerHTML = "<div id='text'><p>Our apologies; there was a " + status + " error while loading game data."+
           "  Please refresh your browser now; if that doesn't work, please click the Restart button and email "+getSupportEmail()+" with details.</p>"+
-          " <p><button onclick='window.location.reload();'>Refresh Now</button></p>";
+          " <p><button onclick='window.location.reload();'>Refresh Now</button></p></div>";
+          curl();
           return;
         } else if (xhr.responseText === "") {
           throw new Error("Couldn't load " + url + "\nThe file is probably missing or empty.");
@@ -667,7 +669,7 @@ Scene.prototype.checkSum = function checkSum() {
       var self = this;
       safeTimeout(function() {
         clearScreen(function() {
-          loadAndRestoreGame("backup", self.name);
+          loadAndRestoreGame("backup");
         });
       }, 0);
       return false;
@@ -1144,7 +1146,7 @@ Scene.prototype.finish = function finish(buttonName) {
         });
       }
     );
-    if (this.debugMode) println(toJson(this.stats));
+    if (this.debugMode) println(computeCookie(this.stats, this.temps, this.lineNum, this.indent));
 };
 
 Scene.prototype.autofinish = function autofinish(buttonName) {
@@ -1224,18 +1226,11 @@ Scene.prototype.goto_scene = function gotoScene(data) {
 // *redirect_scene foo
 Scene.prototype.redirect_scene = function redirectScene(data) {
   if (this.secondaryMode != "stats") throw new Error(this.lineMsg() + "The *redirect_scene command can only be used from the stats screen.");
-  var args = trim(data).split(/ /);
-  var sceneName, label;
-  if (args.length == 1) {
-    sceneName = data;
-  } else {
-    sceneName = args[0];
-    label = args[1];
-  }
+  var result = this.parseGotoScene(data);
   this.finished = true;
   this.skipFooter = true;
   var self = this;
-  redirectFromStats(sceneName, label, this.lineNum, function() {
+  redirectFromStats(result.sceneName, result.label, this.lineNum, function() {
     delete self.secondaryMode;
     delete self.saveSlot;
     self.redirectingFromStats = true;
@@ -1915,7 +1910,7 @@ Scene.prototype.renderOptions = function renderOptions(groups, options, callback
     this.paragraph();
     printOptions(groups, options, callback);
 
-    if (this.debugMode) println(toJson(this.stats));
+    if (this.debugMode) println(computeCookie(this.stats, this.temps, this.lineNum, this.indent));
 
     if (this.finished) printFooter();
 };
@@ -1936,7 +1931,7 @@ Scene.prototype.page_break = function page_break(buttonName) {
         self.resetPage();
       }
     );
-    if (this.debugMode) println(toJson(this.stats));
+    if (this.debugMode) println(computeCookie(this.stats, this.temps, this.lineNum, this.indent));
 };
 
 // *line_break
@@ -2173,7 +2168,7 @@ Scene.prototype.input_text = function input_text(line) {
         self.resetPage();
       });
     });
-    if (this.debugMode) println(toJson(this.stats));
+    if (this.debugMode) println(computeCookie(this.stats, this.temps, this.lineNum, this.indent));
 };
 
 // *input_number var min max
@@ -2246,7 +2241,7 @@ Scene.prototype.input_number = function input_number(data) {
         self.resetPage();
       });
     }, minimum, maximum, intRequired);
-    if (this.debugMode) println(toJson(this.stats));
+    if (this.debugMode) println(computeCookie(this.stats, this.temps, this.lineNum, this.indent));
 };
 
 // *script code
@@ -3645,6 +3640,8 @@ Scene.prototype.skipTrueBranch = function skipTrueBranch(inElse) {
           } else if (/^else?if$/.test(command)) {
               this.lineNum = this.lineNum; // code coverage
               this["if"](data);
+          } else if ("comment" == command) {
+              continue;
           } else {
               this.lineNum = this.previousNonBlankLineNum();
               this.rollbackLineCoverage();
@@ -4184,20 +4181,19 @@ Scene.prototype.achievement = function scene_achievement(data) {
   var achievementName = parsed[1];
   if (!/^[a-z][a-z0-9_]+$/.test(achievementName)) throw new Error(this.lineMsg()+"Invalid achievement name: " +achievementName);
 
+  if (!this.parsedAnAchievment && Object.keys(this.nav.achievements).length > 0) {
+    // blow away pre-existing mygame.js achievements
+    this.nav.achievements = {};
+    this.nav.achievementList = [];
+    this.achievementTotal = 0;
+    this.seenAchievementTitles = {};
+  }
+
+  this.parsedAnAchievment = true;
+
   if (this.nav.achievements.hasOwnProperty(achievementName)) {
-    // this achievement already exists...
     var preExisting = this.nav.achievements[achievementName];
-    if (!preExisting.lineNumber || preExisting.lineNumber == (this.lineNum+1)) {
-      // restarting/randomtest will naturally re-run *achievements; ignore those
-      // blow away pre-existing mygame.js achievements
-      this.nav.achievements = {};
-      this.nav.achievementList = [];
-      this.achievementTotal = 0;
-      this.seenAchievementTitles = {};
-    } else {
-      // don't allow redefining achievements
-      throw new Error(this.lineMsg()+"Achievement "+achievementName+" already defined on line " + this.nav.achievements[achievementName].lineNumber);
-    }
+    throw new Error(this.lineMsg()+"Achievement "+achievementName+" already defined on line " + this.nav.achievements[achievementName].lineNumber);
   }
 
   var lineNumber = this.lineNum+1;
@@ -4346,6 +4342,12 @@ Scene.prototype.feedback = function scene_feedback() {
       }
       self.finished = false;
       self.resetPage();
+    }
+
+    if (value == "null") {
+      self.finished = false;
+      self.resetPage();
+      return;
     }
 
     isRegistered(function(registered) {

@@ -143,11 +143,7 @@ function isDefined(x) {
 }
 
 function jsonStringifyAscii(obj) {
-  var stringified = JSON.stringify(obj, function replacer(key, value) {
-    if (key == "scene") return undefined;
-    return value;
-  });
-  var output = stringified.replace(/(.)/g, function(x) {
+  var output = JSON.stringify(obj).replace(/(.)/g, function(x) {
     var code = x.charCodeAt(0);
     if (code > 127 || code < 32) {
      var outCode = code.toString(16);
@@ -264,7 +260,10 @@ function xhrAuthRequest(method, endpoint, callback) {
     } catch (e) {
       ok = false;
     }
-    if (!ok && !response.error) response.error = "unknown error";
+    if (!ok) {
+      if (!response.error) response.error = "unknown error";
+      response.status = xhr.status;
+    }
     if (callback) safeCall(null, function() {callback(ok, response);});
   };
   xhr.send(params);
@@ -598,7 +597,9 @@ function getRemoteSaves(email, callback) {
       result = jsonParse(result);
       var remoteSaveList = [];
       for (var i = 0; i < result.length; i++) {
+        if (!result[i]) continue;
         var save = result[i].json;
+        if (!save) continue;
         save.timestamp = result[i].timestamp;
         remoteSaveList.push(save);
       }
@@ -673,7 +674,11 @@ function getAppId() {
 
 function submitReceipts(receipts, callback) {
   console.log("submitReceipts: " + JSON.stringify(receipts));
-  if (!callback) callback = window.transferPurchaseCallback || function() {};
+  if (!callback) callback = function(error) {
+    if (window.transferPurchaseCallback) {
+      window.transferPurchaseCallback(error || "done");
+    }
+  };
   var appId = receipts.appId;
   var count = 0;
   var error;
@@ -681,14 +686,21 @@ function submitReceipts(receipts, callback) {
     return function submitCallback(ok, response) {
       if (!ok) {
         console.log("failed: " + product + " " + JSON.stringify(response));
-        if (!error) callback("error");
+        if (!error) {
+          var match = /^receipt transaction already processed: (\d+) current login (\d+)$/.exec(response.error);
+          if (match) {
+            callback("409-" + match[1] + "-" + match[2]);
+          } else {
+            callback("" + response.status + "r");
+          }
+        }
         error = true;
       }
       if (error) return;
       count--;
       if (!count) {
         if (!receipts.avoidOverrides) cacheKnownPurchases(response);
-        callback("done");
+        callback();
       }
     }
   }
@@ -723,7 +735,7 @@ function submitReceipts(receipts, callback) {
         );
       }
     }
-    if (!count) safeTimeout(function() {callback("done");}, 0);
+    if (!count) safeTimeout(function() {callback();}, 0);
   } else {
     callback("error");
   }
@@ -852,6 +864,7 @@ function restoreGame(state, forcedScene, userRestored) {
 function redirectScene(sceneName, label, originLine) {
   var scene = new Scene(sceneName, window.stats, window.nav, {debugMode:window.debug});
   if (label) scene.targetLabel = {label:label, origin:"choicescript_stats", originLine:originLine};
+  scene.redirectingFromStats = true;
   clearScreen(function() {scene.execute();});
 }
 
@@ -1096,7 +1109,13 @@ function updateSinglePaidSceneCache(sceneName, callback) {
           if (!receiptsSent) {
             window.receiptRequestCallback = function(receipts) {
               window.receiptRequestCallback = null;
-              submitReceipts(receipts, function() {actualRequest("receiptsSent");});
+              submitReceipts(receipts, function(error) {
+                if (error) {
+                  return callback(error);
+                } else {
+                  actualRequest("receiptsSent");
+                }
+              });
             }
             androidBilling.requestReceipts();
             return;
