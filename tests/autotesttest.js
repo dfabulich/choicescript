@@ -4,7 +4,7 @@ nav = {
 
 function autotestScene(text, expectedCoverage, expectedUncovered) {
   stats = {};
-  var result = autotester(text);
+  var result = autotester(text, undefined, 'startup');
   deepEqual(result[0], expectedCoverage, "coverage");
   var uncovered = result[1];
   deepEqual(uncovered, expectedUncovered, "uncovered");
@@ -194,6 +194,20 @@ test("repeatedGosub", function() {
   ;
   autotestScene(scene,  [1,1,2,1,1,1,1,1,1,0]);
 })
+test("purchase", function() {
+  var scene = ""
+    +"\n*product foo"
+    +"\n*check_purchase foo"
+    +"\n*if choice_purchased_foo"
+    +"\n  *goto bought"
+    +"\nBuy it!"
+    +"\n*purchase foo $0.99 bought"
+    +"\n*delay_break 5"
+    +"\n*label bought"
+    +"\nDone"
+  ;
+  autotestScene(scene,  [1,1,1,1,1,1,1,1,2,1,0]);
+})
 test("repeatedStatChart", function() {
   var scene = ""
     +"\n*temp x"
@@ -242,6 +256,5 @@ test("ifInChoiceMistakenForRealIf", function() {
     +"\n    Two"
     +"\n    *finish"
   ;
-  debugger;
   raises(function() {autotester(scene)}, null, "Fall out of *choice statement");
 })
