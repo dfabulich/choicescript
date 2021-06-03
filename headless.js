@@ -127,4 +127,15 @@ function slurpFileLines(name, throwOnError) {
     }
 }
 
+function slurpImage(name) {
+    var blob = fs.readFileSync(name);
+    var dataType;
+    if (/\.jpe?g$/i.test(name)) {
+        dataType = 'image/jpeg';
+    } else if (/\.png/i.test(name)) {
+        dataType = 'image/png';
+    }
+    return `data:${dataType};base64,${Buffer.from(blob).toString('base64')}`;
+}
+
 function initStore() { return false; }
