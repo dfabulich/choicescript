@@ -1500,6 +1500,52 @@ Scene.prototype.create = function create(line) {
     this.created[variable] = this.lineNum + 1;
     this.stats[variable] = value;
     if (this.nav) this.nav.startingStats[variable] = value;
+}
+
+// *create_array {name} {length} {value(s)}
+// create an "array" of permanent stats:
+//    myarray_1
+//    myarray_2
+//    ...
+//    myarray_count
+Scene.prototype.create_array = function create(line) {
+  var result = /^(\w+)(.*)/.exec(line);
+  if (!result) throw new Error(this.lineMsg()+"Invalid create_array instruction, no array name specified: " + line);
+  var variable = result[1];
+  this.validateVariable(variable);
+  variable = variable.toLowerCase();
+  var stack = this.tokenizeExpr(result[2]);
+  var length = stack.shift();
+
+  // Validate stack tokens ahead of time so we can use evaluateValueToken in processArrayValues (without risk of complex values)
+  var self = this;
+  function complexError(token) {
+    throw new Error(self.lineMsg()+"Invalid create_array value, values must be a number, true/false, or a quoted string, not: " + token.name);
+  }
+  for (var i = 0; i < stack.length; i++) {
+    if (!/STRING|NUMBER|VAR/.test(stack[i].name)) complexError(stack[i]);
+    if ("VAR" == stack[i].name && !/^true|false$/i.test(stack[i].value)) complexError(stack[i]);
+    if ("STRING" == stack[i].name && /(\$|@)!?!?{/.test(stack[i].value)) throw new Error(this.lineMsg() + "Invalid create_array value, it must be a simple string without ${} or @{}: " + line);
+  }
+
+  if (typeof length === "undefined" || length.name != "NUMBER" || length.value <= 1) throw new Error(this.lineMsg()+"Invalid " + "create_array instruction, length should be a number greater than 1: " + line);
+  var values = this.processArrayValues(true /* isCreate */, variable, length.value, stack, line);
+
+  function createArrayVariable(name, value) {
+    if (!self.created) self.created = {};
+    if (self.created[name]) throw new Error(self.lineMsg() + "Invalid create_array element '" + name + "'. " + name + " was previously created on line " + self.created[variable]);
+    self.created[name] = self.lineNum + 1;
+    self.stats[name] = value;
+    if (self.nav) self.nav.startingStats[name] = value;
+  }
+
+  var valueIndex = 0;
+  while (values.length) {
+    createArrayVariable(variable + ("_" + (++valueIndex)), values.shift());
+  }
+
+  // also create a convenience attribute {arrayname}_count with the length of the array
+  createArrayVariable(variable + ("_count"), length.value);
 };
 
 // *temp
@@ -1521,6 +1567,77 @@ Scene.prototype.temp = function temp(line) {
     }
     this.temps[variable.toLowerCase()] = value;
 };
+
+// *temp_array
+// create an "array" of temporary stats for the current scene
+Scene.prototype.temp_array = function create(line) {
+  var result = /^(\w+)(.*)/.exec(line);
+  if (!result) throw new Error(this.lineMsg()+"Invalid temp_array instruction, no array name specified: " + line);
+  var variable = result[1];
+  this.validateVariable(variable);
+  var stack = this.tokenizeExpr(result[2]);
+  var length = stack.shift();
+  if (typeof length === "undefined" || length.name != "NUMBER" || length.value <= 1) throw new Error(this.lineMsg()+"Invalid " + "temp_array instruction, length should be a number greater than 1: " + line);
+  var values = this.processArrayValues(false /* isCreate */, variable, length.value, stack, line);
+
+  var self = this;
+  function tempArrayVariable(name, value) {
+    if (typeof self.stats[name.toLowerCase()] !== 'undefined') {
+      self.warning("This is a temp_array, but there is already a *create(d) array: " + variable);
+    }
+    self.temps[name.toLowerCase()] = value;
+  }
+
+  var valueIndex = 0;
+  while (values.length) {
+    tempArrayVariable(variable + ("_" + (++valueIndex)), values.shift());
+  }
+
+  // also create a convenience attribute {arrayname}_count with the length of the array
+  tempArrayVariable(variable + ("_count"), length.value);
+};
+
+// processArrayValues
+// Takes a stack of tokens representing the "values" to be stored in the array,
+// evaluates them, validates the resulting values and returns them.
+// - isCreate: true if called from create_array (else temp_array)
+// - arrName: array prefix (e.g. "my_arr" of "my_arr_1")
+// - length: the specified length of the array
+// - stack: the remaining tokens representing the array value(s)
+Scene.prototype.processArrayValues = function processArrayValues(isCreate, arrName, length, stack, line) {
+  var values = [];
+  var type = isCreate ? "create" : "temp";
+
+  // Temp declarations support expressions, which we have to parse now in order to get the number of values.
+  // Because we've validated the stack contents ahead of time we can do the same for create(d) arrays too.
+  while (stack.length) {
+    values.push(this.evaluateValueToken(stack.shift(), stack));
+  }
+
+  // Array declarations support three formats:
+  //   (default value)        *create_array 3 ""
+  //   (explicit values)      *create_array 3 "a" "b" "c"
+  //   (no value, temps only) *temp_array 3
+  switch(values.length) {
+    case 0: // only temps are allowed to be declared without a value
+      if (isCreate) {
+        throw new Error(this.lineMsg()+"Invalid " + type + "_array instruction, no value(s) specified: " + line);
+      } else {
+        for (var i = 0; i < length; i++) values.push(null);
+      }
+      break;
+    case 1: // set all elements to a single default value
+      var defaultValue = values[0];
+      values = [];
+      for (var i = 0; i < length; i++) values.push(defaultValue);
+      break;
+    case parseInt(length): // explicit values were specified for each element
+      break;
+    default:
+      throw new Error(this.lineMsg() + "Expected 1 default value or " + length + " explicit values for " + type + "_array " +  arrName + ", not " + values.length + ": " + line);
+  }
+  return values;
+}
 
 // retrieve the value of the variable, preferring temp scope
 Scene.prototype.getVar = function getVar(variable) {
@@ -1605,6 +1722,26 @@ Scene.prototype["delete"] = function scene_delete(variable) {
     } else {
         delete this.temps[variable];
     }
+};
+
+Scene.prototype["delete_array"] = function scene_delete_array(arrayName) {
+  arrayName = arrayName.toLowerCase();
+  if ("undefined" === typeof this.temps[arrayName + "_count"]) {
+      if ("undefined" === typeof this.stats[arrayName + "_count"]) {
+          throw new Error(this.lineMsg() + "Non-existent array '"+arrayName+"'");
+      }
+      var length = this.stats[arrayName + "_count"];
+      delete this.stats[arrayName + "_count"];
+      for (var i = 1; i <= length; i++) {
+        delete this.stats[arrayName + ("_" + i)];
+      }
+  } else {
+      var length = this.temps[arrayName + "_count"];
+      delete this.temps[arrayName + "_count"];
+      for (var i = 1; i <= length; i++) {
+        delete this.temps[arrayName + ("_" + i)];
+      }
+  }
 };
 
 // during a choice, recursively parse the options
@@ -4514,10 +4651,10 @@ Scene.operators = {
     "modulo": function modulo(v1,v2,line) { return num(v1,line) % num(v2,line); },
 };
 
-Scene.initialCommands = {"create":1,"scene_list":1,"title":1,"author":1,"comment":1,"achievement":1,"product":1};
+Scene.initialCommands = {"create":1,"create_array":1,"scene_list":1,"title":1,"author":1,"comment":1,"achievement":1,"product":1};
 
 Scene.validCommands = {"comment":1, "goto":1, "gotoref":1, "label":1, "looplimit":1, "finish":1, "abort":1,
-    "choice":1, "create":1, "temp":1, "delete":1, "set":1, "setref":1, "print":1, "if":1, "rand":1,
+    "choice":1, "create":1, "create_array": 1, "temp":1, "temp_array": 1, "delete":1, "delete_array":1, "set":1, "setref":1, "print":1, "if":1, "rand":1,
     "page_break":1, "line_break":1, "script":1, "else":1, "elseif":1, "elsif":1, "reset":1,
     "goto_scene":1, "fake_choice":1, "input_text":1, "ending":1, "share_this_game":1, "stat_chart":1,
     "subscribe":1, "show_password":1, "gosub":1, "return":1, "hide_reuse":1, "disable_reuse":1, "allow_reuse":1,
