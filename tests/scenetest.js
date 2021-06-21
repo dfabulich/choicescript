@@ -1357,6 +1357,120 @@ test("or", function() {
     doh.is(true, value, true);
 })
 
+
+module("Operators with Mis-Matched Datatypes")
+
+
+test("add a string", function() {
+    raises(function() {Scene.operators["+"]("1", "\"2\"", 17, {"name":"startup"})}, /startup line 17:/, "Invalid data type");
+})
+test("add to a string", function() {
+    raises(function() {Scene.operators["+"]("\"1\"", "2", 17, {"name":"startup"})}, /startup line 17:/, "Invalid data type");
+})
+test("subtract a string", function() {
+    raises(function() {Scene.operators["-"]("1", "\"2\"", 17, {"name":"startup"})}, /startup line 17:/, "Invalid data type");
+})
+test("subtract from a string", function() {
+    raises(function() {Scene.operators["-"]("\"1\"", "2", 17, {"name":"startup"})}, /startup line 17:/, "Invalid data type");
+})
+test("multiply by a string", function() {
+    raises(function() {Scene.operators["*"]("1", "\"2\"", 17, {"name":"startup"})}, /startup line 17:/, "Invalid data type");
+})
+test("multiply a string", function() {
+    raises(function() {Scene.operators["*"]("\"1\"", "2", 17, {"name":"startup"})}, /startup line 17:/, "Invalid data type");
+})
+test("divide by a string", function() {
+    raises(function() {Scene.operators["/"]("1", "\"2\"", 17, {"name":"startup"})}, /startup line 17:/, "Invalid data type");
+})
+test("divide a string", function() {
+    raises(function() {Scene.operators["/"]("\"1\"", "2", 17, {"name":"startup"})}, /startup line 17:/, "Invalid data type");
+})
+test("modulo by a string", function() {
+    raises(function() {Scene.operators["modulo"]("1", "\"2\"", 17, {"name":"startup"})}, /startup line 17:/, "Invalid data type");
+})
+test("modulo a string", function() {
+    raises(function() {Scene.operators["modulo"]("\"1\"", "2", 17, {"name":"startup"})}, /startup line 17:/, "Invalid data type");
+})
+test("exponent by a string", function() {
+    raises(function() {Scene.operators["^"]("1", "\"2\"", 17, {"name":"startup"})}, /startup line 17:/, "Invalid data type");
+})
+test("exponent a string", function() {
+    raises(function() {Scene.operators["^"]("\"1\"", "2", 17, {"name":"startup"})}, /startup line 17:/, "Invalid data type");
+})
+test("fairPlue by a string", function() {
+    var scene = new Scene();
+    scene.name = "startup";
+    scene.lineNum = 18;
+    raises(function() {Scene.operators["%+"]("1", "\"2\"", 17, scene)}, /startup line 17: /, "Invalid data type");
+})
+test("fairPlus a string", function() {
+    var scene = new Scene();
+    scene.name = "startup";
+    scene.lineNum = 18;
+    raises(function() {Scene.operators["%+"]("\"1\"", "2", 17, scene)}, /startup line 17:/, "Invalid data type");
+})
+test("fairPlus to a non-percentile", function() {
+    var scene = new Scene();
+    scene.name = "startup";
+    scene.lineNum = 18;
+    raises(function() {Scene.operators["%+"]("103", "2", 17, scene)}, /startup line 19: Can't fairAdd to non-percentile/, "Not a percent value");
+})
+test("fairMinus by a string", function() {
+    var scene = new Scene();
+    scene.name = "startup";
+    scene.lineNum = 18;
+    raises(function() {Scene.operators["%-"]("1", "\"2\"", 17, scene)}, /startup line 17: /, "Invalid data type");
+})
+test("fairMinus a string", function() {
+    var scene = new Scene();
+    scene.name = "startup";
+    scene.lineNum = 18;
+    raises(function() {Scene.operators["%-"]("\"1\"", "2", 17, scene)}, /startup line 17:/, "Invalid data type");
+})
+test("fairMinus to a non-percentile", function() {
+    var scene = new Scene();
+    scene.name = "startup";
+    scene.lineNum = 18;
+    raises(function() {Scene.operators["%-"]("103", "2", 17, scene)}, /startup line 19: Can't fairAdd to non-percentile/, "Not a percent value");
+})
+test("lessThan a string", function() {
+    raises(function() {Scene.operators["<"]("1", "\"2\"", 17, {"name":"startup"})}, /startup line 17:/, "Invalid data type");
+})
+test("a string is lessThan", function() {
+    raises(function() {Scene.operators["<"]("\"1\"", "2", 17, {"name":"startup"})}, /startup line 17:/, "Invalid data type");
+})
+test("lessThanOrEquals a string", function() {
+    raises(function() {Scene.operators["<="]("1", "\"2\"", 17, {"name":"startup"})}, /startup line 17:/, "Invalid data type");
+})
+test("a string is lessThanOrEquals", function() {
+    raises(function() {Scene.operators["<="]("\"1\"", "2", 17, {"name":"startup"})}, /startup line 17:/, "Invalid data type");
+})
+test("greaterThan a string", function() {
+    raises(function() {Scene.operators[">"]("1", "\"2\"", 17, {"name":"startup"})}, /startup line 17:/, "Invalid data type");
+})
+test("a string is greaterThan", function() {
+    raises(function() {Scene.operators[">"]("\"1\"", "2", 17, {"name":"startup"})}, /startup line 17:/, "Invalid data type");
+})
+test("greaterThanOrEquals a string", function() {
+    raises(function() {Scene.operators[">="]("1", "\"2\"", 17, {"name":"startup"})}, /startup line 17:/, "Invalid data type");
+})
+test("a string is greaterThanOrEquals", function() {
+    raises(function() {Scene.operators[">="]("\"1\"", "2", 17, {"name":"startup"})}, /startup line 17:/, "Invalid data type");
+})
+test("and a string", function() {
+    raises(function() {Scene.operators["and"]("true", "\"2\"", 17, {"name":"startup"})}, /startup line 17:/, "Invalid data type");
+})
+test("a string and", function() {
+    raises(function() {Scene.operators["and"]("\"1\"", "true", 17, {"name":"startup"})}, /startup line 17:/, "Invalid data type");
+})
+test("or a string", function() {
+    raises(function() {Scene.operators["or"]("false", "\"2\"", 17, {"name":"startup"})}, /startup line 17:/, "Invalid data type");
+})
+test("a string or", function() {
+    raises(function() {Scene.operators["or"]("\"1\"", "false", 17, {"name":"startup"})}, /startup line 17:/, "Invalid data type");
+})
+
+
 module("Functions");
 
 test("not", function() {

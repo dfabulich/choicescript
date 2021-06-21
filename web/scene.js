@@ -4575,7 +4575,7 @@ Scene.tokens = [
             }
             let errMessage = "line " + line + ": ";
             if (sceneObj) {
-              errMessage = sceneObj.lineMessage();
+              errMessage = sceneObj.lineMsg();
             }
             throw new Error(errMessage+"Invalid string, open quote with no close quote: " + str);
         }
@@ -4608,7 +4608,7 @@ Scene.operators = {
       let errMessage = "line " + line + ": ";
       if (sceneObj) {
         name = sceneObj.name;
-        errMessage = sceneObj.lineMessage();
+        errMessage = sceneObj.lineMsg();
       }
       var i = num(v2,line,name);
       if (i < 1) {
@@ -4624,7 +4624,7 @@ Scene.operators = {
         let errMessage = "line " + line + ": ";
         if (sceneObj) {
           name = sceneObj.name;
-          errMessage = sceneObj.lineMessage();
+          errMessage = sceneObj.lineMsg();
         }
         v1 = num(v1,line,name);
         v2 = num(v2,line,name);
