@@ -415,10 +415,14 @@ function autotester(sceneText, nav, sceneName, extraLabels) {
     this.parseStatChart();
   }
 
-  Scene.operators["/"] = function divide(v1,v2,line) {
-    v2 = num(v2, line);
+  Scene.operators["/"] = function divide(v1,v2,line,sceneObj) {
+    let name = null;
+    if (sceneObj) {
+      name = sceneObj.name;
+    }
+    v2 = num(v2, line, name);
     if (v2 === 0) return 9007199254740991; //Number.MAX_SAFE_INTEGER
-    return num(v1,line) / num(v2,line);
+    return num(v1,line,name) / num(v2,line,name);
   };
   
   //Scene.prototype.choice = function() { this.finished = true;}

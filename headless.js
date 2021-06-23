@@ -105,7 +105,7 @@ function slurpFileLines(name, throwOnError) {
             if (i === 0 && line.charCodeAt(0) == 65279) line = line.substring(1);
             if (throwOnError) {
                 invalidCharacter = line.match(/^(.*)\ufffd/);
-                if (invalidCharacter) throw new Error("line " + (i+1) + ": invalid character. (ChoiceScript text should be saved in the UTF-8 encoding.)\n" + invalidCharacter[0]);
+                if (invalidCharacter) throw new Error(name+" line " + (i+1) + ": invalid character. (ChoiceScript text should be saved in the UTF-8 encoding.)\n" + invalidCharacter[0]);
             }
             lines.push(line);
         }
@@ -120,7 +120,7 @@ function slurpFileLines(name, throwOnError) {
             for (i = 0; i < lines.length; i++) {
                 line = lines[i];
                 invalidCharacter = line.match(/^(.*)\ufffd/);
-                if (invalidCharacter) throw new Error("line " + (i+1) + ": invalid character. (ChoiceScript text should be saved in the UTF-8 encoding.)\n" + invalidCharacter[0]);
+                if (invalidCharacter) throw new Error(name+" line " + (i+1) + ": invalid character. (ChoiceScript text should be saved in the UTF-8 encoding.)\n" + invalidCharacter[0]);
             }
         }
         return lines;
