@@ -926,15 +926,17 @@ function findOptimalDomain(docDomain) {
     return null;
 }
 
-function num(x, line) {
+function num(x, line, sceneName) {
     if (!line) line = "UNKNOWN";
+    errorInfo = "line "+line;
+    if (sceneName) errorInfo = sceneName + " " + errorInfo;
     var x_num = parseFloat(x);
-    if (isNaN(x_num)) throw new Error("line "+line+": Not a number: " + x);
-    if (!isFinite(x_num)) throw new Error("line "+line+": Not finite " + x);
+    if (isNaN(x_num)) throw new Error(errorInfo+": Not a number: " + x);
+    if (!isFinite(x_num)) throw new Error(errorInfo+": Not finite " + x);
     return x_num;
 }
 
-function bool(x, line) {
+function bool(x, line, sceneName) {
   if (!line) line = "UNKNOWN";
   if ("boolean" == typeof x) {
     return x;
@@ -943,7 +945,9 @@ function bool(x, line) {
   } else if ("false" === x) {
     return false;
   }
-  throw new Error("line "+line+": Neither true nor false: " + x);
+  errorInfo = "line "+line;
+  if (sceneName) errorInfo = sceneName + " " + errorInfo;
+  throw new Error(errorInfo+": Neither true nor false: " + x);
 }
 
 function findXhr() {
