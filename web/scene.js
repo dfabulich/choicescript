@@ -123,6 +123,7 @@ Scene.prototype.printLoop = function printLoop() {
         if (!this.runCommand(line)) {
             this.prevLine = "text";
             this.screenEmpty = false;
+            this.initialCommands = false;
             this.printLine(line);
         }
     }
