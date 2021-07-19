@@ -3740,7 +3740,7 @@ Scene.prototype.skipTrueBranch = function skipTrueBranch(inElse) {
       }
       if (indent <= startIndent) {
           // true block is over
-          var parsed;
+          var parsed = null;
           // check to see if this is an *else or *elseif
           if (indent == startIndent) parsed = /^\s*\*(\w+)(.*)/.exec(line);
           if (!parsed || inElse) {
