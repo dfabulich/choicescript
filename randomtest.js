@@ -286,7 +286,7 @@ if (typeof importScripts != "undefined") {
 }
 
 printImage = function printImage(source, alignment, alt, invert) {
-  console.log('[IMAGE: ' + (alt || source) + ']');
+  //console.log('[IMAGE: ' + (alt || source) + ']');
 }
 
 clearScreen = function clearScreen(code) {
@@ -369,6 +369,9 @@ function configureShowText() {
       println(msg);
       console.log("");
     };
+    printImage = function printImage(source, alignment, alt, invert) {
+      console.log('[IMAGE: ' + (alt || source) + ']');
+    }
   } else {
     oldPrintLine = Scene.prototype.printLine;
     Scene.prototype.printLine = function randomtest_printLine(line) {
