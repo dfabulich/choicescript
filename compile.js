@@ -211,13 +211,30 @@ function compile(){
       scene.loadLines(scene_data);
       var sceneName = knownScenes[i].replace(/\.txt/gi,"");
       sceneName = sceneName.replace(/ /g, "_");
+      if (typeof slurpImage !== "undefined") {
+        scene.lines = scene.lines.map(line => {
+          let result = /^(\s*\*)(\w+)(.*)/.exec(line);
+          if (!result) return line;
+          let command = result[2].toLowerCase();
+          if (!/(text_)image/.test(command)) return line;
+          let data = trim(result[3]);
+          let match = /(\S+) (\S+)(.*)/.exec(data);
+          if (match) {
+            let image = slurpImage(rootDir + 'mygame/' + match[1]);
+            return `${result[1]}${command} ${image} ${match[2]}${match[3]}`;
+          } else {
+            let image = slurpImage(rootDir + 'mygame/' + data);
+            return `${result[1]}${command} ${image}`;
+          }
+        });
+      }
       scene_object = scene_object + "\"" + sceneName + "\": {\"crc\":" + scene.crc + ", \"lines\":" + toJson(scene.lines)+ ", \"labels\":" + toJson(scene.labels) + "}";
       if ((i + 1) != knownScenes.length) {
-        scene_object += ",";
+        scene_object += ",\n";
       }
   }
   scene_object = "allScenes = {" + scene_object + "}";
-    
+
   //8. Reassemble the document (selfnote: allScenes object seems to cause issues if not in its own pair of script tags)
   console.log("Assembling new html file...");
   var new_game = top + "<script>" + scene_object + "<\/script><script>" + jsStore + "<\/script><style>" + cssStore + "</style>" + bottom;

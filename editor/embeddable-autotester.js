@@ -435,7 +435,8 @@ function autotester(sceneText, nav, sceneName, extraLabels) {
       repairStats: function() {},
       resetStats: function() {},
       startingStats: {},
-      bugLog: []
+      bugLog: [],
+      products: {},
     }
   }
   nav.resetStats(startingStats);
