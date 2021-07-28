@@ -1127,7 +1127,14 @@ Scene.prototype.finish = function finish(buttonName) {
       if (typeof window == "undefined") return;
       if (window.forcedScene == "choicescript_stats") return;
       if (window.isAndroidApp && window.statsMode.get()) return;
-      printButton(buttonName || "Next", main, false,
+
+      if (this.screenEmpty) {
+        clearScreen(loadAndRestoreGame);
+        return;
+      }
+      if (!buttonName) buttonName = "Next";
+      buttonName = this.replaceVariables(buttonName);
+      printButton(buttonName, main, false,
         function() {
           clearScreen(loadAndRestoreGame);
         }
