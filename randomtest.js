@@ -381,20 +381,6 @@ function configureShowText() {
   }
 }
 
-var oldGoto = Scene.prototype["goto"];
-Scene.prototype["goto"] = function scene_goto(data) {
-  oldGoto.call(this, data);
-  if (!this.localCoverage) this.localCoverage = {};
-  if (this.localCoverage[this.lineNum]) {
-    this.localCoverage[this.lineNum]++;
-    if (this.looplimit_count && this.localCoverage[this.lineNum] > this.looplimit_count) {
-      throw new Error(this.lineMsg() + "visited this line too many times (" + this.looplimit_count + ")");
-    }
-  } else {
-    this.localCoverage[this.lineNum] = 1;
-  }
-}
-
 Scene.prototype.subscribe = noop;
 Scene.prototype.save = noop;
 Scene.prototype.stat_chart = function() {
