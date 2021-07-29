@@ -995,6 +995,15 @@ Scene.prototype["goto"] = function scene_goto(line) {
     } else {
         throw new Error(this.lineMsg() + "bad label " + label);
     }
+    if (!this.localCoverage) this.localCoverage = {};
+    if (this.localCoverage[this.lineNum]) {
+        this.localCoverage[this.lineNum]++;
+        if (this.looplimit_count && this.localCoverage[this.lineNum] > this.looplimit_count) {
+            throw new Error(this.lineMsg() + "visited this line too many times (" + this.looplimit_count + ")");
+        }
+    } else {
+        this.localCoverage[this.lineNum] = 1;
+    }
 };
 
 Scene.prototype.gosub = function scene_gosub(data) {
@@ -1118,7 +1127,14 @@ Scene.prototype.finish = function finish(buttonName) {
       if (typeof window == "undefined") return;
       if (window.forcedScene == "choicescript_stats") return;
       if (window.isAndroidApp && window.statsMode.get()) return;
-      printButton(buttonName || "Next", main, false,
+
+      if (this.screenEmpty) {
+        clearScreen(loadAndRestoreGame);
+        return;
+      }
+      if (!buttonName) buttonName = "Next";
+      buttonName = this.replaceVariables(buttonName);
+      printButton(buttonName, main, false,
         function() {
           clearScreen(loadAndRestoreGame);
         }
