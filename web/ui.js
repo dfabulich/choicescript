@@ -1345,7 +1345,8 @@ function subscribe(target, options, callback) {
       window["jsonp"+timestamp] = function(response) {
         clearTimeout(timeout);
         if (response.result == "error") {
-          document.getElementById("errorMessage").innerHTML = response.msg;
+          var errElement = document.getElementById("errorMessage");
+          if (errElement) errElement.innerHTML = response.msg;
         } else {
           clearScreen(function() {
             target = document.getElementById('text');
