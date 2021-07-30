@@ -4590,7 +4590,7 @@ Scene.tokens = [
                     return str.substring(0,i+1);
                 }
             }
-            let errMessage = "line " + line + ": ";
+            var errMessage = "line " + line + ": ";
             if (sceneObj) {
               errMessage = sceneObj.lineMsg();
             }
@@ -4609,20 +4609,20 @@ Scene.tokens = [
     //
 ];
 Scene.operators = {
-    "+": function add(v1,v2,line,sceneObj) { let name = null; if (sceneObj) name = sceneObj.name; return num(v1,line,name) + num(v2,line,name); },
-    "-": function subtract(v1,v2,line,sceneObj) { let name = null; if (sceneObj) name = sceneObj.name; return num(v1,line,name) - num(v2,line,name); },
-    "*": function multiply(v1,v2,line,sceneObj) { let name = null; if (sceneObj) name = sceneObj.name; return num(v1,line,name) * num(v2,line,name); },
+    "+": function add(v1,v2,line,sceneObj) { var name = null; if (sceneObj) name = sceneObj.name; return num(v1,line,name) + num(v2,line,name); },
+    "-": function subtract(v1,v2,line,sceneObj) { var name = null; if (sceneObj) name = sceneObj.name; return num(v1,line,name) - num(v2,line,name); },
+    "*": function multiply(v1,v2,line,sceneObj) { var name = null; if (sceneObj) name = sceneObj.name; return num(v1,line,name) * num(v2,line,name); },
     "/": function divide(v1,v2,line,sceneObj) {
-      let name = null; if (sceneObj) name = sceneObj.name; 
+      var name = null; if (sceneObj) name = sceneObj.name; 
       v2 = num(v2, line, name);
       if (v2 === 0) throw new Error(name+" line "+line+": can't divide by zero");
       return num(v1,line,name) / num(v2,line,name);
     },
-    "^": function exponent(v1,v2,line,sceneObj) { let name = null; if (sceneObj) name = sceneObj.name; return Math.pow(num(v1,line,name), num(v2,line,name)); },
+    "^": function exponent(v1,v2,line,sceneObj) { var name = null; if (sceneObj) name = sceneObj.name; return Math.pow(num(v1,line,name), num(v2,line,name)); },
     "&": function concatenate(v1,v2) { return [v1,v2].join(""); },
     "#": function charAt(v1,v2,line,sceneObj) {
-      let name = null;
-      let errMessage = "line " + line + ": ";
+      var name = null;
+      var errMessage = "line " + line + ": ";
       if (sceneObj) {
         name = sceneObj.name;
         errMessage = sceneObj.lineMsg();
@@ -4637,8 +4637,8 @@ Scene.operators = {
       return String(v1).charAt(i-1);
     },
     "%+": function fairAdd(v1, v2, line, sceneObj) {
-        let name = null;
-        let errMessage = "line " + line + ": ";
+        var name = null;
+        var errMessage = "line " + line + ": ";
         if (sceneObj) {
           name = sceneObj.name;
           errMessage = sceneObj.lineMsg();
@@ -4666,27 +4666,27 @@ Scene.operators = {
         }
     },
     "%-": function fairSubtract(v1, v2, line, sceneObj) {
-        let name = null; if (sceneObj) name = sceneObj.name; 
+        var name = null; if (sceneObj) name = sceneObj.name; 
         v2 = num(v2,line,name);
         return Scene.operators["%+"](v1,0-v2,line,sceneObj);
     },
     "=": function equals(v1,v2) { return v1 == v2 || String(v1) == String(v2); },
     "<": function lessThan(v1,v2,line,sceneObj) {
-        let name = null; if (sceneObj) name = sceneObj.name; 
+        var name = null; if (sceneObj) name = sceneObj.name; 
         return num(v1,line,name) < num(v2,line,name); },
-    ">": function greaterThan(v1,v2,line,sceneObj) { let name = null; if (sceneObj) name = sceneObj.name; return num(v1,line,name) > num(v2,line,name); },
-    "<=": function lessThanOrEquals(v1,v2,line,sceneObj) { let name = null; if (sceneObj) name = sceneObj.name; return num(v1,line,name) <= num(v2,line,name); },
-    ">=": function greaterThanOrEquals(v1,v2,line,sceneObj) { let name = null; if (sceneObj) name = sceneObj.name; return num(v1,line,name) >= num(v2,line,name); },
+    ">": function greaterThan(v1,v2,line,sceneObj) { var name = null; if (sceneObj) name = sceneObj.name; return num(v1,line,name) > num(v2,line,name); },
+    "<=": function lessThanOrEquals(v1,v2,line,sceneObj) { var name = null; if (sceneObj) name = sceneObj.name; return num(v1,line,name) <= num(v2,line,name); },
+    ">=": function greaterThanOrEquals(v1,v2,line,sceneObj) { var name = null; if (sceneObj) name = sceneObj.name; return num(v1,line,name) >= num(v2,line,name); },
     "!=": function notEquals(v1,v2) { return v1 != v2; },
     "and": function and(v1, v2, line, sceneObj) {
-        let name = null; if (sceneObj) name = sceneObj.name; 
+        var name = null; if (sceneObj) name = sceneObj.name; 
         return bool(v1,line,name) && bool(v2,line,name);
     },
     "or": function or(v1, v2, line, sceneObj) {
-        let name = null; if (sceneObj) name = sceneObj.name; 
+        var name = null; if (sceneObj) name = sceneObj.name; 
         return bool(v1,line,name) || bool(v2,line,name);
     },
-    "modulo": function modulo(v1,v2,line,sceneObj) { let name = null; if (sceneObj) name = sceneObj.name; return num(v1,line,name) % num(v2,line,name); },
+    "modulo": function modulo(v1,v2,line,sceneObj) { var name = null; if (sceneObj) name = sceneObj.name; return num(v1,line,name) % num(v2,line,name); },
 };
 
 Scene.initialCommands = {"create":1,"create_array":1,"scene_list":1,"title":1,"author":1,"comment":1,"achievement":1,"product":1};
