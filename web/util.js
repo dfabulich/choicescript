@@ -706,36 +706,41 @@ function submitReceipts(receipts, callback) {
   }
 
   if (window.isAndroidApp) {
-    var platform = window.isAmazonAndroidApp ? 'amazon' : 'google';
-    if (receipts.prePurchased && platform === 'google') {
-      for (var i = 0; i < receipts.prePurchased.length; i++) {
-        var product = receipts.prePurchased[i];
-        count++;
-        xhrAuthRequest("POST", "submit-device-receipt", submitCallback(product),
-          'platform', platform,
-          'company', receipts.company,
-          'game_id', window.storeName,
-          'app_package', appId,
-          'product_id', product,
-          'signature', encodeURIComponent(receipts.signature),
-          'receipt', encodeURIComponent(receipts.signedData)
-        );
+    window.store.get("login", function(ok, loginId) {
+      loginId = loginId || 0;
+      var platform = window.isAmazonAndroidApp ? 'amazon' : 'google';
+      if (receipts.prePurchased && platform === 'google') {
+        for (var i = 0; i < receipts.prePurchased.length; i++) {
+          var product = receipts.prePurchased[i];
+          count++;
+          xhrAuthRequest("POST", "submit-device-receipt", submitCallback(product),
+            'platform', platform,
+            'company', receipts.company,
+            'game_id', window.storeName,
+            'app_package', appId,
+            'product_id', product,
+            'signature', encodeURIComponent(receipts.signature),
+            'receipt', encodeURIComponent(receipts.signedData),
+            'login_id', loginId
+          );
+        }
       }
-    }
-    if (receipts.iaps) {
-      for (var product in receipts.iaps) {
-        count++;
-        xhrAuthRequest("POST", "submit-device-receipt", submitCallback(product),
-          'platform', platform,
-          'company', receipts.company,
-          'game_id', window.storeName,
-          'app_package', appId,
-          'product_id', product,
-          'receipt', encodeURIComponent(receipts.iaps[product])
-        );
+      if (receipts.iaps) {
+        for (var product in receipts.iaps) {
+          count++;
+          xhrAuthRequest("POST", "submit-device-receipt", submitCallback(product),
+            'platform', platform,
+            'company', receipts.company,
+            'game_id', window.storeName,
+            'app_package', appId,
+            'product_id', product,
+            'receipt', encodeURIComponent(receipts.iaps[product]),
+            'login_id', loginId
+          );
+        }
       }
-    }
-    if (!count) safeTimeout(function() {callback();}, 0);
+      if (!count) safeTimeout(function () { callback(); }, 0);
+    });
   } else {
     callback("error");
   }
