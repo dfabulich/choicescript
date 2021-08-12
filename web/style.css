@@ -1,22 +1,19 @@
 body {
   position: relative;
-  max-width: 680px;
+  max-width: 80ch;
   min-height: 100vh; /* keep iOS address bar from popping in and out */
-  _width:expression(this.scrollWidth > 680 ? "680px" : "auto");
   font-size: 100%;  /* reset for CWS */
   font: -apple-system-body; /* we'll override the font, but keep the size from iOS dynamic text sizing */
   font-family: Georgia,"Times New Roman",serif;
   background-color: #F7F4F1;
   color: rgba(0, 0, 0, 0.85);
-  margin: 8px auto;
+  margin: 1ch auto;
   padding: 0;
   -webkit-user-select: text; /* selectable text for Chrome app support */
   transition-property: background-color, color;
   transition-duration: 2s;
   -webkit-transition-property: background-color, color;
   -webkit-transition-duration: 2s;
-  /* Fix iPadOS 13+ Desktop-class browsing https://stackoverflow.com/a/64998974/54829 */
-  -webkit-text-size-adjust: none;
 }
 
 a {
@@ -34,7 +31,7 @@ a {
   position: absolute; /* so containers can overlap */
   left: 0;
   right: 0;
-  margin: 0 8px;
+  margin: 0 1ch;
   animation-duration: 0.5s;
   -webkit-animation-duration: 0.5s;
   transition-property: opacity;
@@ -93,8 +90,8 @@ a {
   background-color: #949291;
   height: 2em;
   line-height: 2em;
-  margin: 4px 0;
-  width: 300px;
+  margin: 0.5ch 0;
+  width: 35ch;
   max-width: 100%;
   color: #f7f4f1;
   position: relative; /* to allow absolute positioned value */
@@ -139,7 +136,7 @@ table {
     -webkit-transition-property: background-color, color;
     -webkit-transition-duration: 0.1s;
     -webkit-tap-highlight-color: transparent;
-    padding: 11px 8px 12px;
+    padding: 0.5em 1ch;
     display:block;
     border-color:#a9acaf;
     border-style:solid;
@@ -233,7 +230,7 @@ table {
 }
 
 input[type="radio"], input[type="checkbox"] {
-  margin-right: 8px;
+  margin-right: 1ch;
 }
 
 .saveGame>label {
@@ -252,6 +249,10 @@ input[type=password]:disabled {
 input[type=email],input[type=password] {
   padding: 1px;
   margin: 2px 0;
+}
+
+button {
+  font-size: 100%;
 }
 
 .next {
