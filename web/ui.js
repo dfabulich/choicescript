@@ -905,7 +905,7 @@ function printOptions(groups, options, callback) {
   var slidingEnabled = true;
   if (window.slidingEnabled === false || groups.length > 1) slidingEnabled = false;
 
-  if (slidingEnabled) [].forEach.call(document.querySelectorAll('label'), function(label) {
+  if (slidingEnabled) [].forEach.call(document.querySelectorAll('.choice > div'), function(label) {
     label.addEventListener('touchstart', touchStartHandler);
     if (window.isMobile) label.addEventListener('click', function(e) {
       var target = e.currentTarget;
@@ -3463,9 +3463,9 @@ if (window.isWeb) {
 }
 // on touch devices, this hover state never goes away
 if (!('ontouchstart' in window)) {
-  document.getElementById("dynamic").innerHTML += ".choice label:hover {background-color: #E4DED8;}\n" +
-    "body.nightmode .choice label:hover {background-color: #555;}\n"+
-    "body.whitemode .choice label:hover {background-color: #ddd;}\n";
+  document.getElementById("dynamic").innerHTML += ".choice > div:hover {background-color: #E4DED8;}\n" +
+    "body.nightmode .choice > div:hover {background-color: #555;}\n"+
+    "body.whitemode .choice > div:hover {background-color: #ddd;}\n";
 }
 function fixChromeLinks() {
   var aboutLink = document.getElementById("aboutLink");
