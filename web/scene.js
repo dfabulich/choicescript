@@ -339,7 +339,16 @@ Scene.prototype.loadSceneFast = function loadSceneFast(url) {
                     });
                 });
               } else if (err === "not purchased") {
-                err = "403x";
+                window.rerestore = function () {
+                  restorePurchases(window.purchases[self.name], function (purchased) {
+                    window.location.reload(); 
+                  });
+                };
+                main.innerHTML = "<div id='text'><p>Our apologies; we were unable to access your purchase while loading game data. (Error 403x)" +
+                  "  Please restore purchases now; if that doesn't work, please email " + getSupportEmail() + " with details, including the error number 403x.</p>" +
+                  " <p><button class='next' onclick='window.rerestore();'>Restore Now</button></p></div>";
+                curl();
+                return;
               }
               main.innerHTML = "<div id='text'><p>Our apologies; there was a " + err + " error while loading game data."+
               "  Please refresh now; if that doesn't work, please click the Restart button and email "+getSupportEmail()+" with details, including the error number.</p>"+
@@ -668,19 +677,16 @@ Scene.prototype.checkSum = function checkSum() {
         }
       }
       var self = this;
-      safeTimeout(function() {
-        clearScreen(function() {
+      safeTimeout(function () {
+        clearScreen(function () {
           loadAndRestoreGame("backup");
         });
       }, 0);
       return false;
-    } else {
-      return true;
     }
-  } else {
-    this.temps.choice_crc = this.crc;
-    return true;
   }
+  this.temps.choice_crc = this.crc;
+  return true;
 };
 
 Scene.prototype.loadLines = function loadLines(str) {
