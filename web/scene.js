@@ -1567,6 +1567,8 @@ Scene.prototype.getVar = function getVar(variable) {
     if (variable == "choice_kindle") return typeof isKindle !== "undefined" && !!isKindle;
     if (variable == "choice_randomtest") return !!this.randomtest;
     if (variable == "choice_quicktest") return false; // quicktest will explore "false" paths
+    if (variable == "choice_linenum") return this.lineNum;
+    if (variable == "choice_scene") return this.name;
     if (variable == "choice_restore_purchases_allowed") return isRestorePurchasesSupported();
     if (variable == "choice_save_allowed") return areSaveSlotsSupported();
     if (variable == "choice_time_stamp") return Math.floor(new Date()/1000);
