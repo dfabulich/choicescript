@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Setup Node.js environment
-        uses: actions/setup-node@v1.4.3
+        uses: actions/setup-node@v1.4.4
         with:
           # Version Spec of the version to use.  Examples: 10.x, 10.15.1, >=10.15.0
           node-version: 12.x
