@@ -184,7 +184,7 @@ function compile(){
         csTitle = scene["lines"][i];
       }
     }
-    
+
     //if we have a title, set the <h1> and <title> tags to it
     if (csTitle != "") {
       patt = /^\*title[\s]+/i
@@ -197,6 +197,12 @@ function compile(){
       console.log("Game title set to: " + csTitle);
     }
   
+  var ifidLine = scene.lines.find(line => /^\*ifid/i);
+  if (ifidLine) {
+    var ifid = ifidLine.replace(/^\*ifid\s+/i, "").toUpperCase();
+    top += `<meta property="ifiction:ifid" content="${ifid}" prefix="ifiction: http://babel.ifarchive.org/protocol/iFiction/">`;
+  }
+
   //7.2 Create the allScenes object
   console.log("");
   console.log("Combining scene files...");
