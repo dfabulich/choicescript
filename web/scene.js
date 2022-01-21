@@ -18,8 +18,7 @@
  */
 function Scene(name, stats, nav, options) {
     if (!name) name = "";
-    if (!stats) stats = {implicit_control_flow:false};
-    if (stats["implicit_control_flow"] === undefined) stats["implicit_control_flow"] = false;
+    if (!stats) stats = {};
     // the name of the scene
     this.name = name;
 
@@ -106,7 +105,7 @@ Scene.prototype.printLoop = function printLoop() {
         }
         // Ability to end a choice #option without goto is guarded by implicit_control_flow variable
         if (this.temps._choiceEnds[this.lineNum] &&
-                (this.stats["implicit_control_flow"] || this.temps._fakeChoiceDepth > 0)) {
+                (this.getVar("implicit_control_flow") || this.temps._fakeChoiceDepth > 0)) {
             // Skip to the end of the choice if we hit the end of an #option
             this.rollbackLineCoverage();
             this.lineNum = this.temps._choiceEnds[this.lineNum];
@@ -873,7 +872,7 @@ Scene.prototype.choice = function choice(data) {
       self.standardResolution(option);
     });
     this.finished = true;
-    if (this.temps._fakeChoiceDepth > 0 || this.stats["implicit_control_flow"]) {
+    if (this.temps._fakeChoiceDepth > 0 || this.getVar("implicit_control_flow")) {
       if (!this.temps._choiceEnds) {
         this.temps._choiceEnds = {};
       }
@@ -1579,6 +1578,7 @@ Scene.prototype.getVar = function getVar(variable) {
     if (variable == "choice_nightmode") return typeof isNightMode != "undefined" && isNightMode();
     if ((!this.temps.hasOwnProperty(variable))) {
         if ((!this.stats.hasOwnProperty(variable))) {
+            if (variable == "implicit_control_flow") return false;
             throw new Error(this.lineMsg() + "Non-existent variable '"+variable+"'");
         }
         value = this.stats[variable];
@@ -3668,9 +3668,9 @@ Scene.prototype.skipTrueBranch = function skipTrueBranch(inElse) {
 };
 
 Scene.prototype["else"] = Scene.prototype.elsif = Scene.prototype.elseif = function scene_else(data, inChoice) {
-    // Authors can avoid using goto to get out of an if branch with:  *set implicit_control_flow true
+    // Authors can avoid using goto to get out of an if branch with:  *create implicit_control_flow true
     // This avoids the error message at the end of the function.
-    if (inChoice || this.stats["implicit_control_flow"]) {
+    if (inChoice || this.getVar("implicit_control_flow")) {
       this.skipTrueBranch(true);
       return;
     }
