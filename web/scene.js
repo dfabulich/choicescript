@@ -339,7 +339,16 @@ Scene.prototype.loadSceneFast = function loadSceneFast(url) {
                     });
                 });
               } else if (err === "not purchased") {
-                err = "403x";
+                window.rerestore = function () {
+                  restorePurchases(window.purchases[self.name], function (purchased) {
+                    window.location.reload(); 
+                  });
+                };
+                main.innerHTML = "<div id='text'><p>Our apologies; we were unable to access your purchase while loading game data. (Error 403x)" +
+                  "  Please restore purchases now; if that doesn't work, please email " + getSupportEmail() + " with details, including the error number 403x.</p>" +
+                  " <p><button class='next' onclick='window.rerestore();'>Restore Now</button></p></div>";
+                curl();
+                return;
               }
               main.innerHTML = "<div id='text'><p>Our apologies; there was a " + err + " error while loading game data."+
               "  Please refresh now; if that doesn't work, please click the Restart button and email "+getSupportEmail()+" with details, including the error number.</p>"+
@@ -668,19 +677,16 @@ Scene.prototype.checkSum = function checkSum() {
         }
       }
       var self = this;
-      safeTimeout(function() {
-        clearScreen(function() {
+      safeTimeout(function () {
+        clearScreen(function () {
           loadAndRestoreGame("backup");
         });
       }, 0);
       return false;
-    } else {
-      return true;
     }
-  } else {
-    this.temps.choice_crc = this.crc;
-    return true;
   }
+  this.temps.choice_crc = this.crc;
+  return true;
 };
 
 Scene.prototype.loadLines = function loadLines(str) {
@@ -4434,6 +4440,15 @@ Scene.prototype.config = function config(data) {
     }
 };
 
+Scene.prototype.ifid = function ifid(id) {
+  if (!/^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$/.test(id)) {
+    throw new Error(this.lineMsg() + "Invalid IFID. It should have five parts, like \"a0a0a0a0-a0a0-a0a0-a0a0-a0a0a0a0a0a0\: " + id);
+  }
+  if (!/^[A-F0-9\-]{36}$/i.test(id)) {
+    throw new Error(this.lineMsg() + "Invalid IFID. It should contain only numbers, letters A-F, and dashes: " + id);
+  }
+}
+
 Scene.prototype.lineMsg = function lineMsg() {
     return this.name + " line " + (this.lineNum+1) + ": ";
 };
@@ -4566,7 +4581,7 @@ Scene.operators = {
     "modulo": function modulo(v1,v2,line,sceneObj) { var name = null; if (sceneObj) name = sceneObj.name; return num(v1,line,name) % num(v2,line,name); },
 };
 
-Scene.initialCommands = {"create":1,"scene_list":1,"title":1,"author":1,"comment":1,"achievement":1,"product":1};
+Scene.initialCommands = {"create":1,"scene_list":1,"title":1,"author":1,"comment":1,"achievement":1,"product":1,"ifid":1};
 
 Scene.validCommands = {"comment":1, "goto":1, "gotoref":1, "label":1, "looplimit":1, "finish":1, "abort":1,
     "choice":1, "create":1, "temp":1, "delete":1, "set":1, "setref":1, "print":1, "if":1, "rand":1,
@@ -4579,5 +4594,5 @@ Scene.validCommands = {"comment":1, "goto":1, "gotoref":1, "label":1, "looplimit
     "restart":1,"more_games":1,"delay_ending":1,"end_trial":1,"login":1,"achieve":1,"scene_list":1,"title":1,
     "bug":1,"link_button":1,"check_registration":1,"sound":1,"author":1,"gosub_scene":1,"achievement":1,
     "check_achievements":1,"redirect_scene":1,"print_discount":1,"purchase_discount":1,"track_event":1,
-    "timer":1,"youtube":1,"product":1,"text_image":1,"ai":1,"params":1,"config":1
+    "timer":1,"youtube":1,"product":1,"text_image":1,"ai":1,"params":1,"config":1,"ifid":1
     };
