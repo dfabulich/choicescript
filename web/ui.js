@@ -300,27 +300,18 @@ function textOptionsMenu(categories) {
 }
 
 function getZoomFactor() {
-  if (document.body.style.zoom === undefined) {
+  if (document.body.style.fontSize === undefined) {
     return window.zoomFactor || 1;
   } else {
-    var zoomFactor = parseFloat(document.body.style.zoom);
-    if (isNaN(zoomFactor)) zoomFactor = 1;
-    return zoomFactor;
+    var fontSize = parseFloat(document.body.style.fontSize);
+    if (isNaN(fontSize)) fontSize = 100;
+    return fontSize / 100;
   }
 }
 
 function setZoomFactor(zoomFactor) {
-  if (document.body.style.zoom === undefined) {
-    var initialMaxWidth = 680;
-    document.body.style.maxWidth = (initialMaxWidth / zoomFactor) + "px";
-    document.body.style.transformOrigin = "center top";
-    document.body.style.transform = "scale("+zoomFactor+")";
-    document.body.style.webkitTransformOrigin = "center top";
-    document.body.style.webkitTransform = "scale("+zoomFactor+")";
-    window.zoomFactor = zoomFactor;
-  } else {
-    document.body.style.zoom = zoomFactor;
-  }
+  document.body.style.fontSize = Math.round(100*zoomFactor) + "%";
+  window.zoomFactor = zoomFactor;
   if (initStore()) store.set("preferredZoom", String(zoomFactor));
 }
 
@@ -525,8 +516,6 @@ function clearScreen(code) {
         extraScroll = 1; // try to hide url bar
       }
       pageYOffset -= extraScroll;
-      var zoomFactor = window.zoomFactor || document.body.style.zoom;
-      if (zoomFactor) pageYOffset /= parseFloat(zoomFactor);
       container1.style.transform = "translateY(-"+pageYOffset+ "px)";
       container1.style.webkitTransform = "translateY(-"+pageYOffset+ "px)";
       window.scrollTo(0,extraScroll);
@@ -916,7 +905,7 @@ function printOptions(groups, options, callback) {
   var slidingEnabled = true;
   if (window.slidingEnabled === false || groups.length > 1) slidingEnabled = false;
 
-  if (slidingEnabled) [].forEach.call(document.querySelectorAll('label'), function(label) {
+  if (slidingEnabled) [].forEach.call(document.querySelectorAll('.choice > div'), function(label) {
     label.addEventListener('touchstart', touchStartHandler);
     if (window.isMobile) label.addEventListener('click', function(e) {
       var target = e.currentTarget;
@@ -1008,6 +997,12 @@ function printImage(source, alignment, alt, invert) {
   }
   img.src = source;
   if (alt !== null && String(alt).length > 0) img.setAttribute("alt", alt);
+  var zoomFactor = getZoomFactor();
+  if (zoomFactor !== 1) {
+    var size = (zoomFactor * 100) + '%';
+    img.style.height = size;
+    img.style.width = size;
+  }
   if (invert) {
     setClass(img, "invert align"+alignment);
   } else {
@@ -3468,9 +3463,9 @@ if (window.isWeb) {
 }
 // on touch devices, this hover state never goes away
 if (!('ontouchstart' in window)) {
-  document.getElementById("dynamic").innerHTML += ".choice label:hover {background-color: #E4DED8;}\n" +
-    "body.nightmode .choice label:hover {background-color: #555;}\n"+
-    "body.whitemode .choice label:hover {background-color: #ddd;}\n";
+  document.getElementById("dynamic").innerHTML += ".choice > div:hover {background-color: #E4DED8;}\n" +
+    "body.nightmode .choice > div:hover {background-color: #555;}\n"+
+    "body.whitemode .choice > div:hover {background-color: #ddd;}\n";
 }
 function fixChromeLinks() {
   var aboutLink = document.getElementById("aboutLink");

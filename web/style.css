@@ -1,22 +1,19 @@
 body {
   position: relative;
-  max-width: 680px;
+  max-width: 80ch;
   min-height: 100vh; /* keep iOS address bar from popping in and out */
-  _width:expression(this.scrollWidth > 680 ? "680px" : "auto");
   font-size: 100%;  /* reset for CWS */
   font: -apple-system-body; /* we'll override the font, but keep the size from iOS dynamic text sizing */
   font-family: Georgia,"Times New Roman",serif;
   background-color: #F7F4F1;
   color: rgba(0, 0, 0, 0.85);
-  margin: 8px auto;
+  margin: 1ch auto;
   padding: 0;
   -webkit-user-select: text; /* selectable text for Chrome app support */
   transition-property: background-color, color;
   transition-duration: 2s;
   -webkit-transition-property: background-color, color;
   -webkit-transition-duration: 2s;
-  /* Fix iPadOS 13+ Desktop-class browsing https://stackoverflow.com/a/64998974/54829 */
-  -webkit-text-size-adjust: none;
 }
 
 a {
@@ -34,7 +31,7 @@ a {
   position: absolute; /* so containers can overlap */
   left: 0;
   right: 0;
-  margin: 0 8px;
+  margin: 0 1ch;
   animation-duration: 0.5s;
   -webkit-animation-duration: 0.5s;
   transition-property: opacity;
@@ -93,8 +90,8 @@ a {
   background-color: #949291;
   height: 2em;
   line-height: 2em;
-  margin: 4px 0;
-  width: 300px;
+  margin: 0.5ch 0;
+  width: 35ch;
   max-width: 100%;
   color: #f7f4f1;
   position: relative; /* to allow absolute positioned value */
@@ -132,18 +129,25 @@ table {
   margin: 1rem 0;
 }
 
+.choice > div {
+  position: relative; /* so the .shuttle can be positioned absolutely within it */
+  min-height: 1.25cm;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-color:#a9acaf;
+  border-style:solid;
+  border-width: 1px 1px 0px 1px;
+}
+
 .choice label{
-    position: relative; /* so the .shuttle can be positioned absolutely within it */
     transition-property: background-color, color;
     transition-duration: 0.1s;
     -webkit-transition-property: background-color, color;
     -webkit-transition-duration: 0.1s;
     -webkit-tap-highlight-color: transparent;
-    padding: 11px 8px 12px;
+    padding: 0.5em 1ch;
     display:block;
-    border-color:#a9acaf;
-    border-style:solid;
-    border-width: 1px 1px 0px 1px
 }
 
 .shuttle {
@@ -176,13 +180,13 @@ table {
 }
 
 @keyframes shuttlefadeout {
-  from {opacity: 0.25; transform: translateX(-403%);} /* borders, maybe? */
-  to {opacity: 0; transform: translateX(-403%);}
+  from {opacity: 0.25; transform: translateX(-401%);} /* borders, maybe? */
+  to {opacity: 0; transform: translateX(-401%);}
 }
 
 @keyframes shuttleslide {
   from { opacity: 0.25; transform: translateX(0);}
-  to { opacity: 0.25; transform: translateX(-403%); }
+  to { opacity: 0.25; transform: translateX(-401%); }
 }
 
 @-webkit-keyframes shuttlefadein {
@@ -191,13 +195,13 @@ table {
 }
 
 @-webkit-keyframes shuttlefadeout {
-  from {opacity: 0.25; -webkit-transform: translateX(-403%);} /* borders, maybe? */
-  to {opacity: 0; -webkit-transform: translateX(-403%);}
+  from {opacity: 0.25; -webkit-transform: translateX(-401%);} /* borders, maybe? */
+  to {opacity: 0; -webkit-transform: translateX(-401%);}
 }
 
 @-webkit-keyframes shuttleslide {
   from { opacity: 0.25; -webkit-transform: translateX(0);}
-  to { opacity: 0.25; -webkit-transform: translateX(-403%); }
+  to { opacity: 0.25; -webkit-transform: translateX(-401%); }
 }
 
 .selected {
@@ -205,27 +209,20 @@ table {
   background-color: #007AFF;
 }
 
-.choice .firstChild{
+.choice>div:first-child{
     border-top-width:1px;
-    -webkit-border-top-right-radius:8px;
-    -webkit-border-top-left-radius:8px;
-    border-top-right-radius:8px;
-    border-top-left-radius:8px;
+    -webkit-border-top-right-radius:1ch;
+    -webkit-border-top-left-radius:1ch;
+    border-top-right-radius:1ch;
+    border-top-left-radius:1ch;
 }
 /* IE doesn't support label:last-child */
-.choice .lastChild{
+.choice>div:last-child{
     border-bottom-width:1px;
-    -webkit-border-bottom-right-radius:8px;
-    -webkit-border-bottom-left-radius:8px;
-    -moz-border-radius:0px 0px 8px 8px;
-    border-bottom-right-radius:8px;
-    border-bottom-left-radius:8px;
-}
-.choice .onlyChild{
-    border-width:1px;
-    -webkit-border-radius:8px;
-    -moz-border-radius:8px;
-    border-radius:8px;
+    -webkit-border-bottom-right-radius:1ch;
+    -webkit-border-bottom-left-radius:1ch;
+    border-bottom-right-radius:1ch;
+    border-bottom-left-radius:1ch;
 }
 
 .choice .noBorder {
@@ -233,7 +230,7 @@ table {
 }
 
 input[type="radio"], input[type="checkbox"] {
-  margin-right: 8px;
+  margin-right: 1ch;
 }
 
 .saveGame>label {
@@ -252,6 +249,10 @@ input[type=password]:disabled {
 input[type=email],input[type=password] {
   padding: 1px;
   margin: 2px 0;
+}
+
+button {
+  font-size: 100%;
 }
 
 .next {
