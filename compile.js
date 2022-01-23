@@ -5,15 +5,22 @@ var skip = false;
 var loadFailed = false;
 
 var rootDir;
+var projectDir;
 
 if (typeof process != "undefined") {
   var outputFile = process.argv[2];
   if (!outputFile) throw new Error("Specify an output file on the command line");
   rootDir = process.argv[3];
+  projectDir = process.argv[4];
   if (rootDir) {
     rootDir += "/";
   } else {
     rootDir = "web/";
+  }
+  if (projectDir) {
+    projectDir += "/";
+  } else {
+    projectDir = "web/mygame/scenes/"
   }
   fs = require('fs');
   path = require('path');
@@ -21,6 +28,7 @@ if (typeof process != "undefined") {
   load = function(file) {
     vm.runInThisContext(fs.readFileSync(file), file);
   };
+  load("cside_message.js");
   load(rootDir+ "scene.js");
   load(rootDir+"navigator.js");
   load(rootDir+"util.js");
@@ -154,7 +162,7 @@ function compile(){
   //Check startup.txt for a *scene_list
   var sceneList = false;
   scene = new Scene("startup");
-  var scene_data = slurpFile(rootDir+'mygame/scenes/startup.txt', true);
+  var scene_data = slurpFile(projectDir+'startup.txt', true);
   scene.loadLines(scene_data);
   patt = /^\*scene_list\b/i;
   for (i = 0; i < scene["lines"].length; i++) {
@@ -208,10 +216,11 @@ function compile(){
   console.log("Combining scene files...");
   var scene_data = "";
   for (var i = 0; i < knownScenes.length; i++) {
-      scene_data = safeSlurpFile(rootDir+'mygame/scenes/' + knownScenes[i]);
+      console.log(knownScenes[i], { type: LOG_TYPES.PROGRESS, value: (i / knownScenes.length) * 100 });
+      scene_data = safeSlurpFile(projectDir + knownScenes[i]);
       if (scene_data === null || typeof scene_data === 'undefined') {
         if ("choicescript_upgrade.txt" === knownScenes[i]) continue;
-        throw new Error("Couldn't find file " + 'mygame/scenes/' + knownScenes[i]);
+        throw new Error("Couldn't find file " + projectDir + knownScenes[i]);
       }
       var scene = new Scene();
       scene.loadLines(scene_data);
@@ -226,10 +235,10 @@ function compile(){
           let data = trim(result[3]);
           let match = /(\S+) (\S+)(.*)/.exec(data);
           if (match) {
-            let image = slurpImage(rootDir + 'mygame/' + match[1]);
+            let image = slurpImage(projectDir + match[1]);
             return `${result[1]}${command} ${image} ${match[2]}${match[3]}`;
           } else {
-            let image = slurpImage(rootDir + 'mygame/' + data);
+            let image = slurpImage(projectDir + data);
             return `${result[1]}${command} ${image}`;
           }
         });

@@ -19,8 +19,7 @@
 
 // usage: randomtest num=10000 game=mygame seed=0 delay=false trial=false
 
-var projectPath = "";
-var outFileStream;
+var projectPath;
 var outFilePath;
 var isRhino = false;
 var iterations = 10;
@@ -67,6 +66,9 @@ function parseArgs(args) {
       recordBalance = (value !== "false");
     }
   }
+  if (!projectPath) {
+    projectPath = 'web/'+gameName+'/scenes/';
+  }
   if (isTrial === null) {
     isTrial = !!process.env.TRIAL;
   }
@@ -89,16 +91,13 @@ function countWords(msg) {
   }
 }
 
-if (typeof console != "undefined") {
+/*if (typeof console != "undefined") {
   var oldLog = console.log;
   console.log = function(msg) {
-    if (outFileStream)
-      outFileStream.write(msg + '\n', 'utf8');
-    else
-      oldLog(msg);
+    oldLog(msg);
     countWords(msg);
-  };
-}
+  };                  // Moved to below the cside_message.js import,
+}*/                   // So we can *re*-override in order to support countWords().
 
 
 if (typeof importScripts != "undefined") {
@@ -116,7 +115,7 @@ if (typeof importScripts != "undefined") {
   };
 
   if (typeof Scene === 'undefined') {
-    importScripts("web/scene.js", "web/navigator.js", "web/util.js", "web/mygame/mygame.js", "seedrandom.js");
+    importScripts("cside_message.js", "web/scene.js", "web/navigator.js", "web/util.js", "web/mygame/mygame.js", "seedrandom.js");
   }
 
   _global = this;
@@ -134,8 +133,8 @@ if (typeof importScripts != "undefined") {
       return xhr.responseText;
     } catch (x) {
       doneLoading();
-      console.log("RANDOMTEST FAILED");
-      console.log("ERROR: couldn't open " + url);
+      console.log("RANDOMTEST FAILED", { type: LOG_TYPES.STATUS });
+      console.log("ERROR: couldn't open " + url, { type: LOG_TYPES.ERROR });
       if (typeof window != "undefined" && window.location.protocol == "file:" && /Chrome/.test(navigator.userAgent)) {
             console.log("We're sorry, Google Chrome has blocked ChoiceScript from functioning.  (\"file:\" URLs cannot "+
               "load files in Chrome.)  ChoiceScript works just fine in Chrome, but only on a published website like "+
@@ -271,23 +270,23 @@ if (typeof importScripts != "undefined") {
   fs = require('fs');
   path = require('path');
   vm = require('vm');
-  if (outFilePath) {
-    if (fs.existsSync(outFilePath)) {
-      throw new Error("Specified output file already exists.");
-      process.exit(1);
-    }
-    outFileStream = fs.createWriteStream(outFilePath, {encoding: 'utf8'});
-    outFileStream.write("TESTING PROJECT AT:\n\t"+projectPath+"\n\nWRITING TO LOG FILE AT:\n\t"+outFilePath + '\n\nTEST OUTPUT FOLLOWS:\n', 'utf8');
-  }
   load = function(file) {
     vm.runInThisContext(fs.readFileSync(file), file);
   };
+  load("cside_message.js");
   load("web/scene.js");
   load("web/navigator.js");
   load("web/util.js");
   load("headless.js");
   load("seedrandom.js");
-  load("web/"+gameName+"/"+"mygame.js");
+  load("web/mygame/mygame.js");
+  if (typeof console != "undefined") {
+    var oldLog = console.log;
+    console.log = function(msg, data) {
+      oldLog(msg, data);
+      countWords(msg);
+    };
+  }
 } else if (typeof args == "undefined") {
   isRhino = true;
   args = arguments;
@@ -297,7 +296,7 @@ if (typeof importScripts != "undefined") {
   load("web/util.js");
   load("headless.js");
   load("seedrandom.js");
-  load("web/"+gameName+"/"+"mygame.js");
+  load("web/mygame/mygame.js");
   if (typeof console == "undefined") {
     console = {
       log: function(msg) { print(msg);}
@@ -765,8 +764,8 @@ function randomtestAsync(i, showCoverage) {
     }
 
     function fail(e) {
-      console.log("RANDOMTEST FAILED\n");
-      console.log(e);
+      console.log("RANDOMTEST FAILED\n", { type: LOG_TYPES.STATUS });
+      console.log(e, { type: LOG_TYPES.ERROR });
       if (isRhino) {
         java.lang.System.exit(1);
       } else if (typeof process != "undefined" && process.exit) {
@@ -787,7 +786,7 @@ function randomtestAsync(i, showCoverage) {
           }
         }
       }
-      console.log("RANDOMTEST PASSED");
+      console.log("RANDOMTEST PASSED", { type: LOG_TYPES.STATUS });
       var end = new Date().getTime();
       var duration = (end - start)/1000;
       console.log("Time: " + duration + "s")
@@ -809,15 +808,12 @@ function randomtestAsync(i, showCoverage) {
 }
 
 function randomtest() {
+  console.log("Writing to file: " + outFilePath,  { type: "config", outputFile: outFilePath });
   configureShowText();
   var start = new Date().getTime();
   randomSeed *= 1;
-  var percentage = iterations / 100;
   for (var i = 0; i < iterations; i++) {
-    if (typeof process != "undefined")
-      if (typeof process.send != "undefined")
-        process.send({type: "progress", data: i / percentage});
-    console.log("*****Seed " + (i+randomSeed));
+    console.log("*****Seed " + (i+randomSeed), { type: "progress", value: (i / (iterations / 100)) });
     nav.resetStats(stats);
     timeout = null;
     Math.seedrandom(i+randomSeed);
@@ -836,10 +832,15 @@ function randomtest() {
         iterations++;
         continue;
       }
-      console.log("RANDOMTEST FAILED: " + e);
-      process.exitCode = 1;
-      processExit = true;
-      break;
+      console.log("RANDOMTEST FAILED: " + e, { type: LOG_TYPES.ERROR });
+      if (isRhino) {
+        java.lang.System.exit(1);
+      } else if (typeof process != "undefined" && process.exit) {
+        process.exit(1);
+      } else {
+        processExit = true;
+        break;
+      }
     }
   }
 
@@ -855,7 +856,7 @@ function randomtest() {
         }
       }
     }
-    console.log("RANDOMTEST PASSED");
+    console.log("RANDOMTEST PASSED", { type: LOG_TYPES.STATUS });
     var duration = (new Date().getTime() - start)/1000;
     console.log("Time: " + duration + "s")
     if (recordBalance) {
@@ -889,6 +890,5 @@ function randomtest() {
       })();
     }
   }
-  if (process.disconnect) process.disconnect(); // Close IPC channel, so we can exit.
 }
 if (!delay) randomtest();

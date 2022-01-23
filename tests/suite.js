@@ -4,6 +4,7 @@ if (typeof java == "undefined") {
 	fs = require('fs');
 	vm = require('vm');
 	path = require('path');
+	cp = require("child_process");
 	var args = process.argv.slice(0);
 	args.shift();
 	args.shift();
@@ -35,6 +36,7 @@ QUnit.log = function(entry) {
 	if (entry.result) return;
 	var message = entry.message;
 	if (typeof message === "undefined") message = "";
+	print(QUnit.config.current.module + ": " + QUnit.config.current.testName);
     print("    ", entry.result ? 'PASS' : 'FAIL', message);
     if (!entry.result && (typeof entry.expected != "undefined")) {
     	if (entry.actual) {
@@ -48,15 +50,14 @@ QUnit.log = function(entry) {
 var finalResults;
 QUnit.done = function(results) {
 	finalResults = results;
+    if (finalResults.failed) {
+        print(finalResults.failed, "FAILED out of", finalResults.total, "total");
+        isRhino ? java.lang.System.exit(1) : process.exit(1);
+    } else {
+        print(finalResults.total, "PASSED");
+    }
 }
 
 for (var i = 1; i < args.length; i++) {
 	load(args[i]);
-}
-
-if (finalResults.failed) {
-	print(finalResults.failed, "FAILED out of", finalResults.total, "total");
-	isRhino ? java.lang.System.exit(1) : process.exit(1);
-} else {
-	print(finalResults.total, "PASSED");
 }
