@@ -205,7 +205,7 @@ function compile(){
       console.log("Game title set to: " + csTitle);
     }
   
-  var ifidLine = scene.lines.find(line => /^\*ifid/i);
+  var ifidLine = scene.lines.find(line => /^\*ifid/i.test(line));
   if (ifidLine) {
     var ifid = ifidLine.replace(/^\*ifid\s+/i, "").toUpperCase();
     top += `<meta property="ifiction:ifid" content="${ifid}" prefix="ifiction: http://babel.ifarchive.org/protocol/iFiction/">`;
