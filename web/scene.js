@@ -3889,6 +3889,23 @@ Scene.prototype.functions = {
     if (isNaN(value*1)) throw new Error(this.lineMsg()+"round() value is not a number: " + value);
     return Math.round(value);
   },
+  /**
+   * Takes a value and clamps it between 0 and 100.
+   * It is, return 0 if value below 0. Return 100
+   * if value above 100, and return the value itself
+   * if inside the range.
+   * 
+   * @param {Number} value - Current value of stat.
+   * @returns {Number} - Clamped value between 0 and 100.
+   */
+  stat: function (value) {
+    if (isNaN(value)) 
+      throw new Error(
+        this.lineMsg() + "argument in stat() is not a number: " + value
+      );
+    // This will clamp the value between 0 and 100.
+    return Math.max(Math.min(value, 100), 0); 
+  },
   timestamp: function(value) {
     return Date.parse(value)/1000;
   },
@@ -4455,7 +4472,7 @@ Scene.tokens = [
     {name:"CLOSE_CURLY", test:function(str){ return Scene.regexpMatch(str,/^\}/); } },
     {name:"OPEN_SQUARE", test:function(str){ return Scene.regexpMatch(str,/^\[/); } },
     {name:"CLOSE_SQUARE", test:function(str){ return Scene.regexpMatch(str,/^\]/); } },
-    {name:"FUNCTION", test:function(str){ return Scene.regexpMatch(str,/^(not|round|timestamp|log|length|auto)\s*\(/); } },
+    {name:"FUNCTION", test:function(str){ return Scene.regexpMatch(str,/^(not|round|timestamp|log|length|auto|stat)\s*\(/); } },
     {name:"NUMBER", test:function(str){ return Scene.regexpMatch(str,/^\d+(\.\d+)?\b/); } },
     {name:"STRING", test:function(str, line, sceneObj) {
             var i;
