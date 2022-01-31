@@ -1105,7 +1105,8 @@ var tokenizerTests = {
     ,'2*3': [{"value":"2","name":"NUMBER","pos":1},{"value":"*","name":"OPERATOR","pos":2},{"value":"3","name":"NUMBER","pos":3}]
     ,'3%2': [{name:"NUMBER",value:"3",pos:1},{name:"OPERATOR",value:"%",pos:2},{name:"NUMBER",value:"2",pos:3}]
     ,'not(false)': [{name:"FUNCTION",value:"not(",pos:4,func:"not"},{name:"VAR",value:"false",pos:9},{name:"CLOSE_PARENTHESIS",value:")",pos:10}]
-    ,'round(1.5)': [{name:"FUNCTION",value:"round(",pos:6,func:"round"},{name:"NUMBER",value:"1.5",pos:9},{name:"CLOSE_PARENTHESIS",value:")",pos:10}]
+    , 'round(1.5)': [{ name: "FUNCTION", value: "round(", pos: 6, func: "round" }, { name: "NUMBER", value: "1.5", pos: 9 }, { name: "CLOSE_PARENTHESIS", value: ")", pos: 10 }]
+    , 'stat(150)': [{ name: "FUNCTION", value: "stat(", pos: 5, func: "stat" }, { name: "NUMBER", value: "150", pos: 8 }, { name: "CLOSE_PARENTHESIS", value: ")", pos: 9 }]
 }
 
 var tokenizerErrorTests = ['"foo'];
@@ -1487,6 +1488,14 @@ test("round", function() {
     var token = stack.shift();
     var actual = scene.evaluateValueToken(token, stack);
     doh.is(2, actual);
+});
+
+test("stat", function () {
+    var scene = new Scene();
+    var stack = scene.tokenizeExpr("stat(150)");
+    var token = stack.shift();
+    var actual = scene.evaluateValueToken(token, stack);
+    doh.is(100, actual);
 });
 
 module("Line Breaks");
