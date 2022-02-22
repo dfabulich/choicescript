@@ -792,9 +792,6 @@ function printOptions(groups, options, callback) {
   // global num will be used to assign accessKeys to the options
   var globalNum = 1;
   var currentOptions = options;
-  var div = document.createElement("div");
-  form.appendChild(div);
-  setClass(div, "choice");
   for (var groupNum = 0; groupNum < groups.length; groupNum++) {
       var group = groups[groupNum];
       if (group) {
@@ -805,8 +802,11 @@ function printOptions(groups, options, callback) {
 
           var p = document.createElement("p");
           p.appendChild(document.createTextNode(textBuilder.join("")));
-          div.appendChild(p);
+          form.appendChild(p);
       }
+      var div = document.createElement("div");
+      form.appendChild(div);
+      setClass(div, "choice");
       var checked = null;
       for (var optionNum = 0; optionNum < currentOptions.length; optionNum++) {
           var option = currentOptions[optionNum];
