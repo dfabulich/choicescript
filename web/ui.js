@@ -300,17 +300,17 @@ function textOptionsMenu(categories) {
 }
 
 function getZoomFactor() {
-  if (document.body.style.fontSize === undefined) {
+  if (document.documentElement.style.fontSize === undefined) {
     return window.zoomFactor || 1;
   } else {
-    var fontSize = parseFloat(document.body.style.fontSize);
+    var fontSize = parseFloat(document.documentElement.style.fontSize);
     if (isNaN(fontSize)) fontSize = 100;
     return fontSize / 100;
   }
 }
 
 function setZoomFactor(zoomFactor) {
-  document.body.style.fontSize = Math.round(100*zoomFactor) + "%";
+  document.documentElement.style.fontSize = Math.round(100*zoomFactor) + "%";
   window.zoomFactor = zoomFactor;
   if (initStore()) store.set("preferredZoom", String(zoomFactor));
 }

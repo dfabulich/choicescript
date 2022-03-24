@@ -88,10 +88,10 @@ a {
 
 .statBar {
   background-color: #949291;
-  height: 2em;
-  line-height: 2em;
+  height: 2rem;
+  line-height: 2rem;
   margin: 0.5ch 0;
-  width: 35ch;
+  width: 20rem;
   max-width: 100%;
   color: #f7f4f1;
   position: relative; /* to allow absolute positioned value */
