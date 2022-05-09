@@ -315,17 +315,17 @@ function textOptionsMenu(categories) {
 }
 
 function getZoomFactor() {
-  if (document.body.style.fontSize === undefined) {
+  if (document.documentElement.style.fontSize === undefined) {
     return window.zoomFactor || 1;
   } else {
-    var fontSize = parseFloat(document.body.style.fontSize);
+    var fontSize = parseFloat(document.documentElement.style.fontSize);
     if (isNaN(fontSize)) fontSize = 100;
     return fontSize / 100;
   }
 }
 
 function setZoomFactor(zoomFactor) {
-  document.body.style.fontSize = Math.round(100*zoomFactor) + "%";
+  document.documentElement.style.fontSize = Math.round(100*zoomFactor) + "%";
   window.zoomFactor = zoomFactor;
   if (initStore()) store.set("preferredZoom", String(zoomFactor));
 }
@@ -811,9 +811,6 @@ function printOptions(groups, options, callback) {
   // global num will be used to assign accessKeys to the options
   var globalNum = 1;
   var currentOptions = options;
-  var div = document.createElement("div");
-  form.appendChild(div);
-  setClass(div, "choice");
   for (var groupNum = 0; groupNum < groups.length; groupNum++) {
       var group = groups[groupNum];
       if (group) {
@@ -824,8 +821,11 @@ function printOptions(groups, options, callback) {
 
           var p = document.createElement("p");
           p.appendChild(document.createTextNode(textBuilder.join("")));
-          div.appendChild(p);
+          form.appendChild(p);
       }
+      var div = document.createElement("div");
+      form.appendChild(div);
+      setClass(div, "choice");
       var checked = null;
       for (var optionNum = 0; optionNum < currentOptions.length; optionNum++) {
           var option = currentOptions[optionNum];
