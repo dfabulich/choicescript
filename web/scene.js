@@ -1767,7 +1767,15 @@ Scene.prototype.parseOptions = function parseOptions(startIndent, choicesRemaini
                 this["if"](data, true /*inChoice*/);
                 continue;
               }
-            } else if (/^(else|elseif|elsif)$/.test(command)) {
+            } else if ("else" == command) {
+              if (data) throw new Error(this.lineMsg() + "Invalid content after *" + command + "; move the #option to the next line, indented: " + data);
+              this[command](data, true /*inChoice*/);
+              continue;
+            } else if (/^(elseif|elsif)$/.test(command)) {
+              ifResult = this.parseOptionIf(data, command);
+              if (ifResult) {
+                throw new Error(this.lineMsg() + "Invalid content after *" + command + "; move the #option to the next line, indented: " + ifResult.line);
+              }
               this[command](data, true /*inChoice*/);
               continue;
             } else if ("selectable_if" == command) {
