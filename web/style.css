@@ -1,9 +1,12 @@
+html {
+  font: -apple-system-body; /* we'll override the font, but keep the size from iOS dynamic text sizing */
+}
+
 body {
   position: relative;
   max-width: 80ch;
   min-height: 100vh; /* keep iOS address bar from popping in and out */
   font-size: 100%;  /* reset for CWS */
-  font: -apple-system-body; /* we'll override the font, but keep the size from iOS dynamic text sizing */
   font-family: Georgia,"Times New Roman",serif;
   background-color: #F7F4F1;
   color: rgba(0, 0, 0, 0.85);
