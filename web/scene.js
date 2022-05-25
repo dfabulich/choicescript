@@ -3624,6 +3624,7 @@ Scene.prototype["if"] = function scene_if(line) {
 Scene.prototype.skipTrueBranch = function skipTrueBranch(inElse) {
   var startIndent = this.indent;
   var nextIndent = null;
+  var line;
   while (isDefined(line = this.lines[++this.lineNum])) {
       this.rollbackLineCoverage();
       if (!trim(line)) continue;
