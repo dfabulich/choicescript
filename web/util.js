@@ -1100,8 +1100,12 @@ function updateSinglePaidSceneCache(sceneName, callback) {
       var xhr = new XMLHttpRequest();
       var canonical = document.querySelector("link[rel=canonical]");
       var canonicalHref = canonical && canonical.getAttribute("href");
+      if (window.beta) {
+        canonicalHref = canonicalHref.replace('https://www.choiceofgames.com/', 'https://www.choiceofgames.com/beta/');
+      }
       var url = canonicalHref + "scenes/" + fileName + "?hash="+hashes.scenes[fileName];
       xhr.open("GET", url);
+      xhr.withCredentials = true;
       xhr.onload = function() {
         var error;
         if (xhr.status !== 200) {

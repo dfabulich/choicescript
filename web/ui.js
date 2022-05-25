@@ -1627,6 +1627,15 @@ function checkPurchase(products, callback) {
     purchases.billingSupported = true;
     publishPurchaseEvents(purchases);
     safeTimeout(function() {callback("ok", purchases);}, 0);
+  } else if (window.beta === "beta") {
+    var productList = products.split(/ /);
+    var purchases = {};
+    for (i = 0; i < productList.length; i++) {
+      purchases[productList[i]] = true;
+    }
+    purchases.billingSupported = true;
+    publishPurchaseEvents(purchases);
+    safeTimeout(function () { callback("ok", purchases); }, 0);
   } else if (isWebPurchaseSupported()) {
     checkWebPurchases(function(ok, knownPurchases) {
       callback(ok, knownPurchases);
@@ -1645,7 +1654,8 @@ function checkPurchase(products, callback) {
 }
 
 function isWebPurchaseSupported() {
-  return isWebSavePossible() && !!window.stripeKey;
+  var enableBilling = (typeof window.enableBilling === 'undefined' || window.enableBilling)
+  return enableBilling && isWebSavePossible() && !!window.stripeKey;
 }
 
 function isRestorePurchasesSupported() {
