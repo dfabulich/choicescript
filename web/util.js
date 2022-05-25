@@ -786,7 +786,8 @@ function loadAndRestoreGame(slot, forcedScene) {
         state = jsonParse(value);
       } else if (slot == "backup") {
         console.log("loadAndRestoreGame couldn't find backup");
-        return loadAndRestoreGame("", forcedScene);
+        if (typeof alertify !== "undefined") alertify.log("Failed restarting chapter. Restarting the game from scratch.");
+        return restartGame();
       }
       restoreGame(state, forcedScene);
     });
