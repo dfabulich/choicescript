@@ -1557,6 +1557,7 @@ Scene.prototype.getVar = function getVar(variable) {
     if (variable == "choice_is_web") return typeof window != "undefined" && !!window.isWeb;
     if (variable == "choice_is_steam") return typeof window != "undefined" && !!window.isSteamApp;
     if (variable == "choice_is_ios_app") return typeof window != "undefined" && !!window.isIosApp;
+    if (variable == "choice_is_ipad_app") return typeof window != "undefined" && !!window.isIosApp && !!window.isIPad;
     if (variable == "choice_is_android_app") return typeof window != "undefined" && !!window.isAndroidApp;
     if (variable == "choice_is_omnibus_app") return typeof window != "undefined" && !!window.isOmnibusApp;
     if (variable == "choice_is_amazon_app") return typeof window != "undefined" && !!window.isAmazonApp;
