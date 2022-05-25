@@ -2316,6 +2316,8 @@ function checkAchievements(callback) {
               });
             })(i);
           }
+        } else {
+          safeTimeout(function() {checkAchievements(callback);}, 100);
         }
       } else if (window.isMacApp && window.macAchievements) {
         alreadyLoadingAchievements = !!window.checkAchievementCallback;
