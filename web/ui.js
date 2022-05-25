@@ -2210,7 +2210,8 @@ function handleDiscountResponse(ok, response) {
 }
 
 function isPrerelease() {
-  if (typeof window != "undefined" && !!window.isWeb && window.releaseDate) {
+  var steamTrial = window.isSteamApp && window.isTrial;
+  if (typeof window != "undefined" && (window.isWeb || steamTrial) && window.releaseDate) {
     if (new Date() > window.releaseDate.getTime()) return false;
     if (/(fullaccess|preview)@choiceofgames.com/.test(getCookieByName("login"))) return false;
     var identity = document.getElementById("identity");
