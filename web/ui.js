@@ -3297,6 +3297,10 @@ window.onload=function() {
     } else {
       safeCall(null, loadAndRestoreGame);
     }
+    if (window.beta) {
+      var reportBugButton = document.getElementById("bugButton");
+      if (reportBugButton) reportBugButton.setAttribute("style", "");
+    }
     if (window.Touch && window.isWeb) {
       // INSERT ADMOB AD
     }
