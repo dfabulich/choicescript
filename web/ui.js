@@ -110,6 +110,16 @@ function redirectFromStats(scene, label, originLine, callback) {
   }
 }
 
+function returnFromStats() {
+  if (window.isIosApp && !window.isIPad) {
+    callIos("returntogame");
+  } else if (window.isAndroidApp && window.statsMode.get()) {
+    statsMode.returnToGame();
+  } else {
+    clearScreen(loadAndRestoreGame);
+  }
+}
+
 function showAchievements(hideNextButton) {
   if (document.getElementById('loading')) return;
   var button = document.getElementById("achievementsButton");

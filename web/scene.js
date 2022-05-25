@@ -1130,18 +1130,18 @@ Scene.prototype.finish = function finish(buttonName) {
     var self = this;
     if (this.secondaryMode == "stats") {
       if (typeof window == "undefined") return;
-      if (window.forcedScene == "choicescript_stats") return;
-      if (window.isAndroidApp && window.statsMode.get()) return;
+      // In iPad app, the stats screen is always visible
+      if (window.isIosApp && window.isIPad) return;
 
       if (this.screenEmpty) {
-        clearScreen(loadAndRestoreGame);
+        returnFromStats();
         return;
       }
       if (!buttonName) buttonName = "Next";
       buttonName = this.replaceVariables(buttonName);
       printButton(buttonName, main, false,
         function() {
-          clearScreen(loadAndRestoreGame);
+          returnFromStats();
         }
       );
       return;
