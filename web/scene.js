@@ -1569,7 +1569,7 @@ Scene.prototype.getVar = function getVar(variable) {
       }
       return "release day";
     }
-    if (variable == "choice_prerelease") return isPrerelease();
+    if (variable == "choice_prerelease") return typeof isPrerelease != "undefined" && !!isPrerelease();
     if (variable == "choice_kindle") return typeof isKindle !== "undefined" && !!isKindle;
     if (variable == "choice_randomtest") return !!this.randomtest;
     if (variable == "choice_quicktest") return false; // quicktest will explore "false" paths
