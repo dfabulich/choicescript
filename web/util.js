@@ -984,18 +984,24 @@ function findXhr() {
         return crc ^ (-1);
     }
 
-function simpleDateTimeFormat(date) {
+function simpleDateFormat(date) {
   var day = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][date.getDay()];
   var month = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][date.getMonth()];
   var minutes = date.getMinutes();
-  if (minutes < 10) minutes = "0" + (""+minutes);
+  if (minutes < 10) minutes = "0" + ("" + minutes);
   var oneYearInMillis = 1000 * 60 * 60 * 24 * 365;
   var millisAgo = new Date().getTime() - date.getTime();
   var yearString = ""
   if (millisAgo > oneYearInMillis) {
     yearString = ", " + date.getFullYear();
   }
-  return day + ", " + month + " " + date.getDate() + yearString + ", " + date.getHours() + ":" + minutes;
+  return day + ", " + month + " " + date.getDate() + yearString;
+}
+
+function simpleDateTimeFormat(date) {
+  var minutes = date.getMinutes();
+  if (minutes < 10) minutes = "0" + ("" + minutes);
+  return simpleDateFormat(date) + ", " + date.getHours() + ":" + minutes;
 }
 
 function jsonParse(str) {

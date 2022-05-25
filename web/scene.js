@@ -1565,7 +1565,7 @@ Scene.prototype.getVar = function getVar(variable) {
     if (variable == "choice_is_trial") return !!(typeof isTrial != "undefined" && isTrial);
     if (variable == "choice_release_date") {
       if (typeof window != "undefined" && window.releaseDate) {
-        return simpleDateTimeFormat(window.releaseDate);
+        return simpleDateFormat(window.releaseDate);
       }
       return "release day";
     }
