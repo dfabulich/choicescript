@@ -1423,7 +1423,7 @@ function subscribe(target, options, callback) {
           };
           xhr.send();
         } else {
-          script.src = 'http://choiceofgames.us4.list-manage.com/subscribe/post-json?'+mailParams+'&c=jsonp' + timestamp;
+          script.src = 'https://choiceofgames.us4.list-manage.com/subscribe/post-json?'+mailParams+'&c=jsonp' + timestamp;
           head.appendChild(script);
         }
       }
