@@ -110,6 +110,16 @@ function redirectFromStats(scene, label, originLine, callback) {
   }
 }
 
+function returnFromStats() {
+  if (window.isIosApp && !window.isIPad) {
+    callIos("returntogame");
+  } else if (window.isAndroidApp && window.statsMode.get()) {
+    statsMode.returnToGame();
+  } else {
+    clearScreen(loadAndRestoreGame);
+  }
+}
+
 function showAchievements(hideNextButton) {
   if (document.getElementById('loading')) return;
   var button = document.getElementById("achievementsButton");
@@ -1432,7 +1442,7 @@ function subscribe(target, options, callback) {
           };
           xhr.send();
         } else {
-          script.src = 'http://choiceofgames.us4.list-manage.com/subscribe/post-json?'+mailParams+'&c=jsonp' + timestamp;
+          script.src = 'https://choiceofgames.us4.list-manage.com/subscribe/post-json?'+mailParams+'&c=jsonp' + timestamp;
           head.appendChild(script);
         }
       }
@@ -1636,6 +1646,15 @@ function checkPurchase(products, callback) {
     purchases.billingSupported = true;
     publishPurchaseEvents(purchases);
     safeTimeout(function() {callback("ok", purchases);}, 0);
+  } else if (window.beta === "beta") {
+    var productList = products.split(/ /);
+    var purchases = {};
+    for (i = 0; i < productList.length; i++) {
+      purchases[productList[i]] = true;
+    }
+    purchases.billingSupported = true;
+    publishPurchaseEvents(purchases);
+    safeTimeout(function () { callback("ok", purchases); }, 0);
   } else if (isWebPurchaseSupported()) {
     checkWebPurchases(function(ok, knownPurchases) {
       callback(ok, knownPurchases);
@@ -1654,7 +1673,8 @@ function checkPurchase(products, callback) {
 }
 
 function isWebPurchaseSupported() {
-  return isWebSavePossible() && !!window.stripeKey;
+  var enableBilling = (typeof window.enableBilling === 'undefined' || window.enableBilling)
+  return enableBilling && isWebSavePossible() && !!window.stripeKey;
 }
 
 function isRestorePurchasesSupported() {
@@ -2209,7 +2229,8 @@ function handleDiscountResponse(ok, response) {
 }
 
 function isPrerelease() {
-  if (typeof window != "undefined" && !!window.isWeb && window.releaseDate) {
+  var steamTrial = window.isSteamApp && window.isTrial;
+  if (typeof window != "undefined" && (window.isWeb || steamTrial) && window.releaseDate) {
     if (new Date() > window.releaseDate.getTime()) return false;
     if (/(fullaccess|preview)@choiceofgames.com/.test(getCookieByName("login"))) return false;
     var identity = document.getElementById("identity");
@@ -2314,6 +2335,8 @@ function checkAchievements(callback) {
               });
             })(i);
           }
+        } else {
+          safeTimeout(function() {checkAchievements(callback);}, 100);
         }
       } else if (window.isMacApp && window.macAchievements) {
         alreadyLoadingAchievements = !!window.checkAchievementCallback;
@@ -3292,6 +3315,10 @@ window.onload=function() {
       }
     } else {
       safeCall(null, loadAndRestoreGame);
+    }
+    if (window.beta) {
+      var reportBugButton = document.getElementById("bugButton");
+      if (reportBugButton) reportBugButton.setAttribute("style", "");
     }
     if (window.Touch && window.isWeb) {
       // INSERT ADMOB AD

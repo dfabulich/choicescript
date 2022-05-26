@@ -1130,18 +1130,18 @@ Scene.prototype.finish = function finish(buttonName) {
     var self = this;
     if (this.secondaryMode == "stats") {
       if (typeof window == "undefined") return;
-      if (window.forcedScene == "choicescript_stats") return;
-      if (window.isAndroidApp && window.statsMode.get()) return;
+      // In iPad app, the stats screen is always visible
+      if (window.isIosApp && window.isIPad) return;
 
       if (this.screenEmpty) {
-        clearScreen(loadAndRestoreGame);
+        returnFromStats();
         return;
       }
       if (!buttonName) buttonName = "Next";
       buttonName = this.replaceVariables(buttonName);
       printButton(buttonName, main, false,
         function() {
-          clearScreen(loadAndRestoreGame);
+          returnFromStats();
         }
       );
       return;
@@ -1557,6 +1557,7 @@ Scene.prototype.getVar = function getVar(variable) {
     if (variable == "choice_is_web") return typeof window != "undefined" && !!window.isWeb;
     if (variable == "choice_is_steam") return typeof window != "undefined" && !!window.isSteamApp;
     if (variable == "choice_is_ios_app") return typeof window != "undefined" && !!window.isIosApp;
+    if (variable == "choice_is_ipad_app") return typeof window != "undefined" && !!window.isIosApp && !!window.isIPad;
     if (variable == "choice_is_android_app") return typeof window != "undefined" && !!window.isAndroidApp;
     if (variable == "choice_is_omnibus_app") return typeof window != "undefined" && !!window.isOmnibusApp;
     if (variable == "choice_is_amazon_app") return typeof window != "undefined" && !!window.isAmazonApp;
@@ -1564,11 +1565,11 @@ Scene.prototype.getVar = function getVar(variable) {
     if (variable == "choice_is_trial") return !!(typeof isTrial != "undefined" && isTrial);
     if (variable == "choice_release_date") {
       if (typeof window != "undefined" && window.releaseDate) {
-        return simpleDateTimeFormat(window.releaseDate);
+        return simpleDateFormat(window.releaseDate);
       }
       return "release day";
     }
-    if (variable == "choice_prerelease") return isPrerelease();
+    if (variable == "choice_prerelease") return typeof isPrerelease != "undefined" && !!isPrerelease();
     if (variable == "choice_kindle") return typeof isKindle !== "undefined" && !!isKindle;
     if (variable == "choice_randomtest") return !!this.randomtest;
     if (variable == "choice_quicktest") return false; // quicktest will explore "false" paths
@@ -3637,6 +3638,7 @@ Scene.prototype["if"] = function scene_if(line) {
 Scene.prototype.skipTrueBranch = function skipTrueBranch(inElse) {
   var startIndent = this.indent;
   var nextIndent = null;
+  var line;
   while (isDefined(line = this.lines[++this.lineNum])) {
       this.rollbackLineCoverage();
       if (!trim(line)) continue;
