@@ -632,17 +632,30 @@ Scene.prototype.choice = function choice(data) {
     this.paragraph();
     if (showChoices) {
       if (showText) {
-        this.randomLog("*choice " + (choiceLine+1)+'#'+(index+1)+' (line '+item.ultimateOption.line+')');
-        // it would be nice to handle choice groups here
-        for (var i = 0; i < flattenedOptions.length; i++) {
-          if (i > 0) {
-            this.printLine("[n/]");
-          } else {
-            this.printLine(" ");
+        this.randomLog("*choice " + (choiceLine + 1) + '#' + (index + 1) + ' (line ' + item.ultimateOption.line + ')');
+        var currentOptions = options;
+        for (var i = 0; i < groups.length; i++) {
+          if (groups.length > 1) {
+            var article = "a"
+            if (/^[aeiou].*/i.test(groups[i])) article = "an";
+            this.printLine("Select " + article + " " + groups[i] + ":");
+            this.paragraph();
           }
-          this.printLine("\u2022 " + (i === index ? "\u2605 " : "") + flattenedOptions[i].ultimateOption.name);
+          var index = item[groups[i]];
+          var first = true;
+          for (var j = 0; j < currentOptions.length; j++) {
+            if (currentOptions[j].unselectable) continue;
+            if (first) {
+              first = false;
+              this.printLine(" ");
+            } else {
+              this.printLine("[n/]");
+            }
+            this.printLine("\u2022 " + (j === index ? "\u2605 " : "") + currentOptions[j].name);
+          }
+          this.paragraph();
+          currentOptions = currentOptions[0].suboptions;
         }
-        this.paragraph();
       } else {
         var optionName = this.replaceVariables(item.ultimateOption.name);
         this.randomLog("*choice " + (choiceLine+1)+'#'+(index+1)+' (line '+item.ultimateOption.line+') #' + optionName);
