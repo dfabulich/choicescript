@@ -33,6 +33,7 @@ var highlightGenderPronouns = false;
 var showChoices = true;
 var avoidUsedOptions = true;
 var recordBalance = false;
+var outputFile = undefined;
 var slurps = {}
 function parseArgs(args) {
   for (var i = 0; i < args.length; i++) {
@@ -64,6 +65,8 @@ function parseArgs(args) {
       showCoverage = (value !== "false");
     } else if (name === "recordBalance") {
       recordBalance = (value !== "false");
+    } else if (name === "outputFile") {
+      outputFile = value;
     }
   }
   if (!projectPath) {
@@ -78,6 +81,19 @@ function parseArgs(args) {
     showChoices = false;
     showCoverage = false;
     avoidUsedOptions = false;
+  }
+  if (outputFile) {
+    var fs = require('fs');
+    var output = fs.openSync(outputFile, 'w');
+    console.log = function (msg) {
+      countWords(msg);
+      fs.writeSync(output, msg + '\n');
+    }
+    var oldError = console.error;
+    console.error = function (msg) {
+      oldError(msg);
+      fs.writeSync(output, msg + '\n');
+    }
   }
 }
 
