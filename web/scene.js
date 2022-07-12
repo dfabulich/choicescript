@@ -1261,7 +1261,7 @@ Scene.prototype.redirect_scene = function redirectScene(data) {
 };
 
 Scene.prototype.product = function product(productId) {
-  if (!/^[a-z]+$/.test(productId)) throw new Error(this.lineMsg()+"Invalid product id: " +productId);
+  if (!/^[a-z]+$/.test(productId)) throw new Error(this.lineMsg()+"Invalid product id (only lowercase letters, no numbers or punctuation): " +productId);
   if (this.nav) this.nav.products[productId] = {};
 }
 
