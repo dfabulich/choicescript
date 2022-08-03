@@ -1966,6 +1966,32 @@ Scene.prototype.page_break = function page_break(buttonName) {
     if (this.debugMode) println(computeCookie(this.stats, this.temps, this.lineNum, this.indent));
 };
 
+Scene.prototype.page_break_advertisement = function pageBreakAdvertisement(line) {
+  if (line) throw new Error(this.lineMsg() + "*page_break_advertisement doesn't allow you to change the button message. This text will never be shown: " + line);
+  var self = this;
+  this.finished = true;
+  showFullScreenAdvertisementButton("Watch an Ad to Continue", function () {
+    self.page_break("");
+  }, function () {
+    self.finished = false;
+    self.skipFooter = false;
+    self.resetPage();
+  });
+};
+
+Scene.prototype.finish_advertisement = function finishAdvertisement(line) {
+  if (line) throw new Error(this.lineMsg() + "*finish_advertisement doesn't allow you to change the button message. This text will never be shown: " + line);
+  var self = this;
+  this.finished = true;
+  showFullScreenAdvertisementButton("Watch an Ad for the Next Chapter", function () {
+    self.finish("");
+  }, function () {
+    var nextSceneName = self.nav && nav.nextSceneName(self.name);
+    var scene = new Scene(nextSceneName, self.stats, self.nav, { debugMode: self.debugMode, secondaryMode: self.secondaryMode });
+    scene.resetPage();
+  });
+};
+
 // *line_break
 // single line break in the middle of a paragraph
 Scene.prototype.line_break = function line_break() {
@@ -4590,5 +4616,6 @@ Scene.validCommands = {"comment":1, "goto":1, "gotoref":1, "label":1, "looplimit
     "restart":1,"more_games":1,"delay_ending":1,"end_trial":1,"login":1,"achieve":1,"scene_list":1,"title":1,
     "bug":1,"link_button":1,"check_registration":1,"sound":1,"author":1,"gosub_scene":1,"achievement":1,
     "check_achievements":1,"redirect_scene":1,"print_discount":1,"purchase_discount":1,"track_event":1,
-    "timer":1,"youtube":1,"product":1,"text_image":1,"ai":1,"params":1,"config":1,"ifid":1
+    "timer":1,"youtube":1,"product":1,"text_image":1,"ai":1,"params":1,"config":1,"ifid":1,
+    "page_break_advertisement":1, "finish_advertisement":1
     };

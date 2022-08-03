@@ -40,6 +40,7 @@ function autotester(sceneText, nav, sceneName, extraLabels) {
   };
 
   Scene.prototype.page_break = function(buttonName) {
+    this.finished = false;
     this.replaceVariables(buttonName);
     this.resetCheckedPurchases();
   };

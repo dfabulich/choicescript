@@ -2381,6 +2381,23 @@ function showFullScreenAdvertisement(callback) {
   }
 }
 
+function showFullScreenAdvertisementButton(buttonName, skipCallback, doneCallback) {
+  if (typeof isFullScreenAdvertisingSupported == "undefined" || !isFullScreenAdvertisingSupported()) {
+    return skipCallback();
+  }
+  startLoading();
+  checkPurchase("adfree", function (ok, result) {
+    doneLoading();
+    if (result.adfree || !result.billingSupported) {
+      skipCallback();
+    } else {
+      printButton(buttonName, main, false, function () {
+        showFullScreenAdvertisement(doneCallback);
+      })
+    }
+  });
+}
+
 function showTicker(target, endTimeInSeconds, finishedCallback) {
   if (!target) target = document.getElementById('text');
   var div = document.createElement("span");

@@ -361,6 +361,7 @@ Scene.prototype.page_break = function randomtest_page_break(buttonText) {
   buttonText = this.replaceVariables(buttonText);
   println("*page_break " + buttonText);
   println("");
+  this.finished = false;
   this.resetCheckedPurchases();
 };
 
