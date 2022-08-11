@@ -1959,6 +1959,7 @@ Scene.prototype.page_break = function page_break(buttonName) {
     var self = this;
     printButton(buttonName, main, false,
       function() {
+        delayBreakEnd();
         self.finished = false;
         self.resetPage();
       }
@@ -1973,6 +1974,7 @@ Scene.prototype.page_break_advertisement = function pageBreakAdvertisement(line)
   showFullScreenAdvertisementButton("Watch an Ad to Continue", function () {
     self.page_break("");
   }, function () {
+    delayBreakEnd();
     self.finished = false;
     self.skipFooter = false;
     self.resetPage();
@@ -3507,11 +3509,7 @@ Scene.prototype.delay_break = function(durationInSeconds) {
     window.blockRestart = true;
     var endTimeInSeconds = durationInSeconds * 1 + delayStart * 1;
     showTicker(target, endTimeInSeconds, function() {
-      printButton("Next", target, false, function() {
-        delayBreakEnd();
-        self.finished = false;
-        self.resetPage();
-      });
+      self.page_break_advertisement();
     });
     printFooter();
   });
