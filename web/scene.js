@@ -1374,7 +1374,7 @@ Scene.prototype.buyButton = function(product, priceGuess, label, title) {
   var self = this;
   getPrice(product, function (price) {
     if (!price || "free" == price) {
-      self["goto"](label);
+      if (label) self["goto"](label);
       self.finished = false;
       self.resetPage();
     } else {
@@ -1414,7 +1414,7 @@ Scene.prototype.buyButton = function(product, priceGuess, label, title) {
             safeCall(self, function() {
                 restorePurchases(product, function(purchased) {
                   if (purchased) {
-                    self["goto"](label);
+                    if (label) self["goto"](label);
                     self.finished = false;
                     self.resetPage();
                   } else {
@@ -1427,9 +1427,11 @@ Scene.prototype.buyButton = function(product, priceGuess, label, title) {
         );
       }
 
-      self.skipFooter = false;
-      self.finished = false;
-      self.execute();
+      if (label) {
+        self.skipFooter = false;
+        self.finished = false;
+        self.execute();
+      }
     }
   });
 };
@@ -2130,19 +2132,26 @@ Scene.prototype.comment = function comment(line) {
     if (this.debugMode) println("*comment " + line);
 };
 
-Scene.prototype.advertisement = function advertisement() {
-  if (typeof isFullScreenAdvertisingSupported != "undefined" && isFullScreenAdvertisingSupported()) {
-    this.finished = true;
-    this.skipFooter = true;
-
-    var self = this;
-    showFullScreenAdvertisement(function() {
+Scene.prototype.advertisement = function advertisement(durationInSeconds) {
+  if (this.getVar("choice_prerelease") || this.getVar("choice_is_steam")) return;
+  var self = this;
+  this.finished = true;
+  this.skipFooter = true;
+  startLoading();
+  checkPurchase("adfree", function(ok, result) {
+    doneLoading();
+    if (result.adfree) {
       self.finished = false;
       self.skipFooter = false;
-      self.resetPage();
-    });
-  }
-
+      self.execute();
+    }
+    self.printLine("Come back later to play the next part of [i]${choice_title}[/i]!");
+    self.paragraph();
+    self.printLine("Or you can buy the game now to skip the wait.");
+    self.paragraph();
+    self.buyButton("adfree", "$1.99", null, "It");
+    self.delay_break(durationInSeconds || 7200);
+  });
 };
 
 // *looplimit 5

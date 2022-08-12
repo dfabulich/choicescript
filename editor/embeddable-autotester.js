@@ -48,6 +48,11 @@ function autotester(sceneText, nav, sceneName, extraLabels) {
   Scene.prototype.feedback = function() {};
   Scene.prototype.save = function() {};
   Scene.prototype.restore_purchases = function() {};
+  Scene.prototype.advertisement = function() {
+    if (this.name === "startup") {
+      throw new Error(this.lineMsg() + "*advertisement is not allowed in startup.txt");
+    }
+  }
   Scene.prototype.buyButton = function (product, priceGuess, label) {
     if (seen[label]) return;
     var scene = this.clone();

@@ -470,6 +470,13 @@ Scene.prototype.restore_game = function(data) {
   }
 };
 
+Scene.prototype.advertisement = function randomtest_advertisement(durationInSeconds) {
+  if (this.name === "startup") {
+    throw new Error(this.lineMsg() + "*advertisement is not allowed in startup.txt");
+  }
+  if (durationInSeconds) this.delay_break(durationInSeconds);
+}
+
 Scene.prototype.delay_break = function randomtest_delayBreak(durationInSeconds) {
   if (isNaN(durationInSeconds * 1)) throw new Error(this.lineMsg() + "invalid duration");
 }
