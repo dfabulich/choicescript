@@ -2154,7 +2154,7 @@ Scene.prototype.advertisement = function advertisement(durationInSeconds) {
     self.printLine("Or you can buy the game now to skip the wait.");
     self.paragraph();
     self.buyButton("adfree", "$1.99", null, "It");
-    self.delay_break(durationInSeconds || 7200);
+    self.delay_break(durationInSeconds || 300);
   });
 };
 
