@@ -1577,6 +1577,11 @@ Scene.prototype.getVar = function getVar(variable) {
     if (variable == "choice_save_allowed") return areSaveSlotsSupported();
     if (variable == "choice_time_stamp") return Math.floor(new Date()/1000);
     if (variable == "choice_nightmode") return typeof isNightMode != "undefined" && isNightMode();
+    if (variable == "choice_title") {
+      if (typeof this.stats.choice_title === "undefined") {
+        throw new Error(this.lineMsg() + "This game is missing a *title command");
+      }
+    }
     if ((!this.temps.hasOwnProperty(variable))) {
         if ((!this.stats.hasOwnProperty(variable))) {
             if (variable == "implicit_control_flow") return false;
@@ -4204,6 +4209,8 @@ Scene.prototype.parseSceneList = function parseSceneList() {
 };
 
 Scene.prototype.title = function scene_title(title) {
+  this.stats.choice_title = trim(title);
+  if (this.nav) this.nav.startingStats.choice_title = trim(title);
   if (typeof changeTitle != "undefined") {
     changeTitle(title);
   }
