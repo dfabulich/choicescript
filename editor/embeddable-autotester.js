@@ -52,6 +52,9 @@ function autotester(sceneText, nav, sceneName, extraLabels) {
     if (this.name === "startup") {
       throw new Error(this.lineMsg() + "*advertisement is not allowed in startup.txt");
     }
+    if (/^\s*\*delay_break/.test(this.lines[this.lineNum - 1])) {
+      throw new Error(this.lineMsg() + "*advertisement is not allowed immediately after *delay_break (*delay_break includes its own advertisement)");
+    }
   }
   Scene.prototype.buyButton = function (product, priceGuess, label) {
     if (seen[label]) return;

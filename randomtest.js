@@ -474,6 +474,9 @@ Scene.prototype.advertisement = function randomtest_advertisement(durationInSeco
   if (this.name === "startup") {
     throw new Error(this.lineMsg() + "*advertisement is not allowed in startup.txt");
   }
+  if (/^\s*\*delay_break/.test(this.lines[this.lineNum - 1])) {
+    throw new Error(this.lineMsg() + "*advertisement is not allowed immediately after *delay_break (*delay_break includes its own advertisement)");
+  }
   if (durationInSeconds) this.delay_break(durationInSeconds);
 }
 

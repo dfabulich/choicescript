@@ -2133,6 +2133,9 @@ Scene.prototype.comment = function comment(line) {
 };
 
 Scene.prototype.advertisement = function advertisement(durationInSeconds) {
+  if (/^\s*\*delay_break/.test(this.lines[this.lineNum - 1])) {
+    throw new Error(this.lineMsg() + "*advertisement is not allowed immediately after *delay_break (*delay_break includes its own advertisement)");
+  }
   if (this.getVar("choice_prerelease") || this.getVar("choice_is_steam")) return;
   var self = this;
   this.finished = true;
