@@ -2381,7 +2381,7 @@ function checkAchievements(callback) {
 
 function isAdvertisingSupported() {
   if (typeof window === "undefined") return false;
-  return (window.isIosApp || window.isAndroidApp);
+  return (window.isIosApp || window.isAndroidApp || window.adSupportedDebug);
 }
 
 function isFullScreenAdvertisingSupported() {
@@ -2395,9 +2395,29 @@ function showFullScreenAdvertisement(callback) {
   } else if (window.isAndroidApp && window.adBridge) {
     adBridge.displayFullScreenAdvertisement();
     safeTimeout(callback, 0);
+  } else if (window.adSupportedDebug) {
+    alert("ad!");
+    safeTimeout(callback, 0);
   } else {
     safeTimeout(callback, 0);
   }
+}
+
+function showFullScreenAdvertisementButton(buttonName, skipCallback, doneCallback) {
+  if (typeof isFullScreenAdvertisingSupported == "undefined" || !isFullScreenAdvertisingSupported()) {
+    return skipCallback();
+  }
+  startLoading();
+  checkPurchase("adfree", function (ok, result) {
+    doneLoading();
+    if (result.adfree) {
+      skipCallback();
+    } else {
+      printButton(buttonName, main, false, function () {
+        showFullScreenAdvertisement(doneCallback);
+      })
+    }
+  });
 }
 
 function showTicker(target, endTimeInSeconds, finishedCallback) {

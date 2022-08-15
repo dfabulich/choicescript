@@ -1261,7 +1261,7 @@ Scene.prototype.redirect_scene = function redirectScene(data) {
 };
 
 Scene.prototype.product = function product(productId) {
-  if (!/^[a-z]+$/.test(productId)) throw new Error(this.lineMsg()+"Invalid product id: " +productId);
+  if (!/^[a-z]+$/.test(productId)) throw new Error(this.lineMsg()+"Invalid product id (only lowercase letters, no numbers or punctuation): " +productId);
   if (this.nav) this.nav.products[productId] = {};
 }
 
@@ -1374,7 +1374,7 @@ Scene.prototype.buyButton = function(product, priceGuess, label, title) {
   var self = this;
   getPrice(product, function (price) {
     if (!price || "free" == price) {
-      self["goto"](label);
+      if (label) self["goto"](label);
       self.finished = false;
       self.resetPage();
     } else {
@@ -1414,7 +1414,7 @@ Scene.prototype.buyButton = function(product, priceGuess, label, title) {
             safeCall(self, function() {
                 restorePurchases(product, function(purchased) {
                   if (purchased) {
-                    self["goto"](label);
+                    if (label) self["goto"](label);
                     self.finished = false;
                     self.resetPage();
                   } else {
@@ -1427,9 +1427,11 @@ Scene.prototype.buyButton = function(product, priceGuess, label, title) {
         );
       }
 
-      self.skipFooter = false;
-      self.finished = false;
-      self.execute();
+      if (label) {
+        self.skipFooter = false;
+        self.finished = false;
+        self.execute();
+      }
     }
   });
 };
@@ -1577,6 +1579,11 @@ Scene.prototype.getVar = function getVar(variable) {
     if (variable == "choice_save_allowed") return areSaveSlotsSupported();
     if (variable == "choice_time_stamp") return Math.floor(new Date()/1000);
     if (variable == "choice_nightmode") return typeof isNightMode != "undefined" && isNightMode();
+    if (variable == "choice_title") {
+      if (typeof this.stats.choice_title === "undefined") {
+        throw new Error(this.lineMsg() + "This game is missing a *title command");
+      }
+    }
     if ((!this.temps.hasOwnProperty(variable))) {
         if ((!this.stats.hasOwnProperty(variable))) {
             if (variable == "implicit_control_flow") return false;
@@ -1959,11 +1966,39 @@ Scene.prototype.page_break = function page_break(buttonName) {
     var self = this;
     printButton(buttonName, main, false,
       function() {
+        delayBreakEnd();
         self.finished = false;
         self.resetPage();
       }
     );
     if (this.debugMode) println(computeCookie(this.stats, this.temps, this.lineNum, this.indent));
+};
+
+Scene.prototype.page_break_advertisement = function pageBreakAdvertisement(line) {
+  if (line) throw new Error(this.lineMsg() + "*page_break_advertisement doesn't allow you to change the button message. This text will never be shown: " + line);
+  var self = this;
+  this.finished = true;
+  showFullScreenAdvertisementButton("Watch an Ad to Continue", function () {
+    self.page_break("");
+  }, function () {
+    delayBreakEnd();
+    self.finished = false;
+    self.skipFooter = false;
+    self.resetPage();
+  });
+};
+
+Scene.prototype.finish_advertisement = function finishAdvertisement(line) {
+  if (line) throw new Error(this.lineMsg() + "*finish_advertisement doesn't allow you to change the button message. This text will never be shown: " + line);
+  var self = this;
+  this.finished = true;
+  showFullScreenAdvertisementButton("Watch an Ad for the Next Chapter", function () {
+    self.finish("");
+  }, function () {
+    var nextSceneName = self.nav && nav.nextSceneName(self.name);
+    var scene = new Scene(nextSceneName, self.stats, self.nav, { debugMode: self.debugMode, secondaryMode: self.secondaryMode });
+    scene.resetPage();
+  });
 };
 
 // *line_break
@@ -2111,19 +2146,29 @@ Scene.prototype.comment = function comment(line) {
     if (this.debugMode) println("*comment " + line);
 };
 
-Scene.prototype.advertisement = function advertisement() {
-  if (typeof isFullScreenAdvertisingSupported != "undefined" && isFullScreenAdvertisingSupported()) {
-    this.finished = true;
-    this.skipFooter = true;
-
-    var self = this;
-    showFullScreenAdvertisement(function() {
+Scene.prototype.advertisement = function advertisement(durationInSeconds) {
+  if (/^\s*\*delay_break/.test(this.lines[this.lineNum - 1])) {
+    throw new Error(this.lineMsg() + "*advertisement is not allowed immediately after *delay_break (*delay_break includes its own advertisement)");
+  }
+  if (this.getVar("choice_prerelease") || this.getVar("choice_is_steam")) return;
+  var self = this;
+  this.finished = true;
+  this.skipFooter = true;
+  startLoading();
+  checkPurchase("adfree", function(ok, result) {
+    doneLoading();
+    if (result.adfree) {
       self.finished = false;
       self.skipFooter = false;
-      self.resetPage();
-    });
-  }
-
+      self.execute();
+    }
+    self.printLine("Come back later to play the next part of [i]${choice_title}[/i]!");
+    self.paragraph();
+    self.printLine("Or you can buy the game now to skip the wait.");
+    self.paragraph();
+    self.buyButton("adfree", "$1.99", null, "It");
+    self.delay_break(durationInSeconds || 7200);
+  });
 };
 
 // *looplimit 5
@@ -3495,11 +3540,7 @@ Scene.prototype.delay_break = function(durationInSeconds) {
     window.blockRestart = true;
     var endTimeInSeconds = durationInSeconds * 1 + delayStart * 1;
     showTicker(target, endTimeInSeconds, function() {
-      printButton("Next", target, false, function() {
-        delayBreakEnd();
-        self.finished = false;
-        self.resetPage();
-      });
+      self.page_break_advertisement();
     });
     printFooter();
   });
@@ -4194,6 +4235,8 @@ Scene.prototype.parseSceneList = function parseSceneList() {
 };
 
 Scene.prototype.title = function scene_title(title) {
+  this.stats.choice_title = trim(title);
+  if (this.nav) this.nav.startingStats.choice_title = trim(title);
   if (typeof changeTitle != "undefined") {
     changeTitle(title);
   }
@@ -4604,5 +4647,6 @@ Scene.validCommands = {"comment":1, "goto":1, "gotoref":1, "label":1, "looplimit
     "restart":1,"more_games":1,"delay_ending":1,"end_trial":1,"login":1,"achieve":1,"scene_list":1,"title":1,
     "bug":1,"link_button":1,"check_registration":1,"sound":1,"author":1,"gosub_scene":1,"achievement":1,
     "check_achievements":1,"redirect_scene":1,"print_discount":1,"purchase_discount":1,"track_event":1,
-    "timer":1,"youtube":1,"product":1,"text_image":1,"ai":1,"params":1,"config":1,"ifid":1
+    "timer":1,"youtube":1,"product":1,"text_image":1,"ai":1,"params":1,"config":1,"ifid":1,
+    "page_break_advertisement":1, "finish_advertisement":1
     };

@@ -94,6 +94,11 @@ verifyFileName = function verifyFileName(dir, name) {
     canonicalName = file.getCanonicalFile().getName();
     if (fileName != canonicalName) throw new Error("Incorrect capitalization/canonicalization; the file is called " + canonicalName + " but you requested " + name);
   } else {
+    var match = /(.*)\/([^\/]*)/.exec(name);
+    if (match) {
+      dir += "/" + match[1];
+      name = match[2];
+    }
     if (!sceneFileSets[dir]) {
       sceneFileSets[dir] = {};
       var sceneFiles = fs.readdirSync(dir);
