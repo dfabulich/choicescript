@@ -1,9 +1,12 @@
+html {
+  font: -apple-system-body; /* we'll override the font, but keep the size from iOS dynamic text sizing */
+}
+
 body {
   position: relative;
   max-width: 80ch;
   min-height: 100vh; /* keep iOS address bar from popping in and out */
   font-size: 100%;  /* reset for CWS */
-  font: -apple-system-body; /* we'll override the font, but keep the size from iOS dynamic text sizing */
   font-family: Georgia,"Times New Roman",serif;
   background-color: #F7F4F1;
   color: rgba(0, 0, 0, 0.85);
@@ -88,10 +91,10 @@ a {
 
 .statBar {
   background-color: #949291;
-  height: 2em;
-  line-height: 2em;
+  height: 2rem;
+  line-height: 2rem;
   margin: 0.5ch 0;
-  width: 35ch;
+  width: 20rem;
   max-width: 100%;
   color: #f7f4f1;
   position: relative; /* to allow absolute positioned value */

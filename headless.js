@@ -60,6 +60,8 @@ areSaveSlotsSupported = function() {return false;};
 isAdvertisingSupported = function() {return false;};
 isPrerelease = function() {return false;};
 
+showFullScreenAdvertisementButton = function(message, callback) { callback(); }
+
 function fileExists(filePath) {
     if (isRhino) {
         return new java.io.File(filePath).exists();

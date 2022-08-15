@@ -95,7 +95,7 @@ var create = /^\*create +(\w+) +(.*)/;
 var result, variable, value;
 var achievements = [];
 
-var ignoredInitialCommands = {"comment":1, "title":1, "author":1};
+var ignoredInitialCommands = {"comment":1, "author":1};
 
 for (var i = 0; i < lines.length; i++) {
   var line = (""+lines[i]).trim();
@@ -118,6 +118,8 @@ for (var i = 0; i < lines.length; i++) {
     scenes = result.scenes;
     purchases = result.purchases;
     i = result.lineNum;
+  } else if (command == "title") {
+    stats.choice_title = data;
   } else if (command == "achievement") {
     i = parseAchievement(data, lines, i);
   } else if (command == "product") {

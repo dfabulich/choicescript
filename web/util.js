@@ -786,7 +786,8 @@ function loadAndRestoreGame(slot, forcedScene) {
         state = jsonParse(value);
       } else if (slot == "backup") {
         console.log("loadAndRestoreGame couldn't find backup");
-        return loadAndRestoreGame("", forcedScene);
+        if (typeof alertify !== "undefined") alertify.log("Failed restarting chapter. Restarting the game from scratch.");
+        return restartGame();
       }
       restoreGame(state, forcedScene);
     });
@@ -984,18 +985,24 @@ function findXhr() {
         return crc ^ (-1);
     }
 
-function simpleDateTimeFormat(date) {
+function simpleDateFormat(date) {
   var day = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][date.getDay()];
   var month = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][date.getMonth()];
   var minutes = date.getMinutes();
-  if (minutes < 10) minutes = "0" + (""+minutes);
+  if (minutes < 10) minutes = "0" + ("" + minutes);
   var oneYearInMillis = 1000 * 60 * 60 * 24 * 365;
   var millisAgo = new Date().getTime() - date.getTime();
   var yearString = ""
   if (millisAgo > oneYearInMillis) {
     yearString = ", " + date.getFullYear();
   }
-  return day + ", " + month + " " + date.getDate() + yearString + ", " + date.getHours() + ":" + minutes;
+  return day + ", " + month + " " + date.getDate() + yearString;
+}
+
+function simpleDateTimeFormat(date) {
+  var minutes = date.getMinutes();
+  if (minutes < 10) minutes = "0" + ("" + minutes);
+  return simpleDateFormat(date) + ", " + date.getHours() + ":" + minutes;
 }
 
 function jsonParse(str) {
@@ -1094,8 +1101,12 @@ function updateSinglePaidSceneCache(sceneName, callback) {
       var xhr = new XMLHttpRequest();
       var canonical = document.querySelector("link[rel=canonical]");
       var canonicalHref = canonical && canonical.getAttribute("href");
+      if (window.beta) {
+        canonicalHref = canonicalHref.replace('https://www.choiceofgames.com/', 'https://www.choiceofgames.com/beta/');
+      }
       var url = canonicalHref + "scenes/" + fileName + "?hash="+hashes.scenes[fileName];
       xhr.open("GET", url);
+      xhr.withCredentials = true;
       xhr.onload = function() {
         var error;
         if (xhr.status !== 200) {

@@ -127,15 +127,15 @@ either express or implied.
   <target name="randomtest" depends="rhino">
     <property name="num" value="10000" />
     <property name="game" value="${game.dir}" />
-    <property name="output" value="randomtest-output.txt" />
+    <property name="outputFile" value="randomtest-output.txt" />
     <property name="trial" value="false" />
     <property name="showText" value="false" />
     <property name="avoidUsedOptions" value="true" />
     <property name="showChoices" value="true" />
     <property name="seed" value="0" />
     <property name="recordBalance" value="false" />
-    <echo>Executing randomtest, writing to ${output}</echo>
-    <rhino output="${output}">
+    <echo>Executing randomtest, writing to ${outputFile}</echo>
+    <rhino>
       <arg value="randomtest.js" />
       <arg value="num=${num}" />
       <arg value="game=${game}" />
@@ -146,6 +146,7 @@ either express or implied.
       <arg value="avoidUsedOptions=${avoidUsedOptions}" />
       <arg value="showChoices=${showChoices}" />
       <arg value="recordBalance=${recordBalance}" />
+      <arg value="outputFile=${outputFile}" />
     </rhino>
   </target>
   

@@ -110,6 +110,16 @@ function redirectFromStats(scene, label, originLine, callback) {
   }
 }
 
+function returnFromStats() {
+  if (window.isIosApp && !window.isIPad) {
+    callIos("returntogame");
+  } else if (window.isAndroidApp && window.statsMode.get()) {
+    statsMode.returnToGame();
+  } else {
+    clearScreen(loadAndRestoreGame);
+  }
+}
+
 function showAchievements(hideNextButton) {
   if (document.getElementById('loading')) return;
   var button = document.getElementById("achievementsButton");
@@ -300,17 +310,17 @@ function textOptionsMenu(categories) {
 }
 
 function getZoomFactor() {
-  if (document.body.style.fontSize === undefined) {
+  if (document.documentElement.style.fontSize === undefined) {
     return window.zoomFactor || 1;
   } else {
-    var fontSize = parseFloat(document.body.style.fontSize);
+    var fontSize = parseFloat(document.documentElement.style.fontSize);
     if (isNaN(fontSize)) fontSize = 100;
     return fontSize / 100;
   }
 }
 
 function setZoomFactor(zoomFactor) {
-  document.body.style.fontSize = Math.round(100*zoomFactor) + "%";
+  document.documentElement.style.fontSize = Math.round(100*zoomFactor) + "%";
   window.zoomFactor = zoomFactor;
   if (initStore()) store.set("preferredZoom", String(zoomFactor));
 }
@@ -792,9 +802,6 @@ function printOptions(groups, options, callback) {
   // global num will be used to assign accessKeys to the options
   var globalNum = 1;
   var currentOptions = options;
-  var div = document.createElement("div");
-  form.appendChild(div);
-  setClass(div, "choice");
   for (var groupNum = 0; groupNum < groups.length; groupNum++) {
       var group = groups[groupNum];
       if (group) {
@@ -805,8 +812,11 @@ function printOptions(groups, options, callback) {
 
           var p = document.createElement("p");
           p.appendChild(document.createTextNode(textBuilder.join("")));
-          div.appendChild(p);
+          form.appendChild(p);
       }
+      var div = document.createElement("div");
+      form.appendChild(div);
+      setClass(div, "choice");
       var checked = null;
       for (var optionNum = 0; optionNum < currentOptions.length; optionNum++) {
           var option = currentOptions[optionNum];
@@ -1413,7 +1423,7 @@ function subscribe(target, options, callback) {
           };
           xhr.send();
         } else {
-          script.src = 'http://choiceofgames.us4.list-manage.com/subscribe/post-json?'+mailParams+'&c=jsonp' + timestamp;
+          script.src = 'https://choiceofgames.us4.list-manage.com/subscribe/post-json?'+mailParams+'&c=jsonp' + timestamp;
           head.appendChild(script);
         }
       }
@@ -1617,6 +1627,15 @@ function checkPurchase(products, callback) {
     purchases.billingSupported = true;
     publishPurchaseEvents(purchases);
     safeTimeout(function() {callback("ok", purchases);}, 0);
+  } else if (window.beta === "beta") {
+    var productList = products.split(/ /);
+    var purchases = {};
+    for (i = 0; i < productList.length; i++) {
+      purchases[productList[i]] = true;
+    }
+    purchases.billingSupported = true;
+    publishPurchaseEvents(purchases);
+    safeTimeout(function () { callback("ok", purchases); }, 0);
   } else if (isWebPurchaseSupported()) {
     checkWebPurchases(function(ok, knownPurchases) {
       callback(ok, knownPurchases);
@@ -1635,7 +1654,8 @@ function checkPurchase(products, callback) {
 }
 
 function isWebPurchaseSupported() {
-  return isWebSavePossible() && !!window.stripeKey;
+  var enableBilling = (typeof window.enableBilling === 'undefined' || window.enableBilling)
+  return enableBilling && isWebSavePossible() && !!window.stripeKey;
 }
 
 function isRestorePurchasesSupported() {
@@ -2190,7 +2210,8 @@ function handleDiscountResponse(ok, response) {
 }
 
 function isPrerelease() {
-  if (typeof window != "undefined" && !!window.isWeb && window.releaseDate) {
+  var steamTrial = window.isSteamApp && window.isTrial;
+  if (typeof window != "undefined" && (window.isWeb || steamTrial) && window.releaseDate) {
     if (new Date() > window.releaseDate.getTime()) return false;
     if (/(fullaccess|preview)@choiceofgames.com/.test(getCookieByName("login"))) return false;
     var identity = document.getElementById("identity");
@@ -2295,6 +2316,8 @@ function checkAchievements(callback) {
               });
             })(i);
           }
+        } else {
+          safeTimeout(function() {checkAchievements(callback);}, 100);
         }
       } else if (window.isMacApp && window.macAchievements) {
         alreadyLoadingAchievements = !!window.checkAchievementCallback;
@@ -2339,7 +2362,7 @@ function checkAchievements(callback) {
 
 function isAdvertisingSupported() {
   if (typeof window === "undefined") return false;
-  return (window.isIosApp || window.isAndroidApp);
+  return (window.isIosApp || window.isAndroidApp || window.adSupportedDebug);
 }
 
 function isFullScreenAdvertisingSupported() {
@@ -2353,9 +2376,29 @@ function showFullScreenAdvertisement(callback) {
   } else if (window.isAndroidApp && window.adBridge) {
     adBridge.displayFullScreenAdvertisement();
     safeTimeout(callback, 0);
+  } else if (window.adSupportedDebug) {
+    alert("ad!");
+    safeTimeout(callback, 0);
   } else {
     safeTimeout(callback, 0);
   }
+}
+
+function showFullScreenAdvertisementButton(buttonName, skipCallback, doneCallback) {
+  if (typeof isFullScreenAdvertisingSupported == "undefined" || !isFullScreenAdvertisingSupported()) {
+    return skipCallback();
+  }
+  startLoading();
+  checkPurchase("adfree", function (ok, result) {
+    doneLoading();
+    if (result.adfree) {
+      skipCallback();
+    } else {
+      printButton(buttonName, main, false, function () {
+        showFullScreenAdvertisement(doneCallback);
+      })
+    }
+  });
 }
 
 function showTicker(target, endTimeInSeconds, finishedCallback) {
@@ -3273,6 +3316,10 @@ window.onload=function() {
       }
     } else {
       safeCall(null, loadAndRestoreGame);
+    }
+    if (window.beta) {
+      var reportBugButton = document.getElementById("bugButton");
+      if (reportBugButton) reportBugButton.setAttribute("style", "");
     }
     if (window.Touch && window.isWeb) {
       // INSERT ADMOB AD
