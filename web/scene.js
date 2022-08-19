@@ -2148,6 +2148,7 @@ Scene.prototype.advertisement = function advertisement(durationInSeconds) {
       self.finished = false;
       self.skipFooter = false;
       self.execute();
+      return;
     }
     self.printLine("Come back later to play the next part of [i]${choice_title}[/i]!");
     self.paragraph();
