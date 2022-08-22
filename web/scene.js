@@ -1398,7 +1398,7 @@ Scene.prototype.buyButton = function(product, priceGuess, label, title) {
           safeCall(self, function() {
               purchase(product, function() {
                 safeCall(self, function() {
-                  self["goto"](label);
+                  if (label) self["goto"](label);
                   self.finished = false;
                   self.resetPage();
                 });
