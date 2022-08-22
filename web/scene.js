@@ -1373,11 +1373,14 @@ Scene.prototype.buyButton = function(product, priceGuess, label, title) {
   this.finished = true;
   this.skipFooter = true;
   var self = this;
+  var purchaseFinished = function() {
+    if (label) self["goto"](label);
+    self.finished = false;
+    self.resetPage();
+  }
   getPrice(product, function (price) {
     if (!price || "free" == price) {
-      if (label) self["goto"](label);
-      self.finished = false;
-      self.resetPage();
+      purchaseFinished();
     } else {
       if (price == "guess") price = priceGuess + " USD";
       var prerelease = self.getVar('choice_prerelease');
@@ -1397,11 +1400,7 @@ Scene.prototype.buyButton = function(product, priceGuess, label, title) {
         function() {
           safeCall(self, function() {
               purchase(product, function() {
-                safeCall(self, function() {
-                  if (label) self["goto"](label);
-                  self.finished = false;
-                  self.resetPage();
-                });
+                safeCall(self, purchaseFinished);
               });
           });
         }
@@ -1415,9 +1414,7 @@ Scene.prototype.buyButton = function(product, priceGuess, label, title) {
             safeCall(self, function() {
                 restorePurchases(product, function(purchased) {
                   if (purchased) {
-                    if (label) self["goto"](label);
-                    self.finished = false;
-                    self.resetPage();
+                    purchaseFinished();
                   } else {
                     // refresh, in case we're on web showing a full-screen login. Not necessary on mobile? But, meh.
                     clearScreen(function() {loadAndRestoreGame("", window.forcedScene);});
