@@ -1376,6 +1376,7 @@ Scene.prototype.buyButton = function(product, priceGuess, label, title) {
   var purchaseFinished = function() {
     if (label) self["goto"](label);
     self.finished = false;
+    self.skipFooter = false;
     self.resetPage();
   }
   getPrice(product, function (price) {
