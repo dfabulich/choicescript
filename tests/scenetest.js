@@ -1819,3 +1819,125 @@ test("conditionals", function() {
     scene.standardResolution(options[0]);
     doh.is("<p>bar </p>", printed.join(""), "printed");
 })
+
+module("Array Creation")
+
+test("createArrayDefault", function() {
+    var scene = new Scene();
+    scene.name = "startup";
+    scene.loadLines("*create_array g_arr 2 0\n*finish");
+    scene.execute();
+    doh.is("undefined", typeof scene.stats.g_arr_0, "scene.stats.g_arr_0");
+    doh.is(0, scene.stats.g_arr_1, "scene.stats.g_arr_1");
+    doh.is(0, scene.stats.g_arr_2, "scene.stats.g_arr_2");
+    doh.is(2, scene.stats.g_arr_count, "scene.stats.g_arr_count");
+    doh.is("undefined", typeof scene.stats.g_arr_3, "scene.stats.g_arr_3");
+});
+test("createArrayExplicit", function() {
+    var scene = new Scene();
+    scene.name = "startup";
+    scene.loadLines("*create_array g_arr 3 1 2 3");
+    scene.execute();
+    doh.is("undefined", typeof scene.stats.g_arr_0, "scene.stats.g_arr_0");
+    doh.is(1, scene.stats.g_arr_1, "scene.stats.g_arr_1");
+    doh.is(2, scene.stats.g_arr_2, "scene.stats.g_arr_2");
+    doh.is(3, scene.stats.g_arr_3, "scene.stats.g_arr_3");
+    doh.is(3, scene.stats.g_arr_count, "scene.stats.g_arr_count");
+    doh.is("undefined", typeof scene.stats.g_arr_4, "scene.stats.g_arr_4");
+});
+test("errorCreateArrayLength", function() {
+    var scene = new Scene();
+    scene.loadLines("*create_array g_arr");
+    doh.assertError(Error, scene, "execute", null, "Expected Array Length");
+});
+test("errorCreateArrayName", function() {
+    var scene = new Scene();
+    scene.loadLines("*create_array");
+    doh.assertError(Error, scene, "execute", null, "Expected Array Name");
+});
+test("errorCreateArrayValues", function() {
+    var scene = new Scene();
+    scene.loadLines("*create_array g_arr 5 1 2 3 4");
+    doh.assertError(Error, scene, "execute", null, "Expected 1 or 5 values for array g_arr");
+});
+test("errorCreateComplexValues", function() {
+    var scene = new Scene();
+    scene.loadLines("*create_array g_arr 2 1 n&n");
+    doh.assertError(Error, scene, "execute", null, "Invalid create_array value, values must be a number, true/false, or a quoted string, not: VAR");
+});
+test("errorCreateDuplicate", function() {
+    var scene = new Scene();
+    scene.name = "startup";
+    scene.loadLines("*create_array g_arr 2 1\n*create_array g_arr 4 \"\"");
+    doh.assertError(Error, scene, "execute", null, "Invalid create_array element ... Was previously created ...");
+});
+test("errorCreateConflict", function() {
+    var scene = new Scene();
+    scene.name = "startup";
+    scene.loadLines("*create g_arr_1 1\n*create_array g_arr 4 \"\"");
+    doh.assertError(Error, scene, "execute", null, "g_arr_1 already exists");
+});
+test("tempArrayDefault", function() {
+    var scene = new Scene();
+    scene.loadLines("*temp_array t_arr 3 \"\"");
+    scene.execute();
+    doh.is("undefined", typeof scene.temps.t_arr_0, "scene.temps.t_arr_0");
+    doh.is("", scene.temps.t_arr_1, "scene.temps.t_arr_1");
+    doh.is("", scene.temps.t_arr_2, "scene.temps.t_arr_2");
+    doh.is("", scene.temps.t_arr_3, "scene.temps.t_arr_3");
+    doh.is(3, scene.temps.t_arr_count, "scene.temps.t_arr_count");
+    doh.is("undefined", typeof scene.temps.t_arr_4, "scene.temps.t_arr_4");
+});
+test("tempArrayExplicitAndComplex", function() {
+    var scene = new Scene();
+    scene.loadLines("*temp fname \"FNAME\"\n*temp lname \"LNAME\"\n*temp_array t_arr 2 \"Hello\" (fname&(\" \"&lname))");
+    scene.execute();
+    doh.is("undefined", typeof scene.temps.t_arr_0, "scene.temps.t_arr_0");
+    doh.is("Hello", scene.temps.t_arr_1, "scene.temps.t_arr_1");
+    doh.is("FNAME LNAME", scene.temps.t_arr_2, "scene.temps.t_arr_2");
+    doh.is(2, scene.temps.t_arr_count, "scene.temps.t_arr_count");
+    doh.is("undefined", typeof scene.temps.t_arr_3, "scene.temps.t_arr_3");
+});
+test("tempArrayEmpty", function() {
+    var scene = new Scene();
+    scene.loadLines("*temp_array t_arr 2");
+    scene.execute();
+    doh.is("undefined", typeof scene.temps.t_arr_0, "scene.temps.t_arr_0");
+    doh.is(null, scene.temps.t_arr_1, "scene.temps.t_arr_1");
+    doh.is(null, scene.temps.t_arr_2, "scene.temps.t_arr_2");
+    doh.is(2, scene.temps.t_arr_count, "scene.temps.t_arr_count");
+    doh.is("undefined", typeof scene.temps.t_arr_3, "scene.temps.t_arr_3");
+});
+test("errorTempArrayName", function() {
+    var scene = new Scene();
+    scene.loadLines("*temp_array");
+    doh.assertError(Error, scene, "execute", null, "Expected Array Name");
+});
+test("errorTempArrayLength", function() {
+    var scene = new Scene();
+    scene.loadLines("*temp_array foo");
+    doh.assertError(Error, scene, "execute", null, "Expected Array Length");
+});
+test("errorTempArrayValues", function() {
+    var scene = new Scene();
+    scene.loadLines("*temp_array foo 5 1 2 3 4 5 6");
+    doh.assertError(Error, scene, "execute", null, "Expected 1 or 5 values for array foo not 6");
+});
+test("deleteCreateArray", function() {
+    var scene = new Scene();
+    scene.name = "startup";
+    scene.loadLines("*create_array g_arr 3 1 2 3\n*delete_array g_arr");
+    scene.execute();
+    doh.is("undefined", typeof scene.stats.g_arr_1, "scene.stats.g_arr_1");
+    doh.is("undefined", typeof scene.stats.g_arr_2, "scene.stats.g_arr_2");
+    doh.is("undefined", typeof scene.stats.g_arr_3, "scene.stats.g_arr_3");
+});
+test("deleteTempArray", function() {
+    var scene = new Scene();
+    scene.name = "startup";
+    scene.loadLines("*temp_array t_arr 3\n*delete_array t_arr");
+    scene.execute();
+    doh.is("undefined", typeof scene.temps.t_arr_1, "scene.temps.t_arr_1");
+    doh.is("undefined", typeof scene.temps.t_arr_2, "scene.temps.t_arr_2");
+    doh.is("undefined", typeof scene.temps.t_arr_3, "scene.temps.t_arr_3");
+});

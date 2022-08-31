@@ -88,6 +88,30 @@ function parseCheckPurchase(data) {
   }
 }
 
+function parseCreateValue(value) {
+  if (/^true$/i.test(value)) value = "true";
+  if (/^false$/i.test(value)) value = "false";
+  return JSON.parse(value);
+}
+
+function parseCreateArray(line) {
+  var result = /^(\w+)\s+(.*)/.exec(line);
+  var variable = result[1].toLowerCase();
+  var values = result[2].split(/\s+/);
+  var length = Number(values.shift());
+  if (values.length === 1) {
+    var value = parseCreateValue(values[0]);
+    for (var i = 0; i < length; i++) {
+      stats[variable + "_" + (i + 1)] = value;
+    }
+  } else {
+    for (var i = 0; i < length; i++) {
+      var value = parseCreateValue(values[i]);
+      stats[variable + "_" + (i + 1)] = value;
+    }
+  }
+}
+
 var lines = slurpFileLines("web/"+gameDir+"/scenes/startup.txt");
 var stats = {}, purchases = {}, productMap = {};
 var scenes = ["startup"];
@@ -108,11 +132,10 @@ for (var i = 0; i < lines.length; i++) {
   else if (command == "create") {
     var result = /^(\w*)(.*)/.exec(data);
     variable = result[1];
-    value = result[2].trim();
-    if (/^true$/i.test(value)) value = "true";
-    if (/^false$/i.test(value)) value = "false";
-    value = JSON.parse(value);
+    value = parseCreateValue(result[2].trim());
     stats[variable.toLowerCase()] = value;
+  } else if (command == "create_array") {
+    parseCreateArray(data);
   } else if (command == "scene_list") {
     result = parseSceneList(lines, i);
     scenes = result.scenes;
