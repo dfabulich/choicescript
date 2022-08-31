@@ -142,6 +142,7 @@ Scene.prototype.dedent = function dedent(newDent) {};
 
 Scene.prototype.printLine = function printLine(line) {
     if (!line) return null;
+    this.screenEmpty = false;
     line = this.replaceVariables(line.replace(/^\s*/, ""));
     this.accumulatedParagraph.push(line);
     // insert extra space unless the line ends with hyphen or dash
@@ -1372,11 +1373,15 @@ Scene.prototype.buyButton = function(product, priceGuess, label, title) {
   this.finished = true;
   this.skipFooter = true;
   var self = this;
+  var purchaseFinished = function() {
+    if (label) self["goto"](label);
+    self.finished = false;
+    self.skipFooter = false;
+    self.resetPage();
+  }
   getPrice(product, function (price) {
     if (!price || "free" == price) {
-      if (label) self["goto"](label);
-      self.finished = false;
-      self.resetPage();
+      purchaseFinished();
     } else {
       if (price == "guess") price = priceGuess + " USD";
       var prerelease = self.getVar('choice_prerelease');
@@ -1396,11 +1401,7 @@ Scene.prototype.buyButton = function(product, priceGuess, label, title) {
         function() {
           safeCall(self, function() {
               purchase(product, function() {
-                safeCall(self, function() {
-                  self["goto"](label);
-                  self.finished = false;
-                  self.resetPage();
-                });
+                safeCall(self, purchaseFinished);
               });
           });
         }
@@ -1414,9 +1415,7 @@ Scene.prototype.buyButton = function(product, priceGuess, label, title) {
             safeCall(self, function() {
                 restorePurchases(product, function(purchased) {
                   if (purchased) {
-                    if (label) self["goto"](label);
-                    self.finished = false;
-                    self.resetPage();
+                    purchaseFinished();
                   } else {
                     // refresh, in case we're on web showing a full-screen login. Not necessary on mobile? But, meh.
                     clearScreen(function() {loadAndRestoreGame("", window.forcedScene);});
@@ -1575,6 +1574,8 @@ Scene.prototype.getVar = function getVar(variable) {
     if (variable == "choice_kindle") return typeof isKindle !== "undefined" && !!isKindle;
     if (variable == "choice_randomtest") return !!this.randomtest;
     if (variable == "choice_quicktest") return false; // quicktest will explore "false" paths
+    if (variable == "choice_linenum") return this.lineNum;
+    if (variable == "choice_scene") return this.name;
     if (variable == "choice_restore_purchases_allowed") return isRestorePurchasesSupported();
     if (variable == "choice_save_allowed") return areSaveSlotsSupported();
     if (variable == "choice_time_stamp") return Math.floor(new Date()/1000);
@@ -2161,13 +2162,14 @@ Scene.prototype.advertisement = function advertisement(durationInSeconds) {
       self.finished = false;
       self.skipFooter = false;
       self.execute();
+      return;
     }
     self.printLine("Come back later to play the next part of [i]${choice_title}[/i]!");
     self.paragraph();
     self.printLine("Or you can buy the game now to skip the wait.");
     self.paragraph();
     self.buyButton("adfree", "$1.99", null, "It");
-    self.delay_break(durationInSeconds || 7200);
+    self.delay_break(durationInSeconds || 300);
   });
 };
 
