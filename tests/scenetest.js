@@ -1874,7 +1874,7 @@ test("errorCreateDuplicate", function() {
 test("errorCreateConflict", function() {
     var scene = new Scene();
     scene.name = "startup";
-    scene.loadLines("*create_array g_arr_1 1\n*create_array g_arr 4 \"\"");
+    scene.loadLines("*create g_arr_1 1\n*create_array g_arr 4 \"\"");
     doh.assertError(Error, scene, "execute", null, "g_arr_1 already exists");
 });
 test("tempArrayDefault", function() {
