@@ -1501,28 +1501,31 @@ Scene.prototype.abort = function() {
 // create a new permanent stat
 Scene.prototype.create = function create(line) {
     var result = /^(\w*)(.*)/.exec(line);
-    if (!result) throw new Error(this.lineMsg()+"Invalid create instruction, no variable specified: " + line);
+    if (!result) throw new Error(this.lineMsg() + "Invalid create instruction, no variable specified: " + line);
     var variable = result[1];
     this.validateVariable(variable);
     variable = variable.toLowerCase();
     var expr = result[2];
     var stack = this.tokenizeExpr(expr);
-    if (stack.length === 0) throw new Error(this.lineMsg()+"Invalid create instruction, no value specified: " + line);
-    var self = this;
-    function complexError() {
-      throw new Error(self.lineMsg()+"Invalid create instruction, value must be a a number, true/false, or a quoted string: " + line);
-    }
-    if (stack.length > 1) complexError();
-    var token = stack[0];
-    if (!/STRING|NUMBER|VAR/.test(token.name)) complexError();
-    if ("VAR" == token.name && !/^true|false$/i.test(token.value)) complexError();
-    if ("STRING" == token.name && /(\$|@)!?!?{/.test(token.value)) throw new Error(this.lineMsg() + "Invalid create instruction, value must be a simple string without ${} or @{}: " + line);
-    var value = this.evaluateExpr(stack);
-    if (!this.created) this.created = {};
-    if (this.created[variable]) throw new Error(this.lineMsg() + "Invalid create. " + variable + " was previously created on line " + this.created[variable]);
-    this.created[variable] = this.lineNum + 1;
-    this.stats[variable] = value;
-    if (this.nav) this.nav.startingStats[variable] = value;
+    if (stack.length > 1) throw new Error(this.lineMsg() + "Invalid create instruction, too many values: " + line);
+    this.createVariable(variable, stack[0], line);
+}
+
+Scene.prototype.createVariable = function createVariable(variable, token, line) {
+  var self = this;
+  if (!token) throw new Error(this.lineMsg() + "Invalid create instruction, no value specified: " + line);
+  function complexError() {
+    throw new Error(self.lineMsg() + "Invalid create instruction, value must be a number, true/false, or a quoted string: " + line);
+  }
+  if (!/STRING|NUMBER|VAR/.test(token.name)) complexError();
+  if ("VAR" == token.name && !/^true|false$/i.test(token.value)) complexError();
+  if ("STRING" == token.name && /(\$|@)!?!?{/.test(token.value)) throw new Error(this.lineMsg() + "Invalid create instruction, value must be a simple string without ${} or @{}: " + line);
+  var value = this.evaluateExpr([token]);
+  if (!this.created) this.created = {};
+  if (this.created[variable]) throw new Error(this.lineMsg() + "Invalid create. " + variable + " was previously created on line " + this.created[variable]);
+  this.created[variable] = this.lineNum + 1;
+  this.stats[variable] = value;
+  if (this.nav) this.nav.startingStats[variable] = value;
 }
 
 // *create_array {name} {length} {value(s)}
@@ -1532,43 +1535,7 @@ Scene.prototype.create = function create(line) {
 //    ...
 //    myarray_count
 Scene.prototype.create_array = function create(line) {
-  var result = /^(\w+)(.*)/.exec(line);
-  if (!result) throw new Error(this.lineMsg()+"Invalid create_array instruction, no array name specified: " + line);
-  var variable = result[1];
-  this.validateVariable(variable);
-  variable = variable.toLowerCase();
-  var stack = this.tokenizeExpr(result[2]);
-  var length = stack.shift();
-
-  // Validate stack tokens ahead of time so we can use evaluateValueToken in processArrayValues (without risk of complex values)
-  var self = this;
-  function complexError(token) {
-    throw new Error(self.lineMsg()+"Invalid create_array value, values must be a number, true/false, or a quoted string, not: " + token.name);
-  }
-  for (var i = 0; i < stack.length; i++) {
-    if (!/STRING|NUMBER|VAR/.test(stack[i].name)) complexError(stack[i]);
-    if ("VAR" == stack[i].name && !/^true|false$/i.test(stack[i].value)) complexError(stack[i]);
-    if ("STRING" == stack[i].name && /(\$|@)!?!?{/.test(stack[i].value)) throw new Error(this.lineMsg() + "Invalid create_array value, it must be a simple string without ${} or @{}: " + line);
-  }
-
-  if (typeof length === "undefined" || length.name != "NUMBER" || length.value <= 1) throw new Error(this.lineMsg()+"Invalid " + "create_array instruction, length should be a number greater than 1: " + line);
-  var values = this.processArrayValues(true /* isCreate */, variable, length.value, stack, line);
-
-  function createArrayVariable(name, value) {
-    if (!self.created) self.created = {};
-    if (self.created[name]) throw new Error(self.lineMsg() + "Invalid create_array element '" + name + "'. " + name + " was previously created on line " + self.created[variable]);
-    self.created[name] = self.lineNum + 1;
-    self.stats[name] = value;
-    if (self.nav) self.nav.startingStats[name] = value;
-  }
-
-  var valueIndex = 0;
-  while (values.length) {
-    createArrayVariable(variable + ("_" + (++valueIndex)), values.shift());
-  }
-
-  // also create a convenience attribute {arrayname}_count with the length of the array
-  createArrayVariable(variable + ("_count"), length.value);
+  this.defineArray("create", line);
 };
 
 // *temp
@@ -1593,73 +1560,65 @@ Scene.prototype.temp = function temp(line) {
 
 // *temp_array
 // create an "array" of temporary stats for the current scene
-Scene.prototype.temp_array = function create(line) {
-  var result = /^(\w+)(.*)/.exec(line);
-  if (!result) throw new Error(this.lineMsg()+"Invalid temp_array instruction, no array name specified: " + line);
-  var variable = result[1];
-  this.validateVariable(variable);
-  var stack = this.tokenizeExpr(result[2]);
-  var length = stack.shift();
-  if (typeof length === "undefined" || length.name != "NUMBER" || length.value <= 1) throw new Error(this.lineMsg()+"Invalid " + "temp_array instruction, length should be a number greater than 1: " + line);
-  var values = this.processArrayValues(false /* isCreate */, variable, length.value, stack, line);
-
-  var self = this;
-  function tempArrayVariable(name, value) {
-    if (typeof self.stats[name.toLowerCase()] !== 'undefined') {
-      self.warning("This is a temp_array, but there is already a *create(d) array: " + variable);
-    }
-    self.temps[name.toLowerCase()] = value;
-  }
-
-  var valueIndex = 0;
-  while (values.length) {
-    tempArrayVariable(variable + ("_" + (++valueIndex)), values.shift());
-  }
-
-  // also create a convenience attribute {arrayname}_count with the length of the array
-  tempArrayVariable(variable + ("_count"), length.value);
+Scene.prototype.temp_array = function temp_array(line) {
+  this.defineArray("temp", line);
 };
 
-// processArrayValues
-// Takes a stack of tokens representing the "values" to be stored in the array,
-// evaluates them, validates the resulting values and returns them.
-// - isCreate: true if called from create_array (else temp_array)
-// - arrName: array prefix (e.g. "my_arr" of "my_arr_1")
-// - length: the specified length of the array
-// - stack: the remaining tokens representing the array value(s)
-Scene.prototype.processArrayValues = function processArrayValues(isCreate, arrName, length, stack, line) {
-  var values = [];
-  var type = isCreate ? "create" : "temp";
-
-  // Temp declarations support expressions, which we have to parse now in order to get the number of values.
-  // Because we've validated the stack contents ahead of time we can do the same for create(d) arrays too.
-  while (stack.length) {
-    values.push(this.evaluateValueToken(stack.shift(), stack));
+Scene.prototype.defineArray = function defineArray(command, line) {
+  var result = /^(\w+)(.*)/.exec(line);
+  if (!result) throw new Error(this.lineMsg() + "Invalid " + command + "_array instruction, no array name specified: " + line);
+  var variable = result[1];
+  this.validateVariable(variable);
+  variable = variable.toLowerCase();
+  var stack = this.tokenizeExpr(result[2].trim());
+  if (!stack.length) {
+    throw new Error(this.lineMsg() + "Invalid " + command + "_array instruction, missing length: " + line);
+  }
+  var length = Number(stack.shift().value);
+  if (length !== Math.floor(length) || length < 1) {
+    throw new Error(this.lineMsg() + "Invalid " + command + "_array instruction, length should be a whole number greater than 0: " + line);
   }
 
-  // Array declarations support three formats:
-  //   (default value)        *create_array 3 ""
-  //   (explicit values)      *create_array 3 "a" "b" "c"
-  //   (no value, temps only) *temp_array 3
-  switch(values.length) {
-    case 0: // only temps are allowed to be declared without a value
-      if (isCreate) {
-        throw new Error(this.lineMsg()+"Invalid " + type + "_array instruction, no value(s) specified: " + line);
-      } else {
-        for (var i = 0; i < length; i++) values.push(null);
-      }
-      break;
-    case 1: // set all elements to a single default value
-      var defaultValue = values[0];
-      values = [];
-      for (var i = 0; i < length; i++) values.push(defaultValue);
-      break;
-    case parseInt(length): // explicit values were specified for each element
-      break;
-    default:
-      throw new Error(this.lineMsg() + "Expected 1 default value or " + length + " explicit values for " + type + "_array " +  arrName + ", not " + values.length + ": " + line);
+  var token;
+  var value = null;
+  var self = this;
+  var i;
+  function create(suffix) {
+    if (command === "create") {
+      self.createVariable(variable + "_" + suffix, token, line);
+    } else {
+      self.temps[variable + "_" + suffix] = value;
+    }
   }
-  return values;
+
+  function next() {
+    token = stack[0];
+    if (!token) throw new Error(self.lineMsg() + "Too few values. Expected 1 default value or " + length + " explicit values, not " + i + ": " + line);
+    value = self.evaluateValueToken(stack.shift(), stack);
+  }
+
+  if (stack.length) next();
+  
+  if (!stack.length) {
+    // Use first default value for all creations
+    for (i = 0; i < length; i++) {
+      create(i+1);
+    }
+  } else {
+    create(1);
+    for (i = 1; i < length; i++) {
+      next();
+      create(i+1);
+    }
+  }
+
+  if (stack.length) {
+    throw new Error(this.lineMsg() + "Too many values. Expected 1 default value or " + length + " explicit values: " + line);
+  }
+
+  token = { name: "NUMBER", value: length };
+  value = length;
+  create("count");
 }
 
 // retrieve the value of the variable, preferring temp scope
