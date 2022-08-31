@@ -91,7 +91,8 @@ function parseCheckPurchase(data) {
 function parseCreateValue(value) {
   if (/^true$/i.test(value)) value = "true";
   if (/^false$/i.test(value)) value = "false";
-  return JSON.parse(value);
+  if (/^".*"$/.test(value)) value = value.slice(1, -1).replace(/\\(.)/g, "$1");
+  return value;
 }
 
 function parseCreateArray(line) {
