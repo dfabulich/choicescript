@@ -12,6 +12,7 @@ if (typeof load == "undefined") {
 }
 
 gameDir = args[0] || "mygame";
+beta = (args[1] === '"beta"');
 
 function parseSceneList(lines, lineNum) {
   var nextIndent = null;
@@ -91,7 +92,8 @@ function parseCheckPurchase(data) {
 function parseCreateValue(value) {
   if (/^true$/i.test(value)) value = "true";
   if (/^false$/i.test(value)) value = "false";
-  return JSON.parse(value);
+  if (/^".*"$/.test(value)) value = value.slice(1, -1).replace(/\\(.)/g, "$1");
+  return value;
 }
 
 function parseCreateArray(line) {
@@ -119,7 +121,7 @@ var create = /^\*create +(\w+) +(.*)/;
 var result, variable, value;
 var achievements = [];
 
-var ignoredInitialCommands = {"comment":1, "author":1};
+var ignoredInitialCommands = {"comment":1, "author":1, "bug": 1};
 
 for (var i = 0; i < lines.length; i++) {
   var line = (""+lines[i]).trim();
@@ -193,11 +195,19 @@ logJson(stats);
 
 console.log(";\npurchases = ");
 
-logJson(purchases);
+if (beta) {
+  console.log("{}");
+} else {
+  logJson(purchases);
+}
 
 console.log(";\nachievements = ");
 logJson(achievements);
-console.log(";");
+console.log(";\n");
+
+if (args[1] === '"beta"' || args[1] === '"beta-iap"') {
+  console.log("beta = " + args[1] + ";\n");
+}
 
 console.log("nav.setStartingStatsClone(stats);");
 console.log("if (achievements.length) {\n  nav.loadAchievements(achievements);\n}");

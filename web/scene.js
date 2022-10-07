@@ -1050,7 +1050,7 @@ Scene.prototype.params = function scene_params(data) {
     var nextParamNum = 1;
     this.temps.param_count = this.temps.param.length;
     while (words) {
-        var varName = words[0];
+        var varName = words[0].toLowerCase();
         this.validateVariable(varName);
         if (this.temps.param.length < 1) {
             throw new Error(this.lineMsg() + "No parameter passed for " + varName);
