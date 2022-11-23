@@ -19,8 +19,6 @@
 
 // usage: randomtest num=10000 game=mygame seed=0 delay=false trial=false
 
-var projectPath;
-var outFilePath;
 var isRhino = false;
 var iterations = 10;
 var gameName = "mygame";
@@ -289,7 +287,6 @@ if (typeof importScripts != "undefined") {
   load = function(file) {
     vm.runInThisContext(fs.readFileSync(file), file);
   };
-  load("cside_message.js");
   load("web/scene.js");
   load("web/navigator.js");
   load("web/util.js");
@@ -848,7 +845,6 @@ function randomtestAsync(i, showCoverage) {
 }
 
 function randomtest() {
-  console.log("Writing to file: " + outFilePath,  { type: "config", outputFile: outFilePath });
   configureShowText();
   var start = new Date().getTime();
   randomSeed *= 1;
