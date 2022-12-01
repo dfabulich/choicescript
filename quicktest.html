@@ -102,6 +102,12 @@ isRestorePurchasesSupported = function() {return false;};
 isFullScreenAdvertisingSupported = function() {return false;};
 areSaveSlotsSupported = function() {return false;};
 
+printDiscount = function() {};
+isFullScreenAdvertisingSupported = function() {return false;};
+isAdvertisingSupported = function() {return false;};
+isPrerelease = function() {return false;};
+showFullScreenAdvertisementButton = function(message, callback) { callback(); }
+
 function safeCall(obj, fn) {
   if (obj) return fn.call(obj);
   return fn.call();
