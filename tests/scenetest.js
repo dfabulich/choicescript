@@ -67,21 +67,30 @@ function dedent (templateStrings, ...values) {
 module("FullScene");
 
 test("error increasing indent", function() {
-    var text = "foo\n  bar";
+    var text = dedent`
+                foo
+                  bar`;
     var scene = new Scene();
     scene.loadLines(text);
     raises(function() {scene.execute();}, null, "Illegally increased indentation");
 })
 
 test("errorInvalidCommand", function() {
-    var text = "foo\n*bar";
+    var text = dedent`
+                foo
+                *bar`;
     var scene = new Scene();
     scene.loadLines(text);
     raises(function() {scene.execute()}, null, "Invalid command");
 })
 test("labelGoto", function() {
     printed = [];
-    var text = "foo\n*goto foo\nskip me!\n*label foo\nbar";
+    var text = dedent`
+                foo
+                *goto foo
+                skip me!
+                *label foo
+                bar`;
     var scene = new Scene();
     scene.loadLines(text);
     scene.execute();
@@ -89,7 +98,14 @@ test("labelGoto", function() {
 })
 test("gotoRef", function() {
     printed = [];
-    var text = "foo\n*temp x\n*set x \"foo\"\n*gotoref x\nskip me!\n*label foo\nbar";
+    var text = dedent`
+                foo
+                *temp x
+                *set x \"foo\"
+                *gotoref x
+                skip me!
+                *label foo
+                bar`;
     var scene = new Scene();
     scene.loadLines(text);
     scene.execute();
@@ -97,7 +113,12 @@ test("gotoRef", function() {
 })
 test("mixedCaseLabels", function() {
     printed = [];
-    var text = "foo\n*goto foo\nskip me!\n*Label Foo\nbar";
+    var text = dedent`
+                foo
+                *goto foo
+                skip me!
+                *Label Foo
+                bar`;
     var scene = new Scene();
     scene.loadLines(text);
     scene.execute();
@@ -105,7 +126,10 @@ test("mixedCaseLabels", function() {
 })
 test("finish", function() {
     printed = [];
-    var text = "foo\n*finish\nskip me!";
+    var text = dedent`
+                foo
+                *finish
+                skip me!`;
     var scene = new Scene();
     scene.loadLines(text);
     scene.execute();
@@ -115,110 +139,204 @@ test("finish", function() {
 module("OptionParsing");
 
 test("single", function() {
-    var text = "*choice\n  #foo\n    Foo!\n  #bar\n    Bar!\nbaz";
+    var text = dedent`
+                *choice
+                  #foo
+                    Foo!
+                  #bar
+                    Bar!
+                baz`;
     var scene = new Scene();
     scene.loadLines(text);
     var options = scene.parseOptions(0, []);
     doh.is([{"name":"foo","line":2,"group":"choice","endLine":3},{"name":"bar","line":4,"group":"choice","endLine":5}], options, "options");
 })
 test("singleTabs", function() {
-    var text = "*choice\n\t#foo\n\t\tFoo!\n\t#bar\n\t\tBar!\nbaz";
+    var text = dedent`
+                *choice
+                    #foo
+                        Foo!
+                    #bar
+                        Bar!
+                baz`;
     var scene = new Scene();
     scene.loadLines(text);
     var options = scene.parseOptions(0, []);
     doh.is([{"name":"foo","line":2,"group":"choice","endLine":3},{"name":"bar","line":4,"group":"choice","endLine":5}], options, "options");
 })
 test("blankLine", function() {
-    var text = "*choice\n  #foo\n    Foo!\n\n    Foo, I say!\n  #bar\n    Bar!\nbaz";
+    var text = dedent`
+                *choice
+                  #foo
+                    Foo!
+                
+                    Foo, I say!
+                  #bar
+                    Bar!
+                baz`;
     var scene = new Scene();
     scene.loadLines(text);
     var options = scene.parseOptions(0, []);
     doh.is([{"name":"foo","line":2,"group":"choice","endLine":5},{"name":"bar","line":6,"group":"choice","endLine":7}], options, "options");
 })
 test("singlePrint", function() {
-    var text = "*choice\n  #foo\n    Foo!\n  *print \"#ba\"&\"r\"\n    Bar!\nbaz";
+    var text = dedent`
+                *choice
+                  #foo
+                    Foo!
+                  *print "#ba"&"r"
+                    Bar!
+                baz`;
     var scene = new Scene();
     scene.loadLines(text);
     var options = scene.parseOptions(0, []);
     doh.is([{"name":"foo","line":2,"group":"choice","endLine":3},{"name":"bar","line":4,"group":"choice","endLine":5}], options, "options");
 })
 test("simpleConditionalTrue", function() {
-    var text = "*choice\n  *if true\n    #foo\n      Foo!\n  #bar\n    Bar!\nbaz";
+    var text = dedent`
+                *choice
+                  *if true
+                    #foo
+                      Foo!
+                  #bar
+                    Bar!
+                baz`;
     var scene = new Scene();
     scene.loadLines(text);
     var options = scene.parseOptions(0, []);
     doh.is([{group:"choice",endLine:4,name:"foo",line:3},{group:"choice",endLine:6,name:"bar",line:5}], options, "options");
 })
 test("oneLineConditionalTrue", function() {
-    var text = "*choice\n  *if (true) #foo\n      Foo!\n  #bar\n    Bar!\nbaz";
+    var text = dedent`
+                *choice
+                  *if (true) #foo
+                      Foo!
+                  #bar
+                    Bar!
+                baz`;
     var scene = new Scene();
     scene.loadLines(text);
     var options = scene.parseOptions(0, []);
     doh.is([{group:"choice",endLine:3,name:"foo",line:2},{group:"choice",endLine:5,name:"bar",line:4}], options, "options");
 })
 test("unselectable", function() {
-    var text = "*choice\n  *selectable_if (false) #foo\n      Foo!\n  #bar\n    Bar!\nbaz";
+    var text = dedent`
+                *choice
+                  *selectable_if (false) #foo
+                      Foo!
+                  #bar
+                    Bar!
+                baz`;
     var scene = new Scene();
     scene.loadLines(text);
     var options = scene.parseOptions(0, []);
     doh.is([{group:"choice",endLine:3,unselectable:true,name:"foo",line:2},{group:"choice",endLine:5,name:"bar",line:4}], options, "options");
 })
 test("nonUnselectable", function() {
-    var text = "*choice\n  *selectable_if (true) #foo\n      Foo!\n  #bar\n    Bar!\nbaz";
+    var text = dedent`
+                *choice
+                  *selectable_if (true) #foo
+                      Foo!
+                  #bar
+                    Bar!
+                baz`;
     var scene = new Scene();
     scene.loadLines(text);
     var options = scene.parseOptions(0, []);
     doh.is([{group:"choice",endLine:3,name:"foo",line:2},{group:"choice",endLine:5,name:"bar",line:4}], options, "options");
 })
 test("simpleConditionalFalse", function() {
-    var text = "*choice\n  *if false\n    #foo\n      Foo!\n  #bar\n    Bar!\nbaz";
+    var text = dedent`
+                *choice
+                  *if false
+                    #foo
+                      Foo!
+                  #bar
+                    Bar!
+                baz`;
     var scene = new Scene();
     scene.loadLines(text);
     var options = scene.parseOptions(0, []);
     doh.is([{group:"choice",endLine:6,name:"bar",line:5}], options, "options");
 })
 test("oneLineConditionalFalse", function() {
-    var text = "*choice\n  *if (false)    #foo\n      Foo!\n  #bar\n    Bar!\nbaz";
+    var text = dedent`
+                *choice
+                  *if (false)    #foo
+                      Foo!
+                  #bar
+                    Bar!
+                baz`;
     var scene = new Scene();
     scene.loadLines(text);
     var options = scene.parseOptions(0, []);
     doh.is([{group:"choice",endLine:5,name:"bar",line:4}], options, "options");
 })
 test("simpleConditionalElseTrue", function() {
-    var text = "*choice\n  *if true\n    #foo\n      Foo!\n  *else\n    #fail\n      Fail!\n  #bar\n    Bar!\nbaz";
+    var text = dedent`
+                *choice
+                  *if true
+                    #foo
+                      Foo!
+                  *else
+                    #fail
+                      Fail!
+                  #bar
+                    Bar!
+                baz`;
     var scene = new Scene();
     scene.loadLines(text);
     var options = scene.parseOptions(0, []);
     doh.is([{group:"choice",endLine:4,name:"foo",line:3},{group:"choice",endLine:9,name:"bar",line:8}], options, "options");
 })
 test("simpleConditionalElseFalse", function() {
-    var text = "*choice\n  *if false\n    #fail\n      Fail!\n  *else\n    #foo\n      Foo!\n  #bar\n    Bar!\nbaz";
+    var text = dedent`
+                *choice
+                  *if false
+                    #fail
+                      Fail!
+                  *else
+                    #foo
+                      Foo!
+                  #bar
+                    Bar!
+                baz`;
     var scene = new Scene();
     scene.loadLines(text);
     var options = scene.parseOptions(0, []);
     doh.is([{group:"choice",endLine:7,name:"foo",line:6},{group:"choice",endLine:9,name:"bar",line:8}], options, "options");
 })
 test("nestedConditionalTrue", function() {
-    var text = "*choice\n  *if true\n    *if true\n        #foo\n          foo\n          *finish\n    #bar\n      bar\n      *finish";
+    var text = dedent`
+                *choice
+                  *if true
+                    *if true
+                        #foo
+                          foo
+                          *finish
+                    #bar
+                      bar
+                      *finish`;
     var scene = new Scene();
     scene.loadLines(text);
     var options = scene.parseOptions(0, []);
     doh.is([{group:"choice",endLine:6,name:"foo",line:4},{group:"choice",endLine:9,name:"bar",line:7}], options, "options");
 })
 test("multi", function() {
-    var text = 
-        "*choice color toy\n"+
-        "  #red\n"+
-        "    #spaceship\n"+
-        "      Red spaceship\n"+
-        "    #yo-yo\n"+
-        "      Red yo-yo\n"+
-        "  #blue\n"+
-        "    #spaceship\n"+
-        "      Blue spaceship\n"+
-        "    #yo-yo\n"+
-        "      Blue yo-yo\n"+
-        "baz";
+    var text = dedent`
+        *choice color toy
+          #red
+            #spaceship
+              Red spaceship
+            #yo-yo
+              Red yo-yo
+          #blue
+            #spaceship
+              Blue spaceship
+            #yo-yo
+              Blue yo-yo
+        baz
+    `;
     var scene = new Scene();
     scene.loadLines(text);
     var options = scene.parseOptions(0, ["color", "toy"]);
@@ -240,19 +358,19 @@ test("multi", function() {
 })
 
 test("multi partially unselectable", function() {
-    var text = 
-        "*choice color toy\n"+
-        "  #red\n"+
-        "    #spaceship\n"+
-        "      Red spaceship\n"+
-        "    #yo-yo\n"+
-        "      Red yo-yo\n"+
-        "  #blue\n"+
-        "    #spaceship\n"+
-        "      Blue spaceship\n"+
-        "    *selectable_if (false) #yo-yo\n"+
-        "      Blue yo-yo\n"+
-        "baz";
+    var text = dedent`
+        *choice color toy
+          #red
+            #spaceship
+              Red spaceship
+            #yo-yo
+              Red yo-yo
+          #blue
+            #spaceship
+              Blue spaceship
+            *selectable_if (false) #yo-yo
+              Blue yo-yo
+        baz`;
     var scene = new Scene();
     scene.loadLines(text);
     var options = scene.parseOptions(0, ["color", "toy"]);
@@ -274,101 +392,148 @@ test("multi partially unselectable", function() {
 })
 
 test("errorInvalidIndent", function() {
-    var text = "*choice\n    #foo\n  #bar";
+    var text = dedent`
+                *choice
+                    #foo
+                  #bar`;
     var scene = new Scene();
     scene.loadLines(text);
     //var options = scene.parseOptions(0, []);
     doh.assertError(Error, scene, "parseOptions", [0, []], "Invalid indent");
 })
 test("errorTabMixing", function() {
-    var text = "*choice\n\t #foo\n\t\tFoo!\n\t#bar\n\t\tBar!\nbaz";
+    var text = `
+*choice
+      #foo
+        Foo!
+    #bar
+        Bar!
+baz`;
     var scene = new Scene();
     scene.loadLines(text);
     doh.assertError(Error, scene, "parseOptions", [0, []], "mixing");
 })
 test("errorTabFirstSpaceLater", function() {
-    var text = "*choice\n\t#foo\n        Foo!\n\t#bar\n\t\tBar!\nbaz";
+    var text = dedent`
+                *choice
+                \t#foo
+                        Foo!
+                \t#bar
+                \t\tBar!
+                baz`;
     var scene = new Scene();
     scene.loadLines(text);
     doh.assertError(Error, scene, "parseOptions", [0, []], "mixing");
 })
 test("errorSpaceFirstTabLater", function() {
-    var text = "*choice\n    #foo\n\t\tFoo!\n\t#bar\n\t\tBar!\nbaz";
+    var text = dedent`
+                *choice
+                    #foo
+                \t\tFoo!
+                \t#bar
+                \t\tBar!
+                baz`;
     var scene = new Scene();
     scene.loadLines(text);
     doh.assertError(Error, scene, "parseOptions", [0, []], "mixing");
 })
 test("errorNoChoices", function() {
-    var text = "*choice\nbaz";
+    var text = dedent`
+                *choice
+                baz`;
     var scene = new Scene();
     scene.loadLines(text);
     //var options = scene.parseOptions(0, []);
     doh.assertError(Error, scene, "parseOptions", [0, []], "No options");
 })
 test("errorNoBody", function() {
-    var text = "*choice\n  #foo\n  #bar";
+    var text = dedent`
+                *choice
+                  #foo
+                  #bar`;
     var scene = new Scene();
     scene.loadLines(text);
     doh.assertError(Error, scene, "parseOptions", [0, []], "Expected choice body");
 })
 test("errorNoBodyOneChoice", function() {
-    var text = "*choice\n  #foo\nbar";
+    var text = dedent`
+                *choice
+                  #foo
+                bar`;
     var scene = new Scene();
     scene.loadLines(text);
     doh.assertError(Error, scene, "parseOptions", [0, []], "Expected choice body");
 })
 test("errorNoBodyMultiChoice", function() {
-    var text = "*choice one two\n  #foo\n    #x\n  #bar\n    #x\nbaz";
+    var text = dedent`
+                *choice one two
+                  #foo
+                    #x
+                  #bar
+                    #x
+                baz`;
     var scene = new Scene();
     scene.loadLines(text);
     doh.assertError(Error, scene, "parseOptions", [0, ["one", "two"]], "Expected choice body");
 })
 test("errorNonOverlappingMultiChoice", function() {
-    var text = 
-        "*choice color toy\n"+
-        "  #red\n"+
-        "    #wagon\n"+
-        "      Red spaceship\n"+
-        "    #yo-yo\n"+
-        "      Red yo-yo\n"+
-        "  #blue\n"+
-        "    #spaceship\n"+
-        "      Blue spaceship\n"+
-        "    #truck\n"+
-        "      Blue yo-yo\n"+
-        "baz";
+    var text = dedent`
+        *choice color toy
+          #red
+            #wagon
+              Red spaceship
+            #yo-yo
+              Red yo-yo
+          #blue
+            #spaceship
+              Blue spaceship
+            #truck
+              Blue yo-yo
+        baz`;
     var scene = new Scene();
     scene.loadLines(text);
     doh.assertError(Error, scene, "parseOptions", [0, ["color", "toy"]], "Mismatched suboptions");
 })
 test("errorNonOverlappingMultiChoice2", function() {
-    var text = 
-        "*choice color toy\n"+
-        "  #red\n"+
-        "    #wagon\n"+
-        "      Red spaceship\n"+
-        "    #yo-yo\n"+
-        "      Red yo-yo\n"+
-        "  #blue\n"+
-        "    #spaceship\n"+
-        "      Blue spaceship\n"+
-        "    #truck\n"+
-        "      Blue yo-yo\n"+
-        "    #wagon\n"+
-        "      Blue wagon\n"+
-        "baz";
+    var text = dedent`
+        *choice color toy
+          #red
+            #wagon
+              Red spaceship
+            #yo-yo
+              Red yo-yo
+          #blue
+            #spaceship
+              Blue spaceship
+            #truck
+              Blue yo-yo
+            #wagon
+              Blue wagon
+        baz`;
     var scene = new Scene();
     scene.loadLines(text);
     doh.assertError(Error, scene, "parseOptions", [0, ["color", "toy"]], "Mismatched suboptions");
 })
 test("errorDupes", function() {
-    var text = "*choice\n  #foo\n    Foo!\n  #foo\n    Bar!\nbaz";
+    var text = dedent`
+                *choice
+                  #foo
+                    Foo!
+                  #foo
+                    Bar!
+                baz`;
     var scene = new Scene();
     scene.loadLines(text);
     doh.assertError(Error, scene, "parseOptions", [0, []], "Duplicate options");
 })
 test("errorNoSelectable", function() {
-    var text = "*choice\n  *selectable_if (false) #foo\n      Foo!\n  *selectable_if (false) #bar\n    Bar!\nbaz";
+    var text = dedent`
+                *choice
+                  *selectable_if (false) #foo
+                      Foo!
+                  *selectable_if (false) #bar
+                    Bar!
+                baz`;
     var scene = new Scene();
     scene.loadLines(text);
     doh.assertError(Error, scene, "parseOptions", [0, []], "No selectable options");
@@ -408,33 +573,45 @@ module("Set")
 
 test("setTemp", function() {
     var scene = new Scene();
-    scene.loadLines("*temp foo\n*set foo 2");
+    scene.loadLines(dedent`
+                *temp foo
+                *set foo 2`);
     scene.execute();
     doh.is(2, scene.temps.foo, "scene.temps.foo");
 })
 test("mixedCaseVariable", function() {
     var scene = new Scene();
-    scene.loadLines("*temp Foo\n*set foo 2");
+    scene.loadLines(dedent`
+                *temp Foo
+                *set foo 2`);
     scene.execute();
     doh.is(2, scene.temps.foo, "scene.temps.foo");
 })
 test("deleteTemp", function() {
     var scene = new Scene();
-    scene.loadLines("*temp foo\n*set foo 2\n*delete foo");
+    scene.loadLines(dedent`
+                *temp foo
+                *set foo 2
+                *delete foo`);
     scene.execute();
     doh.is("undefined", typeof scene.temps.foo, "typeof scene.temps.foo");
 })
 test("setStat", function() {
     var scene = new Scene();
     scene.name = "startup";
-    scene.loadLines("*create foo 0\n*set foo 2");
+    scene.loadLines(dedent`
+                *create foo 0
+                *set foo 2`);
     scene.execute();
     doh.is(2, scene.stats.foo, "scene.stats.foo");
 })
 test("deleteStat", function() {
     var scene = new Scene();
     scene.name = "startup";
-    scene.loadLines("*create foo 0\n*set foo 2\n*delete foo");
+    scene.loadLines(dedent`
+                *create foo 0
+                *set foo 2
+                *delete foo`);
     scene.execute();
     doh.is("undefined", typeof scene.stats.foo, "typeof scene.stats.foo");
 })
@@ -442,7 +619,12 @@ test("setTempOverridingStat", function() {
     printed = [];
     var scene = new Scene();
     scene.name = "startup";
-    scene.loadLines("*create foo 0\n*set foo 2\n*temp foo\n*set foo 3\n*print foo");
+    scene.loadLines(dedent`
+                *create foo 0
+                *set foo 2
+                *temp foo
+                *set foo 3
+                *print foo`);
     scene.execute();
     doh.is(2, scene.stats.foo, "scene.stats.foo");
     doh.is(3, scene.temps.foo, "scene.temps.foo");
@@ -452,7 +634,13 @@ test("deleteTempOverridingStat", function() {
     printed = [];
     var scene = new Scene();
     scene.name = "startup";
-    scene.loadLines("*create foo 0\n*set foo 2\n*temp foo\n*set foo 3\n*delete foo\n*print foo");
+    scene.loadLines(dedent`
+                *create foo 0
+                *set foo 2
+                *temp foo
+                *set foo 3
+                *delete foo
+                *print foo`);
     scene.execute();
     doh.is(2, scene.stats.foo, "scene.stats.foo");
     doh.is("undefined", typeof scene.temps.foo, "typeof scene.temps.foo");
@@ -460,7 +648,10 @@ test("deleteTempOverridingStat", function() {
 })
 test("implicitVariable", function() {
     var scene = new Scene();
-    scene.loadLines("*temp foo 0\n*set foo 2\n*set foo+2");
+    scene.loadLines(dedent`
+                *temp foo 0
+                *set foo 2
+                *set foo+2`);
     scene.execute();
     doh.is(4, scene.temps.foo, "scene.temps.foo");
 })
@@ -481,36 +672,58 @@ test("errorNoExpression", function() {
 })
 test("setRef", function() {
     var scene = new Scene();
-    scene.loadLines("*temp foo 0\n*temp bar 0\n*set foo \"bar\"\n*setref foo 2");
+    scene.loadLines(dedent`
+                *temp foo 0
+                *temp bar 0
+                *set foo \"bar\"
+                *setref foo 2`);
     scene.execute();
     doh.is(2, scene.temps.bar, "scene.temps.bar");
 })
 test("setByRef", function() {
     var scene = new Scene();
-    scene.loadLines("*temp foo 0\n*temp bar 0\n*set foo \"bar\"\n*set {foo} 2");
+    scene.loadLines(dedent`
+                *temp foo 0
+                *temp bar 0
+                *set foo \"bar\"
+                *set {foo} 2`);
     scene.execute();
     doh.is(2, scene.temps.bar, "scene.temps.bar");
 })
 test("setArray", function() {
     var scene = new Scene();
-    scene.loadLines("*temp foo \"foo\"\n*temp foo_1 0\n*set foo[1] 2");
+    scene.loadLines(dedent`
+                *temp foo \"foo\"
+                *temp foo_1 0
+                *set foo[1] 2`);
     scene.execute();
     doh.is(2, scene.temps.foo_1, "scene.temps.foo_1");
 })
 test("setMultidimensionalArray", function() {
     var scene = new Scene();
-    scene.loadLines("*temp foo \"foo\"\n*temp foo_1_1 0\n*set foo[1][1] 2");
+    scene.loadLines(dedent`
+                *temp foo \"foo\"
+                *temp foo_1_1 0
+                *set foo[1][1] 2`);
     scene.execute();
     doh.is(2, scene.temps.foo_1_1, "scene.temps.foo_1_1");
 })
 test("errorSetRefNoExpression", function() {
     var scene = new Scene();
-    scene.loadLines("*temp foo 0\n*temp bar 0\n*set foo \"bar\"\n*setref foo");
+    scene.loadLines(dedent`
+                *temp foo 0
+                *temp bar 0
+                *set foo \"bar\"
+                *setref foo`);
     doh.assertError(Error, scene, "execute", null, "No expression");
 })
 test("setRefWhitespace", function() {
     var scene = new Scene();
-    scene.loadLines("*temp foo 0\n*temp bar 0\n*set foo \"bar\"\n*setref foo(2)");
+    scene.loadLines(dedent`
+                *temp foo 0
+                *temp bar 0
+                *set foo \"bar\"
+                *setref foo(2)`);
     scene.execute();
     doh.is(2, scene.temps.bar, "scene.temps.bar");
     //doh.assertError(Error, scene, "execute", null, "No expression");
@@ -521,82 +734,166 @@ module("If");
 test("basic", function() {
     printed = [];
     var scene = new Scene();
-    scene.loadLines("*if true\n  Truthy\n  *finish\n*else\n  Falsish\n  *finish");
+    scene.loadLines(dedent`
+                *if true
+                  Truthy
+                  *finish
+                *else
+                  Falsish
+                  *finish`);
     scene.execute();
     doh.is("<p>Truthy </p>", printed.join(""), "Wrong printed value");
 })
 test("extraLineBreak", function() {
     printed = [];
     var scene = new Scene();
-    scene.loadLines("*if true\n\n  Truthy\n  *finish\n*else\n  Falsish\n  *finish");
+    scene.loadLines(dedent`
+                *if true
+                
+                  Truthy
+                  *finish
+                *else
+                  Falsish
+                  *finish`);
     scene.execute();
     doh.is("<p>Truthy </p>", printed.join(""), "Wrong printed value");
 })
 test("testElse", function() {
     printed = [];
     var scene = new Scene();
-    scene.loadLines("*if false\n  Truthy\n  *finish\n*else\n  Falsish\n  *finish");
+    scene.loadLines(dedent`
+                *if false
+                  Truthy
+                  *finish
+                *else
+                  Falsish
+                  *finish`);
     scene.execute();
     doh.is("<p>Falsish </p>", printed.join(""), "Wrong printed value");
 })
 test("testElseExtraLineBreak", function() {
     printed = [];
     var scene = new Scene();
-    scene.loadLines("*if false\n  Truthy\n  *finish\n*else\n\n  Falsish\n  *finish");
+    scene.loadLines(dedent`
+                *if false
+                  Truthy
+                  *finish
+                *else
+                
+                  Falsish
+                  *finish`);
     scene.execute();
     doh.is("<p>Falsish </p>", printed.join(""), "Wrong printed value");
 })
 test("testElseIfTrue", function() {
     printed = [];
     var scene = new Scene();
-    scene.loadLines("*if false\n  Truthy\n  *finish\n*elseif true\n  Elsey\n  *finish\n*else\n  Falsish\n  *finish");
+    scene.loadLines(dedent`
+                *if false
+                  Truthy
+                  *finish
+                *elseif true
+                  Elsey
+                  *finish
+                *else
+                  Falsish
+                  *finish`);
     scene.execute();
     doh.is("<p>Elsey </p>", printed.join(""), "Wrong printed value");
 })
 test("testElseIfFalse", function() {
     printed = [];
     var scene = new Scene();
-    scene.loadLines("*if false\n  Truthy\n  *finish\n*elseif false\n  Elsey\n  *finish\n*else\n  Falsish\n  *finish");
+    scene.loadLines(dedent`
+                *if false
+                  Truthy
+                  *finish
+                *elseif false
+                  Elsey
+                  *finish
+                *else
+                  Falsish
+                  *finish`);
     scene.execute();
     doh.is("<p>Falsish </p>", printed.join(""), "Wrong printed value");
 })
 test("testDoubleElseIf", function() {
     printed = [];
     var scene = new Scene();
-    scene.loadLines("*if false\n  Truthy\n  *finish\n*elseif false\n  Elsey\n  *finish\n*elseif true\n  Double Elsey\n  *finish\n*else\n  Falsish\n  *finish");
+    scene.loadLines(dedent`
+                *if false
+                  Truthy
+                  *finish
+                *elseif false
+                  Elsey
+                  *finish
+                *elseif true
+                  Double Elsey
+                  *finish
+                *else
+                  Falsish
+                  *finish`);
     scene.execute();
     doh.is("<p>Double Elsey </p>", printed.join(""), "Wrong printed value");
 })
 test("nested", function() {
     printed = [];
     var scene = new Scene();
-    scene.loadLines("*if true\n  *if true\n    Truthy\n*label end");
+    scene.loadLines(dedent`
+                *if true
+                  *if true
+                    Truthy
+                *label end`);
     scene.execute();
     doh.is("<p>Truthy </p>", printed.join(""), "Wrong printed value");
 })
 test("errorNonNestedElse", function() {
     printed = [];
     var scene = new Scene();
-    scene.loadLines("*if true\n  OK\n  *if false\n    Fail\n*else\n  Fail");
+    scene.loadLines(dedent`
+                *if true
+                  OK
+                  *if false
+                    Fail
+                *else
+                  Fail`);
     doh.assertError(Error, scene, "execute", null, "fall into else");
 })
 test("nestedExtraLineBreak", function() {
     printed = [];
     var scene = new Scene();
-    scene.loadLines("*if true\n  *if true\n    Truthy\n\n  Still Truthy\n*label end");
+    scene.loadLines(dedent`
+                *if true
+                  *if true
+                    Truthy
+                
+                  Still Truthy
+                *label end`);
     scene.execute();
     doh.is("<p>Truthy </p><p>Still Truthy </p>", printed.join(""), "Wrong printed value");
 })
 test("errorDrift", function() {
     var scene = new Scene();
-    scene.loadLines("*if true\n        drift\n      drift\n    drift\n  drift");
+    scene.loadLines(dedent`
+                *if true
+                        drift
+                      drift
+                    drift
+                  drift`);
     //TODO drift detection
     //doh.assertError(Error, scene, "execute", null, "drifting");
 })
 test("ignoreCommentsICF", function() {
     printed = [];
     var scene = new Scene("test", { implicit_control_flow: true })
-    scene.loadLines("*if false\n  false\n*comment blah\n*elseif true\n  true\n\nend");
+    scene.loadLines(dedent`
+                *if false
+                  false
+                *comment blah
+                *elseif true
+                  true
+                
+                end`);
     scene.execute();
     doh.is("<p>true </p><p>end </p>", printed.join(""), "Wrong printed value");
 })
@@ -604,57 +901,100 @@ test("ignoreCommentsICF", function() {
 module("Complex Choice");
 
 test("trueNestedIf", function() {
-    var text = "*choice\n  #foo\n    Foo!\n  *if true\n    #bar\n      Bar!\nbaz";
+    var text = dedent`
+                *choice
+                  #foo
+                    Foo!
+                  *if true
+                    #bar
+                      Bar!
+                baz`;
     var scene = new Scene();
     scene.loadLines(text);
     var options = scene.parseOptions(0, []);
     doh.is(([{"name":"foo","line":2,"group":"choice","endLine":3},{"name":"bar","line":5,"group":"choice","endLine":6}]), (options), "options");
 })
 test("falseNestedIf", function() {
-    var text = "*choice\n  #foo\n    Foo!\n  *if false\n    #bar\n      Bar!\nbaz";
+    var text = dedent`
+                *choice
+                  #foo
+                    Foo!
+                  *if false
+                    #bar
+                      Bar!
+                baz`;
     var scene = new Scene();
     scene.loadLines(text);
     var options = scene.parseOptions(0, []);
     doh.is(([{"name":"foo","line":2,"group":"choice","endLine":3}]), (options), "options");
 })
 test("trueNestedElse", function() {
-    var text = "*choice\n  #foo\n    Foo!\n    *finish\n  *if true\n    #bar\n      Bar!\n      *finish\n  *else\n    #baz\n      Baz!\n      *finish\nbaz\n";
+    var text = dedent`
+                *choice
+                  #foo
+                    Foo!
+                    *finish
+                  *if true
+                    #bar
+                      Bar!
+                      *finish
+                  *else
+                    #baz
+                      Baz!
+                      *finish
+                baz
+                `;
     var scene = new Scene();
     scene.loadLines(text);
     var options = scene.parseOptions(0, []);
     doh.is([{"name":"foo","line":2,"group":"choice","endLine":4},{"name":"bar","line":6,"group":"choice","endLine":8}], options, "options");
 })
 test("falseNestedElse", function() {
-    var text = "*choice\n  #foo\n    Foo!\n    *finish\n  *if false\n    #bar\n      Bar!\n      *finish\n  *else\n    #baz\n      Baz!\n      *finish\nbaz\n";
+    var text = dedent`
+                *choice
+                  #foo
+                    Foo!
+                    *finish
+                  *if false
+                    #bar
+                      Bar!
+                      *finish
+                  *else
+                    #baz
+                      Baz!
+                      *finish
+                baz
+                `;
     var scene = new Scene();
     scene.loadLines(text);
     var options = scene.parseOptions(0, []);
     doh.is([{"name":"foo","group":"choice","line":2,"endLine":4},{"name":"baz","group":"choice","line":10,"endLine":12}], options, "options");
 })
 test("twoFalseNestedElses", function() {
-    var text = "*choice\n"+
-    "  #foo\n"+
-    "    Foo!\n"+
-    "    *finish\n"+
-    "  *if false\n"+
-    "    #bar\n"+
-    "      Bar!\n"+
-    "      *finish\n"+
-    "    *goto end\n"+
-    "  *else\n"+
-    "    #baz\n"+
-    "      Baz!\n"+
-    "      *finish\n"+
-    "  *if false\n"+
-    "    #qoo\n"+
-    "      Qoo!\n"+
-    "      *finish\n"+
-    "    *goto end\n"+
-    "  *else\n"+
-    "    #quz\n"+
-    "      Quz!\n"+
-    "*label end\n"+
-    "baz";
+    var text = dedent`
+    *choice
+      #foo
+        Foo!
+        *finish
+      *if false
+        #bar
+          Bar!
+          *finish
+        *goto end
+      *else
+        #baz
+          Baz!
+          *finish
+      *if false
+        #qoo
+          Qoo!
+          *finish
+        *goto end
+      *else
+        #quz
+          Quz!
+    *label end
+    baz`
     var scene = new Scene();
     scene.loadLines(text);
     var options = scene.parseOptions(0, []);
@@ -662,28 +1002,29 @@ test("twoFalseNestedElses", function() {
 })
 // TODO add drift detection
 // test("errorTwoFalseNestedElses", function() {
-//             var text = "*choice\n"+
-//             "  #foo\n"+
-//             "    Foo!\n"+
-//             "  *if false\n"+
-//             "    #bar\n"+
-//             "      Bar!\n"+
-//             "    *goto end\n"+
-//             "  *else\n"+
-//             "    #baz\n"+
-//             "      Baz!\n"+
-//             "  *if false\n"+
-//             "    #qoo\n"+
-//             "      Qoo!\n"+
-//             "    *goto end\n"+
-//             "  *else\n"+
-//             "    #quz\n"+
-//             "      Quz!\n"+
-//             "      *goto end\n"+
-//             "   #sheesh\n"+ // misindented = 3
-//             "     Sheesh!\n"+
-//             "*label end\n"+
-//             "baz";
+            // var text = dedent`
+            // *choice
+            //   #foo
+            //     Foo!
+            //   *if false
+            //     #bar
+            //       Bar!
+            //     *goto end
+            //   *else
+            //     #baz
+            //       Baz!
+            //   *if false
+            //     #qoo
+            //       Qoo!
+            //     *goto end
+            //   *else
+            //     #quz
+            //       Quz!
+            //       *goto end
+            //    #sheesh // misindented = 3
+            //      Sheesh!
+            // *label end
+            // baz`
 //             var scene = new Scene();
 //             scene.loadLines(text);
 //             doh.assertError(Error, scene, "parseOptions", [0, []], "misindented");
@@ -693,7 +1034,15 @@ module("Standard Resolution");
 
 test("single", function() {
     printed = [];
-    var text = "*choice\n  #foo\n    Foo!\n    *finish\n  #bar\n    Bar!\n    *finish\nbaz";
+    var text = dedent`
+                *choice
+                  #foo
+                    Foo!
+                    *finish
+                  #bar
+                    Bar!
+                    *finish
+                baz`;
     var scene = new Scene();
     scene.loadLines(text);
     var options, groups;
@@ -708,7 +1057,15 @@ test("single", function() {
 })
 test("saveAndRestore", function() {
     printed = [];
-    var text = "*choice\n  #foo\n    Foo!\n    *finish\n  #bar\n    Bar!\n    *finish\nbaz";
+    var text = dedent`
+                *choice
+                  #foo
+                    Foo!
+                    *finish
+                  #bar
+                    Bar!
+                    *finish
+                baz`;
     var scene = new Scene();
     scene.loadLines(text);
     var options, groups;
@@ -731,7 +1088,20 @@ test("saveAndRestore", function() {
 })
 test("saveAndRestoreGoSub", function() {
     printed = [];
-    var text = "start\n*gosub subroutine\nend\n*finish\n*label subroutine\n*choice\n  #foo\n    Foo!\n    *return\n  #bar\n    Bar!\n    *return\nbaz";
+    var text = dedent`
+                start
+                *gosub subroutine
+                end
+                *finish
+                *label subroutine
+                *choice
+                  #foo
+                    Foo!
+                    *return
+                  #bar
+                    Bar!
+                    *return
+                baz`;
     var scene = new Scene();
     scene.loadLines(text);
     var options, groups;
@@ -755,7 +1125,16 @@ test("saveAndRestoreGoSub", function() {
 })
 test("extraLineBreak", function() {
     printed = [];
-    var text = "*choice\n  #foo\n\n    Foo!\n    *finish\n  #bar\n    Bar!\n    *finish\nbaz";
+    var text = dedent`
+                *choice
+                  #foo
+                
+                    Foo!
+                    *finish
+                  #bar
+                    Bar!
+                    *finish
+                baz`;
     var scene = new Scene();
     scene.loadLines(text);
     var options, groups;
@@ -770,7 +1149,13 @@ test("extraLineBreak", function() {
 })
 test("fake", function() {
     printed = [];
-    var text = "*fake_choice\n  #foo\n    Foo!\n  #bar\n    Bar!\nbaz";
+    var text = dedent`
+                *fake_choice
+                  #foo
+                    Foo!
+                  #bar
+                    Bar!
+                baz`;
     var scene = new Scene();
     scene.loadLines(text);
     var options, groups;
@@ -785,7 +1170,14 @@ test("fake", function() {
 })
 test("fakeFollowedByBlank", function() {
     printed = [];
-    var text = "*fake_choice\n  #foo\n    Foo!\n  #bar\n    Bar!\n\nbaz";
+    var text = dedent`
+                *fake_choice
+                  #foo
+                    Foo!
+                  #bar
+                    Bar!
+                
+                baz`;
     var scene = new Scene();
     scene.loadLines(text);
     var options, groups;
@@ -800,7 +1192,11 @@ test("fakeFollowedByBlank", function() {
 })
 test("fakeNoBody", function() {
     printed = [];
-    var text = "*fake_choice\n  #foo\n  #bar\nbaz";
+    var text = dedent`
+                *fake_choice
+                  #foo
+                  #bar
+                baz`;
     var scene = new Scene();
     scene.loadLines(text);
     var options, groups;
@@ -815,7 +1211,13 @@ test("fakeNoBody", function() {
 })
 test("unselectableFake", function() {
     printed = [];
-    var text = "*fake_choice\n  #foo\n    Foo!\n  *selectable_if (false) #bar\n    Bar!\nbaz";
+    var text = dedent`
+                *fake_choice
+                  #foo
+                    Foo!
+                  *selectable_if (false) #bar
+                    Bar!
+                baz`;
     var scene = new Scene();
     scene.loadLines(text);
     var options, groups;
@@ -830,7 +1232,11 @@ test("unselectableFake", function() {
 })
 test("unselecteableFakeNoBody", function() {
     printed = [];
-    var text = "*fake_choice\n  #foo\n  *selectable_if (false) #bar\nbaz";
+    var text = dedent`
+                *fake_choice
+                  #foo
+                  *selectable_if (false) #bar
+                baz`;
     var scene = new Scene();
     scene.loadLines(text);
     var options, groups;
@@ -845,7 +1251,15 @@ test("unselecteableFakeNoBody", function() {
 })
 /*test("choiceTemp", function() {
     printed = [];
-    var text = "*choice\n  #foo\n    Foo!\n    *goto end\n  #bar\n    Bar!\n*label end\n*print choice_1";
+    var text = dedent`
+                *choice
+                  #foo
+                    Foo!
+                    *goto end
+                  #bar
+                    Bar!
+                *label end
+                *print choice_1`;
     var scene = new Scene();
     scene.loadLines(text);
     var options, groups;
@@ -863,19 +1277,20 @@ test("unselecteableFakeNoBody", function() {
 })*/
 test("fallingChoices", function() {
     printed = [];
-    var text = "*choice\n"+
-    "   #foo\n"+
-    "       Foo\n"+
-    "       *finish\n"+
-    "   #bar\n"+
-    "       Bar\n"+
-    "baz\n"+
-    "*choice\n"+
-    "   #one\n"+
-    "       one\n"+
-    "       *finish\n"+
-    "   #two\n"+
-    "       two";
+    var text = dedent`
+                *choice
+                   #foo
+                       Foo
+                       *finish
+                   #bar
+                       Bar
+                baz
+                *choice
+                   #one
+                       one
+                       *finish
+                   #two
+                       two`;
     var scene = new Scene();
     scene.loadLines(text);
     var options, groups;
@@ -895,25 +1310,25 @@ module("Reuse Options");
 
 test("modifiers", function() {
     printed = [];
-    var text = ""
-      +"*label start\n"
-      +"What do you want to do?\n"
-      +"*choice\n"
-      +"  *hide_reuse #A little of this.\n"
-      +"    You do some of this.\n"
-      +"    *goto start\n"
-      +"  *disable_reuse #A little of that.\n"
-      +"    You do some of that.\n"
-      +"    *goto start\n"
-      +"  *allow_reuse #Let me think about it a little longer.\n"
-      +"    Very well.\n"
-      +"    *goto start\n"
-      +"  #What was the question?\n"
-      +"    Quit stalling!\n"
-      +"    *goto start  \n"
-      +"  #Nothing; I'm done.\n"
-      +"    OK!\n"
-      +"    *finish\n";
+    var text = dedent`
+      *label start
+      What do you want to do?
+      *choice
+        *hide_reuse #A little of this.
+          You do some of this.
+          *goto start
+        *disable_reuse #A little of that.
+          You do some of that.
+          *goto start
+        *allow_reuse #Let me think about it a little longer.
+          Very well.
+          *goto start
+        #What was the question?
+          Quit stalling!
+          *goto start  
+        #Nothing; I'm done.
+          OK!
+          *finish`
     var scene = new Scene();
     scene.loadLines(text);
     var options, groups;
@@ -955,25 +1370,26 @@ test("modifiers", function() {
 })
 test("hideByDefault", function() {
     printed = [];
-    var text = "*hide_reuse\n"
-      +"*label start\n"
-      +"What do you want to do?\n"
-      +"*choice\n"
-      +"  *hide_reuse #A little of this.\n"
-      +"    You do some of this.\n"
-      +"    *goto start\n"
-      +"  *disable_reuse #A little of that.\n"
-      +"    You do some of that.\n"
-      +"    *goto start\n"
-      +"  *allow_reuse #Let me think about it a little longer.\n"
-      +"    Very well.\n"
-      +"    *goto start\n"
-      +"  #What was the question?\n"
-      +"    Quit stalling!\n"
-      +"    *goto start  \n"
-      +"  #Nothing; I'm done.\n"
-      +"    OK!\n"
-      +"    *finish\n";
+    var text = dedent`
+      *hide_reuse
+      *label start
+      What do you want to do?
+      *choice
+        *hide_reuse #A little of this.
+          You do some of this.
+          *goto start
+        *disable_reuse #A little of that.
+          You do some of that.
+          *goto start
+        *allow_reuse #Let me think about it a little longer.
+          Very well.
+          *goto start
+        #What was the question?
+          Quit stalling!
+          *goto start  
+        #Nothing; I'm done.
+          OK!
+          *finish`
     var scene = new Scene();
     scene.loadLines(text);
     var options, groups;
@@ -1018,25 +1434,26 @@ test("hideByDefault", function() {
 })
 test("disableByDefault", function() {
     printed = [];
-    var text = "*disable_reuse\n"
-      +"*label start\n"
-      +"What do you want to do?\n"
-      +"*choice\n"
-      +"  *hide_reuse #A little of this.\n"
-      +"    You do some of this.\n"
-      +"    *goto start\n"
-      +"  *disable_reuse #A little of that.\n"
-      +"    You do some of that.\n"
-      +"    *goto start\n"
-      +"  *allow_reuse #Let me think about it a little longer.\n"
-      +"    Very well.\n"
-      +"    *goto start\n"
-      +"  #What was the question?\n"
-      +"    Quit stalling!\n"
-      +"    *goto start  \n"
-      +"  #Nothing; I'm done.\n"
-      +"    OK!\n"
-      +"    *finish\n";
+    var text = dedent`
+      *disable_reuse
+      *label start
+      What do you want to do?
+      *choice
+        *hide_reuse #A little of this.
+          You do some of this.
+          *goto start
+        *disable_reuse #A little of that.
+          You do some of that.
+          *goto start
+        *allow_reuse #Let me think about it a little longer.
+          Very well.
+          *goto start
+        #What was the question?
+          Quit stalling!
+          *goto start  
+        #Nothing; I'm done.
+          OK!
+          *finish`
     var scene = new Scene();
     scene.loadLines(text);
     var options, groups;
@@ -1494,7 +1911,8 @@ module("Line Breaks");
 
 test("noBreaks", function() {
     printed = [];
-    var text = "No line breaks";
+    var text = dedent`
+                No line breaks`;
     var scene = new Scene();
     scene.loadLines(text);
     scene.execute();
@@ -1502,7 +1920,9 @@ test("noBreaks", function() {
 })
 test("oneTrailingBreak", function() {
     printed = [];
-    var text = "One trailing break\n";
+    var text = dedent`
+                One trailing break
+                `;
     var scene = new Scene();
     scene.loadLines(text);
     scene.execute();
@@ -1510,7 +1930,9 @@ test("oneTrailingBreak", function() {
 })
 test("singleBreakNoBr", function() {
     printed = [];
-    var text = "This is\none sentence";
+    var text = dedent`
+                This is
+                one sentence`;
     var scene = new Scene();
     scene.loadLines(text);
     scene.execute();
@@ -1518,7 +1940,10 @@ test("singleBreakNoBr", function() {
 })
 test("doubleBreakDoubleBr", function() {
     printed = [];
-    var text = "This is one sentence.\n\nThis is another.";
+    var text = dedent`
+                This is one sentence.
+                
+                This is another.`;
     var scene = new Scene();
     scene.loadLines(text);
     scene.execute();
@@ -1526,7 +1951,10 @@ test("doubleBreakDoubleBr", function() {
 })
 test("doubleBreakAfterPrint", function() {
     printed = [];
-    var text = '*print "This is one sentence."\n\nThis is another.';
+    var text = dedent`
+                *print "This is one sentence."
+                
+                This is another.`;
     var scene = new Scene();
     scene.loadLines(text);
     scene.execute();
@@ -1534,7 +1962,11 @@ test("doubleBreakAfterPrint", function() {
 })
 test("tripleBreakDoubleBr", function() {
     printed = [];
-    var text = "This is one sentence.\n\n\nThis is another.";
+    var text = dedent`
+                This is one sentence.
+                
+                
+                This is another.`;
     var scene = new Scene();
     scene.loadLines(text);
     scene.execute();
@@ -1546,7 +1978,8 @@ module("Variable Interpolation")
 
 test("replacement", function() {
     printed = [];
-    var text = "This ${foo} is a ${bar}.";
+    var text = dedent`
+                This \${foo} is a \${bar}.`;
     var stats = {foo:"foo", bar:"bar"};
     var scene = new Scene("test", stats);
     scene.loadLines(text);
@@ -1554,20 +1987,23 @@ test("replacement", function() {
     doh.is("<p>This foo is a bar. </p>", printed.join(""), "printed");
 })
 test("unknownVariable", function() {
-    var text = "Unknown variable: ${foo}.";
+    var text = dedent`
+                Unknown variable: \${foo}.`;
     var scene = new Scene();
     scene.loadLines(text);
     doh.assertError(Error, scene, "execute", null, "Unknown variable");
 })
 test("invalidExpression", function() {
-    var text = "Invalid expression: ${foo.";
+    var text = dedent`
+                Invalid expression: \${foo.`;
     var scene = new Scene();
     scene.loadLines(text);
     doh.assertError(Error, scene, "execute", null, "Invalid expresison");
 })
 test("capitalize", function() {
     printed = [];
-    var text = "This ${foo} is a true $!{Foo}.";
+    var text = dedent`
+                This \${foo} is a true \$!{Foo}.`;
     var stats = {foo:"foo"};
     var scene = new Scene("test", stats);
     scene.loadLines(text);
@@ -1576,7 +2012,8 @@ test("capitalize", function() {
 })
 test("references", function() {
     printed = [];
-    var text = "This ${foo} is a true $!{{bar}}.";
+    var text = dedent`
+                This \${foo} is a true \$!{{bar}}.`;
     var stats = {foo:"foo",bar:"foo"};
     var scene = new Scene("test", stats);
     scene.loadLines(text);
@@ -1585,7 +2022,8 @@ test("references", function() {
 })
 test("multiReplace", function() {
     printed = [];
-    var text = "There @{foo is one thing|are two things} here in the room, and @{(bar) one person|two people}.";
+    var text = dedent`
+                There @{foo is one thing|are two things} here in the room, and @{(bar) one person|two people}.`;
     var stats = {foo:1, bar:false};
     var scene = new Scene("test", stats);
     scene.loadLines(text);
@@ -1597,11 +2035,12 @@ module("Parse Stat Chart");
 
 
 test("noLabels", function() {
-    var text = "*stat_chart\n"
-      + "  percent foo\n"
-      + "  percent bar\n"
-      + "  text baz\n"
-      + "  text quz\n";
+    var text = dedent`
+                *stat_chart
+                    percent foo
+                    percent bar
+                    text baz
+                    text quz`
     var scene = new Scene("test", {foo:50, bar:50, baz: "blah", quz:"urk"});
     scene.loadLines(text);
     var rows = scene.parseStatChart();
@@ -1614,11 +2053,12 @@ test("noLabels", function() {
     doh.is(expected, rows, "parsed");
 })
 test("labels", function() {
-    var text = "*stat_chart\n"
-      + "  percent foo One\n"
-      + "  percent bar Two Three\n"
-      + "  text baz Four  Five\n"
-      + "  text quz Six Seven!\n";
+    var text = dedent`
+                *stat_chart
+                    percent foo One
+                    percent bar Two Three
+                    text baz Four  Five
+                    text quz Six Seven!`
     var scene = new Scene("test", {foo:50, bar:50, baz: "blah", quz:"urk"});
     scene.loadLines(text);
     var rows = scene.parseStatChart();
@@ -1631,12 +2071,13 @@ test("labels", function() {
     doh.is(expected, rows, "parsed");
 })
 test("opposedPairs", function() {
-    var text = "*stat_chart\n"
-      + "  opposed_pair Leadership\n"
-      + "    Honesty\n"
-      + "  opposed_pair strength\n"
-      + "    Strength\n"
-      + "    Weakness\n"
+    var text = dedent`
+                *stat_chart
+                    opposed_pair Leadership
+                        Honesty
+                    opposed_pair strength
+                        Strength
+                        Weakness`;
     var scene = new Scene("test", {leadership:50, strength:50});
     scene.loadLines(text);
     var rows = scene.parseStatChart();
@@ -1647,14 +2088,15 @@ test("opposedPairs", function() {
     doh.is(expected, rows, "parsed");
 })
 test("definitions", function() {
-    var text = "*stat_chart\n"
-      + "  opposed_pair Leadership\n"
-      + "    Leadership\n"
-      + "      Managing\n"
-      + "    Honesty\n"
-      + "      Clueless\n"
-      + "  percent strength\n"
-      + "    Vigor\n"
+    var text = dedent`
+    *stat_chart
+      opposed_pair Leadership
+        Leadership
+          Managing
+        Honesty
+          Clueless
+      percent strength
+        Vigor`
     var scene = new Scene("test", {leadership:50, strength:50});
     scene.loadLines(text);
     var rows = scene.parseStatChart();
@@ -1681,11 +2123,11 @@ test("obfuscate", function() {
 module("goto_random_scene");
 
 test("basic parse", function() {
-    var text = "*goto_random_scene\n"
-      + "  hello\n"
-      + "  goodbye\n"
-      + "  death\n"
-    ;
+    var text = dedent`
+                *goto_random_scene
+                    hello
+                    goodbye
+                    death`
     var scene = new Scene("test", {leadership:50, strength:50});
     scene.loadLines(text);
     var actual = scene.parseGotoRandomScene();
@@ -1698,12 +2140,12 @@ test("basic parse", function() {
 })
 
 test("complex parse", function() {
-    var text = "*goto_random_scene allow_no_selection\n"
-      + "  *allow_reuse hello\n"
-      + "  *if (false) goodbye\n"
-      + "  *allow_reuse *if ((true and true) or false) death\n"
-      + "Nothing selected"
-    ;
+    var text = dedent`
+      *goto_random_scene allow_no_selection
+        *allow_reuse hello
+        *if (false) goodbye
+        *allow_reuse *if ((true and true) or false) death
+      Nothing selected`
     var scene = new Scene("test", {leadership:50, strength:50});
     scene.loadLines(text);
     var actual = scene.parseGotoRandomScene("allow_no_selection");
@@ -1825,7 +2267,9 @@ module("Array Creation")
 test("createArrayDefault", function() {
     var scene = new Scene();
     scene.name = "startup";
-    scene.loadLines("*create_array g_arr 2 0\n*finish");
+    scene.loadLines(dedent`
+                *create_array g_arr 2 0
+                *finish`);
     scene.execute();
     doh.is("undefined", typeof scene.stats.g_arr_0, "scene.stats.g_arr_0");
     doh.is(0, scene.stats.g_arr_1, "scene.stats.g_arr_1");
@@ -1868,13 +2312,17 @@ test("errorCreateComplexValues", function() {
 test("errorCreateDuplicate", function() {
     var scene = new Scene();
     scene.name = "startup";
-    scene.loadLines("*create_array g_arr 2 1\n*create_array g_arr 4 \"\"");
+    scene.loadLines(dedent`
+                *create_array g_arr 2 1
+                *create_array g_arr 4 \"\"`);
     doh.assertError(Error, scene, "execute", null, "Invalid create_array element ... Was previously created ...");
 });
 test("errorCreateConflict", function() {
     var scene = new Scene();
     scene.name = "startup";
-    scene.loadLines("*create g_arr_1 1\n*create_array g_arr 4 \"\"");
+    scene.loadLines(dedent`
+                *create g_arr_1 1
+                *create_array g_arr 4 \"\"`);
     doh.assertError(Error, scene, "execute", null, "g_arr_1 already exists");
 });
 test("tempArrayDefault", function() {
@@ -1890,7 +2338,10 @@ test("tempArrayDefault", function() {
 });
 test("tempArrayExplicitAndComplex", function() {
     var scene = new Scene();
-    scene.loadLines("*temp fname \"FNAME\"\n*temp lname \"LNAME\"\n*temp_array t_arr 2 \"Hello\" (fname&(\" \"&lname))");
+    scene.loadLines(dedent`
+                *temp fname \"FNAME\"
+                *temp lname \"LNAME\"
+                *temp_array t_arr 2 \"Hello\" (fname&(\" \"&lname))`);
     scene.execute();
     doh.is("undefined", typeof scene.temps.t_arr_0, "scene.temps.t_arr_0");
     doh.is("Hello", scene.temps.t_arr_1, "scene.temps.t_arr_1");
@@ -1926,7 +2377,9 @@ test("errorTempArrayValues", function() {
 test("deleteCreateArray", function() {
     var scene = new Scene();
     scene.name = "startup";
-    scene.loadLines("*create_array g_arr 3 1 2 3\n*delete_array g_arr");
+    scene.loadLines(dedent`
+                *create_array g_arr 3 1 2 3
+                *delete_array g_arr`);
     scene.execute();
     doh.is("undefined", typeof scene.stats.g_arr_1, "scene.stats.g_arr_1");
     doh.is("undefined", typeof scene.stats.g_arr_2, "scene.stats.g_arr_2");
@@ -1935,7 +2388,9 @@ test("deleteCreateArray", function() {
 test("deleteTempArray", function() {
     var scene = new Scene();
     scene.name = "startup";
-    scene.loadLines("*temp_array t_arr 3\n*delete_array t_arr");
+    scene.loadLines(dedent`
+                *temp_array t_arr 3
+                *delete_array t_arr`);
     scene.execute();
     doh.is("undefined", typeof scene.temps.t_arr_1, "scene.temps.t_arr_1");
     doh.is("undefined", typeof scene.temps.t_arr_2, "scene.temps.t_arr_2");
