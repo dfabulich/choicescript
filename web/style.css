@@ -459,6 +459,40 @@ body.whitemode .next:hover {
   color: #ddd;
 }
 
+#keyboardShortcuts {
+  font-family: system-ui;
+}
+
+#keyboardShortcuts::backdrop {
+  background: rgba(0, 0, 0, 0.4);
+}
+
+#keyboardShortcuts header {
+  display: flex;
+  justify-content: space-between;
+}
+
+#keyboardShortcuts header span {
+  font-weight: bold;
+}
+
+#keyboardShortcuts .table {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+#keyboardShortcuts .table div {
+  padding: 0.5em;
+}
+
+#keyboardShortcuts .key {
+  background-color: ghostwhite;
+  border: thin solid lightgrey;
+  border-radius: 5px;
+  padding: 0.3em;
+  font-family: monospace;
+}
+
 @media only screen and (max-width: 480px) {
   .definition{
     display: none;

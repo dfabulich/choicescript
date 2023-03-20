@@ -3405,6 +3405,11 @@ window.onload=function() {
         inputType = ev.target.type;
       }
       if (inputType === 'text' || inputType === 'number' || inputType === 'email') return;
+      var dialog = document.getElementById('keyboardShortcuts');
+      if (dialog.open) {
+        dialog.close();
+        return;
+      }
       var key = ev.key;
 
       function clickRadio(value) {
@@ -3474,6 +3479,8 @@ window.onload=function() {
           }
         }
         window.activatingNext = Date.now();
+      } else if (key === '?' || key === '/') {
+        dialog.showModal();
       }
     }, false);
 
