@@ -212,6 +212,17 @@ table {
   background-color: #007AFF;
 }
 
+.selectedKeyboard, .choice label.selectedKeyboard, .next.selectedKeyboard {
+  color: rgba(255, 255, 255, 0.85);
+  background-color: #007AFF;
+  transition-property: background-color, color;
+  transition-duration: 0.5s;
+  transition-timing-function: linear;
+  -webkit-transition-property: background-color, color;
+  -webkit-transition-duration: 0.5s;
+  -webkit-transition-timing-function: linear;
+}
+
 .choice>div:first-child{
     border-top-width:1px;
     -webkit-border-top-right-radius:1ch;

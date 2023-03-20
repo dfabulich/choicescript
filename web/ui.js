@@ -3399,6 +3399,103 @@ window.onload=function() {
       })();
     }
 
+    document.addEventListener('keydown', function(ev) {
+      var inputType;
+      if (ev.target && ev.target.tagName === 'INPUT') {
+        inputType = ev.target.type;
+      }
+      if (inputType === 'text' || inputType === 'number' || inputType === 'email') return;
+      var key = ev.key;
+
+      function clickRadio(value) {
+        var newTarget = document.querySelector('input[type=radio][value="' + value + '"]');
+        if (!newTarget) return;
+        newTarget.checked = true;
+        newTarget.focus();
+        newTarget.blur();
+      }
+
+      function clickButton(id) {
+        var button = document.querySelector('#' + id);
+        if (!button) return;
+        button.click();
+      }
+
+      if (key === 'j') {
+        var oldTarget = document.querySelector('input[type=radio]:checked');
+        if (!oldTarget) {
+          var input = document.querySelector('#main input');
+          if (input) {
+            setTimeout(function () { input.focus(); }, 0);
+          }
+          return;
+        }
+        var value = Number(oldTarget.value);
+        var lastValue = oldTarget.form.querySelectorAll('input[type=radio]').length - 1;
+        if (value === lastValue) {
+          value = 0;
+        } else {
+          value++;
+        }
+        clickRadio(value);
+      } else if (key === 'k') {
+        var oldTarget = document.querySelector('input[type=radio]:checked');
+        if (!oldTarget) return;
+        var value = Number(oldTarget.value);
+        if (value === 0) {
+          value = oldTarget.form.querySelectorAll('input[type=radio]').length - 1;
+        } else {
+          value--;
+        }
+        clickRadio(value);
+      } else if (!isNaN(key)) {
+        if (key === 0) {
+          key = 10;
+        }
+        key--;
+        clickRadio(key);
+      } else if (key === 'q') {
+        clickButton('statsButton');
+      } else if (key === 'w') {
+        clickButton('menuButton');
+      } else if (key === 'n') {
+        if (window.activatingNext) return;
+        var checked = document.querySelector('input[type=radio]:checked');
+        if (checked) {
+          var label = document.querySelector('label[for="' + checked.id + '"]');
+          label.classList.add('selectedKeyboard');
+        } else {
+          var n = document.querySelector('*[accesskey="n"]');
+          if (ev.target && ev.target.tagName === "BUTTON" || ev.target.tagName === "A") {
+            n = ev.target;
+          }
+          if (n) {
+            n.classList.add('selectedKeyboard');
+          }
+        }
+        window.activatingNext = Date.now();
+      }
+    }, false);
+
+    document.addEventListener('keyup', function (ev) {
+      var now = Date.now();
+      if (ev.key !== 'n' && ev.key !== 'Escape') return;
+      var inputType;
+      if (ev.target && ev.target.tagName === 'INPUT') {
+        inputType = ev.target.type;
+      }
+      if (inputType === 'text' || inputType === 'number' || inputType === 'email') return;
+      var activatingNext = window.activatingNext;
+      window.activatingNext = null;
+      if (ev.key === 'n' && activatingNext && (now - activatingNext > 500)) {
+        var n = document.querySelector('.selectedKeyboard');
+        if (n) n.click();
+      }
+      document.querySelectorAll('.selectedKeyboard').forEach(function (selected) {
+        selected.classList.remove('selectedKeyboard');
+      })
+    });
+
 };
 
 if ( document.addEventListener ) {
