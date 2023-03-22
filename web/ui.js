@@ -193,8 +193,10 @@ function showMenu() {
           ]
           printOptions([""], options, function(option) {
             if (option.restart) {
-              setButtonTitles();
-              restartGame();
+              clearScreen(function() {
+                setButtonTitles();
+                restartGame();
+              })
             } else {
               clearScreen(function() {
                 setButtonTitles();
