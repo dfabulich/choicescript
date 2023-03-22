@@ -161,15 +161,18 @@ function showMenu() {
     setButtonTitles();
     var button = document.getElementById("menuButton");
     button.innerHTML = "Return to the Game";
-    options = [
-      {name:"Return to the game.", group:"choice", resume:true},
+    options = [{name:"Return to the game.", group:"choice", resume:true}];
+    if (nav.achievementList.length) options.push(
+      { name: "View achievements.", group: "choice", achievements: true }
+    );
+    options.push(
       {name:"Restart the game.", group:"choice", restart:true},
       {name:"Change settings.", group:"choice", settings:true},
       {name:"Play more games like this.", group:"choice", moreGames:true},
       {name:"Email us at " + getSupportEmail() + ".", group:"choice", contactUs:true},
       {name:"Share this game with friends.", group:"choice", share:true},
       {name:"Email me when new games are available.", group:"choice", subscribe:true},
-    ];
+    );
     if (document.getElementById("aboutLink")) {
       options.push({name:"View the credits.", group:"choice", credits:true});
     }
@@ -179,6 +182,8 @@ function showMenu() {
           setButtonTitles();
           loadAndRestoreGame();
         });
+      } else if (option.achievements) {
+        return showAchievements();
       } else if (option.restart) {
         if (_global.blockRestart) {
           asyncAlert("Please wait until the timer has run out.");
