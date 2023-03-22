@@ -290,6 +290,13 @@ function textOptionsMenu(categories) {
         options.push({ name: "Animate between pages.", group: "choice", animation: 1 });
       }
     }
+    if (window.isMobile) {
+      if (window.slidingEnabled) {
+        options.push({ name: "Disable touch slide controls.", group: "choice", sliding: 1 });
+      } else {
+        options.push({ name: "Enable touch slide controls.", group: "choice", sliding: 2 });
+      }
+    }
     printOptions([""], options, function(option) {
       if (option.resume) {
         return clearScreen(function() {
@@ -303,6 +310,9 @@ function textOptionsMenu(categories) {
       } else if (option.animation) {
         window.animateEnabled = option.animation !== 2;
         if (initStore()) store.set("preferredAnimation", parseFloat(option.animation));
+      } else if (option.sliding) {
+        window.slidingEnabled = option.sliding == 2;
+        if (initStore()) store.set("preferredSliding", window.slidingEnabled);
       } else {
         changeFontSize(option.bigger);
       }
@@ -3174,6 +3184,9 @@ function loadPreferences() {
     });
     store.get("preferredAnimation", function(ok, preferredAnimation) {
       window.animateEnabled = parseFloat(preferredAnimation) !== 2;
+    });
+    store.get("preferredSliding", function (ok, preferredSliding) {
+      window.slidingEnabled = preferredSliding !== false;
     });
   } else {
     window.animateEnabled = true;
