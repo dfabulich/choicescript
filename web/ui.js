@@ -283,10 +283,13 @@ function textOptionsMenu(categories) {
       {name:"Use a sepia background.", group:"choice", color:"sepia"},
       {name:"Use a white background.", group:"choice", color:"white"}
     );
-    if (categories.animation) options.push(
-      {name: "Animate between pages.", group:"choice", animation:1},
-      {name: "Don't animate between pages.", group:"choice", animation:2}
-    );
+    if (categories.animation) {
+      if (window.animateEnabled) {
+        options.push({ name: "Don't animate between pages.", group: "choice", animation: 2 });
+      } else {
+        options.push({ name: "Animate between pages.", group: "choice", animation: 1 });
+      }
+    }
     printOptions([""], options, function(option) {
       if (option.resume) {
         return clearScreen(function() {
