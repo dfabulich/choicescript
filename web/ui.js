@@ -3512,7 +3512,12 @@ window.onload=function() {
       window.activatingNext = null;
       if (ev.key === 'n' && activatingNext && (now - activatingNext > 500)) {
         var n = document.querySelector('.selectedKeyboard');
-        if (n) n.click();
+        if (n && n.tagName === 'BUTTON' || n.tagName === 'A') {
+          n.click();
+        } else {
+          n = document.querySelector('*[accesskey="n"]');
+          n.click();
+        }
       }
       document.querySelectorAll('.selectedKeyboard').forEach(function (selected) {
         selected.classList.remove('selectedKeyboard');
