@@ -164,6 +164,7 @@ function showMenu() {
     options = [
       {name:"Return to the game.", group:"choice", resume:true},
       {name:"View the credits.", group:"choice", credits:true},
+      {name:"Restart the game.", group:"choice", restart:true},
       {name:"Play more games like this.", group:"choice", moreGames:true},
       {name:"Email us at " + getSupportEmail() + ".", group:"choice", contactUs:true},
       {name:"Share this game with friends.", group:"choice", share:true},
@@ -179,6 +180,31 @@ function showMenu() {
         return clearScreen(function() {
           setButtonTitles();
           loadAndRestoreGame();
+        });
+      } else if (option.restart) {
+        if (_global.blockRestart) {
+          asyncAlert("Please wait until the timer has run out.");
+          return;
+        }
+        return clearScreen(function() {
+          var text = document.getElementById('text');
+          text.innerHTML = "Start over from the beginning?";
+          var options = [
+            {name: "Restart the game.", group:"choice", restart: true},
+            {name: "Cancel.", group: "choice", restart: false },
+          ]
+          printOptions([""], options, function(option) {
+            if (option.restart) {
+              setButtonTitles();
+              restartGame();
+            } else {
+              clearScreen(function() {
+                setButtonTitles();
+                loadAndRestoreGame();
+              })
+            }
+          })
+          curl();
         });
       } else if (option.credits) {
         absolutizeAboutLink();
@@ -213,11 +239,7 @@ function setButtonTitles() {
   var button;
   button = document.getElementById("menuButton");
   if (button) {
-    if (window.isCef || window.isNode || window.isMacApp) {
-      button.innerHTML = "Menu";
-    } else {
-      button.innerHTML = "Settings";
-    }
+    button.innerHTML = "Menu";
   }
   button = document.getElementById("statsButton");
   if (button) {
@@ -3350,12 +3372,6 @@ window.onload=function() {
               return false;
             };
         }
-    }
-    if (window.isCef || window.isNode || window.isMacApp) {
-      var menuButton = document.getElementById("menuButton");
-      if (menuButton) {
-        menuButton.innerHTML = "Menu";
-      }
     }
     if (window.isWinOldApp) {
         absolutizeAboutLink();
