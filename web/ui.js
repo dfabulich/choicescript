@@ -164,16 +164,12 @@ function showMenu() {
     options = [
       {name:"Return to the game.", group:"choice", resume:true},
       {name:"Restart the game.", group:"choice", restart:true},
+      {name:"Change settings.", group:"choice", settings:true},
       {name:"Play more games like this.", group:"choice", moreGames:true},
       {name:"Email us at " + getSupportEmail() + ".", group:"choice", contactUs:true},
       {name:"Share this game with friends.", group:"choice", share:true},
       {name:"Email me when new games are available.", group:"choice", subscribe:true},
-      {name:"Make the text bigger or smaller.", group:"choice", fontSizeMenu:true},
-      {name:"Change the background color.", group:"choice", background:true},
     ];
-    if (window.animationProperty) options.push(
-      {name:"Change the animation between pages.", group:"choice", animation:true}
-    );
     if (document.getElementById("aboutLink")) {
       options.push({name:"View the credits.", group:"choice", credits:true});
     }
@@ -208,6 +204,8 @@ function showMenu() {
           })
           curl();
         });
+      } else if (option.settings) {
+        textOptionsMenu({ size: 1, color: 1, animation: window.animationProperty, settings: true });
       } else if (option.credits) {
         absolutizeAboutLink();
         aboutClick();
@@ -224,12 +222,6 @@ function showMenu() {
         subscribeLink();
       } else if (option.contactUs) {
         window.location.href="mailto:"+getSupportEmail();
-      } else if (option.fontSizeMenu) {
-        textOptionsMenu({size:1});
-      } else if (option.background) {
-        textOptionsMenu({color:1});
-      } else if (option.animation) {
-        textOptionsMenu({animation:1});
       }
     });
     curl();
@@ -278,7 +270,9 @@ function textOptionsMenu(categories) {
     if (button) button.innerHTML = "Return to the Game";
     var text = document.getElementById("text");
     var oldZoom = getZoomFactor();
-    if (categories.size && categories.color) {
+    if (categories.settings) {
+      text.innerHTML = "<p>Change the game's settings.</p>";
+    } else if (categories.size && categories.color) {
       text.innerHTML = "<p>Change the game's appearance.</p>";
     } else if (categories.size) {
       text.innerHTML = "<p>Make the text bigger or smaller.</p>";
