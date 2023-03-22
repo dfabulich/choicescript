@@ -163,7 +163,6 @@ function showMenu() {
     button.innerHTML = "Return to the Game";
     options = [
       {name:"Return to the game.", group:"choice", resume:true},
-      {name:"View the credits.", group:"choice", credits:true},
       {name:"Restart the game.", group:"choice", restart:true},
       {name:"Play more games like this.", group:"choice", moreGames:true},
       {name:"Email us at " + getSupportEmail() + ".", group:"choice", contactUs:true},
@@ -175,6 +174,9 @@ function showMenu() {
     if (window.animationProperty) options.push(
       {name:"Change the animation between pages.", group:"choice", animation:true}
     );
+    if (document.getElementById("aboutLink")) {
+      options.push({name:"View the credits.", group:"choice", credits:true});
+    }
     printOptions([""], options, function(option) {
       if (option.resume) {
         return clearScreen(function() {
