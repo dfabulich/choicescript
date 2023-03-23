@@ -59,10 +59,9 @@ var rootDir = "../";
     </p>
   <p id="buttons">
     <button id="statsButton" class="spacedLink" onclick="showStats()">Show Stats</button>
-    <button id="restartButton" class="spacedLink" onclick="restartGame('prompt')">Restart</button>
     <button id="achievementsButton" onclick="showAchievements()" class="spacedLink" style="display: none">Achievements</button>
     <button id="bugButton" onclick="reportBug()" class="spacedLink" style="display: none">Report Bug</button>
-    <button id="menuButton" onclick="textOptionsMenu()" class="spacedLink">Settings</button>
+    <button id="menuButton" onclick="showMenu()" class="spacedLink">Menu</button>
   </p>
 </div>
 <div id="main">
@@ -78,5 +77,28 @@ startLoading();
 <p>This game requires JavaScript; please enable JavaScript and refresh this page.</p>
 </noscript>
 <a id="makeyourowngames" href="https://www.choiceofgames.com/make-your-own-games/choicescript-intro/">Make your own games with ChoiceScript</a>
+<dialog id="keyboardShortcuts" onclick="event.target === this && this.close()">
+<header><span>Keyboard Shortcuts</span> <form method=dialog><button>X</button></form></header>
+<div class="table">
+  <div>Scroll Down</div>
+  <div><span class="key">Space</span></div>
+  <div>Scroll Up</div>
+  <div><span class="key">Shift</span> + <span class="key">Space</span></div>
+  <div>Next Option</div>
+  <div><span class="key">J</span></div>
+  <div>Previous Option</div>
+  <div><span class="key">K</span></div>
+  <div>Next (Press and Hold)</div>
+  <div><span class="key">Enter</span></div>
+  <div>Jump to Option</div>
+  <div><span class="key">1</span> - <span class="key">9</span></div>
+  <div>Show Stats</div>
+  <div><span class="key">Q</span></div>
+  <div>Menu</div>
+  <div><span class="key">W</span></div>
+  <div>Show Shortcuts</div>
+  <div><span class="key">?</span></div>
+</div>
+</dialog>
 </body>
 </html>
