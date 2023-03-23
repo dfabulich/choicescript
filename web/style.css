@@ -212,7 +212,7 @@ table {
   background-color: #007AFF;
 }
 
-.selectedKeyboard, .choice label.selectedKeyboard, .next.selectedKeyboard {
+.selectedKeyboard, .choice>div.selectedKeyboard:hover, .next.selectedKeyboard {
   color: rgba(255, 255, 255, 0.85);
   background-color: #007AFF;
   transition-property: background-color, color;
