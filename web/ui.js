@@ -320,7 +320,7 @@ function textOptionsMenu(categories) {
       }
     }
     if (window.isMobile) {
-      if (window.slidingEnabled) {
+      if (window.slidingEnabled !== false) {
         options.push({ name: "Disable touch slide controls.", group: "choice", sliding: 1 });
       } else {
         options.push({ name: "Enable touch slide controls.", group: "choice", sliding: 2 });
