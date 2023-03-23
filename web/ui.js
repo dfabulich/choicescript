@@ -3510,10 +3510,12 @@ window.onload=function() {
         var checked = document.querySelector('input[type=radio]:checked');
         if (checked) {
           var label = document.querySelector('label[for="' + checked.id + '"]');
+          label.scrollIntoView({block: "nearest", behavior: 'smooth'});
           label.classList.add('selectedKeyboard');
         } else {
           var n = document.querySelector('*[accesskey="n"]');
           if (n) {
+            n.scrollIntoView({block: "nearest", behavior: 'smooth'});
             n.classList.add('selectedKeyboard');
           }
         }
