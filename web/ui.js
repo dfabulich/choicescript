@@ -884,9 +884,9 @@ function printOptions(groups, options, callback) {
       var maxX = rect.width - shuttleWidth - 2;
       if (transformX > maxX) transformX = maxX;
       if (transformX >= maxX * 0.8) {
-        target.classList.add('selected');
+        target.parentElement.classList.add('selected');
       } else {
-        target.classList.remove('selected');
+        target.parentElement.classList.remove('selected');
       }
       shuttle.style.transform = "translateX(-"+transformX+"px)"
       shuttle.style.webkitTransform = "translateX(-"+transformX+"px)"
@@ -919,7 +919,7 @@ function printOptions(groups, options, callback) {
       var touchEnd = function(e) {
         document.body.removeEventListener('touchmove', moveTracker, {passive: false});
         document.body.removeEventListener('touchend', touchEnd);
-        if (target.classList.contains('selected')) {
+        if (target.parentElement.classList.contains('selected')) {
           if (target.click) {
             target.click();
           } else {
@@ -3509,7 +3509,7 @@ window.onload=function() {
         if (window.activatingNext) return;
         var checked = document.querySelector('input[type=radio]:checked');
         if (checked) {
-          var label = document.querySelector('label[for="' + checked.id + '"]');
+          var label = document.querySelector('label[for="' + checked.id + '"]').parentElement;
           label.scrollIntoView({block: "nearest", behavior: 'smooth'});
           label.classList.add('selectedKeyboard');
         } else {
