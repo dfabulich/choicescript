@@ -3504,7 +3504,11 @@ window.onload=function() {
         clickButton('menuButton');
       } else if (key === 'Enter') {
         if (ev.target && ev.target.tagName === "BUTTON" || ev.target.tagName === "A") {
-          return;
+          if (ev.target.getAttribute("accesskey") === "n") {
+            ev.preventDefault();
+          } else {
+            return;
+          }
         }
         if (window.activatingNext) return;
         var checked = document.querySelector('input[type=radio]:checked');
