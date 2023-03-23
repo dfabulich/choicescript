@@ -3502,7 +3502,10 @@ window.onload=function() {
         clickButton('statsButton');
       } else if (key === 'w') {
         clickButton('menuButton');
-      } else if (key === 'n') {
+      } else if (key === 'Enter') {
+        if (ev.target && ev.target.tagName === "BUTTON" || ev.target.tagName === "A") {
+          return;
+        }
         if (window.activatingNext) return;
         var checked = document.querySelector('input[type=radio]:checked');
         if (checked) {
@@ -3510,9 +3513,6 @@ window.onload=function() {
           label.classList.add('selectedKeyboard');
         } else {
           var n = document.querySelector('*[accesskey="n"]');
-          if (ev.target && ev.target.tagName === "BUTTON" || ev.target.tagName === "A") {
-            n = ev.target;
-          }
           if (n) {
             n.classList.add('selectedKeyboard');
           }
@@ -3525,15 +3525,9 @@ window.onload=function() {
 
     document.addEventListener('keyup', function (ev) {
       var now = Date.now();
-      if (ev.key !== 'n' && ev.key !== 'Escape') return;
-      var inputType;
-      if (ev.target && ev.target.tagName === 'INPUT') {
-        inputType = ev.target.type;
-      }
-      if (inputType === 'text' || inputType === 'number' || inputType === 'email') return;
       var activatingNext = window.activatingNext;
       window.activatingNext = null;
-      if (ev.key === 'n' && activatingNext && (now - activatingNext > 500)) {
+      if (ev.key === 'Enter' && activatingNext && (now - activatingNext > 500)) {
         var n = document.querySelector('.selectedKeyboard');
         if (n && n.tagName === 'BUTTON' || n.tagName === 'A') {
           n.click();
