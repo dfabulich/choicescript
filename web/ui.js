@@ -213,7 +213,7 @@ function showMenu() {
           curl();
         });
       } else if (option.settings) {
-        textOptionsMenu({ size: 1, color: 1, animation: window.animationProperty, settings: true });
+        textOptionsMenu({ size: 1, color: 1, animation: window.animationProperty, sliding: window.isMobile });
       } else if (option.credits) {
         absolutizeAboutLink();
         aboutClick();
@@ -264,17 +264,7 @@ function setButtonTitles() {
 
 function textOptionsMenu(categories) {
   if (!categories) {
-    categories = {size:1, color:1, animation:window.animationProperty};
-    if (document.getElementById('loading')) return;
-    var button = document.getElementById("menuButton");
-    if (!button) return;
-    if (button.innerHTML == "Menu") return showMenu();
-    if (button.innerHTML == "Return to the Game") {
-      return clearScreen(function() {
-        setButtonTitles();
-        loadAndRestoreGame();
-      });
-    }
+    categories = {size:1, color:1, animation:window.animationProperty, sliding: window.isMobile};
   }
   clearScreen(function() {
     var button = document.getElementById("menuButton");
@@ -291,6 +281,8 @@ function textOptionsMenu(categories) {
       text.innerHTML = "<p>Change the background color.</p>";
     } else if (categories.animation) {
       text.innerHTML = "<p>Change the animation between pages.</p>";
+    } else if (categories.sliding) {
+      text.innerHTML = "<p>Enable or disable touch slide controls.</p>";
     }
     options = [
       {name:"Return to the game.", group:"choice", resume:true},
@@ -319,7 +311,7 @@ function textOptionsMenu(categories) {
         options.push({ name: "Animate between pages.", group: "choice", animation: 1 });
       }
     }
-    if (window.isMobile) {
+    if (categories.sliding) {
       if (window.slidingEnabled !== false) {
         options.push({ name: "Disable touch slide controls.", group: "choice", sliding: 1 });
       } else {
