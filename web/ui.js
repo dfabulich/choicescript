@@ -3509,7 +3509,12 @@ window.onload=function() {
           label.scrollIntoView({block: "nearest", behavior: 'smooth'});
           label.classList.add('selectedKeyboard');
         } else {
-          var n = document.querySelector('*[accesskey="n"]');
+          var n;
+          if (ev.target && ev.target.tagName === "BUTTON" || ev.target.tagName === "A") {
+            n = ev.target;
+          } else {
+            n = document.querySelector('*[accesskey="n"]');
+          }
           if (n) {
             n.scrollIntoView({block: "nearest", behavior: 'smooth'});
             n.classList.add('selectedKeyboard');
