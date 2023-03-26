@@ -3207,7 +3207,7 @@ function loadPreferences() {
       window.animateEnabled = parseFloat(preferredAnimation) !== 2;
     });
     store.get("preferredSliding", function (ok, preferredSliding) {
-      window.slidingEnabled = preferredSliding !== false;
+      window.slidingEnabled = preferredSliding !== false && preferredSliding !== "false";
     });
   } else {
     window.animateEnabled = true;
