@@ -3485,7 +3485,7 @@ window.onload=function() {
         }
         clickRadio(value);
       } else if (!isNaN(key)) {
-        if (key === 0) {
+        if (key === "0") {
           key = 10;
         }
         key--;
