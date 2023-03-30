@@ -459,6 +459,11 @@ body.whitemode .next:hover {
   color: #ddd;
 }
 
+/* hide <dialog> on old browsers */
+dialog:not([open]) {
+  display: none;
+}
+
 #keyboardShortcuts {
   font-family: system-ui;
 }
