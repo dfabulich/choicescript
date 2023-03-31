@@ -232,7 +232,7 @@ function showMenu() {
         window.location.href="mailto:"+getSupportEmail();
       } else if (option.shortcuts) {
         var dialog = document.getElementById('keyboardShortcuts');
-        if (dialog) dialog.showModal();
+        if (dialog && dialog.showModal) dialog.showModal();
       }
     });
     curl();
@@ -3437,7 +3437,7 @@ window.onload=function() {
       }
       if (inputType === 'text' || inputType === 'number' || inputType === 'email') return;
       var dialog = document.getElementById('keyboardShortcuts');
-      if (dialog.open) {
+      if (dialog && dialog.open) {
         dialog.close();
         return;
       }
@@ -3522,7 +3522,7 @@ window.onload=function() {
         }
         window.activatingNext = Date.now();
       } else if (key === '?' || key === '/') {
-        dialog.showModal();
+        if (dialog && dialog.showModal) dialog.showModal();
       }
     }, false);
 
