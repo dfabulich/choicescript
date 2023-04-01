@@ -161,19 +161,22 @@ function showMenu() {
     setButtonTitles();
     var button = document.getElementById("menuButton");
     button.innerHTML = "Return to the Game";
-    options = [
-      {name:"Return to the game.", group:"choice", resume:true},
-      /*{name:"View the credits.", group:"choice", credits:true},
-      {name:"Play more games like this.", group:"choice", moreGames:true},
+    options = [{name:"Return to the game.", group:"choice", resume:true}];
+    if (nav.achievementList.length) options.push(
+      { name: "View achievements.", group: "choice", achievements: true }
+    );
+    options.push(
+      {name:"Restart the game.", group:"choice", restart:true},
+      {name:"Change settings.", group:"choice", settings:true},
+      /*{name:"Play more games like this.", group:"choice", moreGames:true},
       {name:"Email us at " + getSupportEmail() + ".", group:"choice", contactUs:true},
       {name:"Share this game with friends.", group:"choice", share:true},
       {name:"Email me when new games are available.", group:"choice", subscribe:true},*/
-      {name:"Make the text bigger or smaller.", group:"choice", fontSizeMenu:true},
-      {name:"Change the background color.", group:"choice", background:true},
-    ];
-    if (window.animationProperty) options.push(
-      {name:"Change the animation between pages.", group:"choice", animation:true}
+      {name:"Show keyboard shortcuts.", group:"choice", shortcuts:true},
     );
+    if (document.getElementById("aboutLink")) {
+      options.push({name:"View the credits.", group:"choice", credits:true});
+    }
     if (parent && parent.cside) {
       options.push({name:"Clear game data.", group:"choice", clearData:true});
     }
@@ -183,6 +186,37 @@ function showMenu() {
           setButtonTitles();
           loadAndRestoreGame();
         });
+      } else if (option.achievements) {
+        return showAchievements();
+      } else if (option.restart) {
+        if (_global.blockRestart) {
+          asyncAlert("Please wait until the timer has run out.");
+          return;
+        }
+        return clearScreen(function() {
+          var text = document.getElementById('text');
+          text.innerHTML = "Start over from the beginning?";
+          var options = [
+            {name: "Restart the game.", group:"choice", restart: true},
+            {name: "Cancel.", group: "choice", restart: false },
+          ]
+          printOptions([""], options, function(option) {
+            if (option.restart) {
+              clearScreen(function() {
+                setButtonTitles();
+                restartGame();
+              })
+            } else {
+              clearScreen(function() {
+                setButtonTitles();
+                loadAndRestoreGame();
+              })
+            }
+          })
+          curl();
+        });
+      } else if (option.settings) {
+        textOptionsMenu({ size: 1, color: 1, animation: window.animationProperty, sliding: window.isMobile });
       } else if (option.credits) {
         absolutizeAboutLink();
         aboutClick();
@@ -199,14 +233,9 @@ function showMenu() {
         subscribeLink();
       } else if (option.contactUs) {
         window.location.href="mailto:"+getSupportEmail();
-      } else if (option.fontSizeMenu) {
-        textOptionsMenu({size:1});
-      } else if (option.background) {
-        textOptionsMenu({color:1});
-      } else if (option.animation) {
-        textOptionsMenu({animation:1});
-      } else if (option.clearData) {
-        textOptionsMenu({clearData:1});
+      } else if (option.shortcuts) {
+        var dialog = document.getElementById('keyboardShortcuts');
+        if (dialog && dialog.showModal) dialog.showModal();
       }
     });
     curl();
@@ -218,11 +247,7 @@ function setButtonTitles() {
   var button;
   button = document.getElementById("menuButton");
   if (button) {
-    if (window.isCef || window.isNode || window.isMacApp) {
-      button.innerHTML = "Menu";
-    } else {
-      button.innerHTML = "Settings";
-    }
+    button.innerHTML = "Menu";
   }
   button = document.getElementById("statsButton");
   if (button) {
@@ -242,24 +267,16 @@ function setButtonTitles() {
 
 function textOptionsMenu(categories) {
   if (!categories) {
-    categories = {size:1, color:1, animation:window.animationProperty};
-    if (document.getElementById('loading')) return;
-    var button = document.getElementById("menuButton");
-    if (!button) return;
-    if (button.innerHTML == "Menu") return showMenu();
-    if (button.innerHTML == "Return to the Game") {
-      return clearScreen(function() {
-        setButtonTitles();
-        loadAndRestoreGame();
-      });
-    }
+    categories = {size:1, color:1, animation:window.animationProperty, sliding: window.isMobile};
   }
   clearScreen(function() {
     var button = document.getElementById("menuButton");
     if (button) button.innerHTML = "Return to the Game";
     var text = document.getElementById("text");
     var oldZoom = getZoomFactor();
-    if (categories.size && categories.color) {
+    if (categories.settings) {
+      text.innerHTML = "<p>Change the game's settings.</p>";
+    } else if (categories.size && categories.color) {
       text.innerHTML = "<p>Change the game's appearance.</p>";
     } else if (categories.size) {
       text.innerHTML = "<p>Make the text bigger or smaller.</p>";
@@ -269,6 +286,8 @@ function textOptionsMenu(categories) {
       text.innerHTML = "<p>Change the animation between pages.</p>";
     } else if (categories.clearData) {
       text.innerHTML = "<p>Clear CSIDE's game data for all games? This means everything: achievements, aesthetic preferences and the rest.</p><p>The game tab will be reset.</p>";
+    } else if (categories.sliding) {
+      text.innerHTML = "<p>Enable or disable touch slide controls.</p>";
     }
     options = [
       {name:"Return to the game.", group:"choice", resume:true},
@@ -290,10 +309,20 @@ function textOptionsMenu(categories) {
       {name:"Use a sepia background.", group:"choice", color:"sepia"},
       {name:"Use a white background.", group:"choice", color:"white"}
     );
-    if (categories.animation) options.push(
-      {name: "Animate between pages.", group:"choice", animation:1},
-      {name: "Don't animate between pages.", group:"choice", animation:2}
-    );
+    if (categories.animation) {
+      if (window.animateEnabled) {
+        options.push({ name: "Don't animate between pages.", group: "choice", animation: 2 });
+      } else {
+        options.push({ name: "Animate between pages.", group: "choice", animation: 1 });
+      }
+    }
+    if (categories.sliding) {
+      if (window.slidingEnabled !== false) {
+        options.push({ name: "Disable touch slide controls.", group: "choice", sliding: 1 });
+      } else {
+        options.push({ name: "Enable touch slide controls.", group: "choice", sliding: 2 });
+      }
+    }
     if (categories.clearData) options.push(
       {name: "Clear data.", group:"choice", clearData:true}
     );
@@ -310,6 +339,9 @@ function textOptionsMenu(categories) {
       } else if (option.animation) {
         window.animateEnabled = option.animation !== 2;
         if (initStore()) store.set("preferredAnimation", parseFloat(option.animation));
+      } else if (option.sliding) {
+        window.slidingEnabled = option.sliding == 2;
+        if (initStore()) store.set("preferredSliding", window.slidingEnabled);
       } else if (option.clearData) {
         if (initStore()) store.store.clear();
         return clearScreen(function() {
@@ -861,9 +893,9 @@ function printOptions(groups, options, callback) {
       var maxX = rect.width - shuttleWidth - 2;
       if (transformX > maxX) transformX = maxX;
       if (transformX >= maxX * 0.8) {
-        target.classList.add('selected');
+        target.parentElement.classList.add('selected');
       } else {
-        target.classList.remove('selected');
+        target.parentElement.classList.remove('selected');
       }
       shuttle.style.transform = "translateX(-"+transformX+"px)"
       shuttle.style.webkitTransform = "translateX(-"+transformX+"px)"
@@ -896,7 +928,7 @@ function printOptions(groups, options, callback) {
       var touchEnd = function(e) {
         document.body.removeEventListener('touchmove', moveTracker, {passive: false});
         document.body.removeEventListener('touchend', touchEnd);
-        if (target.classList.contains('selected')) {
+        if (target.parentElement.classList.contains('selected')) {
           if (target.click) {
             target.click();
           } else {
@@ -3191,6 +3223,9 @@ function loadPreferences() {
     store.get("preferredAnimation", function(ok, preferredAnimation) {
       window.animateEnabled = parseFloat(preferredAnimation) !== 2;
     });
+    store.get("preferredSliding", function (ok, preferredSliding) {
+      window.slidingEnabled = preferredSliding !== false && preferredSliding !== "false";
+    });
   } else {
     window.animateEnabled = true;
   }
@@ -3354,12 +3389,6 @@ window.onload=function() {
             };
         }
     }
-    if (window.isCef || window.isNode || window.isMacApp) {
-      var menuButton = document.getElementById("menuButton");
-      if (menuButton) {
-        menuButton.innerHTML = "Menu";
-      }
-    }
     if (window.isWinOldApp) {
         absolutizeAboutLink();
         var h1s = document.getElementsByTagName("h1");
@@ -3417,6 +3446,120 @@ window.onload=function() {
         }, "products", fullProducts.join(","));
       })();
     }
+
+    document.addEventListener('keydown', function(ev) {
+      var inputType;
+      if (ev.target && ev.target.tagName === 'INPUT') {
+        inputType = ev.target.type;
+      }
+      if (inputType === 'text' || inputType === 'number' || inputType === 'email') return;
+      var dialog = document.getElementById('keyboardShortcuts');
+      if (dialog && dialog.open) {
+        dialog.close();
+        return;
+      }
+      var key = ev.key;
+
+      function clickRadio(value) {
+        var newTarget = document.querySelector('input[type=radio][value="' + value + '"]');
+        if (!newTarget) return;
+        newTarget.checked = true;
+        newTarget.focus();
+        newTarget.blur();
+      }
+
+      function clickButton(id) {
+        var button = document.querySelector('#' + id);
+        if (!button) return;
+        button.click();
+      }
+
+      if (key === 'j') {
+        var oldTarget = document.querySelector('input[type=radio]:checked');
+        if (!oldTarget) {
+          var input = document.querySelector('#main input');
+          if (input) {
+            setTimeout(function () { input.focus(); }, 0);
+          }
+          return;
+        }
+        var value = Number(oldTarget.value);
+        var lastValue = oldTarget.form.querySelectorAll('input[type=radio]').length - 1;
+        if (value === lastValue) {
+          value = 0;
+        } else {
+          value++;
+        }
+        clickRadio(value);
+      } else if (key === 'k') {
+        var oldTarget = document.querySelector('input[type=radio]:checked');
+        if (!oldTarget) return;
+        var value = Number(oldTarget.value);
+        if (value === 0) {
+          value = oldTarget.form.querySelectorAll('input[type=radio]').length - 1;
+        } else {
+          value--;
+        }
+        clickRadio(value);
+      } else if (!isNaN(key)) {
+        if (key === "0") {
+          key = 10;
+        }
+        key--;
+        clickRadio(key);
+      } else if (key === 'q') {
+        clickButton('statsButton');
+      } else if (key === 'w') {
+        clickButton('menuButton');
+      } else if (key === 'Enter') {
+        if (ev.target && ev.target.tagName === "BUTTON" || ev.target.tagName === "A") {
+          if (ev.target.getAttribute("accesskey") === "n") {
+            ev.preventDefault();
+          } else {
+            return;
+          }
+        }
+        if (window.activatingNext) return;
+        var checked = document.querySelector('input[type=radio]:checked');
+        if (checked) {
+          var label = document.querySelector('label[for="' + checked.id + '"]').parentElement;
+          label.scrollIntoView({block: "nearest", behavior: 'smooth'});
+          label.classList.add('selectedKeyboard');
+        } else {
+          var n;
+          if (ev.target && ev.target.tagName === "BUTTON" || ev.target.tagName === "A") {
+            n = ev.target;
+          } else {
+            n = document.querySelector('*[accesskey="n"]');
+          }
+          if (n) {
+            n.scrollIntoView({block: "nearest", behavior: 'smooth'});
+            n.classList.add('selectedKeyboard');
+          }
+        }
+        window.activatingNext = Date.now();
+      } else if (key === '?' || key === '/') {
+        if (dialog && dialog.showModal) dialog.showModal();
+      }
+    }, false);
+
+    document.addEventListener('keyup', function (ev) {
+      var now = Date.now();
+      var activatingNext = window.activatingNext;
+      window.activatingNext = null;
+      if (ev.key === 'Enter' && activatingNext && (now - activatingNext > 500)) {
+        var n = document.querySelector('.selectedKeyboard');
+        if (n && n.tagName === 'BUTTON' || n.tagName === 'A') {
+          n.click();
+        } else {
+          n = document.querySelector('*[accesskey="n"]');
+          n.click();
+        }
+      }
+      document.querySelectorAll('.selectedKeyboard').forEach(function (selected) {
+        selected.classList.remove('selectedKeyboard');
+      })
+    });
 
 };
 
