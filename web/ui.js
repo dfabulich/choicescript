@@ -3495,7 +3495,7 @@ window.onload=function() {
       } else if (key === 'w') {
         clickButton('menuButton');
       } else if (key === 'Enter') {
-        if (ev.target && ev.target.tagName === "BUTTON" || ev.target.tagName === "A") {
+        if (ev.target && (ev.target.tagName === "BUTTON" || ev.target.tagName === "A")) {
           if (ev.target.getAttribute("accesskey") === "n") {
             ev.preventDefault();
           } else {
@@ -3508,9 +3508,10 @@ window.onload=function() {
           var label = document.querySelector('label[for="' + checked.id + '"]').parentElement;
           label.scrollIntoView({block: "nearest", behavior: 'smooth'});
           label.classList.add('selectedKeyboard');
+          window.activatingNext = Date.now();
         } else {
           var n;
-          if (ev.target && ev.target.tagName === "BUTTON" || ev.target.tagName === "A") {
+          if (ev.target && (ev.target.tagName === "BUTTON" || ev.target.tagName === "A")) {
             n = ev.target;
           } else {
             n = document.querySelector('*[accesskey="n"]');
@@ -3518,9 +3519,9 @@ window.onload=function() {
           if (n) {
             n.scrollIntoView({block: "nearest", behavior: 'smooth'});
             n.classList.add('selectedKeyboard');
+            window.activatingNext = Date.now();
           }
         }
-        window.activatingNext = Date.now();
       } else if (key === '?' || key === '/') {
         if (dialog && dialog.showModal) dialog.showModal();
       }
@@ -3532,11 +3533,11 @@ window.onload=function() {
       window.activatingNext = null;
       if (ev.key === 'Enter' && activatingNext && (now - activatingNext > 500)) {
         var n = document.querySelector('.selectedKeyboard');
-        if (n && n.tagName === 'BUTTON' || n.tagName === 'A') {
+        if (n && (n.tagName === 'BUTTON' || n.tagName === 'A')) {
           n.click();
         } else {
           n = document.querySelector('*[accesskey="n"]');
-          n.click();
+          if (n) n.click();
         }
       }
       document.querySelectorAll('.selectedKeyboard').forEach(function (selected) {
