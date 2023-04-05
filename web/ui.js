@@ -3435,7 +3435,7 @@ window.onload=function() {
       if (ev.target && ev.target.tagName === 'INPUT') {
         inputType = ev.target.type;
       }
-      if (inputType === 'text' || inputType === 'number' || inputType === 'email') return;
+      if (inputType === 'text' || inputType === 'number' || inputType === 'email' || inputType === 'password') return;
       var dialog = document.getElementById('keyboardShortcuts');
       if (dialog && dialog.open) {
         dialog.close();
