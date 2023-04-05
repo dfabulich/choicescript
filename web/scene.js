@@ -2076,6 +2076,7 @@ Scene.prototype.page_break_advertisement = function pageBreakAdvertisement(line)
   var self = this;
   this.finished = true;
   showFullScreenAdvertisementButton("Watch an Ad to Continue", function () {
+    self.finished = false;
     self.page_break("");
   }, function () {
     delayBreakEnd();
