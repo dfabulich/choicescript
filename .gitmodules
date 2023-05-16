@@ -1,0 +1,3 @@
+[submodule "web/mygame"]
+	path = web/mygame
+	url = git@github.com:FINFUATS/FINFUATS.git
