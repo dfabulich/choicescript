@@ -9,16 +9,6 @@ const { Console } = require('console');
 const { resolve } = require('path');
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
 
-
-function exitByError(string) {
-    if (typeof process != "undefined") {
-        console.log(string);
-        process.exit();
-    } else {
-        throw new Error(string);
-    }
-}
-
 // I live and breath Rust, I subconsciously structured this like Rust
 const CommitSubCommand = {
     Help: "help",
@@ -30,6 +20,10 @@ const CommitSubCommand = {
 function printCommitHelp() {
     console.log(TAG);
     console.log("\ncommands:");
+    console.log(`    ${CommitSubCommand.Help}\t\tPrint this text`);
+    console.log(`    ${CommitSubCommand.Both}\t\tCommit & Push to both repos (order: ${CommitSubCommand.Game}, ${CommitSubCommand.Main})`);
+    console.log(`    ${CommitSubCommand.Game}\t\tCommit to the game sub repo (default when no args passed)`);
+    console.log(`    ${CommitSubCommand.Main}\t\tCommit to the main repo`);
 }
 
 // Commit message for the git commit.
@@ -50,11 +44,10 @@ function getCommitMessage() {
         process.exit(0);
     }
 
-
     return commitMesg;
 }
 
-async function gitFlow(isSubDir) {
+async function gitCommitPushFlow(isSubDir) {
     let prefix = (isSubDir) ? "cd web/mygame && " : "";
     let commitMesg = getCommitMessage();
         let add_confirm = "";
@@ -101,12 +94,12 @@ function handleCommit(CommitEnum) {
     // Main git commit lambda function
     let mainGitFunc = () => {
         // let commitMesg = getCommitMessage();
-        gitFlow(false);
+        gitCommitPushFlow(false);
     }
 
     // Game git commit lambda function
     let gameGitFunc = async () => {
-        gitFlow(true);
+        gitCommitPushFlow(true);
     }
 
     switch (CommitEnum) {
@@ -139,8 +132,8 @@ const MainSubCommand = {
 function printMainHelp() {
     console.log(TAG);
     console.log("\ncommands:");
-    console.log("    " + MainSubCommand.Update + "\t\tUpdate both Choicescript and " + GameName + " git repos");
-    console.log("    " + MainSubCommand.Commit + "\t\tCommit for either Choicescript or " + GameName + " git repos (default: " + GameName + ")");
+    console.log(`    ${MainSubCommand.Update}\t\tUpdate both Choicescript and ${GameName} git repos`);
+    console.log(`    ${MainSubCommand.Commit}\t\tCommit for either Choicescript or ${GameName} git repos (default: ${GameName})`);
 }
 
 function main() {
