@@ -19,6 +19,7 @@ const CommitSubCommand = {
 
 function printCommitHelp() {
     console.log(TAG);
+    console.log(`  node UAT.js commit (command)`);
     console.log("\ncommands:");
     console.log(`    ${CommitSubCommand.Help}\t\tPrint this text`);
     console.log(`    ${CommitSubCommand.Both}\t\tCommit & Push to both repos (order: ${CommitSubCommand.Game}, ${CommitSubCommand.Main})`);
@@ -131,6 +132,7 @@ const MainSubCommand = {
 
 function printMainHelp() {
     console.log(TAG);
+    console.log(`  node UAT.js (command) ...`);
     console.log("\ncommands:");
     console.log(`    ${MainSubCommand.Update}\t\tUpdate both Choicescript and ${GameName} git repos`);
     console.log(`    ${MainSubCommand.Commit}\t\tCommit for either Choicescript or ${GameName} git repos (default: ${GameName})`);
