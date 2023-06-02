@@ -8,13 +8,6 @@ A lot of things with this documentation are subject to change...
 
 - [Setup](#setup)
 - [Commiting](#commiting)
-  - [UAT.js](#uatjs-under-construction)
-    - [update](#update)
-    - [commit](#commit)
-      - [help](#help)
-      - [game](#game)
-      - [main](#main)
-  - [Manual Commit](#manual)
 
 ## Setup
 
@@ -40,53 +33,7 @@ or run `run-server.bat` if you use Windows, or run `./serve.command` if you use 
 
 ## Commiting
 
-Committing to this repository can be a bit complex as the game files and the environment files are in two different repositories. We'll go over the two methods of commiting to both repositories.
-
-### UAT.js (Under construction)
-
-The UAT.js script is meant to simplify the process of commiting to both repositories.
-
-#### UAT.js Help text
-
-```plaintext
-UAT.js - A script to help with git...
-  node UAT.js (command) ...
-
-commands:
-    update              Update both Choicescript and FINFUATS git repos
-    commit              Commit for either Choicescript or FINFUATS git repos (default: FINFUATS)
-```
-
-#### Update
-
-This command has no functionality, yet...
-
-#### Commit
-
-This functionality will change in the future, do not use it yet
-
-##### Commit Help Text
-
-```plaintext
-UAT.js - A script to help with git...
-  node UAT.js commit (command)
-
-commands:
-    help		Print this text
-    game		Commit to the game sub repo (default when no args passed)
-    main		Commit to the main repo
-```
-
-##### help
-TBW
-##### game
-TBW
-##### main
-TBW
-
-### Manual
-
-To commit manually, follow this sections in order.
+Committing to this repository can be a bit complex as the game files and the environment files are in two different repositories. Follow the sections in order, you will need to do both to ensure main repo stays up to date.
 
 #### Game
 
