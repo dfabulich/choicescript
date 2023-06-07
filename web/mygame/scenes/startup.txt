@@ -1,0 +1,141 @@
+*comment either express or implied.
+
+*title FINFUATS
+*author Mike Horne
+*scene_list
+  startup
+  animal
+  variables
+  gosub
+  ending
+  death
+
+*create gender "Unknown"
+*create parentInfo "Unknown"
+*create craftiness 50
+*create dexterity 50
+*create humor 50
+*create strength 50
+
+*create leadership 50
+
+*create is_chap1_adult_with_you false
+
+WIP build for UAT production studio milestone 1 review
+
+[color=#ff0000][b]COLORED TEXT TEST!!![/b][/color]
+
+*page_break
+
+*comment Ask user for gender ---------------------------------------------------
+*label prebranch_gender_choice
+At the age of 10 years old, the player is running an errand.
+*line_break
+*line_break
+An adult says “Little… hmm” You finish for him.
+*gosub_scene general ChooseGender
+
+*page_break
+
+*comment Ask user where their parents are --------------------------------------
+*label prebranch_parent_info
+“Ah!” the adult continues “Well, little one, where are your parents?”
+*line_break
+*line_break
+You inform them that they’re…
+
+*choice
+  #Manning their stalls in the marketplace
+    *set parentInfo 0
+    *comment I deadass don't know why this shit can't go
+    *comment sequentially, but what ever
+    *goto prebranch_craftiness
+  #Farming the soil
+    *set parentInfo 1
+    *goto prebranch_craftiness
+  #Dead
+    *set parentInfo 2
+    *goto prebranch_craftiness
+  #Somewhere far away, not to be seen again
+    *set parentInfo 3
+    *goto prebranch_craftiness
+
+*page_break
+
+*comment Determine if user is accomanied ---------------------------------------
+*label prebranch_craftiness
+“This is no place for a youth to be alone!
+There have been strange happenings in the forests of late…”
+*line_break
+The adult begins to accompany you.
+
+*choice
+  #Lose ‘em! To hell with adults!
+    *set craftiness +10
+    *set is_chap1_adult_with_you false
+    *goto prebranch_dexterity_and_humor
+  #You’re stuck with this guy…
+    *set is_chap1_adult_with_you true
+    *goto prebranch_dexterity_and_humor
+  #You run into a dead end
+    *set craftiness -10
+    *set is_chap1_adult_with_you true
+    *goto prebranch_dexterity_and_humor
+
+*page_break
+
+*comment Determine if users humor and dexterity --------------------------------
+*label prebranch_dexterity_and_humor
+You come upon a bridge in the center of your village.
+*line_break
+*line_break
+You decide that…
+
+*choice
+  #You’re going to walk on the fence! You live dangerously!
+    *set dexterity +10
+    *set humor +10
+    *goto prebranch_strength
+  #You’ll hold the fencing. Never know what could go wrong…
+    *set dexterity -10
+    *goto prebranch_strength
+  #You’ll just cross the bridge normally
+    *set humor -10
+    *goto prebranch_strength
+
+*page_break
+
+*comment Determine the users strength ------------------------------------------
+*label prebranch_strength
+You arrive at your first destination to pick up a bag of flour.
+*if is_chap1_adult_with_you
+  *line_break
+  *line_break
+  That bothersome adult is still with you… he could be of help…
+  
+*choice
+  #You carry the bag yourself
+    *goto prebranch_confrontation
+  *if is_chap1_adult_with_you
+    #You ask the adult to carry the bag
+      *set strength -10
+      *goto prebranch_confrontation
+  #You carry two bags to boast
+    *set strength +10
+    *comment flex+ would probably be the same as dexterity, no?
+    *goto prebranch_confrontation
+  
+*page_break
+
+*comment Flour confrontation prebranch -----------------------------------------
+*label prebranch_confrontation
+You finally arrive at your destination. “What’s a little one like you doing at a place like this?”
+
+*choice
+  #The local baker said he’d pay for a flour delivery!
+    *finish
+  #The local baker said he needed some flour!
+    *finish
+  #Your mother wanted you to bring some flour from down the road!
+    *comment (Variable) 
+    *finish

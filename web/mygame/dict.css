@@ -1,0 +1,32 @@
+#defined-word {
+    color: inherit;
+    text-decoration-line: underline;
+    text-decoration-style: double;
+}
+
+#dict-word {
+    font-size: 2em;
+    font-weight: bold;
+    font-style: italic;
+}
+
+#dict-top-row {
+    display: flex;
+    align-items: center;
+    gap: .2em;
+}
+
+#dict-pos {
+    font-style: italic;
+    font-size: 1em;
+}
+
+#dict-definition {
+    margin: 0;
+    text-indent: 2em;
+}
+
+[id$=Button] {
+    margin-right: .5em;
+    margin-bottom: .5em;
+}

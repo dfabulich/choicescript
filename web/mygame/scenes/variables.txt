@@ -1,0 +1,44 @@
+*comment Copyright 2010 by Dan Fabulich.
+*comment 
+*comment Dan Fabulich licenses this file to you under the
+*comment ChoiceScript License, Version 1.0 (the "License"); you may
+*comment not use this file except in compliance with the License. 
+*comment You may obtain a copy of the License at
+*comment 
+*comment  http://www.choiceofgames.com/LICENSE-1.0.txt
+*comment 
+*comment See the License for the specific language governing
+*comment permissions and limitations under the License.
+*comment 
+*comment Unless required by applicable law or agreed to in writing,
+*comment software distributed under the License is distributed on an
+*comment "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+*comment either express or implied.
+
+*set leadership 10
+*set strength 10
+
+What do you prefer?
+*choice
+  #Leadership
+    *set leadership +10
+    *goto action
+  #Strength
+    *set strength +10
+
+*label action
+What will you do today?
+*choice
+  #Run for class president
+    *if leadership > 15
+      You win the election.
+      *finish
+    You lose the election.
+    *finish
+  #Lift weights
+    *if strength > 15
+      You lift the weights.
+      *finish
+    You drop the weights and hurt yourself badly.  You never recover.
+    
+    *goto_scene death
