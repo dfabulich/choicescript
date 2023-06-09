@@ -1,4 +1,4 @@
-const dict = new Map();
+dict = new Map();
 
 //-------------------------- Dictionary Definitions --------------------------\\
 dict.set('the', makeDefinition("The", "/ðə/, /ˈðiː/", "Article", "Definite grammatical article that implies necessarily that an entity it hints at is presupposed; something already mentioned, or completely specified later in that same sentence, or assumed already completely specified."));

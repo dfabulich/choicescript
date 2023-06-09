@@ -68,6 +68,10 @@ function openUrl(url) {
       child_process.execFile('open', [url]);
       break;
     }
+    case "linux": {
+      child_process.execFile('xdg-open', [url]);
+      break;
+    }
   }
 }
 

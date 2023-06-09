@@ -1,3 +1,3 @@
-nav = new SceneNavigator(["startup"]);
+nav = new SceneNavigator(["startup", "dict", "codex"]);
 stats = {};
 

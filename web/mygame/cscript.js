@@ -1,4 +1,4 @@
-let originalReplaceBbCode = ""
+originalReplaceBbCode = ""
 
 /* Store the original replaceBbCode to ensure our code keeps up with updated tags */
 function storeOriginalReplaceBbCode(func) {
