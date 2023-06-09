@@ -16,12 +16,14 @@
 *create dexterity 50
 *create humor 50
 *create strength 50
+*create name ""
+
 
 *create leadership 50
 
 *create is_chap1_adult_with_you false
 
-WIP build for UAT production studio milestone 1 review
+WIP build for [define:the] [define:UAT] production studio milestone 1 review
 
 [color=#ff0000][b]COLORED TEXT TEST!!![/b][/color]
 
@@ -33,6 +35,9 @@ At the age of 10 years old, the player is running an errand.
 *line_break
 *line_break
 An adult says “Little… hmm” You finish for him.
+*input_text name
+*line_break
+
 *gosub_scene general ChooseGender
 
 *page_break
