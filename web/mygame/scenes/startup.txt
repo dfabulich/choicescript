@@ -35,7 +35,6 @@ At the age of 10 years old, the player is running an errand.
 *line_break
 *line_break
 An adult says “Little… hmm” You finish for him.
-*input_text name
 *line_break
 
 *gosub_scene general ChooseGender
