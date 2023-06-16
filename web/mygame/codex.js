@@ -46,7 +46,7 @@ function repSetButtonTitles() {
     }
     button = document.getElementById("codexButton");
     if (button) {
-        button.innerHTML = '<img src="images/bookButton.png"/>';
+        button.innerHTML = '<img src="images/bookButton.webp"/>';
     }
 }
 
