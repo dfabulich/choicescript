@@ -8,7 +8,7 @@ function openCodex() {
     // Wait for game to stop loading.
     if (document.getElementById('loading')) return;
     var button = document.getElementById("codexButton");
-    if (button && button.innerHTML == "Return to the Game") {
+    if (button && button.innerHTML == "Return") {
         return clearScreen(function () {
             setButtonTitles();
             loadAndRestoreGame();
@@ -19,7 +19,7 @@ function openCodex() {
     clearScreen(function () {
         setButtonTitles();
         var button = document.getElementById("codexButton");
-        button.innerHTML = "Return to the Game";
+        button.innerHTML = "Return";
         scene.execute();
     })
 }
@@ -46,7 +46,7 @@ function repSetButtonTitles() {
     }
     button = document.getElementById("codexButton");
     if (button) {
-        button.innerHTML = '<img src="images/bookButton.webp"/>';
+        button.innerHTML = '<img id="codexButtonImg" src="images/bookButton.webp"/>';
     }
 }
 
