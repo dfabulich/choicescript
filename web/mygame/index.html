@@ -51,10 +51,16 @@ either express or implied.
   </script>
   <style>
     .codexButton {
-        border: none;
-        background: none;
+      border: none;
+      background: none;
+      align-self: center;
+      margin-bottom: 0;
     }
-</style>
+
+    p#buttons {
+      margin-bottom: 0;
+    }
+  </style>
 </head>
 
 <body>
@@ -63,29 +69,29 @@ either express or implied.
     <div id="header">
       <div id="identity"><a href="#" id="email">you@example.com</a><a href="#" id="logout">Sign Out</a></div>
 
-      <h1 class="gameTitle"><!-- My First ChoiceScript Game --></h1>
-      <h2 id="author" class="gameTitle"><!--by INSERTINSERTINSERT --></h2>
+      <div style="display: flex; justify-content: space-between;">
+        <div>
+          <h1 class="gameTitle"><!-- My First ChoiceScript Game --></h1>
+          <h2 id="author" class="gameTitle"><!--by INSERTINSERTINSERT --></h2>
 
-      <p id="headerLinks">
-        <!-- <a href="credits.html" id="aboutLink" class="spacedLink">About</a> -->
-      </p>
-      <p id="buttons">
-        <button id="statsButton" class="spacedLink" onclick="showStats()">Show Stats</button>
-        <button id="achievementsButton" onclick="showAchievements()" class="spacedLink"
-          style="display: none">Achievements</button>
-        <button id="bugButton" onclick="reportBug()" class="spacedLink" style="display: none">Report Bug</button>
-        <button id="menuButton" onclick="showMenu()" class="spacedLink">Menu</button>
-        <button id="codexButton" onclick="openCodex()" class="codexButton">Codex</button>
-      </p>
+          <p id="headerLinks">
+            <!-- <a href="credits.html" id="aboutLink" class="spacedLink">About</a> -->
+          </p>
+          <p id="buttons">
+            <button id="statsButton" class="spacedLink" onclick="showStats()">Show Stats</button>
+            <button id="achievementsButton" onclick="showAchievements()" class="spacedLink"
+              style="display: none">Achievements</button>
+            <button id="bugButton" onclick="reportBug()" class="spacedLink" style="display: none">Report Bug</button>
+            <button id="menuButton" onclick="showMenu()" class="spacedLink">Menu</button>
+          </p>
+        </div>
+        <button id="codexButton" onclick="openCodex()" class="codexButton"><img id="codexButtonImg" src="images/bookButton.webp"/></button>
+      </div>
     </div>
     <div id="main">
       <div id="text">
       </div>
-      <script>
-        var buttons = document.getElementById("codexButton");
-        buttons.innerHTML = '<img src="images/bookButton.png"/>';
-        startLoading();
-      </script>
+      <script>startLoading();</script>
     </div>
     <div id="mobileLinks" class="webOnly">
     </div>
@@ -120,7 +126,7 @@ either express or implied.
       </div>
     </dialog>
   </div>
-  <script defer>    
+  <script defer>
     /* This is where we replace the stock replacementBbCode */
     storeOriginalReplaceBbCode(replaceBbCode);
     replaceBbCode = replacementReplaceBbCode;
