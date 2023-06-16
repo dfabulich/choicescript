@@ -1,9 +1,7 @@
 const childProcess = require('child_process');
 const fs = require('fs');
 
-
 var artifact_dir = "./public";
-var output_file_path = `${artifact_dir}/mygame/index.html`
 
 if (typeof process != "undefined") {
     build();
@@ -28,8 +26,6 @@ function existsDir(dir) {
 /*----------------------------------------------------------------------------*/
 
 function build() {
-    var output_file = "";
-
     // Check if the artifact directory exists.
     if (existsDir(artifact_dir)) {
         console.log(`"${artifact_dir}" directory already exists... deleting and recreating.`);

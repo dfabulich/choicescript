@@ -51,10 +51,10 @@ either express or implied.
   </script>
   <style>
     .codexButton {
-        border: none;
-        background: none;
+      border: none;
+      background: none;
     }
-</style>
+  </style>
 </head>
 
 <body>
@@ -75,17 +75,13 @@ either express or implied.
           style="display: none">Achievements</button>
         <button id="bugButton" onclick="reportBug()" class="spacedLink" style="display: none">Report Bug</button>
         <button id="menuButton" onclick="showMenu()" class="spacedLink">Menu</button>
-        <button id="codexButton" onclick="openCodex()" class="codexButton">Codex</button>
+        <button id="codexButton" onclick="openCodex()" class="codexButton"><img src="images/bookButton.png" /></button>
       </p>
     </div>
     <div id="main">
       <div id="text">
       </div>
-      <script>
-        var buttons = document.getElementById("codexButton");
-        buttons.innerHTML = '<img src="images/bookButton.png"/>';
-        startLoading();
-      </script>
+      <script>startLoading();</script>
     </div>
     <div id="mobileLinks" class="webOnly">
     </div>
@@ -120,7 +116,7 @@ either express or implied.
       </div>
     </dialog>
   </div>
-  <script defer>    
+  <script defer>
     /* This is where we replace the stock replacementBbCode */
     storeOriginalReplaceBbCode(replaceBbCode);
     replaceBbCode = replacementReplaceBbCode;
