@@ -91,7 +91,15 @@ either express or implied.
     <div id="main">
       <div id="text">
       </div>
-      <script>startLoading();</script>
+      <script>
+          startLoading();
+          // Auto dark mode
+          if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+              changeBackgroundColor('black');
+	  } else {
+	      changeBackgroundColor('white');
+	  }
+      </script>
     </div>
     <div id="mobileLinks" class="webOnly">
     </div>
