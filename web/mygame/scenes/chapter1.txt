@@ -1,71 +1,101 @@
 *label chapter1
-You feel the sun slowly rising through the open window. The golden light is just enough to disturb your slumber. You find yourself looking into a piece of broken glass. 		
-*goto player		
-*label continue
-However, after a few moments of contemplation, you decide to just get up knowing full well that 
+You feel the sun slowly rising through the open window.
+The golden light is just enough to disturb your slumber.
+You find yourself looking into a piece of broken glass. You see...
+*goto Player_Init
+	
+*label StartChapterOne
+However, after a few moments of contemplation,
+you decide to just get up knowing full well that 
+
 *choice
 	#Mother will have it out for you if you do not help with chores.
-		You decide to head outside and see where your mother is, thinking she is probably farming the crops before breakfast. As you walk out of the cozy house, you are greeted with the ever-familiar smell of churned soil, fertilizer, and various crops. 
+		You decide to head outside and see where your mother is,
+		thinking she is probably farming the crops before breakfast.
+		As you walk out of the cozy house, you are greeted with the
+		ever-familiar smell of churned soil, fertilizer, and various crops. 
 		*page_break
-		*if gender  = "Male"
-			“Hey Buddy. You look like you barely slept! Your hair is a mess.” Your mother tells you. She then asks, “I need your help with milking, cleaning stables, and scaring the birds off. Take your choice and I will get the rest”
-			*goto chores
+
+		*if gender = "Male"
+			“Hey Buddy. You look like you barely slept! Your hair is a mess.”
+			Your mother tells you.
+			She then asks, “I need your help with milking, cleaning stables,
+			and scaring the birds off. Take your choice and I will get the rest”
+
 		*if gender = "Female"
-			“Hey Honey. You look like you barely slept! Your hair is a mess.” Your mother tells you as she tries to . She then asks, “I need your help with milking, cleaning stables, and scaring the birds off. Take your choice and I will get the rest”
-			*goto chores
+			“Hey Honey. You look like you barely slept! Your hair is a mess.”
+			Your mother tells you as she tries to.
+			She then asks, “I need your help with milking, cleaning stables,
+			and scaring the birds off. Take your choice and I will get the rest”
+
 		*if gender = "Kid"
-			“Hey Kiddo. You look like you barely slept! Your hair is a mess.” Your mother tells you. She then asks, “I need your help with milking, cleaning stables, and scaring the birds off. Take your choice and I will get the rest”
-			*goto chores
+			“Hey Kiddo. You look like you barely slept! Your hair is a mess.”
+			Your mother tells you.
+			She then asks, “I need your help with milking, cleaning stables,
+			and scaring the birds off. Take your choice and I will get the rest”
 		
-			*label chores
-		*choice
+		*fake_choice
 			#I will go milk the cows
-				The cows were in a feisty mood. You sneakily maneuver yourself through the stray hooves and start 				milking.
+				The cows were in a feisty mood. You sneakily maneuver yourself
+				through the stray hooves and start milking.
+				
 				*set Cunning +1
 				*comment probably Cunning
-				*goto afterChores
 			#I will go clean the stables. 
-				The stables were a mess as always. The strong smell of manure washes over you. Your stomach is
-				strong from the routine conditioning. You grab the wide shovel and get to work.
+				The stables were a mess as always.
+				The strong smell of manure washes over you.
+				Your stomach is strong from the routine conditioning.
+				You grab the wide shovel and get to work.
+				
 				*set Brawn +1
 				*comment probably Brawn 
-				*goto afterChores
 			#I will go run the fields and scare off the birds
-				You sprint through the fields shouting like a madman. Shouting at the flocks of birds trying to get their 				easy early meal. You loop back to the house caked with sweat and breathing heavily. 
+				You sprint through the fields shouting like a madman.
+				Shouting at the flocks of birds trying to get their easy early
+				meal. You loop back to the house caked with sweat and breathing
+				heavily. 
+				
 				*set Agility +1
-				*goto afterChores
-	#You need to head to the market to gather supplies. You will make Mother sad if your don't help with the chores.
+		*page_break
+
+		“Thank you, sweetie. Now I need you to head into the market after
+		breakfast for some grain, eggs, and potatoes so I can make dinner
+		tonight.” After a small but somehow satisfying breakfast, you gather
+		your things and head into the marketplace.
+		*goto SC1_Market
+
+	#You need to head to the market to gather supplies. You will make Mother sad if you don't help with the chores.
 		You head to the market.
-		*goto market
+		*goto SC1_Market
+
 	#You are starting to get hungry and decide to raid the dwindling stock of food kept in the house
 		You open the pantry to find the house is lower on food stores than you realized. With a little thinking and a can-do attitude, you manage to make yourself a small and semi-satisfying breakfast.
-		*choice 
+		*fake_choice 
 			#A hearty and filling meal
 				You are full and are feeling strong.
 				*set Brawn +1
-				*goto afterCooking
 			#A light but nutritious
 				You are energized and light on your feet.
 				*set Agility +1
-				*goto afterCooking
 			#A delectable breakfast
 				You are amazed by your own skill. A small grin strikes your face.
 				*set Cunning +1
-				*goto afterCooking
-*label afterChores
-*page_break
-“Thank you, sweetie. Now I need you to head into the market after breakfast for some grain, eggs, and potatoes so I can make dinner tonight.” After a small but somehow satisfying breakfast, you gather your things and head into the marketplace.
-*goto market
-*label afterCooking
-*page_break
-“Thank you for cooking breakfast, sweetie. Now I need you to head into the market for some grain, eggs, and potatoes so I can make dinner tonight.” After a small but somehow satisfying breakfast, you gather your things and head into the marketplace.
-*goto market
-*label market
+		*page_break
+
+		“Thank you for cooking breakfast, sweetie.
+		Now I need you to head into the market for some grain, eggs,
+		and potatoes so I can make dinner tonight.” After a small but somehow
+		satisfying breakfast, you gather your things and head into the
+		marketplace.
+		*goto SC1_Market
+
+*comment Go to the market ------------------------------------------------------
+*label SC1_Market
 *page_break
 The marketplace is a sprawling area centered in downtown. Merchants of all races are busy milling about. Color tents and intricately carved carts are strategically placed throughout the “main street” creating a competing cacophony of noises and shouting from merchants peddling their goods.
 *page_break
 As you leisurely gaze upon the various booths of food, a tall Elf stops you and asks, “ Hey ${name} what are you doing here by yourself?”
-*choice
+*fake_choice
 	#“Mother needs me to pick up grain, eggs, and potatoes for supper tonight.”
 		“Ah yes,” says the Elf. “While I do not have everything you
 		need, I know that gruff man has the remaining goods you
@@ -74,91 +104,89 @@ As you leisurely gaze upon the various booths of food, a tall Elf stops you and 
 		*page_break
 		You come across the stall the elf pointed you to. The gruff man
 		hands you a stuffed bag. You confusingly open the bag to
-		find the rest of the ingredients that the Elf didn't have. The man holds his hand out expecting payment.
-		handing the crops to the man in the stall to pay for the sack,
-		you swiftly make your way through the crowds towards the elf.
+		find the rest of the ingredients that the Elf didn't have.
+		The man holds his hand out expecting payment.
+		Handing the crops to the man in the stall to pay for the sack,
+		you swiftly make your way through the crowds toward the elf.
 		*page_break
-		The elf hands you another sack with a smile and asks for the
-		bushel of small herbs as payment. You hand the herbs to the
+		The elf hands you another sack with a smile and asks for the bushel of small herbs as payment. You hand the herbs to the
 		elf and start back to the farm.
-		*finish
+
 	#“Just browsing.”
 		You head back after grabbing ingredients and paying in
 		awkward silence.
-		*finish
+
 	#“Well, I seem to be running low on food. I have various crops and items to trade.”
 		The Elf asks, “What do you have kiddo, let us see if we
 		can make a deal.”
-		*choice
+
+		*fake_choice
 			#Make a delivery for the stall dealer in order to pay for all the ingredients.
 				You make the delivery and take the ingredients back
 				to the farm.
 				*set Agility +1
-				*finish
+
 			#Help the stall dealer move the extra goods into storage
 				You lift several crates onto the dealer cart and take the
 				ingredients back to the farm.
 				*set Brawn +1
-				*finish
-			#You haggle with the stall keeper to reduce the price.
-				You successfully haggle the elf. Though you are pretty
+
+			#You haggle with the stallkeeper to reduce the price.
+				You successfully haggle with the elf. Though you are pretty
 				sure they were egging you on.
 				*set Cunning +1
-				*finish
-			 
-	 
 
-*label player		
-You see?
-*choice
+*finish
+
+*comment Initialize the player -------------------------------------------------
+*label Player_Init
+*fake_choice
 	#Just a boy.
 		*set gender "Male"
-		*goto gndr
 	#Just a girl.
 		*set gender "Female"
-		*goto gndr
 	#Just a kid
 		*set gender "Kid"
-		*goto gndr
-*label gndr
+
+*goto PI_GetName
+
+*label PI_GetName
 Your name?
+
 *if gender  = "Male"
-	*choice
+	*fake_choice
 		#Corvo
 			*set name "Corvo"
-			*goto pname
 		#Krieg
 			*set name "Krieg"
-			*goto pname
 		#Other
 			*input_text name
-			*goto pname
+
 *if gender  = "Female"
-	*choice
+	*fake_choice
 		#Emily
 			*set name "Emily"
-			*goto pname
 		#Maya
 			*set name "Maya"
-			*goto pname
 		#Other
 			*input_text name
-			*goto pname
+
 *if gender  = "Kid"
-	*choice
+	*fake_choice
 		#Omo
 			*set name "Omo"
-			*goto pname
 		#Aang
 			*set name "Aang"
-			*goto pname
 		#Other
 			*input_text name
-			*goto pname
-*label pname
+
+*goto PI_ConfirmName
+
+*label PI_ConfirmName
 ${name}, Is that right?
+
 *choice
 	#Yup.
-		*goto continue
+		*goto StartChapterOne
 	#Oh wait, got that wrong.
-		*goto gndr
+		*goto Player_Init
