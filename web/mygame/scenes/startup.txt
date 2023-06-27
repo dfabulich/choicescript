@@ -6,6 +6,7 @@
 	chapter1
 	chapter2
 	chapter4
+	demo
 
 *create name "name"
 *create gender "Unknown"
@@ -27,7 +28,7 @@ What chapter?
 		*goto_scene chapter2
 	#chapter 4
 		*goto_scene chapter4
-	#testing thing
+	#Demo
 		*goto_scene demo
 
 *page_break
