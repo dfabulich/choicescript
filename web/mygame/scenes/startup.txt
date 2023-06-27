@@ -27,5 +27,7 @@ What chapter?
 		*goto_scene chapter2
 	#chapter 4
 		*goto_scene chapter4
+	#testing thing
+		*goto_scene demo
 
 *page_break

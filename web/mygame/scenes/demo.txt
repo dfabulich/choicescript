@@ -1,0 +1,18 @@
+*label demo
+start of the demo
+
+*fake_choice
+	#Choice 1
+		Choice 1!
+	#Choice 2
+		Choice 2!
+	#Choice 3
+		Choice 3!
+	#Go to end of demo
+		*goto demoOver
+*page_break
+*goto demo
+
+*label demoOver
+The demo is over!!!
+*page_break
