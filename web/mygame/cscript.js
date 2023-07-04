@@ -7,6 +7,8 @@ function storeOriginalReplaceBbCode(func) {
     eval(`originalReplaceBbCode = ${func.toString()}`);
 }
 
+//------------------------------- Custom BBcode -------------------------------
+
 /* This is where we add our own formatting tags. */
 function replacementReplaceBbCode(msg) {
     return msg = String(originalReplaceBbCode(msg))
@@ -15,4 +17,28 @@ function replacementReplaceBbCode(msg) {
       .replace(/\[\/color\]/g, '</color>')
       // Tag for the dictionary system
       .replace(/\[define\:(.*?)\]/g, "<a id=\"defined-word\" onClick=\"openDefinition('$1')\">$1</a>")
+      .replace(/\[head\]/g, '<h1 align="center" style="margin-bottom: 0em;">')
+      .replace(/\[\/head\]/g, '</h1><hr style="margin-top: 0em; width: 90%;">')
+}
+
+//------------------------------ Custom Commands ------------------------------
+Scene.validCommands["exec"] = 1;
+
+// Totally not a rebadged script function, I promise :).
+Scene.prototype.exec = function exec(code) {
+    var stats = this.stats,
+        temps = this.temps;
+    try {
+        if (typeof window === "undefined") {
+            var _window = _global;
+        }
+        eval(code);
+    } catch (e) {
+        throw new Error(
+            "error executing javascript on "
+            .concat(this.lineMsg(), "\n")
+            .concat(e)
+            .concat(e.stack ? "\n" + e.stack : "")
+        );
+    }
 }

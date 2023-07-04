@@ -1,8 +1,36 @@
+*label CodexStart
+[head]Codex[/head]
 
-[b]Jakaloids[/b] - They're semi-sentient beings. They don't exactly have a language or much in the ability of reasoning, operating mostly on an instinct to devour.
-*image images/Jakaloids.png
-*line_break 
-[b]Mycelium[/b] - it'll migrate in the direction of animal trails based on where droppings are left most commonly and other telltale signs. it uses acidic and poisonous spores to kill creatures so that they die on top of the mycelium and provide nutrients to the soil and the fungus beneath it.
-*image images/mycelium.png 
-*line_break 
-*finish
+*fake_choice
+    # Monsters
+        *goto Monsters
+*page_break
+
+
+*comment --------------------------- Monsters Choice ---------------------------
+*label Monsters
+
+*comment Jackaloid Section
+*if isJackaloidDiscovered 
+   [head]Jakaloids[/head]
+   *image images/Jakaloids.webp
+   The Manned Jackaloids are small, werewolf-like creatures that inhabit remote regions far from civilized settlements. Standing between 3 and a half to just under 5 feet tall, they operate in packs, using their presence to frighten away other predators from potential prey and scavenging off decaying carcasses. Despite their frail and lesion-ridden appearance, these creatures exhibit surprising resilience.
+
+   Afflicted by an augmented form of leprosy, the Manned Jackaloids are not true lycanthropes in the traditional sense. However, their bites not only spread mundane leprosy to the small hamlets they afflict but also transmit their augmented leprosy to humanoids below the age of physical maturity. The symptoms of this sickness resemble the ordinary affliction, but upon death, the victim's sores widen to unveil a hide of matted fur beneath the skin, transforming them into one of these Jackaloids. This transformation stunts their natural growth, rendering the Jackaloid permanently the size of its host.
+
+   Encounters with these beasts warrant caution, as their infectious nature poses a grave threat. It is advised for individuals to carry an ample supply of healing potions and promptly seek the aid of experienced apothecaries or temples for treatment if bitten. Preemptive measures and swift medical attention are crucial to mitigate the spread of the augmented leprosy and its dire consequences.
+
+   The presence of Maned Jackaloids serves as a grim reminder of the perils lurking in the untamed corners of the world. Their unique affliction, contagious nature, and predatory behavior make them a formidable and unsettling force. Knowledge and vigilance are key to protecting oneself and the communities at risk from these enigmatic and dangerous creatures
+*line_break
+
+*comment Mycelium
+*if isMyceliumDiscovered
+    [head]Mycelium[/head]
+    *image images/mycelium.png 
+    it'll migrate in the direction of animal trails based on where droppings are left most commonly and other telltale signs. it uses acidic and poisonous spores to kill creatures so that they die on top of the mycelium and provide nutrients to the soil and the fungus beneath it.
+
+*comment Monsters not discovered
+*if (isJackaloidDiscovered = false) and (isMyceliumDiscovered = false)
+    [head]You have not discovered any monsters yet…[/head]
+*page_break
+*goto CodexStart

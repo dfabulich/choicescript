@@ -18,6 +18,10 @@
 *create Agility 4
 *create Cunning 2
 
+*comment Monster sightings
+*create isJackaloidDiscovered false
+*create isMyceliumDiscovered  false
+
 WIP build for [define:the] [define:UAT] production studio milestone review
 
 What chapter?

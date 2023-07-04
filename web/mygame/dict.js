@@ -15,7 +15,7 @@ function makeDefinition(word, pronounce, pos, def) {
     };
 }
 
-function openDefinition(inp) {
+function openDefinition(inp, showButton=true) {
     if (document.getElementById('loading')) return;
 
     // Get definition from dict hashmap
@@ -37,12 +37,35 @@ function openDefinition(inp) {
             nullCheck(`<span>•</span><span id="dict-pronounce">${tmp.pronunciation}</span>`, tmp.pronunciation) + `
             </div>` +
             nullCheck(`<p id="dict-definition">${tmp.definition}</p>`, tmp.definition);
-
-        printButton("Back", main, false, () => {
-            clearScreen(loadAndRestoreGame);
-        })
+	if(showButton){
+            printButton("Back", main, false, () => {
+                clearScreen(loadAndRestoreGame);
+            })
+        }
 
         temp.execute();
+    });
+}
+
+function openAllDefinitions(){
+    if (document.getElementById('loading')) return;
+
+    let temp = new Scene("dict", null, this.nav, { secondaryMode: "dict" });
+
+    // Null check for easy readin'
+    let nullCheck = (input, tester) => {
+        return (tester == null ? '' : input)
+    }
+
+    dict.forEach(function(value, key) {
+		document.getElementById("text").innerHTML +=`
+		    <div id="dict-top-row">` + 
+            nullCheck(`<span id="dict-word">${value.word}</span>`, value.word) + 
+            nullCheck(`<span>•</span><span id="dict-pos">${value.partOfSpeech}</span>`, value.partOfSpeech) +
+            nullCheck(`<span>•</span><span id="dict-pronounce">${value.pronunciation}</span>`, value.pronunciation) + `
+            </div>` +
+            nullCheck(`<p id="dict-definition">${value.definition}</p>`, value.definition);
+
     });
 }
 

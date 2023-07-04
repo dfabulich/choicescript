@@ -1,6 +1,13 @@
 *label demo
 start of the demo
 
+*set isJackaloidDiscovered true
+Discovered Jackaloid!!
+*comment *line_break
+*comment *set isMyceliumDiscovered true
+*comment Discovered Mycelium!!
+
+
 *fake_choice
 	#Choice 1
 		Choice 1!
@@ -8,7 +15,7 @@ start of the demo
 		Choice 2!
 	#Choice 3
 		Choice 3!
-	#Go to end of demo
+	#Go to end of the demo
 		*goto demoOver
 *page_break
 *goto demo
