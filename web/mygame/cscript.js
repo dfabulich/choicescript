@@ -17,8 +17,8 @@ function replacementReplaceBbCode(msg) {
       .replace(/\[\/color\]/g, '</color>')
       // Tag for the dictionary system
       .replace(/\[define\:(.*?)\]/g, "<a id=\"defined-word\" onClick=\"openDefinition('$1')\">$1</a>")
-      .replace(/\[head\]/g, '<h1 align="center" style="margin-bottom: 0em;">')
-      .replace(/\[\/head\]/g, '</h1><hr style="margin-top: 0em; width: 90%;">')
+      .replace(/\[head\]/g, '<h1 class="custom-head1" align="center" style="margin-bottom: 0em;">')
+      .replace(/\[\/head\]/g, '</h1><hr class="custom-head1-line" style="margin-top: 0em; width: 90%;">')
 }
 
 //------------------------------ Custom Commands ------------------------------
@@ -26,8 +26,6 @@ Scene.validCommands["exec"] = 1;
 
 // Totally not a rebadged script function, I promise :).
 Scene.prototype.exec = function exec(code) {
-    var stats = this.stats,
-        temps = this.temps;
     try {
         if (typeof window === "undefined") {
             var _window = _global;

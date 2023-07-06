@@ -1,36 +1,133 @@
 *label CodexStart
 [head]Codex[/head]
-
+REMOVE: Monster is the only section to have data…
 *fake_choice
+    # Characters
+        *goto Characters
+    # Factions
+        *goto Factions
+    # Items
+        *goto Items
+    # Magic
+        *goto Magic
     # Monsters
         *goto Monsters
+    # Places
+        *goto Places
+    # Species
+        *goto Species
 *page_break
 
+*comment -------------------------- Characters Choice --------------------------
+*label Characters
+TODO:!!!
+*page_break
+*goto CodexStart
+
+*comment --------------------------- Factions Choice ---------------------------
+*label Factions
+TODO:!!!
+*page_break
+*goto CodexStart
+
+*comment ---------------------------- Items Choice -----------------------------
+*label Items
+TODO:!!!
+*page_break
+*goto CodexStart
+
+*comment ---------------------------- Magic Choice -----------------------------
+*label Magic
+TODO:!!!
+*page_break
+*goto CodexStart
 
 *comment --------------------------- Monsters Choice ---------------------------
 *label Monsters
+*comment Monsters not discovered
+*if (((((isDirewolfDiscovered = false) and (isIchorSwogDiscovered = false)) and (isJackaloidDiscovered = false)) and (isMockguardenDiscovered = false)) and (isMogfishDiscovered = false))
+    [head]You have not discovered any monsters yet…[/head]
+
+*if isDirewolfDiscovered
+    [head]Direwolf[/head]
+    *image #
+    The Direwolf, a creature of awe-inspiring stature and intelligence, reigns as a formidable presence within the realms it calls home. Far surpassing the mere size of their smaller kin, these majestic beings exhibit a level of intelligence that sets them apart from regular wolves. Scholars and druids alike attest to their heightened cognitive abilities, recognizing them as remarkable beings in the animal kingdom.
+    
+    The Direwolf's imposing physique and strength make it a force to be reckoned with. Legends recount tales of these colossal creatures engaging in solitary hunts, where they display their formidable prowess by taking down powerful adversaries such as warhorses. Come morning, all that remains are the mere skeletal remnants of their prey.
+    
+    While solitary hunters by nature, it is not uncommon to hear accounts of a Direwolf taking command of a troublesome wolfpack, effectively becoming their dominant leader. In extremely rare instances, reports suggest the existence of a fully-fledged Direwolf pack. However, such occurrences are scarcely recorded due to the astronomical demands of sustaining a group of such large predators.
+    
+    Possessing the resilience of a bear and the cunning pack tactics of a wolf, encounters with a Direwolf can quickly escalate into perilous situations. Travelers who find themselves within the hunting territory of these creatures are strongly advised to take the shortest and quickest route out of the area. If possible, seeking refuge behind fortified structures with capable defenders is strongly recommended. It is believed that Direwolves, with their heightened intellect, are known to hold grudges and may relentlessly pursue those who have wronged them.
+    
+    Despite their fearsome reputation, there exist rare tales of a human forming a bond of mutual respect and trust with a Direwolf. In extreme and exceptional circumstances, when a human has proven their mettle and earned the respect of the imposing creature, a Direwolf may allow itself to be tamed. These extraordinary alliances between man and beast serve as testaments to the depth of connection and loyalty that can transcend the boundaries of species.
+    
+    The Direwolf, a creature of immense power, intelligence, and strategic prowess, commands respect and captivates the imagination. Their imposing presence in the natural world serves as a reminder of the delicate balance between fear and admiration. Whether viewed as formidable adversaries or as potential allies, the Direwolf continues to inspire awe and reverence in those who encounter them, forever etching their legacy in the annals of folklore and exploration.
+    *line_break
+
+*if isIchorSwogDiscovered
+    [head]Ichor-Swog[/head]
+    *image #
+    The Ichor-Swag, an abominable creature spawned from the depths of corruption, is a testament to the dark forces that pervade the natural world. Emerging from the festering wounds of blighted trees, these cursed beings embody the malevolence that feasts upon the vitality of their surroundings. Although individually feeble, they compensate for their weakness through sheer numbers, swarming together to unleash havoc should the blight go unchecked. Measuring no larger than the heel of a boot, the Ichor-Swag possesses a repulsive appearance.Their grotesque forms are an amalgamation of oozing sap, corrupted flesh, and a sickly aura that resonates with necrotic energy. Their bites transmit a blighted sickness, spreading further devastation within their victims. It is vital to employ fire and holy water when confronting these creatures, as the cleansing power of these elements proves most effective against the darkness that empowers them.
+    
+    Bright lights, such as flames or holy energy, strike fear into the hearts of Ichor-Swags. This aversion to luminosity can be harnessed to advantage by utilizing fire or holy energy to flush them out from the epicenter of rot, typically a diseased tree, and expose them to the purifying light of day. By doing so, their extermination becomes more manageable, and the threat they pose can be mitigated, allowing the process of healing to begin for the blighted landscape.
+    
+    Caution must be exercised when dealing with these creatures and their originating blights. The Ichor-Swag, born from the decay and maleficence of the natural world, serves as a haunting reminder of the relentless struggle between light and darkness, and the delicate balance upon which the harmony of existence hangs.
+    *line_break
 
 *comment Jackaloid Section
 *if isJackaloidDiscovered 
-   [head]Jakaloids[/head]
-   *image images/Jakaloids.webp
-   The Manned Jackaloids are small, werewolf-like creatures that inhabit remote regions far from civilized settlements. Standing between 3 and a half to just under 5 feet tall, they operate in packs, using their presence to frighten away other predators from potential prey and scavenging off decaying carcasses. Despite their frail and lesion-ridden appearance, these creatures exhibit surprising resilience.
-
-   Afflicted by an augmented form of leprosy, the Manned Jackaloids are not true lycanthropes in the traditional sense. However, their bites not only spread mundane leprosy to the small hamlets they afflict but also transmit their augmented leprosy to humanoids below the age of physical maturity. The symptoms of this sickness resemble the ordinary affliction, but upon death, the victim's sores widen to unveil a hide of matted fur beneath the skin, transforming them into one of these Jackaloids. This transformation stunts their natural growth, rendering the Jackaloid permanently the size of its host.
-
-   Encounters with these beasts warrant caution, as their infectious nature poses a grave threat. It is advised for individuals to carry an ample supply of healing potions and promptly seek the aid of experienced apothecaries or temples for treatment if bitten. Preemptive measures and swift medical attention are crucial to mitigate the spread of the augmented leprosy and its dire consequences.
-
-   The presence of Maned Jackaloids serves as a grim reminder of the perils lurking in the untamed corners of the world. Their unique affliction, contagious nature, and predatory behavior make them a formidable and unsettling force. Knowledge and vigilance are key to protecting oneself and the communities at risk from these enigmatic and dangerous creatures
-*line_break
+    [head]Jakaloids[/head]
+    *image images/Jakaloids.webp
+    The Manned Jackaloids are small, werewolf-like creatures that inhabit remote regions far from civilized settlements. Standing between 3 and a half to just under 5 feet tall, they operate in packs, using their presence to frighten away other predators from potential prey and scavenging off decaying carcasses. Despite their frail and lesion-ridden appearance, these creatures exhibit surprising resilience.  
+    
+    Afflicted by an augmented form of leprosy, the Manned Jackaloids are not true lycanthropes in the traditional sense. However, their bites not only spread mundane leprosy to the small hamlets they afflict but also transmit their augmented leprosy to humanoids below the age of physical maturity. The symptoms of this sickness resemble the ordinary affliction, but upon death, the victim's sores widen to unveil a hide of matted fur beneath the skin, transforming them into one of these Jackaloids. This transformation stunts their natural growth, rendering the Jackaloid permanently the size of its host. 
+    
+    Encounters with these beasts warrant caution, as their infectious nature poses a grave threat. It is advised for individuals to carry an ample supply of healing potions and promptly seek the aid of experienced apothecaries or temples for treatment if bitten. Preemptive measures and swift medical attention are crucial to mitigate the spread of the augmented leprosy and its dire consequences.   
+    
+    The presence of Maned Jackaloids serves as a grim reminder of the perils lurking in the untamed corners of the world. Their unique affliction, contagious nature, and predatory behavior make them a formidable and unsettling force. Knowledge and vigilance are key to protecting oneself and the communities at risk from these enigmatic and dangerous creatures
+    *line_break
 
 *comment Mycelium
-*if isMyceliumDiscovered
-    [head]Mycelium[/head]
+*if isMockguardenDiscovered
+    [head]Mockguarden[/head]
     *image images/mycelium.png 
-    it'll migrate in the direction of animal trails based on where droppings are left most commonly and other telltale signs. it uses acidic and poisonous spores to kill creatures so that they die on top of the mycelium and provide nutrients to the soil and the fungus beneath it.
+    The Mockguarden, a perilous and cunning predator, is a formidable form of predatory plant that lurks within the depths of untamed forests. With its ability to adapt and camouflage, it poses a significant threat to unsuspecting creatures that venture too close. While its visible parts may change and blend with the surroundings, it is the subterranean mycelium network that truly defines this enigmatic entity.
+    
+    Beneath the earth's surface lies a vast mycelium network, a sprawling and semi-sentient entity that forms the core of the Mockguarden. This underground network, often circular and measuring between 10 to 20 feet in diameter, serves as the life force and intelligence of this peculiar organism. From this hidden realm, the Mockguarden orchestrates its sinister tactics.
+    
+    The Mockguarden patiently positions itself in areas of high traffic, such as game trails and footpaths, where it awaits an unsuspecting creature to step upon its mycelium-covered surface. In an instant, the Mockguarden springs into action, employing a variety of deadly mechanisms to subdue its prey. Fungal tentacles, coated in acidic spores, lash out to ensnare and immobilize the unfortunate victim. Additionally, the Mockguarden can launch acidic spores from its above-ground appendages, further augmenting its offensive capabilities.
+    
+    The acidic spores secreted by the Mockguarden serve a dual purpose. Primarily, they act as a potent digestive enzyme, designed to break down and decompose the prey's body upon contact. The mycelium network eagerly absorbs the resulting nutrients, fueling its growth and sustaining its existence. However, the unique properties of these spores and acid have caught the attention of skilled metalworkers.
+    
+    Metalworkers have discovered the remarkable applications of the Mockguarden's acidic spores in their craft. From rust removal to the intricate embellishment of armor, the acid's corrosive properties have proven valuable. Some smiths claim that when used in the treatment of metals, the Mockguarden's acid contributes to the creation of higher quality steel, enhancing its durability and strength. The adventurous and enterprising few brave the dangers of harvesting these unique resources, harnessing their potential in the realm of craftsmanship.
+    
+    The Mockguarden stands as a testament to the marvels and perils that exist within the natural world. Its ability to adapt, ensnare, and utilize acidic spores showcases its formidable nature. While it presents a formidable challenge to those who cross its path, it also offers intriguing opportunities for those who dare to explore its enigmatic properties and continues to intrigue and captivate the minds of scholars, adventurers, and craftsmen alike.
+    *line_break
+    
+*if isMogfishDiscovered
+    [head]Mogfish[/head]
+    *image #
+    Mogfish are dangerous creatures that live in very muddy areas and are big enough to eat an elf. They have dorsal fins along their back and the some of the species have been seen with a long tether on their head that has a glowing orb at the end of it.This orb can mimic the light of torches, making people think there is a person deep in the forest or there is a town in that direction. However, there have been sightings of mogfish without this tether. It is theorized that these are the males.
 
-*comment Monsters not discovered
-*if (isJackaloidDiscovered = false) and (isMyceliumDiscovered = false)
-    [head]You have not discovered any monsters yet…[/head]
+    (finds book)
+
+    The Mogfish with orbs will stay in the mud with the orb above ground. They wait for an unsuspecting victim to walk over them, then they will open their huge maw to ensnare the unsuspecting victim and suck them in. The rest have to find other ways to get food. These ones will team up with will-o-wisps to mimic the light the other mogfish have. 
+
+    If you manage to get away, they will climb out of the mud and chase you down. They move really slow, but they can jump far distances. The best way to out run them is to keep something tall between you and it. They will have to get around the object as they can not jump high enough to get over most trees. If you manage to kill one, the orb can be used to create a magical ointment to make whatever it is applied to have a temporary glow.
 *page_break
 *goto CodexStart
+
+*comment ---------------------------- Places Choice ----------------------------
+*label Places
+TODO:!!!
+*page_break
+*goto CodexStart
+
+*comment --------------------------- Species Choice ----------------------------
+*label Species
+TODO:!!!
+*page_break
+*goto CodexStart
+
+*comment -----------------------------------------------------------------------
+

@@ -19,6 +19,7 @@ function openCodex() {
     clearScreen(function () {
         setButtonTitles();
         var button = document.getElementById("codexButton");
+        button.className = "codexButtonWords";
         button.innerHTML = "Return";
         scene.execute();
     })
@@ -46,6 +47,7 @@ function repSetButtonTitles() {
     }
     button = document.getElementById("codexButton");
     if (button) {
+        button.className = "codexButton";
         button.innerHTML = '<img id="codexButtonImg" src="images/bookButton.webp"/>';
     }
 }

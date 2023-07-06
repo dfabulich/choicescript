@@ -1,15 +1,40 @@
-﻿codexbutton{
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    -ms-transform: translate(-50%, -50%);
-    background-color: #f1f1f1;
+﻿.codexButtonWords {
+    align-self: center;
     color: black;
-    font-size: 16px;
-    padding: 16px 30px;
-    border: none;
-    cursor: pointer;
-    border-radius: 5px;
-    text-align: center;
+}
+
+.codexButton {
+    border: none !important;
+    background: none !important;
+    align-self: center;
+    margin-bottom: 0;
+    color: white !important;
+}
+
+p#buttons {
+    margin-bottom: 0;
+}
+
+@media only screen and (max-width: 768px) {
+    div#header {
+        margin-top: 1em;
+    }
+
+    /* For mobile phones: */
+    div#buttons {
+        align-self: center;
+        margin-top: 0;
+        justify-content: space-around;
+        /*  background-color: aqua;  */
+    }
+
+    /*  p#buttons > button {
+      margin: 0;
+    }  */
+
+    div#small-header {
+        text-align: center;
+        display: flex;
+        align-items: center;
+    }
 }

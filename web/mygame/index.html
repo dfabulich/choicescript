@@ -41,6 +41,7 @@ either express or implied.
   <script src="cscript.js" charset="utf-8"></script>
   <link href="../alertify.css" rel="stylesheet" type="text/css">
   <link href="dict.css" rel="stylesheet" type="text/css">
+  <link href="codexButton.css" rel="stylesheet" type="text/css">
   <!--[if IE 6]><style>.alertify-logs { position: absolute; }</style><![endif]-->
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <script>
@@ -49,18 +50,6 @@ either express or implied.
     //Scene.generatedFast = true;
     var rootDir = "../";
   </script>
-  <style>
-    .codexButton {
-      border: none;
-      background: none;
-      align-self: center;
-      margin-bottom: 0;
-    }
-
-    p#buttons {
-      margin-bottom: 0;
-    }
-  </style>
 </head>
 
 <body>
@@ -70,22 +59,22 @@ either express or implied.
       <div id="identity"><a href="#" id="email">you@example.com</a><a href="#" id="logout">Sign Out</a></div>
 
       <div style="display: flex; justify-content: space-between;">
-        <div>
+        <div id="small-header">
           <h1 class="gameTitle"><!-- My First ChoiceScript Game --></h1>
           <h2 id="author" class="gameTitle"><!--by INSERTINSERTINSERT --></h2>
 
           <p id="headerLinks">
             <!-- <a href="credits.html" id="aboutLink" class="spacedLink">About</a> -->
           </p>
-          <p id="buttons">
+          <div id="buttons">
             <button id="statsButton" class="spacedLink" onclick="showStats()">Show Stats</button>
             <button id="achievementsButton" onclick="showAchievements()" class="spacedLink"
               style="display: none">Achievements</button>
             <button id="bugButton" onclick="reportBug()" class="spacedLink" style="display: none">Report Bug</button>
             <button id="menuButton" onclick="showMenu()" class="spacedLink">Menu</button>
-          </p>
+          </div>
         </div>
-        <button id="codexButton" onclick="openCodex()" class="codexButton"><img id="codexButtonImg" src="images/bookButton.webp"/></button>
+        <button id="codexButton" onclick="openCodex()" title="Codex of discovered things" class="codexButton"><img id="codexButtonImg" src="images/bookButton.webp"/></button>
       </div>
     </div>
     <div id="main">

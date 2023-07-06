@@ -8,8 +8,10 @@
 	chapter4
 	demo
 
+*comment ------------------------------ GLOBALS --------------------------------
+*comment ///////// Generic Globals /////////
 *create name "name"
-*create gender "Unknown"
+*create gender "???"
 *create faction "None"
 *create item "None"
 *create bought "None"
@@ -18,9 +20,17 @@
 *create Agility 4
 *create Cunning 2
 
-*comment Monster sightings
-*create isJackaloidDiscovered false
-*create isMyceliumDiscovered  false
+*comment ///////// Codex Globals /////////
+
+*comment Monster sightings global vars
+*create isDirewolfDiscovered    false
+*create isIchorSwogDiscovered   false
+*create isJackaloidDiscovered   false
+*create isMockguardenDiscovered false
+*create isMogfishDiscovered     false
+
+*comment -----------------------------------------------------------------------
+
 
 WIP build for [define:the] [define:UAT] production studio milestone review
 
