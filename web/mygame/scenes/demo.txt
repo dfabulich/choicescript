@@ -1,12 +1,22 @@
 *label demo
 start of the demo
 
-*set isJackaloidDiscovered true
-Discovered Jackaloid!!
-*comment *line_break
-*comment *set isMyceliumDiscovered true
-*comment Discovered Mycelium!!
+*set isDirewolfDiscovered    true
+*set isIchorSwogDiscovered   true
+*set isJackaloidDiscovered   true
+*set isMockguardenDiscovered true
+*set isMogfishDiscovered     true
 
+Discovered Direwolf!!!
+*line_break
+Discovered IchorSwog!!!
+*line_break
+Discovered Jackaloid!!!
+*line_break
+Discovered Mockguarden!!!
+*line_break
+Discovered Mogfish!!!
+*line_break
 
 *fake_choice
 	#Choice 1

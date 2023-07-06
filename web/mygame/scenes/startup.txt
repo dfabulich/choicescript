@@ -42,7 +42,7 @@ What chapter?
 		*goto_scene chapter2
 	#chapter 4
 		*goto_scene chapter4
-	#Demo
+	#REMOVE: Demo (Go here for dynamic codex monster entries demo)
 		*goto_scene demo
 
 *page_break
