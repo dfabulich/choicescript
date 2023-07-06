@@ -6,49 +6,28 @@
 The Mix up
 *page_break
 
-You are walking through the market in the middle of town.
-There are multiple shops around you, each having a few customers looking around
-or chatting. Your job has just finished a huge order and the coin just came in.
-You decided that you were going to spoil yourself today for all of your hard
-work. There have been some items you have been wanting to get. 
+You are walking through the market in the middle of town. There are multiple shops around you, each having a few customers looking around or chatting. Your job has just finished a huge order and the coin just came in. You decided that you were going to spoil yourself today for all of your hard work. There have been some items you have been wanting to get. 
 
-Along your way through the market, you see two people arguing.
-You can’t see what they are arguing about, but you can tell that one of them is
-quite upset. You walk on the other side of the path, trying to avoid getting
-caught in the crossfire. One looks over at you and you catch their eye.
-You can’t get a good look at them, but you can see the scar they have across
-their left eye. Before anything could happen, the guard gets in between the two
-of them and breaks up the fight.
+Along your way through the market, you see two people arguing. You can’t see what they are arguing about, but you can tell that one of them is quite upset. You walk on the other side of the path, trying to avoid getting caught in the crossfire. One looks over at you and you catch their eye. You can’t get a good look at them, but you can see the scar they have across their left eye. Before anything could happen, the guard gets in between the two of them and breaks up the fight.
 *page_break
 
-Deciding that it is none of your business, you continue your way into the market.
-It is a lot busier than normal at this time of day, but not unexpected.
-The dwarves are in town and that usually makes it busier.
-Once you get there, you walk over to the:
+Deciding that it is none of your business, you continue your way into the market. It is a lot busier than normal at this time of day, but not unexpected. The dwarves are in town and that usually makes it busier. Once you get there, you walk over to the:
 
 *fake_choice
     #Bakery. It is run by a dwarven baker and they rarely visit. They are said to have the best bread in the land.
-        There shop is surrounded by people, many of them munching on their bread.
-        At the stand there are two dwarves. One is baking fresh bread and the
-        other is taking orders. Occasionally the one taking orders offers some
-        idle conversation.
+        There shop is surrounded by people, many of them munching on their bread. At the stand there are two dwarves. One is baking fresh bread and the other is taking orders. Occasionally the one taking orders offers some idle conversation.
         
-        While you are waiting for your bread to get done the dwarf stands next
-        to you.
+        While you are waiting for your bread to get done the dwarf stands next to you.
         
-        "You look like a traveler, I'd leave as quickly as possible if I was you."
-        He said while leaning against the table.
+        "You look like a traveler, I'd leave as quickly as possible if I was you." He said while leaning against the table.
 
         “On our way here we saw some evidence of Ichor-swogs along the road.”
 
         “How far out?” You ask, while looking towards the forest.
 
-        “Two or three days, maybe. Though, it seems like your lord has already
-        started precautions, there are a lot of armed men here.”
-        The dwarf looks around, you join him and note the amount of guards.
+        “Two or three days, maybe. Though, it seems like your lord has already started precautions, there are a lot of armed men here.” The dwarf looks around, you join him and note the amount of guards.
 
-        “We aren’t going to be here for much longer. Packing up tomorrow.
-        Enjoy your bread.”
+        “We aren’t going to be here for much longer. Packing up tomorrow. Enjoy your bread.”
         
         *set faction "guards"
         *set item "bread"
@@ -57,27 +36,19 @@ Once you get there, you walk over to the:
         *set coin -2
         
     #Bookstore. You have been looking at a book for weeks and you finally have the money to get it.
-        The book store is never really busy. The books cost too much and not
-        enough people know how to read. However, the Flames of Sigel requires there to be at least a small store for them to read while they stay. They visit at least once a month and that's enough to keep the store in business. Although, there is a lot more people in here then usual. You wonder they're in town.
+        The book store is never really busy. The books cost too much and not enough people know how to read. However, the Flames of Sigel requires there to be at least a small store for them to read while they stay. They visit at least once a month and that's enough to keep the store in business. Although, there is a lot more people in here then usual. You wonder they're in town.
         
-        You walk over to a book you have been thinking about getting for awhile
-        now and the librarian notices you.
+        You walk over to a book you have been thinking about getting for awhile now and the librarian notices you.
 
-        “I’d grab that book fast, there are many priests around and a couple of
-        them have commented on that book.” She says while walking over.
+        “I’d grab that book fast, there are many priests around and a couple of them have commented on that book.” She says while walking over.
 
         “Anything good?” You flip over the book and admire the cover.
 
-        “Nothing but praise, though… There does seem to be a lot of them around.
-        I hope nothing has happened.” As she mentions this, you take a closer
-        look at everyone and notice that there is a lot of priests.
-        Double the amount you normally see when they visit.
+        “Nothing but praise, though… There does seem to be a lot of them around. I hope nothing has happened.” As she mentions this, you take a closer look at everyone and notice that there is a lot of priests. Double the amount you normally see when they visit.
 
-        “The last time I saw this many around was about five years ago.”
-        The librarian says as she puts another book away on a nearby shelf.
+        “The last time I saw this many around was about five years ago.” The librarian says as she puts another book away on a nearby shelf.
  
-        “I hope that it’s nothing too serious.”
-        You comment, looking at all the priests.
+        “I hope that it’s nothing too serious.” You comment, looking at all the priests.
         
         *set faction "priests"
         *set item "book"
@@ -86,29 +57,21 @@ Once you get there, you walk over to the:
         *set coin -3
         
     #Blacksmith. Your dagger is old and falling apart. You have been meaning to replace it.
-        The blacksmith isn't particularly busy today. Only a handful of people
-        actually looking at his stuff, everyone else seems to just be standing
-        off to the side and talking. Though, there is a lot of groups of
-        unfamiliar looking people with weapons. Makes you a little nervous. 
+        The blacksmith isn't particularly busy today. Only a handful of people actually looking at his stuff, everyone else seems to just be standing off to the side and talking. Though, there is a lot of groups of unfamiliar looking people with weapons. Makes you a little nervous. 
         
-        You see the blacksmith teaching their apprentice when you walk up and
-        start looking at the daggers.
+        You see the blacksmith teaching their apprentice when you walk up and start looking at the daggers.
 
-        “Looking for a new dagger?” The blacksmith asks, leaving their
-        apprentice to work.
+        “Looking for a new dagger?” The blacksmith asks, leaving their apprentice to work.
         
         You nod, looking at the dagger rack.
-		
-        “That’s probably a smart idea. Which one are you looking at?”
-        The blacksmith walks over and brings down a few daggers.
 
-        You point out the iron one with a fancier leather handle and the
-        blacksmith hands it to you.
+        “That’s probably a smart idea. Which one are you looking at?” The blacksmith walks over and brings down a few daggers.
+
+        You point out the iron one with a fancier leather handle and the blacksmith hands it to you.
 
         “Why’s that?” You ask him, feeling the weight of the blade.
 
-        “Because there are a lot of mercenaries out and about.”
-        He points to some of the groups of people in the crowd.
+        “Because there are a lot of mercenaries out and about.” He points to some of the groups of people in the crowd.
 
         “Huh,” you said while looking around.
 
@@ -116,9 +79,7 @@ Once you get there, you walk over to the:
 
         You nod and hand over the coin.
 
-        “I’d be careful walking home tonight, it looks like we have multiple
-        groups here and not all of them get along.” He explains and then walks
-        back towards his apprentice.
+        “I’d be careful walking home tonight, it looks like we have multiple groups here and not all of them get along.” He explains and then walks back towards his apprentice.
         
         “Brig! I told you, not while it’s so hot, you’ll warp the metal!”
         
@@ -129,42 +90,26 @@ Once you get there, you walk over to the:
         *set coin -5
 *page_break
 
-You find it odd that there are so many ${faction} around.
-The last time you saw this many was…
-Five years ago, when you went out exploring with (FRIEND).
-It made you nervous, maybe you should visit them again soon.
-However, first you need to take your ${item} back to your house and put it away.
-Maybe you’ll visit after-
+You find it odd that there are so many ${faction} around. The last time you saw this many was… Five years ago, when you went out exploring with (FRIEND). It made you nervous, maybe you should visit them again soon. However, first you need to take your ${item} back to your house and put it away. Maybe you’ll visit after-
 *page_break
 
 [b] SCREAM [/b]
 *page_break
 
-A scream came out of the house you were passing.
-Confused, you look over at the house, deciding what to do.
+A scream came out of the house you were passing. Confused, you look over at the house, deciding what to do.
 
 *choice
     #You run in.
-        Inside of the first room of the building isn't much of note.
-        A rug on the floor and household items littered about.
-        When you run into the main room is where everything happened.
-        There is a dead body on the floor with a pool of blood underneath him.
-        When you walk up to the body you notice that it is Lord Odel.
-        Lord Odel is a lord from a neighboring town, not many like him,
-        but you didn't think it was this bad.
+        Inside of the first room of the building isn't much of note. A rug on the floor and household items littered about. When you run into the main room is where everything happened. There is a dead body on the floor with a pool of blood underneath him. When you walk up to the body you notice that it is Lord Odel. Lord Odel is a lord from a neighboring town, not many like him, but you didn't think it was this bad.
         
         *set option "run"
         *goto C4_Chase
     
     #You ignore it, many things happen in this town, you don’t need to be a part of it.
         
-        As you continue walking towards your house, someone bumps into you.
-        They have a hood on and you can’t see their face.
-        You check your pockets, only to find your ${item} missing,
-        replaced with a bloody iron knife.
+        As you continue walking towards your house, someone bumps into you. They have a hood on and you can’t see their face. You check your pockets, only to find your ${item} missing, replaced with a bloody iron knife.
 
-        When you realize what you were holding, a guard walks up to you and
-        aggressively grabs your arm.
+        When you realize what you were holding, a guard walks up to you and aggressively grabs your arm.
 
         “You are under arrest for the murder of Lord Odel!”
         *set item "bloody dagger"
@@ -176,34 +121,24 @@ When you look up you see a shadowed figure running through the backdoor.
 
 *fake_choice
     #Cut him off
-        You go back through the front door and start running in the direction
-        you saw them go. As you run, you look down every alley you can see.
-        However, there is no sign of them. You seemed to have lost them.
+        You go back through the front door and start running in the direction you saw them go. As you run, you look down every alley you can see. However, there is no sign of them. You seemed to have lost them.
 
-        As you are trying to catch your breath, a guard walks up to you and
-        harshly grabs your arm.
+        As you are trying to catch your breath, a guard walks up to you and harshly grabs your arm.
 
-        “You are under arrest for the murder of Lord Odel and fleeing the scene
-        of the crime!”
+        “You are under arrest for the murder of Lord Odel and fleeing the scene of the crime!”
         
     *if ((Cunning > 6) or (Cunning = 6)) #Chase after him
         You run through the house, not noticing as you step in the pool of blood.
 
-        Outside, you see the cloaked figure running down an alley.
-        You run into the alley right after it, remembering that they connect.
-        You see the cloaked figure running through the alley.
+        Outside, you see the cloaked figure running down an alley. You run into the alley right after it, remembering that they connect. You see the cloaked figure running through the alley.
 
-        You grab his arm and just manage dodges out of the way of a knife attack.
-        The hood moves slightly and underneath it you can see a familiar scar
-        across his eye.
+        You grab his arm and just manage dodges out of the way of a knife attack. The hood moves slightly and underneath it you can see a familiar scar across his eye.
 
-        While you are stunned by the attack, he climbs over the wall.
-        You go to follow him when-
+        While you are stunned by the attack, he climbs over the wall. You go to follow him when-
 
         “Stop!” A guard shouts at you.
 
-        “You are arrested for the murder of Lord Odel!” The guard runs towards
-        you and grabs your arm.
+        “You are arrested for the murder of Lord Odel!” The guard runs towards you and grabs your arm.
                 
     *if (Cunning < 6) #Chase After him
 
@@ -224,30 +159,21 @@ When you look up you see a shadowed figure running through the backdoor.
 *label guard
 “You have the wrong person!” You try to explain.
 
-“Then why were you the only one spotted leaving the scene of the crime?”
-The guard asks, dragging you towards the carriage.
+“Then why were you the only one spotted leaving the scene of the crime?” The guard asks, dragging you towards the carriage.
 
 *if (option = "run")
-    “I was walking home and I heard a scream in the house.
-    I didn’t know something happened until I walked in there!”
-    You struggle against the guard.
+    “I was walking home and I heard a scream in the house. I didn’t know something happened until I walked in there!” You struggle against the guard.
 
-    “If you heard it, why didn’t you alert us?”
-    The guard pulls harder at your arm.
+    “If you heard it, why didn’t you alert us?” The guard pulls harder at your arm.
 
-    “Because there wasn’t time!
-    I could have gotten in there in time and saved his life!”
+    “Because there wasn’t time! I could have gotten in there in time and saved his life!”
 
 *if (option = "leave")
-    “I was walking home and I heard a scream in the house.
-    I didn’t know something happened!” You struggle against the guard.
+    “I was walking home and I heard a scream in the house. I didn’t know something happened!” You struggle against the guard.
 
-    “If you heard it, why didn’t you alert us? And why do you have the murder
-    weapon?” The guard pulls harder at your arm.
+    “If you heard it, why didn’t you alert us? And why do you have the murder weapon?” The guard pulls harder at your arm.
 
-    “Because I didn’t see any of you yet and the murderer planted this on me!
-    They went that way!” You try to point in the direction they went in when
-    the guard just pulls on you rougher.
+    “Because I didn’t see any of you yet and the murderer planted this on me! They went that way!” You try to point in the direction they went in when the guard just pulls on you rougher.
 
 *choice
     #Go with the guard, there isn't much you can do.
@@ -270,218 +196,138 @@ The guard asks, dragging you towards the carriage.
                 *goto C4_Caught
         
     *if (Agility < 6) #Try to escape
-        The guard grabs you by your bicep and wrist, twisting them upwards,
-        and starts walking you towards the carriage.
-        You bend the elbow the guard has-
+        The guard grabs you by your bicep and wrist, twisting them upwards, and starts walking you towards the carriage. You bend the elbow the guard has-
         
         The guard quickly goes under that arm and places the arm on your back.
         
-        “Funny, don’t try it again.” The guard walks you to the carriage
-        and shoves you in.
+        “Funny, don’t try it again.” The guard walks you to the carriage and shoves you in.
         *page_break
 
         *goto C4_Prison
 
 *label C4_Cemetary
-You decide to say one last goodbye to your childhood friend.
-You would visit their grave from time to time and tell them what has happened.
-You haven’t visited in a long time and this seemed like your last chance.
+You decide to say one last goodbye to your childhood friend. You would visit their grave from time to time and tell them what has happened. You haven’t visited in a long time and this seemed like your last chance.
 
-You make your way through the alleys and narrowly avoid the guards until you
-make it to the cemetery. Once there, you take a familiar path towards your
-friend, not noticing the person following you.
+You make your way through the alleys and narrowly avoid the guards until you make it to the cemetery. Once there, you take a familiar path towards your friend, not noticing the person following you.
 
-The cemetery is right next to the forest with a small fence around it.
-There are a lot of graves here, but you know it's actually pretty small for a
-town like your's. You make your way pass the graves, being extra careful because
-mockgardens like to make their home here.
+The cemetery is right next to the forest with a small fence around it. There are a lot of graves here, but you know it's actually pretty small for a town like your's. You make your way pass the graves, being extra careful because mockgardens like to make their home here.
 
 When you get to (FRIEND)'s grave, you kneel over it and leave some flowers.
 
-“Someone murdered Lord Odel. I don’t know who, but they got away.
-The guards seem to think I did it. That jerk managed to leave some evidence on
-me, so I’m going to have to leave. This will probably be the last time I’m able
-to visit, I really miss you old friend.”
+“Someone murdered Lord Odel. I don’t know who, but they got away. The guards seem to think I did it. That jerk managed to leave some evidence on me, so I’m going to have to leave. This will probably be the last time I’m able to visit, I really miss you old friend.”
 *page_break
 
-As you stand you hear the crunching of leaves behind you.
-You whip around and stare at the priestess. 
+As you stand you hear the crunching of leaves behind you. You whip around and stare at the priestess. 
 
-“I’m sorry, I just happened to see you out here. Why are you here so late?
-You know how dangerous it is to be out at night?”
-She asks you while walking closer.
+“I’m sorry, I just happened to see you out here. Why are you here so late? You know how dangerous it is to be out at night?” She asks you while walking closer.
 
-“I was just saying goodbye to my friend. I don’t think I’ll be able to
-visit them again.” You say as you grab your stuff.
+“I was just saying goodbye to my friend. I don’t think I’ll be able to visit them again.” You say as you grab your stuff.
 
-“Why not? Are you going somewhere?” 
-The priestess walks around a grave, towards you.
+“Why not? Are you going somewhere?”  The priestess walks around a grave, towards you.
 
-“I’ve got mixed up in something I had nothing to do with and I have to leave.”
-You start heading towards the gate. 
+“I’ve got mixed up in something I had nothing to do with and I have to leave.” You start heading towards the gate. 
 
 “It’s too dangerous to leave this late, why can’t you stay until the morning?”
 
 “Because I don’t know when they are going to come get me.”
 
-“Nothing can be bad enough to go into certain death.
-If you are so worried, why don’t you come to the local temple and stay there?” 
+“Nothing can be bad enough to go into certain death. If you are so worried, why don’t you come to the local temple and stay there?” 
 *page_break
 
-“I’m not sure the temple would accept (him/her/them), Lord Odel was murdered
-and I think this is the person they are after.” A guy came out of the shadows,
-wearing a cloak and had a sword on his back. 
-He doesn’t look like any guard you know, so he must be a mercenary.
+“I’m not sure the temple would accept (him/her/them), Lord Odel was murdered and I think this is the person they are after.” A guy came out of the shadows, wearing a cloak and had a sword on his back.  He doesn’t look like any guard you know, so he must be a mercenary.
 
-“You have the wrong guy, I had nothing to do with that.” You say as you start
-backing away from the mercenary and the priestess.
+“You have the wrong guy, I had nothing to do with that.” You say as you start backing away from the mercenary and the priestess.
 
-“Even so, you are the one everyone is after.”
-The mercenary crosses his arms and stares at you.
+“Even so, you are the one everyone is after.” The mercenary crosses his arms and stares at you.
 
-“I don’t think a murderer would visit their friend’s grave the day of the murder.
-They would visit the day before so they can leave as quickly as possible.”
-The priestess comments looking towards the mercenary.
+“I don’t think a murderer would visit their friend’s grave the day of the murder. They would visit the day before so they can leave as quickly as possible.” The priestess comments looking towards the mercenary.
 
-“A smart one would and to even plan a murder like this you would have to be
-smart about it. You were seen outside of the house running in, no murder would
-be that obvious. However, the guards don’t seem to care.
-They want the person they found caught and tried.”
-The mercenary walks around the graves.
+“A smart one would and to even plan a murder like this you would have to be smart about it. You were seen outside of the house running in, no murder would be that obvious. However, the guards don’t seem to care. They want the person they found caught and tried.” The mercenary walks around the graves.
 *page_break
 
-“They don’t see that the murder was done by a skilled assassin, not some random
-person. They’ll hang you on the spot.” He stops a little bit away from you.
+“They don’t see that the murder was done by a skilled assassin, not some random person. They’ll hang you on the spot.” He stops a little bit away from you.
 
-“All the more reason for me to leave, now if you excuse me.”
-You say as you creep towards the door.
+“All the more reason for me to leave, now if you excuse me.” You say as you creep towards the door.
 
-“You won’t make it far without help. There are dangerous creatures outside.
-I could take you to the temple and protect you from the town’s ire.”
-The priestess offers.
+“You won’t make it far without help. There are dangerous creatures outside. I could take you to the temple and protect you from the town’s ire.” The priestess offers.
 
-“And do what? Pray that the problem will solve itself?
-Come join me, we’ll find out who did this and prevent them from killing again.”
-The mercenary glares at the priestess and then stares at you.
+“And do what? Pray that the problem will solve itself? Come join me, we’ll find out who did this and prevent them from killing again.” The mercenary glares at the priestess and then stares at you.
 
 *choice
     #"I choose to go with the priestess and stay at the temple."
-        "Welcome to the Flames of Sigel.
-        I'm sure your friend would be proud of you. Come along.
-        We'll head to the temple when we are done here."
-        The priestess leads you to the local church.
+        "Welcome to the Flames of Sigel. I'm sure your friend would be proud of you. Come along. We'll head to the temple when we are done here." The priestess leads you to the local church.
         
         *comment *goto_scene Divine
         *finish
 
     #"I choose to go with the mercenary and find out who did this."
-        "We'll find who did this, now we need to get you out of here.
-        Thankfully I know some people nearby and you can stay there for the
-        time being."
-        The mercenary takes you into a building.
+        "We'll find who did this, now we need to get you out of here. Thankfully I know some people nearby and you can stay there for the time being." The mercenary takes you into a building.
         
         *finish
         *comment *goto_scene Mercenary
 
 *label C4_Leave
-You need to get out of here as soon as possible.
-The watch is on high alert and if you use the cover of night you could get
-out of here.
+You need to get out of here as soon as possible. The watch is on high alert and if you use the cover of night you could get out of here.
 
-You leave your house through the back window and begin using all of the back
-alleys to get to the edge of town. When you turn the corner of the fourth alley,
-you see a guard walking in your direction.
-You turn around to find a place to hide.
-You find a barrel that will block you from view.
+You leave your house through the back window and begin using all of the back alleys to get to the edge of town. When you turn the corner of the fourth alley, you see a guard walking in your direction. You turn around to find a place to hide. You find a barrel that will block you from view.
 
-“I wouldn’t hide there if I were you.
-The guard’s lamp will cast your arm’s shadow along that wall.”
-A voice calls you to you.
+“I wouldn’t hide there if I were you. The guard’s lamp will cast your arm’s shadow along that wall.” A voice calls you to you.
 *page_break
 
-“The crate will hide you better. I’d move fast if I were you.”
-You follow the voice’s advice and move to the crate, just as the guard walks by.
-The lamp moves over the barrel and lights up the spot you were just hiding in.
+“The crate will hide you better. I’d move fast if I were you.” You follow the voice’s advice and move to the crate, just as the guard walks by. The lamp moves over the barrel and lights up the spot you were just hiding in.
 
-After the guard passes you hear a thump, a guy with a cloak and a sword on his
-back. He doesn’t look like a guard so he must be a mercenary.
+After the guard passes you hear a thump, a guy with a cloak and a sword on his back. He doesn’t look like a guard so he must be a mercenary.
 
-“Now, why are you out here so late at night? And what is with the stuff?”
-He asks, looking at your bag.
+“Now, why are you out here so late at night? And what is with the stuff?” He asks, looking at your bag.
 
 “What’s it to you?” You grab at your bag.
 
-“Whoa now! Just asking a simple question. Not many are out this late and that
-looks like you’re skipping town.” The mercenary crosses his arms and leans
-against a wall.
+“Whoa now! Just asking a simple question. Not many are out this late and that looks like you’re skipping town.” The mercenary crosses his arms and leans against a wall.
 
-“Not the best time to skip town, not with the murder on the loose and the
-rot this close to town.” The mercenary looks off to the side,
-seemingly noticing something. 
+“Not the best time to skip town, not with the murder on the loose and the rot this close to town.” The mercenary looks off to the side, seemingly noticing something. 
 *page_break
 
-“Now if you were to explain why you are out here so late, maybe I’ll help you
-get out of here.”  He gets off of the wall and turns to face you more.
+“Now if you were to explain why you are out here so late, maybe I’ll help you get out of here.”  He gets off of the wall and turns to face you more.
 
 “I’m just trying to get to my friend’s -” You start to explain.
 
-“I’m just going to stop you there. You have way too much stuff in that bag to
-visit somebody and even if you were moving in with your friend in the middle of
-the night, you are too jumpy for even sneaking off to a lovers house.
-Now why are you here before I call that guard back over.”
-He said while taking a step closer to you.
+“I’m just going to stop you there. You have way too much stuff in that bag to visit somebody and even if you were moving in with your friend in the middle of the night, you are too jumpy for even sneaking off to a lovers house. Now why are you here before I call that guard back over.” He said while taking a step closer to you.
 
 You take a step back and sigh.
 
-“I got caught up in something I had nothing to do with and I have to leave
-before it comes to get me.” You explain.
+“I got caught up in something I had nothing to do with and I have to leave before it comes to get me.” You explain.
 
-“You are the one the guards are after.” A female voice says.
-You turn around to see a priestess at the entrance of the alley.
+“You are the one the guards are after.” A female voice says. You turn around to see a priestess at the entrance of the alley.
 
 *if (option = "run")
-    “Yes, but I had nothing to do with that murder. All that happened was that
-    I heard a scream and chased after him.” You look between the priestess and
-    the mercenary.
+    “Yes, but I had nothing to do with that murder. All that happened was that I heard a scream and chased after him.” You look between the priestess and the mercenary.
     
 *if (option = "leave")
-    “Yes, but I had nothing to do with the murder, I didn’t even know something
-    happened. I was walking home when I heard a scream and a random person
-    bumped into me.”
+    “Yes, but I had nothing to do with the murder, I didn’t even know something happened. I was walking home when I heard a scream and a random person bumped into me.”
 *page_break
 
-“You would have packed your bags and left a long time ago if you planned out the
-murder.” The priestess walks to the other wall in the alley.
+“You would have packed your bags and left a long time ago if you planned out the murder.” The priestess walks to the other wall in the alley.
 
-“The murder seemed to be too well planned for an amatuer. If you knew what you
-were doing, you would have heard me sneak up on you.” The mercenary looks up
-as if he is thinking.
+“The murder seemed to be too well planned for an amatuer. If you knew what you were doing, you would have heard me sneak up on you.” The mercenary looks up as if he is thinking.
 
-“I could get you out of this town and help you find the murder if you help me
-in return. Don’t worry, it’s nothing bad, just help us protect a few towns.”
-The mercenary looks over at you.
+“I could get you out of this town and help you find the murder if you help me in return. Don’t worry, it’s nothing bad, just help us protect a few towns.” The mercenary looks over at you.
 
-“Don’t join these ruffians. Come join me to the temple and we can protect you
-from the town.” The priestess interrupts.
+“Don’t join these ruffians. Come join me to the temple and we can protect you from the town.” The priestess interrupts.
 
 *choice
     #"I choose to go with the priestess and stay at the temple."
-        "Welcome to the Flames of Sigel. Come along. When we're done here I'll
-        take you to the temple." The priestess leads you to the local church.
+        "Welcome to the Flames of Sigel. Come along. When we're done here I'll take you to the temple." The priestess leads you to the local church.
         *finish
         *comment *goto_scene Divine
         
     #"I choose to go with the mercenary and find out who did this."
-        "We'll find who did this, now we need to get you out of here.
-        I can't help much if you get caught."
-        The mercenary takes you into a building.
+        "We'll find who did this, now we need to get you out of here. I can't help much if you get caught." The mercenary takes you into a building.
         *finish
         *comment *goto_scene Mercenary
 
 *label C4_Caught
 
-You remember seeing a path to the forest a few weeks ago. It’s risky, but not
-many people seem to take it. You take all your stuff and start heading that way.
+You remember seeing a path to the forest a few weeks ago. It’s risky, but not many people seem to take it. You take all your stuff and start heading that way.
 
 You are almost there when -
 
@@ -491,116 +337,71 @@ A guard caught you. He held up a bow and walked up towards you.
 
 “Put your stuff on the ground and put your hands up!”
 
-You complied and when he got to you he put your arm on your back and lead you
-to a carriage.
+You complied and when he got to you he put your arm on your back and lead you to a carriage.
 
 *goto C4_Prison
 
 *label C4_Prison
 
-Once you were at the prison, they threw you into a cell.
-There are only three cells in this prison. Crime isn't much of a problem here.
-The main criminals are just disputes between neighbors that don't like each
-other or an out of town person thinking they could get away with something.
+Once you were at the prison, they threw you into a cell. There are only three cells in this prison. Crime isn't much of a problem here. The main criminals are just disputes between neighbors that don't like each other or an out of town person thinking they could get away with something.
 
-The room you are in is made of stone and you were lucky enough to be thrown into
-the cell with a window and a door with bars on it.
-The room you are in is also across from the guard's room
+The room you are in is made of stone and you were lucky enough to be thrown into the cell with a window and a door with bars on it. The room you are in is also across from the guard's room
 
-You found a nice corner and sat in it, questioning how this all happened.
-All you were trying to do is go home, you had nothing to do with this.
+You found a nice corner and sat in it, questioning how this all happened. All you were trying to do is go home, you had nothing to do with this.
 
-“Hey, what are you in for?” A guy you didn’t notice walks up to the bars
-from a doorway. It kinda looks like an office. He doesn’t look like any guard
-you know. He has a cloak on, none of the guards wear a cloak like that.
-As he walks closer you can see that he has a sword on his back and a dagger in
-his belt, along with some other shiny things across his clothing.
-None of the guards look like this, he must be a mercenary passing through.
+“Hey, what are you in for?” A guy you didn’t notice walks up to the bars from a doorway. It kinda looks like an office. He doesn’t look like any guard you know. He has a cloak on, none of the guards wear a cloak like that. As he walks closer you can see that he has a sword on his back and a dagger in his belt, along with some other shiny things across his clothing. None of the guards look like this, he must be a mercenary passing through.
 
-“I got caught up in a misunderstanding.
-They think I murdered Lord Odel when all I was doing was trying to get home.”
-You explain, putting your head in your knees.
+“I got caught up in a misunderstanding. They think I murdered Lord Odel when all I was doing was trying to get home.” You explain, putting your head in your knees.
 
-“Sounds rough. I heard about Lord Odel, and checked out his body myself.
-You don’t seem bloody enough to have done it. He had multiple stab wounds in him,
-that would have made quite the mess.” The mercenary walks over to a nearby wall
-and leans against it.
+“Sounds rough. I heard about Lord Odel, and checked out his body myself. You don’t seem bloody enough to have done it. He had multiple stab wounds in him, that would have made quite the mess.” The mercenary walks over to a nearby wall and leans against it.
 *page_break
 
-“The murder was also too well planned out for someone like you to be caught.
-Seems like they got a scapegoat.” He crossed his arms..
+“The murder was also too well planned out for someone like you to be caught. Seems like they got a scapegoat.” He crossed his arms..
 
-“Guess so. All I wanted to do was go home and put away my ${bought}.
-Instead I get a bloody dagger dropped on me and sent to prison for a crime I
-didn’t commit.” You sigh.
+“Guess so. All I wanted to do was go home and put away my ${bought}. Instead I get a bloody dagger dropped on me and sent to prison for a crime I didn’t commit.” You sigh.
 
-“Well, I could ask my buddies and see if we could get you out of here, maybe
-even find out who actually murdered the Lord. But, you’ll have to help us in
-return. Nothing bad, just help us protect some towns, find some other bad guys,
-nothing too bad I think.” He explained before sharply looking at the door.
+“Well, I could ask my buddies and see if we could get you out of here, maybe even find out who actually murdered the Lord. But, you’ll have to help us in return. Nothing bad, just help us protect some towns, find some other bad guys, nothing too bad I think.” He explained before sharply looking at the door.
 
-“Think about it, I’ll come back tonight for your answer.” And with that, he
-leaves through the door he just came in through.
+“Think about it, I’ll come back tonight for your answer.” And with that, he leaves through the door he just came in through.
 *page_break
 
 
-“You’d think he’d be quieter if he didn’t want to be caught.” A female’s voice
-calls out from the door. A priestess walks in.
+“You’d think he’d be quieter if he didn’t want to be caught.” A female’s voice calls out from the door. A priestess walks in.
 
-“I happened to overhear you two talking and I overheard that you managed to get
-yourself into a bit of trouble.” The priestess walks over to the bars.
+“I happened to overhear you two talking and I overheard that you managed to get yourself into a bit of trouble.” The priestess walks over to the bars.
 
-“To counter his offer, I can take you to our temple.
-We can protect you from the town and anyone who comes after you as long as you
-follow our rules and help out where you can.” She offered.
+“To counter his offer, I can take you to our temple. We can protect you from the town and anyone who comes after you as long as you follow our rules and help out where you can.” She offered.
 
 You give her a questioning look.
 
-“Oh, my apologies, I am a priestess of the Flames of Sigel.
-We protect towns from the upcoming darkness and house those in trouble.”
-She explained, walking over towards the bars.
+“Oh, my apologies, I am a priestess of the Flames of Sigel. We protect towns from the upcoming darkness and house those in trouble.” She explained, walking over towards the bars.
 
-“But I imagine you have a lot to think about, I’ll come back tonight and you
-can make your decision then.” With that, she left the room.
+“But I imagine you have a lot to think about, I’ll come back tonight and you can make your decision then.” With that, she left the room.
 *page_break
 
-That night the priestess walks in through the main door and the mercenary walks
-through the office. THe entire time you’ve seen guards walk in and out of that
-room, but you never saw him leave it. He doesn’t seem particularly welcome here
-either, or else why would he sneak around so much?
+That night the priestess walks in through the main door and the mercenary walks through the office. THe entire time you’ve seen guards walk in and out of that room, but you never saw him leave it. He doesn’t seem particularly welcome here either, or else why would he sneak around so much?
 
-“I shouldn’t be surprised that you showed up.
-I heard you walking through the halls.”
-The mercenary says, looking at the priestess.
+“I shouldn’t be surprised that you showed up. I heard you walking through the halls.” The mercenary says, looking at the priestess.
 
-“Yes, well, I can’t just let (him/her/them) be hanged if there is a chance
-they are innocent.” The priestess responds.
+“Yes, well, I can’t just let (him/her/them) be hanged if there is a chance they are innocent.” The priestess responds.
 
 “Now, have you made your choice?”
 
 *choice
     #"I choose to go with the priestess and stay at the temple."
         *set item "nothing"
-        "I'll talk with the captain and get you released into my custody."
-        The priestess walks out of the room. When you look over at the
-        mercenary, he is gone.
+        "I'll talk with the captain and get you released into my custody." The priestess walks out of the room. When you look over at the mercenary, he is gone.
         
         She comes back with the captain and he unlocks the gate.
         
-        "Don't come back. I'm already going to be in a rot full of trouble
-        because of this."
+        "Don't come back. I'm already going to be in a rot full of trouble because of this."
         *finish
         *comment *goto_scene Divine
         
     #"I choose to go with the mercenary and find out who did this."
         *set item "dagger with odd design"
-        "I'll make sure we get them and clear your name.
-        Until then you'll be under my custody."
-        The mercenary grabs a key from his pocket.
+        "I'll make sure we get them and clear your name. Until then you'll be under my custody." The mercenary grabs a key from his pocket.
         
-        "You probably won't be allowed back into this town no matter what you
-        choose. However, we'll make sure to keep you safe.
-        Oh, and before I forget. While I couldn't get you your ${bought} back,
-        I was able to snatch the dagger. We'll get it cleaned up for you."
+        "You probably won't be allowed back into this town no matter what you choose. However, we'll make sure to keep you safe. Oh, and before I forget. While I couldn't get you your ${bought} back, I was able to snatch the dagger. We'll get it cleaned up for you."
         *finish
         *comment *goto_scene Mercenary
