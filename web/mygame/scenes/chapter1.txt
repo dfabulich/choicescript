@@ -1,4 +1,5 @@
 *label chapter1
+[head]Chapter 1: Who Are You?[/head]
 You feel the sun slowly rising through the open window.
 The golden light is just enough to disturb your slumber.
 You find yourself looking into a piece of broken glass. You see…

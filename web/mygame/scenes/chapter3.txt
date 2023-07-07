@@ -1,0 +1,339 @@
+[head]Chapter 3: Druid Encounter[/head]
+The second spring after those tragic events surrounding a dear friend and a Jackaloid you’ve slowly begun to walk nearer and nearer to Frontierwood forest. 
+
+Your adventurous side could only be held down for so long, despite the…
+*fake_choice
+    # Fears that may linger (Courage--)
+        *comment TODO: Courage--
+    # Disapproval from those in your village (Stealth++)
+        *comment TODO: Stealth++
+    # Bitter memories you may have (Improvisation++)
+        *comment TODO: Improv++
+*page_break
+
+Besides, this isn’t even the same forest. The other difference now is that you refuse to drag anyone along with you; not again.
+
+Once upon a time, you hadn’t known better. Now, you’ll make better choices. You’re sure of it. From this moment onward, and for the rest of your life, you’ll make better choices.
+
+Walking alongside the rushing river, there happens to be a doe walking ahead of you, which you’ve been following… (split into 3 branches based on reasoning)
+*fake_choice
+    # To observe its behavior! The way each creature goes about its own routine in the forest is absolutely fascinating! (Cunning++)
+        *comment TODO: Cunning++
+    # To see how long it takes to notice you! You’ll test your speed if it starts running… (Agility++)
+        *comment TODO: Agility++
+    # Because you’re hungry… That doe could provide a couple days of good eating! (Brawn++)
+        *comment TODO: Brawn++
+*page_break
+
+As the doe comes to a fork in the road, it turns away from either path, wandering deeper into the forest. Today, you’re feeling particularly bold, so you continue following the doe in spite of past experiences. If anything seems out of place, you’ll know when to run.
+
+Once the doe has reached a spring, it begins to transform before your very eyes! Where there was a doe just a moment prior, now stands an elven woman clad in large leaves, characteristic of a druid!
+
+If you had to guess, you’d say she was a wood elf. You haven’t seen many wood elves; a lot of them live out deep in these forests. Druids are generally a peaceful kind. The opportunity to get a closer look presents itself.
+
+*fake_choice
+    # Speak to the druid (Speechcraft++)
+        You walk up to the druid, rather casually, barely containing your excitement. You ask her if she’s, like, a real druid; the kind that really protect the forest and sleep under the shade of the trees.
+        
+        She seems unamused, but answers all the questions swiftly. Simple “Yes” and “No” responses. Perhaps a little inappropriately, you wonder aloud…
+        
+        “Are you alright, miss?”
+        
+        And, that’s when it becomes clear. As much as druids don’t care for outsiders, this one is extra unhappy.
+        
+        “You may hear of our woes, young sapling, if only so that they may be heard…”
+    # Watch the druid (Stealth++)
+        You hide in a relatively benign-looking bush, and stare at the druid. This is a rare opportunity; has anyone from your village ever even seen a druid? Well, now you can say you have.
+        
+        She sits down and lays her head back against a tree, letting out a lengthy sigh, bordering on the territory of a groan. This is odd behavior, you think, for a free spirited druid to be exhibiting. They’re supposed to be happy, from what you’ve heard.
+        
+        You wonder what she could possibly be thinking about. Could something be wrong in the forest? The idea causes you to shiver. Maybe this wasn’t such a good idea after all…
+        
+        She seems to stay that way, staring up at the branches for a couple of minutes, before lowering her head back down and locking eyes with you.
+        
+        You freeze.
+        *page_break
+
+        “Your pursuit did not go unnoticed, young sapling.”
+        
+        You sheepishly waddle out of the bush. How silly could you have been? You aren’t a child anymore…
+        
+        “You want to know what ails me, don’t you?”
+        
+        You manage to meet the druid’s gaze; the emotions haven’t changed in the slightest. She just looks so dejected… You give a nervous nod.
+        
+        “Very well. You have an air of silence, and our feelings have reached an excess in our hearts. You may know what ails us, young sapling… if only to ease the pressure.”
+    # Leave and explore deeper into the forest (Courage++)
+        But, your instincts tell you otherwise. Better not to disturb these peaceful people of the forest with your villager ways. They avoid outsiders for a reason, you’d imagine.
+        
+        You wander in a perpendicular direction, deeper into the forest, and, oddly darker. If it gets too dark, you think, you’ll turn back. It’s still daylight, so you don’t take this as a sign of danger.
+        
+        The earthy notes of the forest slowly become stronger; quite the plague on your nostrils. That doesn’t strike you as an oddity, at first. You see movement in the pitch blackness up ahead; somehow, you manage to discount it as mere imagination.
+        
+        And then you see something whip toward you. It would’ve hit you, had you not felt a force pull you down from behind.
+        
+        You look up, heart still pumping, to see a liquid seeping from a tree that was near you; the deep slash mark in the bark looks burnt.
+        
+        Behind you is the druid from earlier, who had presumably pulled you back. Still holding onto your hand, she pulls you up.
+        
+        “Run!”
+        *page_break
+
+        And she follows her own directions. You’ve got enough sense left in you to follow them too.
+        
+        And so you both run. Fast. You’re rather out of breath by the time the two of you return to the spring where you’d initially split directions. The druid, more in charge of her stamina, isn’t panting nearly as hard as you are.
+        
+        Your lungs are burning, and your legs are sore. The druid keeps silent until you reclaim your faculties.
+        
+        “There’s a whole Mockguarden in that part of the forest, sapling… I was hoping you’d avoid it.”
+        *page_break
+
+        As you continue to catch your breath, you take that in. A Mockguarden? Here? Is that what attacked you?
+        
+        Perhaps your fellow village folk tell you all those stories for a reason; you take a moment to brood over your inability to take warnings, before apologizing to the druid.
+        
+        “No, perhaps it was our own fault for not telling anyone. Young sapling, if you’ll indulge, you shall hear of what ails us, and spread this knowledge to your kin…”
+        
+        You affirm that you’ll hear what she has to say.
+*page_break
+
+Presumably, as she walks off, you’re meant to follow. You’re already in this deep, so, you might as well follow, right?
+
+As you’re led deeper into the forest, the druid introduces herself as “Milva of the Frontier Woods”. You think to correct her; it’s Frontierwood! On second thought, though, the druids probably just have a different name for it.
+
+Milva takes you through a somewhat larger clearing in the depths of the forest, where you see plenty more druids, going about their day. Some tend to fruiting plants, others lay in the shade; it’s a rather calm and peaceful place.
+
+The two of you end up at a more remote part of the clearing where you see a rather gruesome sight: a dying druid. At least, you hoped it was dying; the slash across its chest was too deep for you to see any end to it, and much of the skin around the wound looked charred. You pity anyone who would have to live on with that wound…
+*page_break
+
+Of course, this druid was in the worst condition; it didn’t take you long to notice that a small handful of similarly, if a little less severely, injured druids were laying in this area on makeshift cots with jugs of water and clusters of herbs by their heads.
+
+The sight reminded you of something you’d only seen once before: this was an infirmary. A makeshift, druid infirmary, but an infirmary nonetheless. Sickening memories of lingering rot and herbal scents mixed with present ones; you covered your mouth and looked down at your feet.
+
+These casualties, Milva explained, had become more commonplace in recent times, and were not limited to the druids. Plenty of the forest creatures had been dropping like flies too.
+
+Why? You couldn’t understand it… Was every forest cursed? Were they all dangerous places where the peaceful and innocent went to die?
+
+Milva answered your panicked pleas.
+*page_break
+
+“I see you’re not unfamiliar to our plight… for that, young sapling, I apologize.”
+
+The sight had come as such an overwhelming one that you’d had trouble arriving at the conclusion that Milva finally gave you: A gigantic Mockguarden had taken root here, where it hadn’t been before.
+
+The naturally caustic species would spell a slow and painful death for any neighbors it found, and Frontierwood had become a new nesting ground for the sour shrooms.
+
+You found yourself particularly moved by the druids’ plight… Perhaps you seek some type of glory out of this… or perhaps you want to help out of sympathy… or perhaps you simply seek to make right with the forest after what happened with Reese those short years ago…
+
+You can’t be too sure, but one thing is certain! You’ll help these forest people. As you wrack your brain for answers, what comes to you is the following. 
+
+You'll
+*fake_choice
+    # Convince some mercenaries at a nearby tavern to help REMOVE: (Check!(Presence = 2 for 70%))
+        You make the somewhat inconsequential trek to a tavern near Frontierwood. The path leading through frontierwood is the only link between some smaller villages and the larger Davenport, so it’s a path naturally dotted with taverns and inns.
+        As you enter the not-so-fine establishment, you find yourself assaulted by an overwhelm of chatter, music, clinking of glasses, and other miscellaneous noises.
+        Fighting through your senses, you manage to spot a group of particularly well armored adults with swords, and shields, and all sorts of other dangerous looking things.
+        Now all you need to do is stand out.
+
+        *comment FIXME: not implemented (Presence = 2)
+        *if true
+            You waste no time getting their attention. You climb up onto their central table and loudly announce your presence, to the disdain of the few of them that were talking.
+            But who cares; there are more important things to be talking about.
+            
+            You project your voice, explaining in bold terms the plight faced by the forest druids. Sure, you have no money to pay them, but are they not people who do what they do for glory and for honor? Is that not what they stand for!
+            
+            You either gave a good speech, or they pitied you for how silly you looked; whatever the case, you seem to have gotten through to these mercenaries, and a good handful of the strong ones, who brought with them a good amount of the weaker ones, agreed to help the inhabitants of Frontierwood.
+            
+            You felt hopeful. The mercenaries went to Frontierwood to fulfill their end, and sent the runt of their group to drag you home.
+            
+            Stupid responsible adults…
+            *page_break
+            *goto CH3_Good_End
+        *else
+            You somewhat nervously approach one of the adults; they tower over you. You gulp and give a light tug on their sleeve. When they look down on you, your blood turns to ice.
+            
+            “Need something, kid?”
+            
+            Woah… Stone cold. You manage to squeeze out the words to explain what’s going on in Frontierwood. The mercenary ponders your request and accepts, bringing along a few of his allies.
+            
+            It isn’t the large group of mercenaries you were hoping to gather together, but it would surely be enough, right? They were just going to be mowing down a bunch of shrooms, right? Something didn’t sit well with you, despite this…
+            
+            As the small group of mercenaries headed for Frontierwood, you went home and tried to ignore your worries.
+            *page_break
+            *goto CH3_Bad_End
+    #Steal some poison from the town apothecary and handle things personally REMOVE: (Check!(Stealth = 2 AND Acrobatics = 2 for 70%))
+        You know of one place, and one place only, that will have what it takes to beat back this great evil. You’ll need to acquire some fungal poison, and if you’re going to acquire enough of it, you’ll need to be less-than-upstanding in your acquisition.
+
+        You make the rather lengthy trek back to your village and, navigating through the narrow areas between shops, slip into the apothecary’s shop through a back window. You time this just right; if someone’s in there, you’ll be caught immediately.
+
+        *comment FIXME: not implemented (Stealth = 2) and (Acrobatics = 2)
+        *if true
+            Yes! Your patience is rewarded with pure silence; looks like you made it in without tripping up the shopkeep's senses!
+            
+            Trying not to give into the adrenaline, you bob and weave your way through the shop, searching for a particular group of vials. Reds, yellows, greens… ah, yes! Purples!
+            
+            Purple is the color of poison, after all. Or at least, the large skull and crossbones acompanied by a mushroom on the vials lead you to believe so.
+            
+            The fungal poison is labeled for its exact purpose, and exactly for your convenience. You stuff as many into your pockets as you can, and then…
+            
+            Chime
+            *page_break
+            Uh oh. The shopkeep’s returned! You quickly make your escape out the back window from whence you came. You linger just long enough to hear the shopkeep let out a dirty word!
+            
+            You don’t look back, but you feel a sense of mischievous satisfaction as you slip into an adjacent street, no one the wiser..
+            
+            Once you’ve returned to the part of Frontierwood just before the druid spring, you begin climbing a tree. 
+            
+            The only things still making any sounds in the dark part of the forest are the birds and squirrels; if you wanted to keep being able to make sounds, you’d be following their example.
+            
+            The forestry, the deeper you go, is quite dense, and you could certainly hop from tree to tree without much risk to yourself.
+            *page_break
+
+            A squirrel tries to nibble at your pocket, clearly smelling food. You tear the squirrel off and set him away from you. He seems to learn his lesson.
+            
+            You pull out a sizable pouch of poisoned acorns and your slingshot. Does fungal poison even hurt squirrels? You wouldn’t know, but you’d rather not waste any of your ill-gotten-gains.
+            
+            So, hopping deeper and deeper into the forest, from tree to tree, you take aim.
+            
+            For the first time in your life, up to that point, you suddenly understand why adults enjoy the hunt. Little by little, you see some of the mycelium stalks start to shrivel and shrink into themselves.
+            *page_break
+            *goto CH3_Good_End
+        *else
+            Your excitement becomes your own undoing.
+            
+            The shopkeep, halfway through the door, whips their head around. You were caught in the act before it even began! You’d never even had a chance!
+            
+            You execute plan B, running past the shopkeep. You dash over the counter, knocking over some recipes. No matter. You grab for the blob of purple loosely defined in your immediate vision; that’s where the poisons are, you think.
+            
+            But you can’t think quickly enough; the shopkeep grabs you, and questions your mischievous behavior. They seem really mad, but…
+            
+            Once you’ve explained yourself, the shopkeep sighs, and takes pity on you. You get a couple vials of fungal poison for your troubles.
+            
+            “They were barely selling anyway…”
+            *page_break
+            
+            You get out of his sight.
+            
+            Once you’ve returned to the part of Frontierwood just before the druid’s spring, you struggle to climb a tree. You’re tired from all the walking you’ve done today, not to mention the running from earlier.. 
+            
+            The only things still making any sounds in the dark part of the forest are the birds and squirrels; if you wanted to keep being able to make sounds, you’d be following their example.
+            
+            The forestry, the deeper you go, is quite dense. That should hopefully be enough for you to be able to hop from tree to tree.
+            *page_break
+
+            A squirrel tries to nibble at your pocket, clearly smelling food. You tear the squirrel off and set him away from you. Unfortunately, you lose some acorns in the process. Dang!
+            
+            You pull out a small pouch of poisoned acorns and your slingshot. It’s not much, but it’ll have to do…
+            
+            You’re sure you took down a couple. You’d remember better if you hadn’t fallen off one of the branches and hit your head on the way down.
+            
+            Milva had to rescue you from becoming shroom-food.
+            *page_break
+            *goto CH3_Bad_End
+    # Consult the town priest REMOVE: (Check!(Cunning = 2 for 70%))
+        You know of only one true authority on banishing such evils… he did all he could for you two years ago, and you’re sure he’ll do what he can for you now too.
+        
+        You make the rather lengthy trek back to your village and, navigating through the winding paths and random passerby, you approach the door of one of the more ornate homes in your village. And then you knock.
+        
+        You’re met with the tall priest from two years ago. Has he gotten shorter, or have you gotten taller?
+        
+        He frowns when he sees you; he’s always done this, ever since what happened. Maybe he blames you, or maybe he pities you. Who’s to say but the man himself? Not that you’d ever ask…
+        *page_break
+        
+        Before he has the chance to speak, you begin to explain that there’s trouble brewing in Frontierwood.
+        
+        “Child… Slow down. Calm yourself. Can you tell me exactly what it is that you saw in Frontierwood?”
+
+        *comment FIXME: not implemented (Cunning = 2)
+        *if true
+            You explain exactly what you saw. A dark and quiet part of the forest. Druids with blackened, wet wounds on their bodies. What Milva called the “Mockguarden.”
+            
+            “A Mockguarden? In Frontierwood?”
+            
+            You affirm that there is indeed a Mockguarden growing in Frontierwood. The priest looks particularly troubled by this news.
+            *page_break
+
+            “They’ve spread to Frontierwood? That’s certainly not good… This close to the village they could pose serious harm.”
+            
+            You ask what he’s so worried about. He explains that, apart from the destruction they bring wherever they go, they seldom stop spreading without being knocked back. If they aren’t knocked back at Frontierwood, they’ll spread out of Frontierwood, and be troublesome for Sigel-knows-how-many villages… Maybe even this one!
+            
+            The priest senses your panic, and speaks calming words.
+            *page_break
+
+            “I’ll handle it, child. You were right to come to me. You just go home and relax…”
+            
+            You nod hesitantly, thank the priest, and go home. It looks like things will be okay…
+            *page_break
+            *goto CH3_Good_End
+        *else
+            You try to recall what you can. A dark and quiet part of the forest by the spring. Druids with slash wounds. Milva spoke of some kind of creature whose name starts with an M…
+            
+            “A Mogfish? In Frontierwood?”
+            
+            Yes! That was definitely it!
+            *page_break
+
+            The priest gives you a confused and concerned look. He explains that a Mogfish shouldn’t be causing such widespread disaster in a forest like Frontierwood; they’re not difficult to avoid, after all, even if they’re dangerous.
+            
+            Nonetheless, the priest agrees to bring some supplies and take a look. The Mogfish are only present in a particular part of the forest; he’ll lay some strong herbs and say a few prayers to stop them from leaving their territory, but that’s really all he’ll be able to do.
+            
+            You thank him, nonetheless. You’re glad to have his aid.
+            *page_break
+            *goto CH3_Bad_End
+
+*comment Good Ending -----------------------------------------------------------
+*label CH3_Good_End
+A few days pass. You’re confident that the Mockguarden’s been knocked back from Frontierwood, but you just can’t help but wonder… So you make the walk back to that little spring, and the clearing, and…
+
+Everyone’s still there. That’s definitely a relief. 
+
+Everyone seems a little put off by the presence of an outsider unaccompanied, but you push past it. You ask around until you’re able to find Milva. You tell her what you did, and you ask her if the Mockguarden has cleared up.
+
+Milva gives you a smile; the first one you’ve seen her give.
+
+“Thank you, young sapling. We have our traditions, but perhaps there are times when we ought to seek the help of outsiders…”
+
+She confirms what you were hoping for; your plan worked. You’re glad. You’re so very glad. It feels like a weight has been lifted off your shoulders.
+
+You’ve grown. You can handle the dangers of the forest now in ways that you wouldn’t have ever thought to try all those seasons ago…
+
+You take this realization not to fuel any hubris, but to fuel a growing child’s much-needed sense of self-confidence. 
+
+You’ve proven yourself an ally to the druid enclave of the Frontier, and are welcome here any time for the foreseeable future.
+*finish
+
+*comment Bad Ending ------------------------------------------------------------
+*label CH3_Bad_End
+A few days pass. You’re really worried about the druids in Frontierwood, and you’re unable to stop thinking about it, until finally… You make the long and anxious walk back to that little spring, and the clearing, and…
+
+It doesn’t feel nearly as dense or lively as it was. You feel a strong sense of unease. 
+
+No one gives you any attention. You keep trying to find Milva, and it takes you a while. She seems to be brooding, while loading some supplies into a makeshift container  Desperately, you walk up to her. You tell her what you did. You ask her if the Mockguarden has cleared up. You really want her to say yes.
+
+Milva gives you a frown; a strong frown.
+
+“Young sapling… We applaud your efforts, really, we do, but there really wasn’t a lot you could do… You bought us a little more time, and for that we’re thankful, but this side of the forest no longer welcomes us; we will hopefully be able to make a home on the other side...”
+
+Your heart sinks. It’s true, then; forests are cursed! There’s no fighting the dark forces that seek to metabolize these woodlands from the inside…
+
+Milva gives you a look of pity. She doesn’t seem particularly cross with you. Maybe she’s as accepting of the natural condition as you’re feeling right about now?
+
+“This isn’t your first time, is it?” 
+
+You give her a curious look. 
+
+“It won’t be your last, either. I can see it in you… An adventurous spirit.” 
+
+Then, unexpectedly, Milva embraces you. You’re not wholly sure what to make of this… 
+
+“Hear this, young sapling… Your actions bought us a couple of extra days. At expense only to yourself, you sought to help us, and you made as significant of a difference as you could. You’ve done more in just that day than some people do in their lives.” 
+
+You try to get out the words. You try to tell her that it just doesn’t count if you fail. But, with your face pressed up against her abdomen, you’re bound to silence. 
+
+“From this day on, absolve yourself of your past. Today, you start anew with the forest, as it does with you. The tree of life forgives those who seek to water its leaves.” 
+
+You don’t understand her druid expression, but, on that day, what she said to you finally resonated. You did what you could; you’re getting too old to keep reliving every possibility… You’ve gotta grow up.
+
+In your heart of hearts, you apologize to Reese for the last time.
+
+*finish

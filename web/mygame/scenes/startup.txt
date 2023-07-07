@@ -5,6 +5,7 @@
 *scene_list
 	chapter1
 	chapter2
+	chapter3
 	chapter4
 	demo
 
@@ -40,9 +41,9 @@ What chapter?
 		*goto_scene chapter1
 	#chapter 2
 		*goto_scene chapter2
+	#chapter 3
+		*goto_scene chapter3
 	#chapter 4
 		*goto_scene chapter4
 	#REMOVE: Demo (Go here for dynamic codex monster entries demo)
 		*goto_scene demo
-
-*page_break

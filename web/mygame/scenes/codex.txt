@@ -16,7 +16,6 @@ REMOVE: Monster is the only section to have data…
         *goto Places
     # Species
         *goto Species
-*page_break
 
 *comment -------------------------- Characters Choice --------------------------
 *label Characters
@@ -50,7 +49,7 @@ TODO:!!!
 
 *if isDirewolfDiscovered
     [head]Direwolf[/head]
-    *image #
+    *image images/Jakaloids.webp
     The Direwolf, a creature of awe-inspiring stature and intelligence, reigns as a formidable presence within the realms it calls home. Far surpassing the mere size of their smaller kin, these majestic beings exhibit a level of intelligence that sets them apart from regular wolves. Scholars and druids alike attest to their heightened cognitive abilities, recognizing them as remarkable beings in the animal kingdom.
     
     The Direwolf's imposing physique and strength make it a force to be reckoned with. Legends recount tales of these colossal creatures engaging in solitary hunts, where they display their formidable prowess by taking down powerful adversaries such as warhorses. Come morning, all that remains are the mere skeletal remnants of their prey.
@@ -66,7 +65,7 @@ TODO:!!!
 
 *if isIchorSwogDiscovered
     [head]Ichor-Swog[/head]
-    *image #
+    *image images/Jakaloids.webp
     The Ichor-Swag, an abominable creature spawned from the depths of corruption, is a testament to the dark forces that pervade the natural world. Emerging from the festering wounds of blighted trees, these cursed beings embody the malevolence that feasts upon the vitality of their surroundings. Although individually feeble, they compensate for their weakness through sheer numbers, swarming together to unleash havoc should the blight go unchecked. Measuring no larger than the heel of a boot, the Ichor-Swag possesses a repulsive appearance.Their grotesque forms are an amalgamation of oozing sap, corrupted flesh, and a sickly aura that resonates with necrotic energy. Their bites transmit a blighted sickness, spreading further devastation within their victims. It is vital to employ fire and holy water when confronting these creatures, as the cleansing power of these elements proves most effective against the darkness that empowers them.
     
     Bright lights, such as flames or holy energy, strike fear into the hearts of Ichor-Swags. This aversion to luminosity can be harnessed to advantage by utilizing fire or holy energy to flush them out from the epicenter of rot, typically a diseased tree, and expose them to the purifying light of day. By doing so, their extermination becomes more manageable, and the threat they pose can be mitigated, allowing the process of healing to begin for the blighted landscape.
@@ -106,7 +105,7 @@ TODO:!!!
     
 *if isMogfishDiscovered
     [head]Mogfish[/head]
-    *image #
+    *image images/Jakaloids.webp
     Mogfish are dangerous creatures that live in very muddy areas and are big enough to eat an elf. They have dorsal fins along their back and the some of the species have been seen with a long tether on their head that has a glowing orb at the end of it.This orb can mimic the light of torches, making people think there is a person deep in the forest or there is a town in that direction. However, there have been sightings of mogfish without this tether. It is theorized that these are the males.
 
     (finds book)

@@ -1,7 +1,5 @@
 *comment Start of Chapter 2 ----------------------------------------------------
-The Encounter
-*page_break
-
+[head]Chapter 2: The Encounter[/head]
 The sun was high in the sky, the dappling of clouds providing cool shade as you walk along the fields. A warm breeze ruffles your loose shirt, the sweat on the back of your neck drying slowly. A few yards ahead of you, your friend (NAME) is batting the tall grass with a thin branch they found on their way from their house to yours. They poked and teased you with it until you chased them out of your yard. The chase continued through town until you both began to tire. As it turns out, this was their plan all along. 
 
 “I’ve got nothing to do today, and you haven’t either. Let’s go play in the forest! We can gather flowers on the way!” they exclaimed. 
@@ -168,7 +166,7 @@ You don’t want them to die.
         The request comes too late. (NAME) is gone in a matter of days. Your last promise to them was broken.
         
         The priest kept saying there was no hope. Later the guards, the healer, your parents and even (NAME)'s parents will all say there was nothing you could do. That you made the best choice you could have at that moment. 
-         Their words won’t matter to you. All you know is loss and the stinging guilt that you hadn’t done enough. And now, you’ve lost your dearest friend.
+        Their words won’t matter to you. All you know is loss and the stinging guilt that you hadn’t done enough. And now, you’ve lost your dearest friend.
         *finish
 
     #You don't believe him
