@@ -1,7 +1,7 @@
 *comment either express or implied.
 
-*title FINFUATS
-*author The FINFUATS Team
+*title Tales From Teren: The Approaching Rot
+*author Team Teren
 *scene_list
 	chapter1
 	chapter2
