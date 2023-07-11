@@ -6,6 +6,8 @@ start of the demo
 *set isJackaloidDiscovered   true
 *set isMockguardenDiscovered true
 *set isMogfishDiscovered     true
+*set isWOWDiscovered         true
+
 
 Discovered Direwolf!!!
 *line_break
@@ -17,6 +19,7 @@ Discovered Mockguarden!!!
 *line_break
 Discovered Mogfish!!!
 *line_break
+Discovered Will-O-Wisps!!!
 
 *fake_choice
 	#Choice 1

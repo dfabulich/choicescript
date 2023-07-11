@@ -1,6 +1,5 @@
 *label CodexStart
 [head]Codex[/head]
-REMOVE: Monster is the only section to have data…
 *fake_choice
     # Characters
         *goto Characters
@@ -19,32 +18,94 @@ REMOVE: Monster is the only section to have data…
 
 *comment -------------------------- Characters Choice --------------------------
 *label Characters
+[head]Cel Storm[/head]
+Cel Storm is a priestess of the Flames of Sigel. She joined the order at a young age when Dustin saved her from icgor-swogs. The rotted creatures overwhelmed her old town. She was one of the few survivors when the Flames of Sigil showed up. Cel managed to hide herself in an old storage shed and used the holy water her parents gave her to protect herself. Dustin was the one who found her and took her to the order’s temple.
+
+As she grew up in the temple, Dustin became a father figure for her. She looked up to him and wanted to make him proud. To do this she studied hard to become a priestess and to follow in his footsteps. The month before her big test Dustin went on a rot patrol, promising to be back on time. He wasn’t there for her test. Nor did he come back for her ceremony. A week later another priestess gave Cel a letter. It was muddy and it had tears in it.
+
+Dustin was killed in a direwolf attack. The direwolves were forced out of their territory because of the incoming rot. The letter was written right before he went into town and he never got the chance to send it. 
+
+[head]Dustin[/head]
+Dustin was the priest that took Cel Storm to the Flames of Sigel’s temple. He is the one who took care of her during her childhood after her town was taken over by ichor-swogs.
+
+He was known for taking in strays even before his wife died. She always talked about how the order should protect and help the people who have lost their homes to the rot. Not many of the strays made it far in the order, and some would leave after getting back on their feet. This didn’t sway her. She was always a kind person and Dustin loved that about her. After she died Dustin continued to help people to honor her memory. 
+
+When he brought Cel in, he treated her like his own. The priest thinks she reminded him of his wife. He helped her get accommodated to the temple and got her a private tutor to help her along. Cel grew to look up to him and did her best to make him proud. In return, Dustin tried to be the kind of role model she needed. 
+
+Dustin died to a direwolf attack when he was patrolling the towns along the rot border. The direwolves got pushed out of their territory by the rot and attacked a nearby town. From what Cel said, he was protecting a family when the direwolves got him.
+
+[head]Glador[/head]
 TODO:!!!
+
+[head]Murderer[/head]
+TODO:!!!
+
+[head]Lord Odel[/head]
+TODO:!!!
+
+[head]Reese[/head]
+TODO:!!!
+
+[head]Rip Daring[/head]
+Rip Daring, known as "The Fearless Blade," is a renowned mercenary and key member of The Wolves of Davenport, a legendary band of mercenaries. Standing at six feet tall with a muscular build, Rip's rugged countenance and piercing green eyes reflect his unwavering determination and prowess on the battlefield.
+
+Skilled in various combat techniques, Rip is a master of swordsmanship and hand-to-hand combat. His agility, speed, and acrobatic prowess make him a lethal opponent, while his custom-crafted dual-bladed longsword, "Shadowfang," grants him versatility and power. Rip's leadership qualities and loyalty to his comrades have been forged through past experiences and the mentorship of the fallen leader, Alistair Blackthorn.
+
+With a dry sense of humor and keen intellect, Rip navigates challenges with wit and resolve. His unwavering commitment to protecting the realm and upholding the ideals of honor and integrity makes him an invaluable asset to The Wolves of Davenport. Rip Daring's legacy as a fearless warrior who led the Wolves and defended Teren from darkness is forever etched in the annals of history.
+
+[head]Sigel[/head]
+TODO:!!!
+
+[head]Skadon[/head]
+Skadon, known as "The Father of Oblivion," emerged from the primordial void, a sentient force embodying darkness and the void itself. As the clash between Skadon and Sigel, the sun god, raged, the chaotic magic within creation stirred. Tera, the goddess of beauty, fertility, and "Mother Earth," manifested as the physical world of Teren. In another realm, Galdor, the embodiment of magic's will, brought order to the once chaotic forces.
+
+Recognizing the fragility of life on Teren, Tera sought Sigel's protection, showing him the burgeoning life on the planet's surface. Impressed by mankind's potential, Sigel proposed a union with Tera to safeguard Teren from Skadon's encroaching darkness. The cosmic balance began to stabilize, with Galdor controlling magic, while Skadon and Sigel's clash birthed other celestial beings and deities.
+
+Skadon, as the God of Darkness and The Void, represents the ever-present threat of oblivion. His eternal conflict with Sigel shapes the world of Teren, while Tera nurtures life and Galdor tames the forces of magic. Within this delicate equilibrium, Lune, the goddess of the moon, and other deities emerged. The struggle between light and darkness remains an enduring theme, influencing the destiny of Teren and its inhabitants throughout time.
+
+[head]Teren[/head]
+TODO:!!!
+
 *page_break
 *goto CodexStart
 
 *comment --------------------------- Factions Choice ---------------------------
 *label Factions
+[head]Flames of Sigel[/head]
 TODO:!!!
+
+[head]Wolves of Davenport[/head]
+TODO:!!!
+
 *page_break
 *goto CodexStart
 
 *comment ---------------------------- Items Choice -----------------------------
 *label Items
+[head]Flames of Sigel Amulet[/head]
 TODO:!!!
+
+[head]Bloody Knife[/head]
+TODO:!!!
+
 *page_break
 *goto CodexStart
 
 *comment ---------------------------- Magic Choice -----------------------------
 *label Magic
+[head]Divine Magic[/head]
 TODO:!!!
+
+[head]Arcane Magic[/head]
+TODO:!!!
+
 *page_break
 *goto CodexStart
 
 *comment --------------------------- Monsters Choice ---------------------------
 *label Monsters
 *comment Monsters not discovered
-*if (((((isDirewolfDiscovered = false) and (isIchorSwogDiscovered = false)) and (isJackaloidDiscovered = false)) and (isMockguardenDiscovered = false)) and (isMogfishDiscovered = false))
+*if ((((((isDirewolfDiscovered = false) and (isIchorSwogDiscovered = false)) and (isJackaloidDiscovered = false)) and (isMockguardenDiscovered = false)) and (isMogfishDiscovered = false)) and (isWOWDiscovered = false))
     [head]You have not discovered any monsters yet…[/head]
 
 *if isDirewolfDiscovered
@@ -89,7 +150,7 @@ TODO:!!!
 *comment Mycelium
 *if isMockguardenDiscovered
     [head]Mockguarden[/head]
-    *image images/mycelium.png 
+    *image images/Mockgarden_Closeup.webp
     The Mockguarden, a perilous and cunning predator, is a formidable form of predatory plant that lurks within the depths of untamed forests. With its ability to adapt and camouflage, it poses a significant threat to unsuspecting creatures that venture too close. While its visible parts may change and blend with the surroundings, it is the subterranean mycelium network that truly defines this enigmatic entity.
     
     Beneath the earth's surface lies a vast mycelium network, a sprawling and semi-sentient entity that forms the core of the Mockguarden. This underground network, often circular and measuring between 10 to 20 feet in diameter, serves as the life force and intelligence of this peculiar organism. From this hidden realm, the Mockguarden orchestrates its sinister tactics.
@@ -105,7 +166,7 @@ TODO:!!!
     
 *if isMogfishDiscovered
     [head]Mogfish[/head]
-    *image images/Jakaloids.webp
+    *image images/Mogfish.webp
     Mogfish are dangerous creatures that live in very muddy areas and are big enough to eat an elf. They have dorsal fins along their back and the some of the species have been seen with a long tether on their head that has a glowing orb at the end of it.This orb can mimic the light of torches, making people think there is a person deep in the forest or there is a town in that direction. However, there have been sightings of mogfish without this tether. It is theorized that these are the males.
 
     (finds book)
@@ -113,18 +174,72 @@ TODO:!!!
     The Mogfish with orbs will stay in the mud with the orb above ground. They wait for an unsuspecting victim to walk over them, then they will open their huge maw to ensnare the unsuspecting victim and suck them in. The rest have to find other ways to get food. These ones will team up with will-o-wisps to mimic the light the other mogfish have. 
 
     If you manage to get away, they will climb out of the mud and chase you down. They move really slow, but they can jump far distances. The best way to out run them is to keep something tall between you and it. They will have to get around the object as they can not jump high enough to get over most trees. If you manage to kill one, the orb can be used to create a magical ointment to make whatever it is applied to have a temporary glow.
+
+*if isWOWDiscovered
+    [head]Will-O-Wisps[/head]
+    *image images/Mogfish.webp
+    Will-o-wisps are glowing orbs, usually seen floating above the ground in swamps. Their glow  can mimic a torch light, so many people mistake it as a person or a nearby town. They are mischievous little creatures and will lead their victims into trouble. Off cliffs, into tunnels, it is even said that they help the mogfish get food. When they are almost caught or have gotten their victim where they wanted them, they will stop glowing. They will turn basically invisible and watch what happens to their victims. It is rumored that they feed off of the misery of their victims.
+
+    It is unknown where they came from There have been many theories over the years, but no one knows for sure. Some believe that they hover over treasure to protect it, others think they are children who have gotten lost in the forest. Some think it’s the ghosts of the people taken by the rot. None of these theories have been proven and no one who went to discover the real reason ever came back. 
+    
+    There have been rumored sightings of wisps right before the rot invades the town. As of yet, there has been no confirmed relationship between the two. 
+
 *page_break
 *goto CodexStart
 
 *comment ---------------------------- Places Choice ----------------------------
 *label Places
+[head]Davenport[/head]
+Davenport, a city that stands as a testament to the ingenuity and resilience of humanity, is a sprawling metropolis nestled within the embrace of the Broken Fields. With its roots reaching back through the annals of history, this cosmopolitan hub has become a beacon of civilization amid the untamed wilderness of the world. Its strategic position, nestled against the flowing river that gracefully winds its way to the vast seas beyond, has transformed Davenport into a thriving center of trade and cultural exchange.
+
+At the heart of the city lies the bustling marketplace, a vibrant tapestry of color, sound, and aromatic delights. Merchants from far and wide gather here, showcasing their exotic goods and rare treasures. Intricately carved carts and stalls brim with vibrant fabrics, tantalizing spices, gleaming jewelry, and mystical artifacts. It is within this kaleidoscope of commerce that the true spirit of Davenport comes alive, as voices from countless lands intermingle, creating a symphony of diverse cultures and languages.
+
+One of the defining features of Davenport is its renowned port, a gateway to distant horizons and uncharted waters. Located on the city's outskirts, this bustling harbor welcomes a constant influx of ships, their sails billowing with the winds of adventure. Here, seafarers and traders from across the known world dock their vessels, unloading cargoes laden with treasures and stories from far-off lands. The port of Davenport has gained a reputation for being a reliable and efficient hub, catering to both merchants seeking to expand their horizons and adventurers yearning for the next great journey.
+
+The city itself is a captivating mosaic of contrasting districts. From the opulence of Goldenspire, where the wealthy elite reside in luxurious splendor, to the humble neighborhoods of the working class, such as Hearthstead and Forgehold, where the heartbeat of Davenport's industries resounds, the city offers experiences for every stratum of society. Beyond the grandeur and the hardship, there is a sense of unity that binds the diverse populace together, as they navigate the intricacies of urban life and embrace the vibrancy that makes Davenport truly unique.
+
+As twilight descends upon the city, the glow of countless lanterns casts an ethereal light upon the winding streets and canals, illuminating the charm and allure that permeate every corner. Davenport, the City of Splendors, thrives not only on its wealth and prosperity but also on the dreams, aspirations, and stories of its inhabitants. It is a place where adventurers find respite, where craftsmen hone their skills, where scholars uncover ancient wisdom, and where the indomitable spirit of humanity continues to flourish in the face of ever-present challenges.
+
+To visit Davenport is to immerse oneself in a vibrant tapestry of life, to witness the ebb and flow of ambition and inspiration that weaves the very fabric of this remarkable city. Whether you seek treasures, knowledge, or a chance encounter that may shape the course of your journey, Davenport awaits, ready to unveil its secrets and welcome you into its embrace.
+
+[head]Lindow[/head]
+TODO:!!!
+
+[head]Krigania[/head]
+TODO:!!!
+
+[head]Teville[/head]
+The capital city Teville is located by the Ironmount mountains on the west side of the country Teville. The capital is broken up into ten different districts. Each district is split up depending on the wealth of the people living in it. With four slums and a castle amongst the city, there is something for everyone.
+
+Starting from the top is the castle. In the castle lives the Queen of the country. They are the ones running and taking care of their county. Not very many have seen the inside, but it is said there is a huge strategy room they use to keep an eye on the rot. Next is Lowrock. This is where most of the middle-class live and where The Beggar’s Tavern is located. Most other shops and taverns can also be found in this district. 
+
+The Old District is where you can find the largest temple in the city. It is said to be the very first temple and the foundation of Teville. Right next to it is the docks. This is where the largest melting pot can be seen within the city and where most outside trades happen. Then there is Noblicar’s Road. The district that produces anything from the weapons and the wagons people travel with.
+
+Hearthgate is named after the wife of the King who died during childbirth. Her daughter, Dianica, became the first ruling Queen in the nation and a great ruler. In the local park you can find statues of great war heroes who made sacrifices for their country. Among them you can find Dianica’s mother Heather. Pelor’s Performance Centre can also be found here. Formally known as The Bone Bleachers, here you can watch yearly battles as knights are pitted against each other. With ample healers and healing potions, this event is one of the safer ones in the country as well as the most popular.
+
+The Six Lodges is the nicest of the outside slums. Although it only has six lodges, it is the second biggest slum in the city of Teville. The biggest goes to the Goldensprawl. While the Goldensprawl isn’t the best slum, it isn’t the worst. It got its name from how the sun hits the buildings in the morning, making it look like it's showered in gold. There is also a rumor going around that the true birthplace of Teville is hidden somewhere in here.
+
+Next is Woolrock, the second nicest slum. Here you will find a lot more elves, dwarves, and gnomes roaming the streets. With many shrines dedicated to their gods and some of the nicer buildings in the area, this isn’t the worst place to visit. The worst place is Ratbowl. Ratbowl has the highest crime rate and the worst people. Not a place you would want to visit on your next trip to Teville.
+
+[head]Starting Town[/head]
 TODO:!!!
 *page_break
 *goto CodexStart
 
 *comment --------------------------- Species Choice ----------------------------
 *label Species
+[head]Dwarves[/head]
 TODO:!!!
+
+[head]Elves[/head]
+TODO:!!!
+
+[head]Gnomes[/head]
+TODO:!!!
+
+[head]Humans[/head]
+TODO:!!!
+
 *page_break
 *goto CodexStart
 

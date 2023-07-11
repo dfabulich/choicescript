@@ -29,6 +29,8 @@
 *create isJackaloidDiscovered   false
 *create isMockguardenDiscovered false
 *create isMogfishDiscovered     false
+*create isWOWDiscovered         false
+
 
 *comment -----------------------------------------------------------------------
 
