@@ -1,0 +1,81 @@
+
+*temp Strength 25
+*temp Dexterity 50
+*temp tempCunning 40
+
+*temp Success 0
+*temp Failure 0
+*temp Chance 0
+
+COMBAT OPENING LINE
+*label fighting
+*choice
+    #This is Strength based
+        *rand Chance 1 100
+        *set Chance + Strength
+        *if Chance >= 95      
+            Success!
+            INSERT STRENGTH BASED DESCRIPTION HERE
+            *set Success +1
+            *if Success >= 3
+                *line_break
+                *line_break
+                STRENGTH VICTORY TEXT
+                *finish
+            *elseif Success < 3
+                *gosub fighting
+        *else
+            Failure!
+            INSERT STRENGTH BASED DESCRIPTION HERE
+            *set Failure +1
+            *if Failure >= 3
+                *goto_scene death
+            *else
+                *gosub fighting
+    #This is Dexterity based
+        *rand Chance 1 100
+        *set Chance + Dexterity
+        *if Chance >= 60      
+            Success!
+            INSERT DEXTERITY BASED DESCRIPTION HERE
+            *set Success +1
+            *if Success >= 3
+                *line_break
+                *line_break
+                DEXTERITY VICTORY TEXT
+                *finish
+            *elseif Success < 3
+                *gosub fighting
+        *else
+            Failure!
+            INSERT DEXTERITY BASED DESCRIPTION HERE
+            *set Failure +1
+            *if Failure >= 3
+                *goto_scene death
+            *else
+                *gosub fighting
+    #This is Cunning based
+        *rand Chance 1 100
+        *set Chance + tempCunning
+        *if Chance >= 95      
+            Success!
+            INSERT CUNNING BASED DESCRIPTION HERE
+            *set Success +1
+            *if Success >= 3
+                *line_break
+                *line_break
+               CUNNING VICTORY TEXT
+                *finish
+            *elseif Success < 3
+                *gosub fighting
+        *else
+            Failure!
+            INSERT CUNNING BASED DESCRIPTION HERE
+            *set Failure +1
+            *if Failure >= 3
+                *goto_scene death
+            *else
+                *gosub fighting
+         
+
+*finish

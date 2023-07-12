@@ -1,6 +1,27 @@
 *label CodexStart
 [head]Codex[/head]
 *fake_choice
+    # Unlock all dynamic entries
+        [head]Monsters[/head]
+        *set isDirewolfDiscovered    true
+        Discovered Direwolf!!!
+        *line_break
+        *set isIchorSwogDiscovered   true
+        Discovered IchorSwog!!!
+        *line_break
+        *set isJackaloidDiscovered   true
+        Discovered Jackaloid!!!
+        *line_break
+        *set isMockguardenDiscovered true
+        Discovered Mockguarden!!!
+        *line_break
+        *set isMogfishDiscovered     true
+        Discovered Mogfish!!!
+        *line_break
+        *set isWOWDiscovered         true
+        Discovered Will-O-Wisps!!!
+        *page_break
+        *goto CodexStart
     # Characters
         *goto Characters
     # Factions
@@ -126,7 +147,7 @@ TODO:!!!
 
 *if isIchorSwogDiscovered
     [head]Ichor-Swog[/head]
-    *image images/Jakaloids.webp
+    *image images/Ichor-Swog.webp
     The Ichor-Swag, an abominable creature spawned from the depths of corruption, is a testament to the dark forces that pervade the natural world. Emerging from the festering wounds of blighted trees, these cursed beings embody the malevolence that feasts upon the vitality of their surroundings. Although individually feeble, they compensate for their weakness through sheer numbers, swarming together to unleash havoc should the blight go unchecked. Measuring no larger than the heel of a boot, the Ichor-Swag possesses a repulsive appearance.Their grotesque forms are an amalgamation of oozing sap, corrupted flesh, and a sickly aura that resonates with necrotic energy. Their bites transmit a blighted sickness, spreading further devastation within their victims. It is vital to employ fire and holy water when confronting these creatures, as the cleansing power of these elements proves most effective against the darkness that empowers them.
     
     Bright lights, such as flames or holy energy, strike fear into the hearts of Ichor-Swags. This aversion to luminosity can be harnessed to advantage by utilizing fire or holy energy to flush them out from the epicenter of rot, typically a diseased tree, and expose them to the purifying light of day. By doing so, their extermination becomes more manageable, and the threat they pose can be mitigated, allowing the process of healing to begin for the blighted landscape.

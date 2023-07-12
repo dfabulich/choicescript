@@ -7,7 +7,7 @@
 	chapter2
 	chapter3
 	chapter4
-	demo
+	combat_test
 
 *comment ------------------------------ GLOBALS --------------------------------
 *comment ///////// Generic Globals /////////
@@ -17,9 +17,15 @@
 *create item "None"
 *create bought "None"
 *create coin 0
+
+*comment ///////// Attribute Globals /////////
 *create Brawn 6
 *create Agility 4
 *create Cunning 2
+
+*create Divine 0
+*create Arcane 0
+
 
 *comment ///////// Codex Globals /////////
 
@@ -34,8 +40,7 @@
 
 *comment -----------------------------------------------------------------------
 
-
-WIP build for [define:the] [define:UAT] production studio milestone review
+WIP build for the UAT production studio milestone review
 
 What chapter?
 *choice
@@ -47,5 +52,5 @@ What chapter?
 		*goto_scene chapter3
 	#chapter 4
 		*goto_scene chapter4
-	#REMOVE: Demo (Go here for dynamic codex monster entries demo)
-		*goto_scene demo
+	#REMOVE: Combat Test
+		*goto_scene combat_test
