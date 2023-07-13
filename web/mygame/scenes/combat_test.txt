@@ -15,32 +15,32 @@
 *temp description_text
 *temp victory_text
 
-COMBAT OPENING LINE
+An Ogre stands in the road, you know he won't let you pass without a fight.
 *label start_of_fight
 *fake_choice
-    # Strength check route
+    # Charge him shield raised in effort to knock him down.
         *set attrib Strength
         *set chance_floor 95
         *gosub chance_checker
 
-        *set description_text "testing strength"
-        *set victory_text "You won on the strength test"
+        *set description_text "You run headlong into the fray, your shoulder readied for impact."
+        *set victory_text "Against all odds, you manage to knock the massive hunk of fat and muscle off balance. You climb onto the shoulders of the ogre and plunge your sword through his eye and into his easily missable brain."
         *gosub succeed_checker
-    # Dexterity check route
+    # Attempt to scurry under his legs cutting at them and bringing him down to size.
         *set attrib Dexterity
         *set chance_floor 60
         *gosub chance_checker
 
-        *set description_text "testing Dexterity"
-        *set victory_text "You won on the Dexterity test"
+        *set description_text "You rush forward ducking under a wide swing and slashing at the meaty calves of the ogre. It's hard to tell though, just how much damage it has done."
+        *set victory_text "The methodical cuts slowly add up, and he falls to one knee. You raise your sword up through the chin of the ogre as it gurgles a final breathy sigh."
         *gosub succeed_checker
-    # Cunning check route
+    # Look for something in your environment to use to your advantage.
         *set attrib tempCunning
         *set chance_floor 95
         *gosub chance_checker
 
-        *set description_text "testing Cunning"
-        *set victory_text "You won on the Cunning test"
+        *set description_text "You see some beehives in the branches of surrounding trees. You grab a sizeable rock and hurl it at one, hoping to dislodge it or at least anger the bees in hopes they will blame the ogre."
+        *set victory_text "The rock cracks against the upper section of the beehive, snapping its supports holding it to the branch. It dangles for a second before falling directly onto the shoulder of the ogre. As he panics and swings wildly you dart forward, cutting into his gut and emptying his intestines onto the forest floor."
         *gosub succeed_checker
 
 
@@ -98,13 +98,13 @@ COMBAT OPENING LINE
 *comment Subroutine for winning the encounter
 *label win_encounter
 *line_break
-WIN!!!
+You walk along down your original path, leaving the soon-to-be-rotting corpse of the ogre laying splayed out across the road.
 *page_break
 *finish
 
 *comment Subroutine for failing the encounter
 *label fail_encounter
 *line_break
-FAIL!!!
+The Ogre steps in front of you moving much faster than you expected. You barely have time to register the treetrunk club before it collides with your skull.
 *page_break
 *finish
