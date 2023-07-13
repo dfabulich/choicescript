@@ -7,75 +7,104 @@
 *temp Failure 0
 *temp Chance 0
 
-COMBAT OPENING LINE
-*label fighting
-*choice
-    #This is Strength based
-        *rand Chance 1 100
-        *set Chance + Strength
-        *if Chance >= 95      
-            Success!
-            INSERT STRENGTH BASED DESCRIPTION HERE
-            *set Success +1
-            *if Success >= 3
-                *line_break
-                *line_break
-                STRENGTH VICTORY TEXT
-                *finish
-            *elseif Success < 3
-                *gosub fighting
-        *else
-            Failure!
-            INSERT STRENGTH BASED DESCRIPTION HERE
-            *set Failure +1
-            *if Failure >= 3
-                *goto_scene death
-            *else
-                *gosub fighting
-    #This is Dexterity based
-        *rand Chance 1 100
-        *set Chance + Dexterity
-        *if Chance >= 60      
-            Success!
-            INSERT DEXTERITY BASED DESCRIPTION HERE
-            *set Success +1
-            *if Success >= 3
-                *line_break
-                *line_break
-                DEXTERITY VICTORY TEXT
-                *finish
-            *elseif Success < 3
-                *gosub fighting
-        *else
-            Failure!
-            INSERT DEXTERITY BASED DESCRIPTION HERE
-            *set Failure +1
-            *if Failure >= 3
-                *goto_scene death
-            *else
-                *gosub fighting
-    #This is Cunning based
-        *rand Chance 1 100
-        *set Chance + tempCunning
-        *if Chance >= 95      
-            Success!
-            INSERT CUNNING BASED DESCRIPTION HERE
-            *set Success +1
-            *if Success >= 3
-                *line_break
-                *line_break
-               CUNNING VICTORY TEXT
-                *finish
-            *elseif Success < 3
-                *gosub fighting
-        *else
-            Failure!
-            INSERT CUNNING BASED DESCRIPTION HERE
-            *set Failure +1
-            *if Failure >= 3
-                *goto_scene death
-            *else
-                *gosub fighting
-         
+*comment General purpose variables to pass data between subroutines.
+*comment This is how things are done at the CPU level... (assembly)
+*temp attrib
+*temp chance_floor
+*temp did_chance_check_succeed
+*temp description_text
+*temp victory_text
 
+COMBAT OPENING LINE
+*label start_of_fight
+*fake_choice
+    # Strength check route
+        *set attrib Strength
+        *set chance_floor 95
+        *gosub chance_checker
+
+        *set description_text "testing strength"
+        *set victory_text "You won on the strength test"
+        *gosub succeed_checker
+    # Dexterity check route
+        *set attrib Dexterity
+        *set chance_floor 60
+        *gosub chance_checker
+
+        *set description_text "testing Dexterity"
+        *set victory_text "You won on the Dexterity test"
+        *gosub succeed_checker
+    # Cunning check route
+        *set attrib tempCunning
+        *set chance_floor 95
+        *gosub chance_checker
+
+        *set description_text "testing Cunning"
+        *set victory_text "You won on the Cunning test"
+        *gosub succeed_checker
+
+
+*comment This subroutine randomly determines if the check succeeded.
+*comment vars:
+*comment    attrib - the attribute to be tested.
+*comment    chance_floor - what chance needs to be greater than.
+*comment return:
+*comment    did_chance_check_succeed - returns if the check succeeded or failed.
+*label chance_checker
+*rand Chance 1 100
+*set Chance + attrib
+
+*if Chance >= chance_floor
+    *set did_chance_check_succeed true
+    *set Success Success + 1
+    *goto _chance_checker_end
+*else
+    *set did_chance_check_succeed false
+    *set Failure Failure + 1
+    *goto _chance_checker_end
+
+*label _chance_checker_end
+*return
+
+*comment This subroutine does the success and failure checking
+*comment vars:
+*comment    description_text - The text to be displayed on fail/success.
+*comment    victory_text - The text to be displayed on encounter win.
+*comment return:
+*comment    NONE
+*label succeed_checker
+*if did_chance_check_succeed = true
+    [head]Success![/head]
+    *print description_text
+    
+    *if Success >= 3
+        *print victory_text
+        *gosub win_encounter
+    
+    *goto _succeed_checker_end
+    
+*else
+    [head]Failure![/head]
+    *print description_text
+
+    *if Failure >= 3
+        *gosub fail_encounter
+    
+    *goto _succeed_checker_end
+
+*label _succeed_checker_end
+*goto start_of_fight
+
+*comment Subroutine for winning the encounter
+*label win_encounter
+*line_break
+WIN!!!
+*page_break
+*finish
+
+*comment Subroutine for failing the encounter
+*label fail_encounter
+*line_break
+FAIL!!!
+*page_break
 *finish

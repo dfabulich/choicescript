@@ -131,7 +131,7 @@ TODO:!!!
 
 *if isDirewolfDiscovered
     [head]Direwolf[/head]
-    *image images/Jakaloids.webp
+    *image images/Dire_Wolf_adult.webp
     The Direwolf, a creature of awe-inspiring stature and intelligence, reigns as a formidable presence within the realms it calls home. Far surpassing the mere size of their smaller kin, these majestic beings exhibit a level of intelligence that sets them apart from regular wolves. Scholars and druids alike attest to their heightened cognitive abilities, recognizing them as remarkable beings in the animal kingdom.
     
     The Direwolf's imposing physique and strength make it a force to be reckoned with. Legends recount tales of these colossal creatures engaging in solitary hunts, where they display their formidable prowess by taking down powerful adversaries such as warhorses. Come morning, all that remains are the mere skeletal remnants of their prey.
