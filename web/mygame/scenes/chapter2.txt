@@ -24,8 +24,10 @@ You roll your eyes in a big dramatic way. It's enough to miss what happened next
 
 
 (NAME)’s haughty laughter turns into a deafening scream. You look up to see your friend gone from their place of glory. A blur of brown quickly vanished behind a nearby tree. You drop the flowers in your hand and grab the branch that had been knocked from your grasp mere moments ago.  You hurry behind the tree, freezing in fright at the sight of a sickly looking beast tearing at your friend’s leg. Their wide eyes turn to you, tears streaming down their cheeks. They reach out to you, “HELP!”
+*set isJackaloidDiscovered true
 
 You charge forward, shouting and yelling with the branch held high above your head. The beast, one you recognize now as a Jackaloid, whips its ugly head to you. Its large muzzle pulls into a grin-like snarl, showing a row of gleaming sharp teeth.
+
 
 *fake_choice
     #Leap onto the stump your friend was standing on.

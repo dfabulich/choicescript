@@ -116,7 +116,7 @@ Why? You couldn’t understand it… Was every forest cursed? Were they all dang
 
 Milva answered your panicked pleas.
 *page_break
-
+*set isMockguardenDiscovered true
 “I see you’re not unfamiliar to our plight… for that, young sapling, I apologize.”
 
 The sight had come as such an overwhelming one that you’d had trouble arriving at the conclusion that Milva finally gave you: A gigantic Mockguarden had taken root here, where it hadn’t been before.

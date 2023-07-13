@@ -52,5 +52,5 @@ What chapter?
 		*goto_scene chapter3
 	#chapter 4
 		*goto_scene chapter4
-	#REMOVE: Combat Test
+	#TEMP: Combat Test
 		*goto_scene combat_test

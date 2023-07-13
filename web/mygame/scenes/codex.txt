@@ -1,7 +1,10 @@
 *label CodexStart
 [head]Codex[/head]
+The codex sections Factions, Items, Magic, and Species are unpopulated.
+*line_break
+The rest of the codex sections are underpopulated.
 *fake_choice
-    # Unlock all dynamic entries
+    # DEBUG: Unlock all dynamic entries
         [head]Monsters[/head]
         *set isDirewolfDiscovered    true
         Discovered Direwolf!!!
@@ -157,8 +160,8 @@ TODO:!!!
 
 *comment Jackaloid Section
 *if isJackaloidDiscovered 
-    [head]Jakaloids[/head]
-    *image images/Jakaloids.webp
+    [head]Jackaloids[/head]
+    *image images/Jackaloid.webp
     The Manned Jackaloids are small, werewolf-like creatures that inhabit remote regions far from civilized settlements. Standing between 3 and a half to just under 5 feet tall, they operate in packs, using their presence to frighten away other predators from potential prey and scavenging off decaying carcasses. Despite their frail and lesion-ridden appearance, these creatures exhibit surprising resilience.  
     
     Afflicted by an augmented form of leprosy, the Manned Jackaloids are not true lycanthropes in the traditional sense. However, their bites not only spread mundane leprosy to the small hamlets they afflict but also transmit their augmented leprosy to humanoids below the age of physical maturity. The symptoms of this sickness resemble the ordinary affliction, but upon death, the victim's sores widen to unveil a hide of matted fur beneath the skin, transforming them into one of these Jackaloids. This transformation stunts their natural growth, rendering the Jackaloid permanently the size of its host. 
