@@ -1,9 +1,4 @@
-// Replace the setButtonTitles
-// This fixes the the button not being reset when clicking on the buttons
-// while in the codex.
-setButtonTitles = repSetButtonTitles
-
-//How to open the Codex scene. Also the second half replaces my Codex button with the option to return to the game
+// How to open the Codex scene. Also the second half replaces my Codex button with the option to return to the game
 function openCodex() {
     // Wait for game to stop loading.
     if (document.getElementById('loading')) return;
@@ -24,32 +19,3 @@ function openCodex() {
         scene.execute();
     })
 }
-
-// Replacement function for setButtonTitles.
-function repSetButtonTitles() {
-    var button;
-    button = document.getElementById("menuButton");
-    if (button) {
-        button.innerHTML = "Menu";
-    }
-    button = document.getElementById("statsButton");
-    if (button) {
-        button.innerHTML = "Show Stats";
-    }
-    button = document.getElementById("achievementsButton");
-    if (button) {
-        if (nav.achievementList.length) {
-            button.style.display = "";
-            button.innerHTML = "Achievements";
-        } else {
-            button.style.display = "none";
-        }
-    }
-    button = document.getElementById("codexButton");
-    if (button) {
-        button.className = "codexButton";
-        button.innerHTML = '<img id="codexButtonImg" src="images/bookButton.webp"/>';
-    }
-}
-
-

@@ -39,6 +39,8 @@ either express or implied.
   <script src="codex.js"></script>
   <script src="dict.js" charset="utf-8"></script>
   <script src="cscript.js" charset="utf-8"></script>
+  <script src="hooks.js" charset="utf-8"></script>
+  <script defer>hookFunctions();</script>
   <link href="../alertify.css" rel="stylesheet" type="text/css">
   <link href="dict.css" rel="stylesheet" type="text/css">
   <link href="codexButton.css" rel="stylesheet" type="text/css">
@@ -82,6 +84,7 @@ either express or implied.
       </div>
       <script>
           startLoading();
+
           // Auto dark mode
           if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
               changeBackgroundColor('black');
@@ -123,11 +126,6 @@ either express or implied.
       </div>
     </dialog>
   </div>
-  <script defer>
-    /* This is where we replace the stock replacementBbCode */
-    storeOriginalReplaceBbCode(replaceBbCode);
-    replaceBbCode = replacementReplaceBbCode;
-  </script>
 </body>
 
 </html>

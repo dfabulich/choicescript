@@ -11,6 +11,14 @@
     color: white !important;
 }
 
+:root {
+    --codex-button-image-width: 100%;
+}
+
+img#codexButtonImg {
+    width: var(--codex-button-image-width);
+}
+
 p#buttons {
     margin-bottom: 0;
 }
