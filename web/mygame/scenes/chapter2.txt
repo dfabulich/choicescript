@@ -1,10 +1,17 @@
 *comment Start of Chapter 2 ----------------------------------------------------
 [head]Chapter 2: The Encounter[/head]
-The sun was high in the sky, the dappling of clouds providing cool shade as you walk along the fields. A warm breeze ruffles your loose shirt, the sweat on the back of your neck drying slowly. A few yards ahead of you, your friend (NAME) is batting the tall grass with a thin branch they found on their way from their house to yours. They poked and teased you with it until you chased them out of your yard. The chase continued through town until you both began to tire. As it turns out, this was their plan all along. 
+The sun was high in the sky, the dappling of clouds providing cool shade as you walk along the fields. A warm breeze ruffles your loose shirt, the sweat on the back of your neck drying slowly. A few yards ahead of you, your friend Reese is batting the tall grass with a thin branch they found on their way from their house to yours. They poked and teased you with it until you chased them out of your yard. The chase continued through town until you both began to tire. As it turns out, this was their plan all along. 
 
-“I’ve got nothing to do today, and you haven’t either. Let’s go play in the forest! We can gather flowers on the way!” they exclaimed. 
+“I’ve got nothing to do today, and you haven’t either. Let’s go play in the forest! We can gather flowers on the way!” they exclaimed.
 
-You saw no reason to say no.
+*fake_choice
+    # You saw no reason to say no.
+    # You are concerned about what both of your parents will do.
+        “Our parents have been telling us to stay away from the forest.” You explain as you stare off towards the forest. 
+        
+        Reese shakes their head and shouts, “Come on! We won’t go that far into the forest, just far enough to find some flowers!”
+        
+        “Alright…” You reluctantly agree.
 *page_break
 
 The forest on the edge of town was well-traveled. Packed dirt of well-traveled footpaths spread across the forest floor like one large spider web of interconnecting routes. The trees were far enough apart tolet in plenty of sunlight,  illuminating the dense patch of a mockgarden that grew on the forest floor. Having grown up a stone’s throw away from this forest, you had long heard stories about these unassuming plants that grew on the forest floor. Their benign color and simple appearance was just a natural ruse. They weren’t too common, but recently a hunter had noticed a mockgarden hidden amongst the thick grass on the forest floor. It had become town-wide news in less than an hour and all the adults were warning their children about the dangerous plant. Looking closer as you passed the deadly clusters of mushroom-like plants, you could see the pale white bone of some unfortunate animal that had been caught in their snare. 

@@ -115,8 +115,32 @@ These casualties, Milva explained, had become more commonplace in recent times, 
 Why? You couldn’t understand it… Was every forest cursed? Were they all dangerous places where the peaceful and innocent went to die?
 
 Milva answered your panicked pleas.
-*page_break
+
+*comment Doing this before the check page because there is a bug in choicescript
+*comment that allows you to reroll random chances.
+
+*set GP_arg0 Presence
+*set GP_arg1 "simple"
+*gosub_scene general AttributeSkillCheck
+*temp CH3_Presence_bool returnData
+
+*set GP_arg0 Stealth
+*set GP_arg1 "simple"
+*gosub_scene general AttributeSkillCheck
+*temp CH3_Stealth_bool returnData
+
+*set GP_arg0 Acrobatics
+*set GP_arg1 "simple"
+*gosub_scene general AttributeSkillCheck
+*temp CH3_Acrobatics_bool returnData
+
+*set GP_arg0 Cunning
+*set GP_arg1 "simple"
+*gosub_scene general AttributeSkillCheck
+*temp CH3_Cunning_bool returnData
 *set isMockguardenDiscovered true
+
+*page_break
 “I see you’re not unfamiliar to our plight… for that, young sapling, I apologize.”
 
 The sight had come as such an overwhelming one that you’d had trouble arriving at the conclusion that Milva finally gave you: A gigantic Mockguarden had taken root here, where it hadn’t been before.
@@ -129,14 +153,14 @@ You can’t be too sure, but one thing is certain! You’ll help these forest pe
 
 You'll
 *fake_choice
-    # Convince some mercenaries at a nearby tavern to help REMOVE: (Check!(Presence = 2 for 70%))
+    # Convince some mercenaries at a nearby tavern to help (Simple Presence Check)
+        [head]Presence Check @{CH3_Presence_bool Success|Failure}![/head]
         You make the somewhat inconsequential trek to a tavern near Frontierwood. The path leading through frontierwood is the only link between some smaller villages and the larger Davenport, so it’s a path naturally dotted with taverns and inns.
         As you enter the not-so-fine establishment, you find yourself assaulted by an overwhelm of chatter, music, clinking of glasses, and other miscellaneous noises.
         Fighting through your senses, you manage to spot a group of particularly well armored adults with swords, and shields, and all sorts of other dangerous looking things.
         Now all you need to do is stand out.
 
-        *comment FIXME: not implemented (Presence = 2)
-        *if true
+        *if CH3_Presence_bool
             You waste no time getting their attention. You climb up onto their central table and loudly announce your presence, to the disdain of the few of them that were talking.
             But who cares; there are more important things to be talking about.
             
@@ -161,13 +185,13 @@ You'll
             As the small group of mercenaries headed for Frontierwood, you went home and tried to ignore your worries.
             *page_break
             *goto CH3_Bad_End
-    #Steal some poison from the town apothecary and handle things personally REMOVE: (Check!(Stealth = 2 AND Acrobatics = 2 for 70%))
+    #Steal some poison from the town apothecary and handle things personally (Simple Stealth & Acrobatics Check)
+        [head]Stealth & Acrobatics Check @{CH3_Stealth_bool Success|Failure}![/head]
         You know of one place, and one place only, that will have what it takes to beat back this great evil. You’ll need to acquire some fungal poison, and if you’re going to acquire enough of it, you’ll need to be less-than-upstanding in your acquisition.
 
         You make the rather lengthy trek back to your village and, navigating through the narrow areas between shops, slip into the apothecary’s shop through a back window. You time this just right; if someone’s in there, you’ll be caught immediately.
 
-        *comment FIXME: not implemented (Stealth = 2) and (Acrobatics = 2)
-        *if true
+        *if (CH3_Stealth_bool and CH3_Acrobatics_bool)
             Yes! Your patience is rewarded with pure silence; looks like you made it in without tripping up the shopkeep's senses!
             
             Trying not to give into the adrenaline, you bob and weave your way through the shop, searching for a particular group of vials. Reds, yellows, greens… ah, yes! Purples!
@@ -230,7 +254,10 @@ You'll
             Milva had to rescue you from becoming shroom-food.
             *page_break
             *goto CH3_Bad_End
-    # Consult the town priest REMOVE: (Check!(Cunning = 2 for 70%))
+
+    # Consult the town priest (Simple Cunning Check)
+        [head]Cunning Check @{CH3_Cunning_bool Success|Failure}![/head]
+        *comment I don't think this is proper, in the character attributes doc it says the main attribute groups are not meant for skill tests 
         You know of only one true authority on banishing such evils… he did all he could for you two years ago, and you’re sure he’ll do what he can for you now too.
         
         You make the rather lengthy trek back to your village and, navigating through the winding paths and random passerby, you approach the door of one of the more ornate homes in your village. And then you knock.
@@ -244,8 +271,7 @@ You'll
         
         “Child… Slow down. Calm yourself. Can you tell me exactly what it is that you saw in Frontierwood?”
 
-        *comment FIXME: not implemented (Cunning = 2)
-        *if true
+        *if CH3_Cunning_bool
             You explain exactly what you saw. A dark and quiet part of the forest. Druids with blackened, wet wounds on their bodies. What Milva called the “Mockguarden.”
             
             “A Mockguarden? In Frontierwood?”

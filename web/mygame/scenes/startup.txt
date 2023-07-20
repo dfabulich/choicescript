@@ -18,10 +18,37 @@
 *create bought "None"
 *create coin 0
 
+*comment ///////// General Purpose Globals (used in subroutine calls) /////////
+*comment Read only! DO NOT WRITE TO THIS OUTSIDE OF A SUBROUTINE AND SELECT CIRCUMSTANCES!!!
+*create returnData true
+*create GP_arg0 0
+*create GP_arg1 0
+*create GP_arg2 0
+*create GP_arg3 0
+*create GP_arg4 0
+
 *comment ///////// Attribute Globals /////////
-*create Brawn 6
-*create Agility 4
-*create Cunning 2
+*create Brawn 0
+*comment brawn sub-attributes
+*create Endurance 0
+*create Strength 0
+*create Presence 0
+*create Courage 0
+
+*create Agility 0
+*comment agility sub-attributes
+*create ReactionSpeed 0
+*create Stealth 0
+*create MotorSkill 0
+*create Acrobatics 0
+
+*create Cunning 0
+*comment cunning sub-attributes
+*create Improvisation 0
+*create Knowledge 0
+*create Medical 0
+*create Speechcraft 0
+
 
 *create Divine 0
 *create Arcane 0
@@ -36,9 +63,13 @@
 *create isMockguardenDiscovered false
 *create isMogfishDiscovered     false
 *create isWOWDiscovered         false
-
-
 *comment -----------------------------------------------------------------------
+
+*comment *set GP_arg0 6
+*comment *set GP_arg1 "difficult"
+*comment *gosub_scene general AttributeSkillCheck
+
+*comment *print "[head]@{returnData Success|Failure}![/head]"
 
 WIP build for the UAT production studio milestone review
 

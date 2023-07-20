@@ -27,6 +27,7 @@ function replacementReplaceBbCode(msg) {
       .replace(/\[define\:(.*?)\]/g, "<a id=\"defined-word\" onClick=\"openDefinition('$1')\">$1</a>")
       .replace(/\[head\]/g, '<h1 class="custom-head1" align="center" style="margin-bottom: 0em;">')
       .replace(/\[\/head\]/g, '</h1><hr class="custom-head1-line" style="margin-top: 0em; width: 90%;">')
+      .replace(/\[break\]/g, '<br>')
 }
 
 // This fixes the the button not being reset when clicking on the buttons while

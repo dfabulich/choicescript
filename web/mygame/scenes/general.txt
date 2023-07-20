@@ -1,3 +1,5 @@
+*finish
+
 *comment Allow the user to chose thier gender
 *label ChooseGender
 *choice
@@ -10,3 +12,82 @@
   #Kid (They/Them)
     *set gender "Kid (they/them)"
     *return
+
+
+*comment This subroutine randomly determines if a random chance passes
+*comment vars:
+*comment    GP_arg0 (attr) - the attribute to be tested.
+*comment    GP_arg1 (succPercent) - what chance needs to be greater than.
+*comment return:
+*comment    returnData (bool) - returns if the check succeeded or failed.
+*label AttributeSkillCheckBase
+*comment Ported from this js code
+*comment function AttributeSkillCheckBase(attr, succPercent) {
+*comment     return (attr * succPercent) > Math.floor(Math.random() * attr); 
+*comment }
+
+*temp attr GP_arg0
+*temp succPercent GP_arg1
+
+*temp rng 0
+*rand rng 0 attr
+
+*set returnData (attr * succPercent) >= rng
+
+*return
+
+*comment This subroutine randomly determines if a random chance passes
+*comment This subroutine replaces GP_arg1 with the corresponding success percentage.
+*comment vars:
+*comment    GP_arg0 (attr) - the attribute to be tested.
+*comment    GP_arg1 (difficulty) - Difficulty Level.
+*comment return:
+*comment    returnData (bool) - returns if the check succeeded or failed.
+*label AttributeSkillCheck
+*temp attr GP_arg0
+*temp difficulty GP_arg1
+
+*if (difficulty = "trivial")
+    *set GP_arg1 0.80
+    *gosub AttributeSkillCheckBase
+    *return
+*elseif (difficulty = "simple")
+    *set GP_arg1 0.70
+    *gosub AttributeSkillCheckBase
+    *return
+*elseif (difficulty = "moderate")
+    *set GP_arg1 0.60
+    *gosub AttributeSkillCheckBase
+    *return
+*elseif (difficulty = "challenging")
+    *set GP_arg1 0.50
+    *gosub AttributeSkillCheckBase
+    *return
+*elseif (difficulty = "difficult")
+    *set GP_arg1 0.35
+    *gosub AttributeSkillCheckBase
+    *return
+*elseif (difficulty = "extreme")
+    *set GP_arg1 0.15
+    *gosub AttributeSkillCheckBase
+    *return
+*elseif (difficulty = "impossible")
+    *set returnData false
+    *return
+*bug Somehow, "RollChanceOnAttribute" failed. Is "${difficulty}" spelled correctly? 
+
+*comment This subroutine calculates and sets all base attributes
+*comment vars:
+*comment    NONE
+*comment return:
+*comment    NONE
+*label CalcAllAttributes
+*comment brawn sub-attributes
+*set Brawn ((Endurance + Strength) + Presence) + Courage
+
+*comment agility sub-attributes
+*set Agility ((ReactionSpeed + Stealth) + MotorSkill) + Acrobatics
+
+*comment cunning sub-attributes
+*set Cunning ((Improvisation + Knowledge) + Medical) + Speechcraft
+*return
