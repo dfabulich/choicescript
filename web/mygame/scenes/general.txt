@@ -1,19 +1,5 @@
 *finish
 
-*comment Allow the user to chose thier gender
-*label ChooseGender
-*choice
-  #Girl (She/Her)
-    *set gender "Girl (She/Her)"
-    *return
-  #Boy (He/Him)
-    *set gender "Boy (He/Him)"
-    *return
-  #Kid (They/Them)
-    *set gender "Kid (they/them)"
-    *return
-
-
 *comment This subroutine randomly determines if a random chance passes
 *comment vars:
 *comment    GP_arg0 (attr) - the attribute to be tested.

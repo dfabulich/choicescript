@@ -8,6 +8,7 @@
 	chapter3
 	chapter4
 	combat_test
+	general
 
 *comment ------------------------------ GLOBALS --------------------------------
 *comment ///////// Generic Globals /////////
