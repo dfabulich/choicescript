@@ -1,13 +1,13 @@
 //---------------------------- Hooked Functions -------------------------------
-hookedFuncs = [
-    ["replaceBbCode", "replacementReplaceBbCode", "originalReplaceBbCode"],
-    ["setButtonTitles", "replacementSetButtonTitles", "originalSetButtonTitles"],
-    ["changeFontSize", "replacementChangeFontSize", "originalChangeFontSize"]
-];
 
 /* -== Function hooker ==- */
 // Store the original function to ensure our code keeps up with updated choicescript versions.
 function hookFunctions() {
+    let hookedFuncs = [
+        ["replaceBbCode", "replacementReplaceBbCode", "originalReplaceBbCode"],
+        ["setButtonTitles", "replacementSetButtonTitles", "originalSetButtonTitles"],
+        ["changeFontSize", "replacementChangeFontSize", "originalChangeFontSize"]
+    ];
     // Is this particularly safe, probably not.
     // Do I care? ... :) 
     for(i in hookedFuncs) {

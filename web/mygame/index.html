@@ -40,7 +40,6 @@ either express or implied.
   <script src="dict.js" charset="utf-8"></script>
   <script src="cscript.js" charset="utf-8"></script>
   <script src="hooks.js" charset="utf-8"></script>
-  <script defer>hookFunctions();</script>
   <link href="../alertify.css" rel="stylesheet" type="text/css">
   <link href="dict.css" rel="stylesheet" type="text/css">
   <link href="codexButton.css" rel="stylesheet" type="text/css">
@@ -76,21 +75,23 @@ either express or implied.
             <button id="menuButton" onclick="showMenu()" class="spacedLink">Menu</button>
           </div>
         </div>
-        <button id="codexButton" onclick="openCodex()" title="Codex of discovered things" class="codexButton"><img id="codexButtonImg" src="images/bookButton.webp"/></button>
+        <button id="codexButton" onclick="openCodex()" title="Codex of discovered things" class="codexButton"><img
+            id="codexButtonImg" src="images/bookButton.webp" /></button>
       </div>
     </div>
     <div id="main">
       <div id="text">
       </div>
       <script>
-          startLoading();
+        startLoading();
+        hookFunctions();
 
-          // Auto dark mode
-          if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-              changeBackgroundColor('black');
-	  } else {
-	      changeBackgroundColor('white');
-	  }
+        // Auto dark mode
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          changeBackgroundColor('black');
+        } else {
+          changeBackgroundColor('white');
+        }
       </script>
     </div>
     <div id="mobileLinks" class="webOnly">
