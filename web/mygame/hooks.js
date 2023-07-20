@@ -1,5 +1,5 @@
 //---------------------------- Hooked Functions -------------------------------
-const hookedFuncs = [
+hookedFuncs = [
     ["replaceBbCode", "replacementReplaceBbCode", "originalReplaceBbCode"],
     ["setButtonTitles", "replacementSetButtonTitles", "originalSetButtonTitles"],
     ["changeFontSize", "replacementChangeFontSize", "originalChangeFontSize"]
