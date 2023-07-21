@@ -113,7 +113,6 @@ As you get closer to town, you hear a voice in the forest. A low, grumbling voic
 As the two of you run, you see the figure of what looks to be a man, a Priest of the Sigel judging by the golden sun emblem on his outfit. The man has a bag bursting with herbs and is trying to stuff more into his overfilled bag. 
 
 There doesn’t seem to be an easy path to get to him. One path has a steep drop, another is covered in roots, and the last has mockgardens too close for your liking.
-*page_break
 
 *fake_choice
     # The drop is small and you’ll just have to pick your friend up (Brawn++)
