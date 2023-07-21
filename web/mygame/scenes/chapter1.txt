@@ -28,16 +28,19 @@ you decide to just get up knowing full well that
 			#I will go milk the cows
 				The cows were in a feisty mood. You sneakily maneuver yourself through the stray hooves and start milking.
 				
+				*comment FIXME: Base attributes should not be mutated outside certain circumstances.
 				*set Cunning +1
 				*comment probably Cunning
 			#I will go clean the stables. 
 				The stables were a mess as always. The strong smell of manure washes over you. Your stomach is strong from the routine conditioning. You grab the wide shovel and get to work.
 				
+				*comment FIXME: Base attributes should not be mutated outside certain circumstances.
 				*set Brawn +1
 				*comment probably Brawn 
 			#I will go run the fields and scare off the birds
 				You sprint through the fields shouting like a madman. Shouting at the flocks of birds trying to get their easy early meal. You loop back to the house caked with sweat and breathing heavily.
 				
+				*comment FIXME: Base attributes should not be mutated outside certain circumstances.
 				*set Agility +1
 		*page_break
 
@@ -53,12 +56,15 @@ you decide to just get up knowing full well that
 		*fake_choice 
 			#A hearty and filling meal
 				You are full and are feeling strong.
+				*comment FIXME: Base attributes should not be mutated outside certain circumstances.
 				*set Brawn +1
 			#A light but nutritious
 				You are energized and light on your feet.
+				*comment FIXME: Base attributes should not be mutated outside certain circumstances.
 				*set Agility +1
 			#A delectable breakfast
 				You are amazed by your own skill. A small grin strikes your face.
+				*comment FIXME: Base attributes should not be mutated outside certain circumstances.
 				*set Cunning +1
 		*page_break
 
@@ -91,14 +97,17 @@ As you leisurely gaze upon the various booths of food, a tall Elf stops you and 
 		*fake_choice
 			#Make a delivery for the stall dealer in order to pay for all the ingredients.
 				You make the delivery and take the ingredients back to the farm.
+				*comment FIXME: Base attributes should not be mutated outside certain circumstances.
 				*set Agility +1
 
 			#Help the stall dealer move the extra goods into storage
 				You lift several crates onto the dealer cart and take the ingredients back to the farm.
+				*comment FIXME: Base attributes should not be mutated outside certain circumstances.
 				*set Brawn +1
 
 			#You haggle with the stallkeeper to reduce the price.
 				You successfully haggle with the elf. Though you are pretty sure they were egging you on.
+				*comment FIXME: Base attributes should not be mutated outside certain circumstances.
 				*set Cunning +1
 
 *finish

@@ -271,6 +271,7 @@ You'll
         
         “Child… Slow down. Calm yourself. Can you tell me exactly what it is that you saw in Frontierwood?”
 
+        *comment Base attributes should not be used in skill checks.
         *if CH3_Cunning_bool
             You explain exactly what you saw. A dark and quiet part of the forest. Druids with blackened, wet wounds on their bodies. What Milva called the “Mockguarden.”
             

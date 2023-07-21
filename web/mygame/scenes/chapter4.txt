@@ -12,7 +12,7 @@ Along your way through the market, you see two people arguing. You can’t see w
 Deciding that it is none of your business, you continue your way into the market. It is a lot busier than normal at this time of day, but not unexpected. The dwarves are in town and that usually makes it busier. Once you get there, you walk over to the:
 
 *fake_choice
-    #Bakery. It is run by a dwarven baker and they rarely visit. They are said to have the best bread in the land.
+    # Bakery. It is run by a dwarven baker and they rarely visit. They are said to have the best bread in the land.
         There shop is surrounded by people, many of them munching on their bread. At the stand there are two dwarves. One is baking fresh bread and the other is taking orders. Occasionally the one taking orders offers some idle conversation.
         
         While you are waiting for your bread to get done the dwarf stands next to you.
@@ -30,10 +30,11 @@ Deciding that it is none of your business, you continue your way into the market
         *set faction "guards"
         *set item "bread"
         *set bought "bread"
+        *comment FIXME: Base attributes should not be mutated outside certain circumstances.
         *set Brawn +2
         *set coin -2
         
-    #Bookstore. You have been looking at a book for weeks and you finally have the money to get it.
+    # Bookstore. You have been looking at a book for weeks and you finally have the money to get it.
         The book store is never really busy. The books cost too much and not enough people know how to read. However, the Flames of Sigel requires there to be at least a small store for them to read while they stay. They visit at least once a month and that's enough to keep the store in business. Although, there is a lot more people in here then usual. You wonder they're in town.
         
         You walk over to a book you have been thinking about getting for awhile now and the librarian notices you.
@@ -51,6 +52,7 @@ Deciding that it is none of your business, you continue your way into the market
         *set faction "priests"
         *set item "book"
         *set bought "book"
+        *comment FIXME: Base attributes should not be mutated outside certain circumstances.
         *set Cunning +2
         *set coin -3
         
@@ -84,6 +86,7 @@ Deciding that it is none of your business, you continue your way into the market
         *set faction "mercenaries"
         *set item "dagger"
         *set bought "dagger"
+        *comment FIXME: Base attributes should not be mutated outside certain circumstances.
         *set Agility +2
         *set coin -5
 *page_break
@@ -115,7 +118,12 @@ A scream came out of the house you were passing. Confused, you look over at the 
         *goto guard
         
 *label C4_Chase
-When you look up you see a shadowed figure running through the backdoor. 
+When you look up you see a shadowed figure running through the backdoor.
+
+*set GP_arg0 Cunning
+*set GP_arg1 "simple"
+*gosub_scene general AttributeSkillCheck
+*temp CH4_cuttoff_cunning returnData
 
 *fake_choice
     #Cut him off
@@ -125,7 +133,8 @@ When you look up you see a shadowed figure running through the backdoor.
 
         “You are under arrest for the murder of Lord Odel and fleeing the scene of the crime!”
         
-    *if ((Cunning > 6) or (Cunning = 6)) #Chase after him
+        *comment Base attributes should not be used in skill checks.
+    *if (CH4_cuttoff_cunning) #Chase after him
         You run through the house, not noticing as you step in the pool of blood.
 
         Outside, you see the cloaked figure running down an alley. You run into the alley right after it, remembering that they connect. You see the cloaked figure running through the alley.
@@ -138,7 +147,8 @@ When you look up you see a shadowed figure running through the backdoor.
 
         “You are arrested for the murder of Lord Odel!” The guard runs towards you and grabs your arm.
                 
-    *if (Cunning < 6) #Chase After him
+        *comment Base attributes should not be used in skill checks.
+    *if (not (CH4_cuttoff_cunning)) #Chase After him
 
         You run through the house, not noticing as you step in the pool of blood.
 
@@ -176,7 +186,8 @@ When you look up you see a shadowed figure running through the backdoor.
 *choice
     #Go with the guard, there isn't much you can do.
         *goto C4_Prison
-
+    
+        *comment Base attributes should not be used in skill checks.
     *if ((Agility > 6) or (Agility = 6)) #Try to escape
         The guard grabs you by your bicep and wrist, twisting them upwards, and starts walking you towards the carriage. You bend the elbow the guard has, spin towards the guard and push at his shoulder with your other hand. Not expecting it, the guard falls face first to the ground.
         
@@ -193,6 +204,7 @@ When you look up you see a shadowed figure running through the backdoor.
             #To take the path you saw to the forest a few weeks ago.
                 *goto C4_Caught
         
+        *comment Base attributes should not be used in skill checks.
     *if (Agility < 6) #Try to escape
         The guard grabs you by your bicep and wrist, twisting them upwards, and starts walking you towards the carriage. You bend the elbow the guard has-
         

@@ -45,6 +45,7 @@ An Ogre stands in the road, you know he won't let you pass without a fight.
         *set victory_text "The rock cracks against the upper section of the beehive, snapping its supports holding it to the branch. It dangles for a second before falling directly onto the shoulder of the ogre. As he panics and swings wildly you dart forward, cutting into his gut and emptying his intestines onto the forest floor."
         *gosub succeed_checker
 
+*goto start_of_fight
 
 *comment This subroutine randomly determines if the check succeeded.
 *comment vars:
@@ -59,13 +60,10 @@ An Ogre stands in the road, you know he won't let you pass without a fight.
 *if Chance >= chance_floor
     *set did_chance_check_succeed true
     *set Success Success + 1
-    *goto _chance_checker_end
 *else
     *set did_chance_check_succeed false
     *set Failure Failure + 1
-    *goto _chance_checker_end
 
-*label _chance_checker_end
 *return
 
 *comment This subroutine does the success and failure checking
@@ -82,9 +80,7 @@ An Ogre stands in the road, you know he won't let you pass without a fight.
     *if Success >= 3
         *print victory_text
         *gosub win_encounter
-    
-    *goto _succeed_checker_end
-    
+        
 *else
     [head]Failure![/head]
     *print description_text
@@ -92,10 +88,7 @@ An Ogre stands in the road, you know he won't let you pass without a fight.
     *if Failure >= 3
         *gosub fail_encounter
     
-    *goto _succeed_checker_end
-
-*label _succeed_checker_end
-*goto start_of_fight
+*return
 
 *comment Subroutine for winning the encounter
 *label win_encounter

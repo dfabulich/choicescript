@@ -11,6 +11,12 @@
 	general
 
 *comment ------------------------------ GLOBALS --------------------------------
+*comment Why use the implicit_control_flow variable?
+*comment ChoiceScript doesn't allow you to fall out of an if statement so you
+*comment have to use a goto or an equivalent, setting this to true allows us to
+*comment fall out of an if statement.
+*create implicit_control_flow true
+
 *comment ///////// Generic Globals /////////
 *create name "name"
 *create gender "???"
