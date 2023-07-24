@@ -3,6 +3,10 @@
 *temp Dexterity 50
 *temp tempCunning 40
 
+*temp bcolor "#d60d0d"
+*temp acolor "#FF9900"
+*temp ccolor "#4A86E8"
+
 *temp Success 0
 *temp Failure 0
 *temp Chance 0
@@ -20,7 +24,7 @@ An Ogre stands in the road, you know he won't let you pass without a fight.
 (Combat works on a Success/Failure tally system. 3 successes results in a victory, while 3 failures results in loss.)
 *label start_of_fight
 *fake_choice
-    # Charge him shield raised in effort to knock him down.
+    # Charge him shield raised in effort to knock him down.  [b][color=${bcolor}](Brawn)[/color][/b]
         *set attrib Strength
         *set chance_floor 95
         *gosub chance_checker
@@ -28,7 +32,7 @@ An Ogre stands in the road, you know he won't let you pass without a fight.
         *set description_text "You run headlong into the fray, your shoulder readied for impact."
         *set victory_text "Against all odds, you manage to knock the massive hunk of fat and muscle off balance. You climb onto the shoulders of the ogre and plunge your sword through his eye and into his easily missable brain."
         *gosub succeed_checker
-    # Attempt to scurry under his legs cutting at them and bringing him down to size.
+    # Attempt to scurry under his legs cutting at them and bringing him down to size. [b][color=${acolor}](Agility)[/color][/b]
         *set attrib Dexterity
         *set chance_floor 60
         *gosub chance_checker
@@ -36,7 +40,7 @@ An Ogre stands in the road, you know he won't let you pass without a fight.
         *set description_text "You rush forward ducking under a wide swing and slashing at the meaty calves of the ogre. It's hard to tell though, just how much damage it has done."
         *set victory_text "The methodical cuts slowly add up, and he falls to one knee. You raise your sword up through the chin of the ogre as it gurgles a final breathy sigh."
         *gosub succeed_checker
-    # Look for something in your environment to use to your advantage.
+    # Look for something in your environment to use to your advantage. [b][color=${ccolor}](Cunning)[/color][/b]
         *set attrib tempCunning
         *set chance_floor 95
         *gosub chance_checker
