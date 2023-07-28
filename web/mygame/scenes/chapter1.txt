@@ -1,158 +1,329 @@
 *label chapter1
 [head]Chapter 1: Who Are You?[/head]
-You feel the sun slowly rising through the open window.
-The golden light is just enough to disturb your slumber.
-You find yourself looking into a piece of broken glass. You see…
-*goto Player_Init
+*comment *goto Player_Init
 	
+*goto PI_GetName
+
 *label StartChapterOne
-However, after a few moments of contemplation,
-you decide to just get up knowing full well that 
+Nestled on the outskirts of Davenport, far beyond the city's bustling streets and grand architecture, lies a serene farmstead. This picturesque land stretches across acres of fertile soil and rolling fields, offering a tranquil respite from the urban chaos. The farmstead serves as the backdrop for your upbringing and sets the stage for your journey.
 
+The farm is a place where hard work and dedication intersect with the rhythms of nature. Fields of vibrant crops sway in the wind, their colors blending together to form a breathtaking tapestry. Rows of vegetables, fruits, and grains stretch as far as the eye can see, a testament to the labor poured into the land. At the heart of the farmstead stands a quaint farmhouse, weathered by time but filled with warmth and love. It is here that your character was raised, nurtured by the unwavering devotion of your parents. The aroma of home-cooked meals often wafts through the air, a testament to your mother's culinary skills and her ability to transform the farm's bounty into delicious feasts.
+
+Your parents are pillars of strength and determination. A seasoned farmer, your mother possesses an uncanny understanding of the land and an unwavering commitment to its care. She has imparted her knowledge and love for the farm to you, teaching you the secrets of cultivating crops and tending to livestock. Together, you have toiled under the sun, sowed seeds, and reaped the rewards of your labor.The farmstead is more than just a source of sustenance; it's a sanctuary. The wide-open spaces invite exploration and introspection.
+
+Your father is often on trips to Davenport. He is a sailor that takes food and other goods down the river to Davenport or smaller towns that can’t grow much. He’s become well known across this side of Teville. 
+*page_break
+
+You wake up to the sun's gentle rays, the farmstead comes alive with the sounds of nature. The roosters crow in the distance, signaling the start of a new day. You have many chores to do and little time to do them. 
+
+You decide to,
 *choice
-	#Mother will have it out for you if you do not help with chores.
-		You decide to head outside and see where your mother is, thinking she is probably farming the crops before breakfast.
-		As you walk out of the cozy house, you are greeted with the ever-familiar smell of churned soil, fertilizer, and various crops. 
-		*page_break
+	# Help Mother on the Farm
+		You feel the warmth of the morning sun gently caress your face as you awaken in your cozy bedroom on the farmstead. Slowly, you rise from your bed, the remnants of sleep still clinging to your eyes. As you contemplate the day ahead, you remember the unspoken expectation that your mother has of you—helping with the farm tasks.
 
-		*if gender = "Male"
-			“Hey Buddy. You look like you barely slept! Your hair is a mess.” Your mother tells you. She then asks, “I need your help with milking, cleaning stables, and scaring the birds off. Take your choice and I will get the rest”
+		Knowing that your mother relies on your assistance, you slip into your simple farm attire, a comfortable tunic and sturdy breeches. With determination in your heart, you make your way to the kitchen, where the aroma of fresh bread and brewed tea envelops the air.
 
-		*if gender = "Female"
-			“Hey Honey. You look like you barely slept! Your hair is a mess.” Your mother tells you as she tries to. She then asks, “I need your help with milking, cleaning stables, and scaring the birds off. Take your choice and I will get the rest”
+		Emerging from the kitchen, you step outside, greeted by the familiar sights and scents of the farmstead. The gentle breeze carries with it the earthy fragrance of fertile soil, while the distant sounds of cows mooing and chickens clucking remind you of the livestock your family tends to. Walking toward the fields, you find your mother diligently working among the crops.
 
-		*if gender = "Kid"
-			“Hey Kiddo. You look like you barely slept! Your hair is a mess.” Your mother tells you. She then asks, “I need your help with milking, cleaning stables, and scaring the birds off. Take your choice and I will get the rest”
-		
+		She looks up as you approach, her eyes softening with affection. 
+
+		"Hey there…"
 		*fake_choice
-			#I will go milk the cows
-				The cows were in a feisty mood. You sneakily maneuver yourself through the stray hooves and start milking.
+			# Buddy (Boy)
+				*set gender "Male"				
+			# Honey (Girl)
+				*set gender "Female"
+			# Kiddo (Other)
+				*set gender "Other"
+		
+		“You look like you barely slept! Your hair is a mess," she teases, a warm smile playing on her lips. 
+
+		"I could use your help with a few farming tasks today," she says, wiping the sweat off her brow. "I need you to assist me in plowing the fields or you can gather the harvest that is ready."
 				
-				*comment FIXME: Base attributes should not be mutated outside certain circumstances.
-				*set Cunning +1
-				*comment probably Cunning
-			#I will go clean the stables. 
-				The stables were a mess as always. The strong smell of manure washes over you. Your stomach is strong from the routine conditioning. You grab the wide shovel and get to work.
-				
-				*comment FIXME: Base attributes should not be mutated outside certain circumstances.
+		*fake_choice
+			# Tend to the fields ([color=${brawn_color}]Brawn++[/color] [color=${agility_color}]Agility++[/color])
 				*set Brawn +1
-				*comment probably Brawn 
-			#I will go run the fields and scare off the birds
-				You sprint through the fields shouting like a madman. Shouting at the flocks of birds trying to get their easy early meal. You loop back to the house caked with sweat and breathing heavily.
-				
-				*comment FIXME: Base attributes should not be mutated outside certain circumstances.
 				*set Agility +1
+				You pick up a sturdy plow and work alongside your mother, pushing it through the earth with all your strength, utilizing your brawn. The physical exertion tests your muscles, and you can feel them straining with the effort. At the same time, you must navigate the uneven terrain and maneuver around rocks and obstacles, showcasing your agility.
+
+				Together, you and your mother plow the fields, preparing them for the planting season. The combination of your brawn and agility allows you to complete the task efficiently, impressing your mother with your physical abilities.
+			# Gather the harvest ([color=${cunning_color}]Cunning++[/color] [color=${agility_color}]Agility++[/color])
+				*set Cunning +1
+				*set Agility +1
+				You follow your mother to the rows of ripe crops, ready to be harvested. She explains the importance of carefully selecting the fruits and vegetables, ensuring that only the best ones are collected. Your keen eye and attention to detail will be essential in discerning the optimal time for harvesting each crop, utilizing your cunning.
+
+				With nimble hands and quick reflexes, you deftly pluck the ripe produce from the plants, showcasing your agility. You must also exercise caution not to damage the delicate crops during the process, relying on your careful movements and precise control.
+				
+		Together, you and your mother gather the harvest, filling baskets with an abundance of fresh, nutritious produce. Your combination of cunning and agility proves invaluable in selecting the best crops and handling them with care.
+	
+		Once you finish your task, you help your mother take some baskets back to the house. There, your stomach grumbles, signaling the need for sustenance. You and your mother take a break, enjoying a simple but satisfying meal prepared from the farm's bounty. Once you've replenished your energy, your mother turns to you and says, "Thank you, (Player_Name). Now, I need you to head into the marketplace after breakfast and gather some bread for dinner tonight."
+
+		Grateful for your help, she hands you a small pouch of coins to cover the expenses. With a sense of purpose, you bid your mother farewell and make your way toward the bustling marketplace, ready to fulfill your task and discover what lies beyond the familiar boundaries of the farmstead.
 		*page_break
 
-		“Thank you, sweetie. Now I need you to head into the market after breakfast for some grain, eggs, and potatoes so I can make dinner tonight.” After a small but somehow satisfying breakfast, you gather your things and head into the marketplace.
 		*goto SC1_Market
 
-	#You need to head to the market to gather supplies. You will make Mother sad if you don't help with the chores.
-		You head to the market.
+	# Head to the market
+		*comment You'll have to randomly assign the base stats...
+		Feeling a sense of urgency, you decide to bypass the farm tasks today. Perhaps you're eager to venture beyond the confines of the farmstead or simply feel that you have already mastered the necessary skills. Without delay, you slip into your chosen attire, bypassing the farm attire and instead opting for something more practical for the market. As you make your way to the kitchen, you catch a whiff of freshly brewed tea, but you decide to forego breakfast for now. With a determined stride, you step out of the house and head straight to the marketplace, bypassing the farm tasks that would have shaped your skills and attributes. As you enter the bustling market, you're immediately greeted by a symphony of colors and sounds—merchants shouting, the rustling of fabric, and the aroma of diverse goods.
+
+		Navigating through the crowd, you begin to take in the variety of stalls and carts. However, amidst the chaos, a tall Elf vendor approaches you, a curious expression on their face. They recognize you and ask, 
+		
+		"Hey there…" 
+		*fake_choice
+			# Buddy (Boy)
+				*set gender "Male"				
+			# Young Lady (Girl)
+				*set gender "Female"
+			# Kiddo (Other)
+				*set gender "Other"
+		
+		”What are you doing here by yourself?" Choosing to skip the tutorials, you respond with a confident smile, "Just browsing." With that, you immerse yourself in the vibrant marketplace, ready to explore and find your own path in this world of opportunities.
+		
 		*goto SC1_Market
 
-	#You are starting to get hungry and decide to raid the dwindling stock of food kept in the house
+	# Create a Meal with Limited Ingredients 
 		You open the pantry to find the house is lower on food stores than you realized. With a little thinking and a can-do attitude, you manage to make yourself a small and semi-satisfying breakfast.
+		
+		As you awaken to the sun's gentle rays, you feel a pang of hunger in your stomach. 
+
+		You pass the mirror on the way to the kitchen and see a,
 		*fake_choice 
-			#A hearty and filling meal
-				You are full and are feeling strong.
-				*comment FIXME: Base attributes should not be mutated outside certain circumstances.
+			# Boy
+				*set gender "Male"
+			# Girl
+				*set gender "Female"
+			# Kid
+				*set gender "Other"
+
+		Once you are in the kitchen, you glance around and realize that the house's food supply is lower than you had realized. It seems you'll have to make do with the limited ingredients available to you.
+
+		With a can-do attitude, you open the pantry and begin scavenging for any remnants of sustenance. 				
+
+		*fake_choice 
+			# Culinary Creativity ([color=${brawn_color}]Brawn++[/color] [color=${agility_color}]Agility++[/color])
+				
 				*set Brawn +1
-			#A light but nutritious
-				You are energized and light on your feet.
-				*comment FIXME: Base attributes should not be mutated outside certain circumstances.
 				*set Agility +1
-			#A delectable breakfast
-				You are amazed by your own skill. A small grin strikes your face.
-				*comment FIXME: Base attributes should not be mutated outside certain circumstances.
+
+				After some resourceful thinking, you manage to gather a handful of vegetables, a few eggs, and a small loaf of bread. It may not be a lavish feast, but it's enough to appease your hunger. You set to work in the kitchen. By utilizing your creativity and culinary skills to prepare a small but semi-satisfying breakfast. The aroma of sizzling vegetables and the sound of cracking eggs fill the air, as you transform the modest ingredients into a nourishing meal. You use your strength to handle the knife and cooking utensils with skill and precision, chopping the vegetables and flipping the eggs with ease. Your agility allows you to swiftly move around the kitchen, multitasking between various cooking techniques.
+
+				Your mother walks into the kitchen from the farm and sees the breakfast you made.
+
+				Thanks for cooking breakfast…
+				*fake_choice
+					# Buddy (Boy).”
+						*set gender "Male"
+					# Honey (Girl).”
+						*set gender "Female"
+					# Kiddo (Other).”
+						*set gender "Other"
+				
+				“Could you head to the market after breakfast? We need to stock up on some food. The harvest isn’t in yet.” Your mother asks you. You nod and finish your food.
+
+				Having savored your breakfast,  you grab the coin and items you’re planning to trade so you can replenish the dwindling food supplies. You have also been hearing some rumors spreading through the town and wanted to ask some people about them.
+				*page_break
+						
+			# Uncovering Secrets ([color=${cunning_color}]Cunning++[/color] [color=${agility_color}]Agility++[/color])
 				*set Cunning +1
+				*set Agility +1
+				While searching through the pantry, you stumble upon a hidden compartment. Confused, you open it and find a note from your father.
+
+				“I was wondering when you would find this. You’re such a clever child. In here you’ll find some toys I got you from Davenport. Thought you and Reese may enjoy playing with them. I hid them from you because I wanted it to be a scavenger hunt, but since you found them before I came back you can have them.”
+			
+				Your father would sometimes come back with toys or treats from out of town. He’ll try to get you some of your favorite bread baked by the dwarves. They bake the best bread you have ever had and whenever he leaves that is the one thing you ask from him.
+				
+				“What did you find in there?” Your mother calls out.
+				*page_break
+				
+				“Wooden swords and a note from Dad!” You shout back.
+			
+				“Oh, you found the hidden compartment, I told your dad that you would find it. He needs to find better hiding places.” Your mother laughs. “You can play with them after you get back from the market. I need you to pick up some food.”
+			
+				You excitedly nod and grab the coin before running out.
+
 		*page_break
 
-		“Thank you for cooking breakfast, sweetie. Now I need you to head into the market for some grain, eggs, and potatoes so I can make dinner tonight.” After a small but somehow satisfying breakfast, you gather your things and head into the marketplace.
 		*goto SC1_Market
 
 *comment Go to the market ------------------------------------------------------
 *label SC1_Market
+The marketplace is the vibrant heart of the city, a sprawling area that serves as the bustling hub of commerce and trade. Nestled in the downtown district, it radiates a sense of energy and liveliness that permeates the air.
+
+As you step into the marketplace, your senses are immediately captivated by a kaleidoscope of colors and sounds. The main street is lined with an assortment of stalls, each adorned with vibrant tents and intricately carved carts, creating a visually captivating tapestry. The merchants, representing diverse races and cultures, are passionately engaged in their craft, enticing customers with their displays and calls to attention.
+
+The air is filled with an amalgamation of scents that intermingle harmoniously. The aroma of freshly baked bread wafts through the air, intermingling with the fragrant spices from exotic cuisines. The scent of freshly harvested fruits and vegetables, as well as the unmistakable scent of various herbs, lingers enticingly. The marketplace is a cornucopia of tantalizing smells, promising culinary delights and aromatic treasures. The soundscape of the marketplace is a symphony of voices, each merchant eager to captivate the attention of potential customers. The air resonates with a chorus of enthusiastic greetings, persuasive sales pitches, and friendly banter. Amidst the bustling crowd, the melodic tunes of street musicians and the rhythmic clinking of coins create a lively backdrop, adding to the vibrant atmosphere.
 *page_break
-The marketplace is a sprawling area centered in downtown. Merchants of all races are busy milling about. Color tents and intricately carved carts are strategically placed throughout the “main street” creating a competing cacophony of noises and shouting from merchants peddling their goods.
-*page_break
-As you leisurely gaze upon the various booths of food, a tall Elf stops you and asks, “ Hey ${name} what are you doing here by yourself?”
+
+Navigating through the marketplace requires a keen sense of observation and adaptability. The bustling crowd, composed of locals and visitors alike, weaves through the maze of stalls, creating a dynamic flow of movement. People from all walks of life can be seen here, dressed in a myriad of vibrant and diverse attire, representing their cultural heritage and personal styles. The marketplace is not merely a place of commerce; it is a center of social interaction. Amidst the transactions and haggling, friends catch up over cups of steaming tea, families explore the wares together, and strangers strike up conversations that lead to unexpected friendships. Laughter, shared stories, and the exchange of ideas are interwoven into the fabric of this bustling place.
+
+Amongst the crowd you hear a shout and turn around. You can see Reese, your best friend, running towards you.
+
+“${name}! ${name}!” Reese shouts before they stop a few feet away, panting. “What… Are… You… Doing…?”
+
 *fake_choice
-	#“Mother needs me to pick up grain, eggs, and potatoes for supper tonight.”
-		“Ah yes,” says the Elf. “While I do not have everything you need, I know that gruff man has the remaining goods you require. Go see them first and I’ll have the rest of what you need by the time you get back.”
+	# "Gathering food for dinner" ([color=${cunning_color}]Cunning++[/color])
+		*set cunning +1
+		They stop you in your tracks and ask, "Hey there, (Player_Name) and Reese, what are you two doing here by yourselves?" 
+
+		"Mother needs me to pick up various food items for supper tonight." You respond.
+
+		The Elf nods, understanding your task. "Ah yes," they say, their voice tinged with a hint of wisdom. "While I don't have everything you need, I know that Ferren has the remaining goods you require. Go see them first, and I'll have the rest of what you need by the time you get back." With directions in mind, you head towards the vendor. As you approach their stall, they greet you warmly. "Well hello there, little human. What can I do for you today?"
 		*page_break
 
-		You come across the stall the elf pointed you to. The gruff man hands you a stuffed bag. You confusingly open the bag to find the rest of the ingredients that the Elf didn't have. The man holds his hand out expecting payment. Handing the crops to the man in the stall to pay for the sack, you swiftly make your way through the crowds toward the elf.
-		*page_break
+		“I need to get vegetables for dinner tonight. Our harvest is late and we can’t pick them yet.” You explain as well as you can.
 
-		The elf hands you another sack with a smile and asks for the bushel of small herbs as payment. You hand the herbs to the elf and start back to the farm.
-
-	#“Just browsing.”
-		You head back after grabbing ingredients and paying in
-		awkward silence.
-
-	#“Well, I seem to be running low on food. I have various crops and items to trade.”
-		The Elf asks, “What do you have kiddo, let us see if we can make a deal.”
+		"I can provide you with what you need, but first, I have a few minor tasks that require your expertise. I will even let you choose which tasks you would like to complete." With determination, you and Reese embark on the tasks assigned by the vendor, immersing yourself in the challenges they present.
 
 		*fake_choice
-			#Make a delivery for the stall dealer in order to pay for all the ingredients.
-				You make the delivery and take the ingredients back to the farm.
-				*comment FIXME: Base attributes should not be mutated outside certain circumstances.
-				*set Agility +1
+			# The Strongarm Delivery ([color=${brawn_color}]Brawn++[/color] [color=${cunning_color}]Cunning++[/color])
 
-			#Help the stall dealer move the extra goods into storage
-				You lift several crates onto the dealer cart and take the ingredients back to the farm.
-				*comment FIXME: Base attributes should not be mutated outside certain circumstances.
-				*set Brawn +1
+				The Elf considers your request for a moment before speaking, "Ah, yes. While I don't have everything you need, I know that a trusted merchant named Gorrim down the lane has the remaining goods you require. However, before I can assist you further, I have a task that requires you to be strong and smart. Although, with the two of you working together, it shouldn’t be that difficult."
 
-			#You haggle with the stallkeeper to reduce the price.
-				You successfully haggle with the elf. Though you are pretty sure they were egging you on.
-				*comment FIXME: Base attributes should not be mutated outside certain circumstances.
-				*set Cunning +1
+				“He is right down this path, but be careful. The crate is very heavy and there are many obstacles along the way. You will need to find a way to work together if you want to deliver this.” The Elf explains. 
+				*page_break
+
+				Your task is clear: deliver the crate to the designated merchant without damaging its contents and without falling into any traps or pitfalls along the way. As you carry the weight on your shoulders, your muscles strain and your brawn is put to the test. 
+
+				“I can help! You don’t have to carry it by yourself.” Reese offers, but you shake your head.
+
+				“This is my task, just help me not bump into anything.” You request. Reese runs ahead and tells you where some obstacles are.
+
+				When the two of you get back, the Elf imparts their knowledge of combat tactics and strategic thinking, honing both your brawn and cunning skills.
+
+			# The Agile Pursuit ([color=${agility_color}]Agility++[/color] [color=${cunning_color}]Cunning++[/color])
+				"There's been an incident in the marketplace where a mischievous pickpocket has been causing trouble. I need one of you to catch them before they slip away using your speed and outsmarting them." The Elf explains.
+
+				“From what I have heard, they are a sneaky fellow. From what I have gathered, they are shorter than a dwarf and wear a dark hood. They keep out of sight, but find ways to move through the crowd. If the two of you work together, you will be able to find and catch them.” The Elf explains before you and Reese join the crowd.
+
+				Your mission is to navigate through the bustling marketplace, swiftly and deftly, in pursuit of the pickpocket. Your agility and quick reflexes will be crucial in catching them, but you must also employ cunning tactics to outsmart their tricks and evasive maneuvers.
+				*page_break
+
+				As you two dart through the marketplace, jumping over obstacles, maneuvering through tight spaces, and blending seamlessly with the flow of people, you must also anticipate the pickpocket's moves and set cunning traps of your own. By strategically positioning yourself and using your wits, you gradually close in on the pickpocket, outmaneuvering them at every turn. Reese follows close behind you, ready to block any escape routes that may pop up. 
+
+				With a final burst of speed and a well-placed trap, you apprehend the pickpocket, returning the stolen goods to their rightful owners. The Elf commends your agile and cunning pursuit, impressed by your ability to think on your feet and adapt to the ever-changing circumstances.
+
+				In recognition of your accomplishment, the Elf imparts their knowledge of stealth techniques and cunning strategies, enhancing your agility and cunning.
+		
+		*page_break
+		Once you've fulfilled their request, you return to the friendly Elf vendor in the marketplace, who now has the rest of the food items you need for dinner. Grateful for your efforts, the Elf vendor hands you the completed package. "Here you go," they say with a smile. "You've proven yourself resourceful and capable and I thank you."
+
+
+	# “Just browsing.” (choice)
+		As you wander through the sprawling marketplace, your eyes dart from one stall to another, taking in the array of goods and the vibrant colors that surround you. The voices of merchants calling out their offers blend into a harmonious background noise.
+
+		In the midst of the crowd, the tall Elf approaches you, wearing a friendly expression. They stop you and inquire, "Hey there, (Player_Name), Reese, what are you two doing here by yourselves?"
+
+		With a nonchalant smile, you respond, "Just browsing." The Elf nods, seemingly understanding your desire to explore the marketplace without any particular goal in mind. They offer you a nod of acknowledgement before continuing on their way, leaving you to your own devices.
+
+		[b]With the tutorials skipped, you are free to apply your skills, and attributes as you see fit. The world of possibilities awaits you in the marketplace, where you can interact with various merchants, engage in conversations, and uncover hidden opportunities.[/b]
+		*fake_choice
+			# Strength [color=${brawn_color}]Brawn++[/color]
+				*set brawn +1
+			# Agility  [color=${agility_color}]Agility++[/color]
+				*set agility +1
+			# Cunning  [color=${cunning_color}]Cunning++[/color]
+				*set cunning +1
+
+	#“Trading Crops and Items” ([color=${brawn_color}]Brawn++[/color])
+		*set brawn +1
+		As you traverse the bustling marketplace, your eyes scan the various stalls, assessing the potential value of your farm's crops and other items. You know that the stock of food at home is dwindling, and you seek a way to replenish it.
+
+		Amidst the crowd, the tall Elf spots you and strides over with an intrigued expression. They stop you in your tracks and inquire, "What do you have, little human? Let's see if we can make a deal." Understanding their intent, you respond, "Well, I seem to be running low on food. I have various crops and items to trade."
+
+		The Elf's eyes sparkle with interest, and they invite you to showcase your offerings. Together, you examine the items you have brought, discussing their worth and potential trade possibilities. Reese watches as you trade, not understanding how you do this. 
+		*page_break
+
+		After negotiating, you strike a deal, exchanging your crops and items for much-needed food supplies. With the trade completed, the Elf presents you with the acquired provisions and a thoughtful smile. "Thank you for your business," they say. "However, if you're looking to fully settle into the marketplace, I have a few minor tasks that require your expertise. Completing them will grant you additional skills, further honing your abilities. I will let you choose which task you wish to complete for me."
+
+		Grateful for the opportunity, you eagerly accept the challenge and embark on the tasks assigned by the Elf. With each successful completion, you acquire new knowledge and grow.
+
+		*fake_choice
+			# The Resourceful Cook ([color=${brawn_color}]Brawn++[/color] [color=${cunning_color}]Cunning++[/color])
+				*set brawn +1
+				*set cunning +1
+				The Elf sends you and Reese to Master Remus, the best chef in town. Believing that you two could learn something new from him.
+
+				After hearing that the Elf sent you here, Master Remus has offers you a challenge. He has a secret recipe that requires a combination of strength and speed. The ingredients are scattered throughout the market, and you must navigate the bustling stalls and negotiate with vendors to gather everything you need.
+
+				Your task is to gather the specific ingredients Master Remus requires, showcasing your agility as you swiftly move through the market and your brawn as you negotiate and trade with the vendors. 
+
+				Along the way, you encounter various obstacles, crates and people in your way. You and Reese work together to get the food back to Master Remus. Climbing over crates and dodging through people you two manage to collect all the necessary ingredients. Master Remus is impressed by your culinary prowess and rewards you with a lesson in both agility and brawn. He teaches you techniques that will enhance your physical prowess and quick reflexes.
+
+
+			# The Elusive Secrets ([color=${brawn_color}]Brawn++[/color] [color=${cunning_color}]Agility++[/color])
+				*set brawn +1
+				*set agility +1
+				The elf sends the two of you to get some cloth from the merchant on the other side of town. However, before you leave, he gives a warning.
+				
+				“Be careful of the people called the Whisper. They may be known for having some good information, but they can’t be trusted.” The Elf tells you before sending you both off.
+
+				As you wander through the market, you notice a shady figure lurking in the shadows. Intrigued, you approach them cautiously, discovering that they are the Whisper. Whisper specializes in acquiring valuable secrets and information, and they have something that piques your interest.
+				*page_break
+
+				Whisper offers you a deal – in exchange for a favor, they will share valuable secrets that can aid you in your journey. The favor they require involves using your cunning to gather classified information from various individuals in the market. You are cautious  at first, but Reese thinks it may prove useful to stay on their good side. They provide you with a list of targets and specific questions to ask them discreetly.
+
+				Your task is to navigate the bustling market, using your cunning to approach the targets, engage them in conversation, and extract the desired information without arousing suspicion. You must rely on your ability to read people, employ persuasive tactics, and adapt to each target's personality and demeanor.
+
+				Many times you and Reese have to find creative hiding spots. A few times even creating some. The two of you will push a barrel into a better location or climb a difficult wall.
+
+				With your natural gift for cunning and strength, you successfully gather the information Whisper seeks, impressing them with your cleverness and resourcefulness. In return, Whisper imparts invaluable knowledge of covert operations and cunning strategies.
+
+*page_break
+
+After a hearty dinner with Mom, you head to bed with a book. It’s a journal of everything you have found. You have a section for monsters, locations, people and items, each categorized with their own bookmark.
+
+You open your book and add in a new creature you learned about today. The mockguarden. While you and Reese were running around town, you overheard some travelers talking about it.
+
+“I’d be careful walking down the main road to Lindow if I were you. Heard that it’s been overrun by mockgardens.” One merchant said to another. “Take the side path between Stormdenn and the river, it’s a longer path, but safer.”
+
+After hearing about the creature, you asked Reese to stop by the library so you could read about it. They agreed, as long as you played knights with them.
+
+At the library, you searched for the book about monsters and flipped through the pages. You see a wide array of monsters you have never heard of, but you only had time to read about one.
+You choose to read:
+
+*fake_choice
+	# Mockgardens
+		You came here to read about this new creature and you set on reading about it. You continue to flip through the pages until you hit “Mockguarden.”
+
+		“The Mockguarden, a perilous and cunning predator, is a formidable form of predatory plant that lurks within the depths of untamed forests. With its ability to adapt and camouflage, it poses a significant threat to unsuspecting creatures that venture too close. While its visible parts may change and blend with the surroundings, it is the subterranean mycelium network that truly defines this enigmatic entity.”
+		
+		[b]You've unlocked the Mockgardens codex entry![/b]
+		To view this entry, click on the codex in the top right corner, and enter the "Monster" section.
+		*set isMockguardenDiscovered true
+	# Jackaloids
+		You never heard of a Jackaloid before and was interested in what it was. Deciding that you could read up about Mockguardens later, you flip back to the manned Jackaloid page.
+
+		“The Manned Jackaloids are small, werewolf-like creatures that inhabit remote regions far from civilized settlements. Standing between 3 and a half to just under 5 feet tall, they operate in packs, using their presence to frighten away other predators from potential prey and scavenging off decaying carcasses. Despite their frail and lesion-ridden appearance, these creatures exhibit surprising resilience.
+		
+		[b]You've unlocked the Jackaloid codex entry![/b]
+		To view this entry, click on the codex in the top right corner, and enter the "Monster" section.
+		*set isJackaloidDiscovered   true
+	# Direwolves
+		“Direwolf?” you mumble as you flip to the page. It has sparked your curiosity and you decide to read it.
+
+		“The Direwolf, a creature of awe-inspiring stature and intelligence, reigns as a formidable presence within the realms it calls home. Far surpassing the mere size of their smaller kin, these majestic beings exhibit a level of intelligence that sets them apart from regular wolves. Scholars and druids alike attest to their heightened cognitive abilities, recognizing them as remarkable beings in the animal kingdom.”
+
+		[b]You've unlocked the Direwolf codex entry![/b]
+		To view this entry, click on the codex in the top right corner, and enter the "Monster" section.
+		*set isDirewolfDiscovered    true
+
+You are enthralled by the readings before you can finish reading, the book is torn from your hands.
+
+“This isn’t something someone so young to read about. There is much more appropriate creature books over in the kids section.” The librarian explains with a rude voice.
+
+You and this librarian have never got along. Every time you find a new book, she will snatch it from your hands and send you to the kids section. You are old enough to buy food and sell crops, why are you not allowed to read about the creatures of this world?
+
+“Come on ${name}, let’s just go play. It isn’t worth angering Miss Librarian.” Reese drags you out of the library and into the town.				
 
 *finish
 
 *comment Initialize the player -------------------------------------------------
-*label Player_Init
-*fake_choice
-	#Just a boy.
-		*set gender "Male"
-	#Just a girl.
-		*set gender "Female"
-	#Just a kid
-		*set gender "Kid"
-
-*goto PI_GetName
 
 *label PI_GetName
 Your name?
 
-*if gender  = "Male"
-	*fake_choice
-		#Corvo
-			*set name "Corvo"
-		#Krieg
-			*set name "Krieg"
-		#Other
-			*input_text name
-
-*if gender  = "Female"
-	*fake_choice
-		#Emily
-			*set name "Emily"
-		#Maya
-			*set name "Maya"
-		#Other
-			*input_text name
-
-*if gender  = "Kid"
-	*fake_choice
-		#Omo
-			*set name "Omo"
-		#Aang
-			*set name "Aang"
-		#Other
-			*input_text name
+*input_text name
 
 *goto PI_ConfirmName
 
@@ -160,7 +331,7 @@ Your name?
 ${name}, Is that right?
 
 *choice
-	#Yup.
+	# Yes.
 		*goto StartChapterOne
-	#Oh wait, got that wrong.
-		*goto Player_Init
+	# No.
+		*goto PI_GetName

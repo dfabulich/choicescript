@@ -18,12 +18,16 @@
 *create implicit_control_flow true
 
 *comment ///////// Generic Globals /////////
-*create name "name"
+*create name "???"
 *create gender "???"
 *create faction "None"
 *create item "None"
 *create bought "None"
 *create coin 0
+
+*create brawn_color   "#d60d0d"
+*create agility_color "#FF9900"
+*create cunning_color "#4A86E8"	
 
 *comment ///////// General Purpose Globals (used in subroutine calls) /////////
 *comment Read only! DO NOT WRITE TO THIS OUTSIDE OF A SUBROUTINE AND SELECT CIRCUMSTANCES!!!
