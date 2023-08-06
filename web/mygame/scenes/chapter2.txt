@@ -14,7 +14,7 @@ The sun was high in the sky, the dappling of clouds providing cool shade as you 
         “Alright…” You reluctantly agree.
 *page_break
 
-The forest on the edge of town was well-traveled. Packed dirt of well-traveled footpaths spread across the forest floor like one large spider web of interconnecting routes. The trees were far enough apart tolet in plenty of sunlight,  illuminating the dense patch of a mockgarden that grew on the forest floor. Having grown up a stone’s throw away from this forest, you had long heard stories about these unassuming plants that grew on the forest floor. Their benign color and simple appearance was just a natural ruse. They weren’t too common, but recently a hunter had noticed a mockgarden hidden amongst the thick grass on the forest floor. It had become town-wide news in less than an hour and all the adults were warning their children about the dangerous plant. Looking closer as you passed the deadly clusters of mushroom-like plants, you could see the pale white bone of some unfortunate animal that had been caught in their snare. 
+The forest on the edge of town was well-traveled. The footpaths are spread across the forest floor like one large spider web of interconnecting routes. The trees were far enough apart to let in plenty of sunlight, illuminating the dense patch of a mockguarden that grew on the forest floor. Having grown up a stone’s throw away from this forest, you had long heard stories about these unassuming plants that grew on the forest floor. Their benign color and simple appearance was just a natural ruse. They weren’t too common, but recently a hunter had noticed a mockguarden hidden amongst the thick grass on the forest floor. It had become town-wide news in less than an hour and all the adults were warning their children about the dangerous plant. Looking closer as you passed the deadly clusters of mushroom-like plants, you could see the pale white bone of some unfortunate animal that had been caught in their snare. 
 *set isMockguardenDiscovered true
 
 The two of you chased each other, playing tag and picking pretty flowers as you ventured deeper into the forest. The branch Reese found having changed hands multiple times and continuously used to tease and attack.  Eventually, you found your own branch and goaded your friend into playing swords. 
@@ -114,6 +114,7 @@ As the two of you run, you see the figure of what looks to be a man, a Priest of
 
 There doesn’t seem to be an easy path to get to him. One path has a steep drop, another is covered in roots, and the last has mockgardens too close for your liking.
 
+*comment Improper usage of attribute variables in this branch
 *fake_choice
     # The drop is small and you’ll just have to pick your friend up (Brawn++)
         You help Reese sit on the edge of the drop and check what is at the bottom of the drop. It looks to be just dirt and leaves scattered about. You jump down and help your friend down. They stagger, but you catch them and help them back to their feet.

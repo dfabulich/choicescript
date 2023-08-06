@@ -1,6 +1,60 @@
 *finish
 
-*comment This subroutine randomly determines if a random chance passes
+*comment This subroutine increments skills
+*comment this should probably be a command...
+*comment vars:
+*comment    GP_arg0 - the skill to be incremented.
+*comment return:
+*comment    None
+*label IncrementSkill
+*if GP_arg0 = "Endurance"
+    *set Endurance +1
+*elseif GP_arg0 = "Strength"
+    *set Strength +1
+*elseif GP_arg0 = "Presence"
+    *set Presence +1
+*elseif GP_arg0 = "Courage"
+    *set Courage +1
+*elseif GP_arg0 = "ReactionSpeed"
+    *set ReactionSpeed +1
+*elseif GP_arg0 = "Stealth"
+    *set Stealth +1
+*elseif GP_arg0 = "MotorSkill"
+    *set MotorSkill +1
+*elseif GP_arg0 = "Acrobatics"
+    *set Acrobatics +1
+*elseif GP_arg0 = "Improvisation"
+    *set Improvisation +1
+*elseif GP_arg0 = "Knowledge"
+    *set Knowledge +1
+*elseif GP_arg0 = "Medical"
+    *set Medical +1
+*elseif GP_arg0 = "Speechcraft"
+    *set Speechcraft +1
+*else
+    *bug Could not find "${GP_arg0}" to increment it…
+
+*comment TODO: Add magic skills
+
+*gosub UpdateAttributes 
+*return
+
+*comment This subroutine updates attributes based on skills
+*comment vars:
+*comment    None
+*comment return:
+*comment    None
+*label UpdateAttributes
+
+*set Brawn (((Endurance + Strength) + Presence) + Courage) / 4
+*set Agility (((ReactionSpeed + Stealth) + MotorSkill) + Acrobatics) / 4
+*set Cunning (((Improvisation + Knowledge) + Medical) + Speechcraft) / 4
+
+*comment TODO: Add magic attribute
+
+*return
+
+*comment This function randomly determines if a random chance passes
 *comment vars:
 *comment    GP_arg0 (attr) - the attribute to be tested.
 *comment    GP_arg1 (succPercent) - what chance needs to be greater than.
@@ -22,8 +76,8 @@
 
 *return
 
-*comment This subroutine randomly determines if a random chance passes
-*comment This subroutine replaces GP_arg1 with the corresponding success percentage.
+*comment This function randomly determines if a random chance passes
+*comment WARNING: This subroutine replaces GP_arg1 with the corresponding success percentage.
 *comment vars:
 *comment    GP_arg0 (attr) - the attribute to be tested.
 *comment    GP_arg1 (difficulty) - Difficulty Level.

@@ -40,21 +40,21 @@
 
 *comment ///////// Attribute Globals /////////
 *create Brawn 0
-*comment brawn sub-attributes
+*comment brawn skills
 *create Endurance 0
 *create Strength 0
 *create Presence 0
 *create Courage 0
 
 *create Agility 0
-*comment agility sub-attributes
+*comment agility skills
 *create ReactionSpeed 0
 *create Stealth 0
 *create MotorSkill 0
 *create Acrobatics 0
 
 *create Cunning 0
-*comment cunning sub-attributes
+*comment cunning skills
 *create Improvisation 0
 *create Knowledge 0
 *create Medical 0

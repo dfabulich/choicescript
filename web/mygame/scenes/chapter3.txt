@@ -3,12 +3,15 @@ The second spring after those tragic events surrounding a dear friend and a Jack
 
 Your adventurous side could only be held down for so long, despite the…
 *fake_choice
-    # Fears that may linger (Courage--)
-        *comment TODO: Courage--
+    # Fears that may linger (Courage++)
+        *set GP_arg0 "Courage"
+        *gosub_scene general IncrementSkill
     # Disapproval from those in your village (Stealth++)
-        *comment TODO: Stealth++
+        *set GP_arg0 "Stealth"
+        *gosub_scene general IncrementSkill
     # Bitter memories you may have (Improvisation++)
-        *comment TODO: Improv++
+        *set GP_arg0 "Improvisation"
+        *gosub_scene general IncrementSkill
 *page_break
 
 Besides, this isn’t even the same forest. The other difference now is that you refuse to drag anyone along with you; not again.
@@ -33,6 +36,9 @@ If you had to guess, you’d say she was a wood elf. You haven’t seen many woo
 
 *fake_choice
     # Speak to the druid (Speechcraft++)
+        *set GP_arg0 "Speechcraft"
+        *gosub_scene general IncrementSkill
+
         You walk up to the druid, rather casually, barely containing your excitement. You ask her if she’s, like, a real druid; the kind that really protect the forest and sleep under the shade of the trees.
         
         She seems unamused, but answers all the questions swiftly. Simple “Yes” and “No” responses. Perhaps a little inappropriately, you wonder aloud…
@@ -43,6 +49,9 @@ If you had to guess, you’d say she was a wood elf. You haven’t seen many woo
         
         “You may hear of our woes, young sapling, if only so that they may be heard…”
     # Watch the druid (Stealth++)
+        *set GP_arg0 "Stealth"
+        *gosub_scene general IncrementSkill
+        
         You hide in a relatively benign-looking bush, and stare at the druid. This is a rare opportunity; has anyone from your village ever even seen a druid? Well, now you can say you have.
         
         She sits down and lays her head back against a tree, letting out a lengthy sigh, bordering on the territory of a groan. This is odd behavior, you think, for a free spirited druid to be exhibiting. They’re supposed to be happy, from what you’ve heard.
@@ -64,6 +73,9 @@ If you had to guess, you’d say she was a wood elf. You haven’t seen many woo
         
         “Very well. You have an air of silence, and our feelings have reached an excess in our hearts. You may know what ails us, young sapling… if only to ease the pressure.”
     # Leave and explore deeper into the forest (Courage++)
+        *set GP_arg0 "Courage"
+        *gosub_scene general IncrementSkill
+
         But, your instincts tell you otherwise. Better not to disturb these peaceful people of the forest with your villager ways. They avoid outsiders for a reason, you’d imagine.
         
         You wander in a perpendicular direction, deeper into the forest, and, oddly darker. If it gets too dark, you think, you’ll turn back. It’s still daylight, so you don’t take this as a sign of danger.

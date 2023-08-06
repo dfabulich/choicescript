@@ -12,7 +12,7 @@
 *temp Chance 0
 
 *comment General purpose variables to pass data between subroutines.
-*comment This is how things are done at the CPU level... (assembly)
+*comment This is how things are done in assembly...
 *temp attrib
 *temp chance_floor
 *temp did_chance_check_succeed
