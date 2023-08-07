@@ -22,6 +22,7 @@
 An Ogre stands in the road, you know he won't let you pass without a fight.
 *line_break
 (Combat works on a Success/Failure tally system. 3 successes results in a victory, while 3 failures results in loss.)
+*image images/Ogre-Encounter.webp
 *label start_of_fight
 *fake_choice
     # Charge him shield raised in effort to knock him down.  [b][color=${bcolor}](Brawn)[/color][/b]
