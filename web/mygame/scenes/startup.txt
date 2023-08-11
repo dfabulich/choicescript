@@ -27,7 +27,7 @@
 *create name "???"
 *create gender "???"
 *create faction "None"
-*create item "None"
+*create item "murder_weapon"
 *create bought "None"
 *create coin 0
 
@@ -72,6 +72,9 @@
 *create Arcane 0
 
 *comment ///////// Phase Globals /////////
+*comment Phase1
+*create CH2_followed_voice false
+*comment Phase2
 *create P2_branch 0
 
 *comment ///////// Codex Globals /////////

@@ -9,7 +9,7 @@ Nestled on the outskirts of Davenport, far beyond the city's bustling streets an
 
 The farm is a place where hard work and dedication intersect with the rhythms of nature. Fields of vibrant crops sway in the wind, their colors blending together to form a breathtaking tapestry. Rows of vegetables, fruits, and grains stretch as far as the eye can see, a testament to the labor poured into the land. At the heart of the farmstead stands a quaint farmhouse, weathered by time but filled with warmth and love. It is here that your character was raised, nurtured by the unwavering devotion of your parents. The aroma of home-cooked meals often wafts through the air, a testament to your mother's culinary skills and her ability to transform the farm's bounty into delicious feasts.
 
-Your parents are pillars of strength and determination. A seasoned farmer, your mother possesses an uncanny understanding of the land and an unwavering commitment to its care. She has imparted her knowledge and love for the farm to you, teaching you the secrets of cultivating crops and tending to livestock. Together, you have toiled under the sun, sowed seeds, and reaped the rewards of your labor.The farmstead is more than just a source of sustenance; it's a sanctuary. The wide-open spaces invite exploration and introspection.
+Your parents are pillars of strength and determination. A seasoned farmer, your mother possesses an uncanny understanding of the land and an unwavering commitment to its care. She has imparted her knowledge and love for the farm to you, teaching you the secrets of cultivating crops and tending to livestock. Together, you have toiled under the sun, sowed seeds, and reaped the rewards of your labor. The farmstead is more than just a source of sustenance; it's a sanctuary. The wide-open spaces invite exploration and introspection.
 
 Your father is often on trips to Davenport. He is a sailor that takes food and other goods down the river to Davenport or smaller towns that can’t grow much. He’s become well known across this side of Teville. 
 *page_break
@@ -56,7 +56,7 @@ You decide to,
 				
 		Together, you and your mother gather the harvest, filling baskets with an abundance of fresh, nutritious produce. Your combination of cunning and agility proves invaluable in selecting the best crops and handling them with care.
 	
-		Once you finish your task, you help your mother take some baskets back to the house. There, your stomach grumbles, signaling the need for sustenance. You and your mother take a break, enjoying a simple but satisfying meal prepared from the farm's bounty. Once you've replenished your energy, your mother turns to you and says, "Thank you, (Player_Name). Now, I need you to head into the marketplace after breakfast and gather some bread for dinner tonight."
+		Once you finish your task, you help your mother take some baskets back to the house. There, your stomach grumbles, signaling the need for sustenance. You and your mother take a break, enjoying a simple but satisfying meal prepared from the farm's bounty. Once you've replenished your energy, your mother turns to you and says, "Thank you, ${name}. Now, I need you to head into the marketplace after breakfast and gather some bread for dinner tonight."
 
 		Grateful for your help, she hands you a small pouch of coins to cover the expenses. With a sense of purpose, you bid your mother farewell and make your way toward the bustling marketplace, ready to fulfill your task and discover what lies beyond the familiar boundaries of the farmstead.
 		*page_break
@@ -164,7 +164,7 @@ Amongst the crowd you hear a shout and turn around. You can see Reese, your best
 *fake_choice
 	# "Gathering food for dinner" ([color=${cunning_color}]Cunning++[/color])
 		*set cunning +1
-		They stop you in your tracks and ask, "Hey there, (Player_Name) and Reese, what are you two doing here by yourselves?" 
+		They stop you in your tracks and ask, "Hey there, ${name} and Reese, what are you two doing here by yourselves?" 
 
 		"Mother needs me to pick up various food items for supper tonight." You respond.
 

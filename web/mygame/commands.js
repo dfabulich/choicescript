@@ -35,4 +35,4 @@ Scene.prototype.bug_continue = function(message) {
         alert(this.lineMsg() + "\n" + message);
     }
 
-}//Important!
+}

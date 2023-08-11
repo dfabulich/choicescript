@@ -105,9 +105,11 @@ As you get closer to town, you hear a voice in the forest. A low, grumbling voic
 
 *choice
      # Yes
-         *goto CH2_Affirm
+        *set CH2_followed_voice true
+        *goto CH2_Affirm
      # No
-         *goto CH2_Reffuse
+        *set CH2_followed_voice false
+        *goto CH2_Reffuse
 
 *label CH2_Affirm
 As the two of you run, you see the figure of what looks to be a man, a Priest of the Sigel judging by the golden sun emblem on his outfit. The man has a bag bursting with herbs and is trying to stuff more into his overfilled bag. 

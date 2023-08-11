@@ -1,4 +1,579 @@
 
 *label StartChapter5
+[head]Chapter 5: Wolves of Davenport[/head]
 
-TESTING MERC CHAP5
+“Follow me, I’ll get you to a place where the guards won’t think to look for you.” The mercenary leads you down some back alleys. You look around, trying to recognize some of the area, but none of it looks familiar. You avoided this side of town as much as you could since Reese’s death. Couldn’t bear to visit the places the two of you used to play.
+
+‘I wonder how our old pathways look now, it has probably been destroyed by now.’ You thought soberly as you looked up at the rooftops.
+
+Both you and the mercenary sneak around the alleys until he stops at a door. It looks vaguely familiar and you can’t quite figure out why. Something about the odd design carved on the front. It looks like it was carved after it was put up, but you can’t quite make out the symbol.
+
+“In here.” The mercenary opens the door and walks in. You follow, stopping for a second to look at the carvings up close before closing the door.
+
+The room is barely lit up with only the moonlight showing through a broken window. You can make out a table, a couple of chairs, and some barrels lining the walls. One of the chairs is on the floor, missing a leg, and the table looks rough with some planks broken. It doesn’t look like anyone lived here for years. You can see the mercenary standing over by the table.
+
+“We can hole up in here for the night and we’ll leave as soon as it is morning. I don’t think I ever got your name. My name is Rip, wish this was under better circumstances, but in my line of work it rarely is.” 
+
+You respond with,
+
+*fake_choice
+    # “${name}.”
+    # “My name is ${name}, and likewise.”
+        Rip walks over to you and you shake his hand.
+    # “How do I know I can trust you?”
+        “You don’t, but clearly you trusted me more than the priestess or else you won’t be here.” Rip crosses his arms and leans against the broken table. You make a note that the table is stronger than it looks.
+
+        “${name}”
+
+“Rest for the night. You’ve had a long day and we’re going to have an early morning. We can talk more in the morning.” Rip walks over to the barrels and sits behind the farthest one. You can’t see him anymore, but you can make out some movements and can guess he’s getting comfortable.
+
+You walk over to the darkest corner you can find and sit down. Your mind is still racing from everything that has happened. ‘How did I go from shopping at the market to getting mixed up with a murder. More so, how did I end up sleeping within 10 feet of a mercenary?”
+
+*comment "item could probably be replaced with the name of the item in this case..."
+Before you head to sleep you open your bag and look at your item.
+
+*if item = "bread" 
+    You take your bread out of your bag. It is a little smashed, but still good.
+    (Option 1, Generous) Share with Rip
+
+    *fake_choice
+        # Share with Rip
+            “Rip,” you whisper.
+
+            “What? Go to sleep,” Rip mumbles.
+
+            “Would you like a piece of bread?”
+
+            “What? Where did you get bread?” You can see movement on the other side of the room.
+
+            “I bought it at the market.” You can see Rip get up and start walking towards you.
+
+            “I’ll take some, thank you.” Rip takes the piece you offer him and sits nearby.
+            *set item "none"
+        # Eat it
+            You break the bread in half, put one half back in your bag and eat the other half.
+            *set item "none"
+        # Save it for later
+            You put the bread back in your bag.
+*elseif item = "dagger"
+    You take your dagger out of your bag and place it next to you. Then you try to get comfy against the corner.
+*elseif item = "book"
+    You take out your book and place it in the light. “Creatures around Tellos.” You open up to the first page about Jackaloids. 
+*elseif item = "murder_weapon"
+    You admire the designs on the knife, wondering what they mean.
+*else
+    There's nothing there…
+    *bug_continue item: ${item}, we should probably be dealing with this???
+*page_break
+  
+The next morning Rip wakes you up and you pack up your stuff.
+
+“We have to get going before the sun is high. Do you have everything?” Rip is standing by the door.
+
+“Yeah, I packed all my important stuff before I left,” You say as you stand up.
+
+“Good, we need to get going.”
+
+As you walk out of the building, you take a closer look at the carving on the door. It is Reese’s family name. This was Reese’s house.
+
+“Are you coming? We don’t have long,” Rip calls out to you.
+
+“Yeah, I’m coming.” You make your way over to Rip.
+*page_break
+
+When you get to him, Rip hands you an old cloak. It is a dark blue and has some tears in it.
+
+"To help you blend in, we can get you a better one later." He tells you before walking down the alley.
+
+You put on the cloak before following Rip. The sun is just barely peeking over the trees and it is still very dark out. You notice that Rip seems to be trying to move slightly more in the light. Everytime he stays in the shadows it is like he disappeared, you are very thankful he is making sure you can see him.
+
+It doesn't take long to make it to the forest. You forgot how close Reese's house was to the forest. You haven't been here since Reese…
+
+"Come on, if you lag behind I won't be able to help if you get caught," Rip calls out. You didn't realize he moved.
+
+“We should get moving, guards are on their way. Someone must have seen us.” Rip starts running towards the trees, you follow suit.
+
+When the two of you make it to the forest, Rip leads you down a pathway. It is a small pathway, but the footprints on it still look fresh. Someone has walked down it recently. Rip doesn’t seem to be worried, he took a quick glance at the path before beginning to walk down it.
+
+“So… You said a little bit about what had happened, what is the full story?” Rip turns to look over his shoulder at you while he asks.
+
+*comment /// I have legit no idea how to implement this... ///
+TODO: use the reputation system here…
+*comment (If the player ran into the house, Rip rep++)
+
+*comment “I heard a scream while I was walking home. Not very much happens here, so I decided to go check it out. You never know if it is something as simple as a mouse, or if someone has fallen. When I walked into the house, there was a body on the floor, I… I walked up to the body to see who it was… It was Lord Odel… I-I should have called the guards right then and there.” You look at the ground as you talk.
+
+*comment “Then what happened?”
+
+*comment (Chased the murderer)
+
+*comment “I saw the murderer leave through the back door, and without thinking I ran after him. I must have stepped in the pool of blood. When I got out of the house I saw him go down an alleyway, I know these alleys like the back of my hand. I knew that the right after the one he ran into connected. So… I ran into that alley and cut him off. I managed to grab his arm and caught a quick look at him. After that the guards came to arrest me.”
+
+*comment “What did he look like?” Rip asks.
+
+*comment “I didn’t get a good look at them, but they had a scar across their eye.” You look up at Rip and he hums.
+
+*comment (Lost the murderer)
+
+*comment “I saw the murderer leave through the back door, and without thinking I ran after him. I must have stepped in the pool of blood. When I got out of the house I saw him go down an alleyway. I used to play in these alleys a lot as a kid and thought I knew which one it connected with. I was wrong, I went down the alley right before it and it ended in a dead end. The guards caught me before I could fix my mistake.”
+
+*comment Rip hums in response.
+
+*comment (Tried to cut off the murderer)
+*comment “I saw the murderer leave through the back door. Without thinking I went through the front door and ran in the direction I saw him go in. However, I couldn’t find him anywhere. When I stopped to catch my breath the guards caught me.”
+
+*comment “He probably jumped over a wall or blended in with the crowd if you didn’t know what you were looking for,” Rip explains.
+
+*comment (Ignored the scream, Rip rep--)
+
+*comment ‘“I heard a scream coming from a house, so I… decided to leave the area. Nothing good ever happens when you get involved with something you don’t have anything to do with. I was walking away from the scream, keeping a look out for a guard, when someone bumped into me. I didn’t realize at the time it was the murderer. He took my (ITEM) and gave me the murder weapon. While I was confused, the guards grabbed me.”
+
+*comment Rip hums in disapproval.
+*page_break
+
+“That does explain some things. You don’t seem like the murdering type and to pull something like that off requires a lot of planning. They made you take the blame so they could get away.” Rip looks straight in front of him.
+
+“Don’t worry too much about this. We’ll figure out who did this and get your name cleared, but it’s going to take a bit. I’m going to send some people out to get some information and I’ll let you know as soon as we find anything. Until then you can help out around the camp.” Rip pats you on the back and you continue walking.
+
+Keeping an eye on the ground, you spot some mockgardens on the ground. You avoid them, remembering running through the forest and learning where all of the mockgardens hide. Lost in thought you didn’t notice when Rip stopped and ran into his back.
+
+“We’re here, welcome to the Wolves of Davenport.” Rip steps out of the way so you can see the camp.
+
+There are three people by the fire, one of them is making wide gestures while he talks while the other two are listening. Another person is petting a horse. One of the other horses bump up against their back. 
+
+While the two of you are standing at the edge of camp, a giant wolf comes running. It is bigger than any other wolf you have seen before, it must be a direwolf. It is running towards both you and Rip.
+
+You take a couple of steps back, but notice that Rip hasn’t moved at all. Actually, no one seems concerned about the direwolf. The people sitting at the fire stood up, but no one was going after their weapons.
+*page_break
+
+“Tyr!” Rip shouted as the direwolf ran at him. When the direwolf, Tyr, notices you, he stops and stares at you. He tilts his head and sniffs the air before seemingly coming to a conclusion of something and walks to Rip. Tyr sits next to Rip’s feet and accepts the pets given to him.
+
+“This is Tyr, my direwolf.” Rip explains while petting the wolf. “I saved him from an enemy faction and ever since then he’s been by my side.”
+
+“Don’t worry about him. He may be big, but he knows not to attack guests. Now let’s introduce you to the rest of the gang.” Rip walks over to the fire. 
+
+“The crazy one over there is Leon. Stay on his good side and he’ll tell you some of the best stories. Get on his bad side and no one will find your body. The girl beside him is Elena. She knows the most about the creatures we find. Ask her any question about a creature and she may have an answer.  The dwarf next to her is Gwyn. He is the local medical expert, come to him with most injuries or illnesses and he’ll find something that helps. Lastly, the elf by the horse is Anwen. She is our weapons expert. Need something fixed and she’ll get it done.” Rip introduces the group.
+
+“Everyone, this is ${name}, they will be staying with us for the foreseeable future.” Rip puts a hand on your shoulder. You give an awkward wave.
+
+Leon is the first person to walk up to you, he puts his arm over your shoulders. “Welcome to the party!”
+
+You,
+*fake_choice
+    # Accept the gesture.
+        Leon walks you over to the campfire and gestures at a log.
+    # Move to the side and give Leon a small smile.
+        Leon stares at you for a second before shrugging and walks back to the fire. He gestures to you to follow.
+    # Shrug off his arm and continue staring at the fire.
+        Leon stares at you before walking over to the campfire. He makes a gesture to one of the logs.
+
+“Come on, take a seat.” Leon hops up on one of the logs.
+
+You take a seat on one of the empty logs. Elena is sitting to your left, reading a book. From what you can see, it is a book about Teville. You make a note to ask her about it later.
+
+“It’s nice to meet you ${name}, how was the journey?” Gwyn asks you. He is to your right and looking through his pouches. 
+“Eh, I haven’t been out this way for a long while, so it has been an experience.” You stare into the fire.
+
+“At least you got here unscaved, Leon over there almost stepped into a mockgaurden,” Anwen says behind you. You didn’t even hear her walk up.
+
+“HEY! I wasn’t going to step on it, just mess with it!” Leon yells at her.
+
+“How have you been alive for this long?”
+*page_break
+
+‘Luck and skill! I’ve lasted this long and I’m not going to die of old age.” Leon hops off of the log and walks around the campfire.
+
+You can see Rip leaning against a tree, watching everyone. Tyr is at his feet watching everyone.
+
+“Would you two quiet down? I’m trying to read about the Mogfish. I would rather we didn’t go in blind. “ Elena looks up over her book, glaring at Leon and Anwen.” Besides, is this anyway to act in front of a new member?”
+
+Everyone looks at you, you are not used to having so many eyes on you and try to sink into the log. Leon seems to take notice and claps his hands.
+
+“Come on! Let’s welcome our new recruit by telling some stories about ourselves!” Leon jumps back onto the stump and thinks for a second. “Hmmm, whose story would you like to hear first?”
+
+Leon looks at you expectantly and you glance over everyone at the fire.
+
+*label MC5StoryLoop
+*fake_choice
+    #“Let’s hear your story.”
+        “Oh! You want to hear my story! Hmm…. Where do I start?”
+
+        “When I was a just a baby, I was handed a knife. With this knife I threw it at a tree and hit a squirrel!” Leon moves his arm like he was throwing a knife.
+
+        “When I grew, I was climbing trees and collecting apples for the village-” Leon was telling his story before Anwen interrupted him.
+
+        “And next you helped defeat a boar with just your bare hands?”
+
+        “Of course I did!” Leon exclaims with a look of offense.
+
+        “Fine, here is a story that actually happened. I stopped a robbery before joining the Wolves. There were four men stealing a cart of grains from the local baker. I was all by myself, but I was able to put a stop to the robbery. I took out the driver and the passenger. After the cart stopped, I got the other two men out and beat them in combat. After I got the cart back to the baker, she gave me some bread for my troubles.” Leon acted out some of the fight scenes and was overly expressive during his whole story.
+
+    # “I’m curious about Elena.”
+        “Really? Okay, umm… Where should I start?”
+
+        “Before joining the Wolves, I was… The intelligence expert in my previous group. One of my jobs was to learn everything I could about an area and their monsters before we go to the location. Which is why I’m reading about the mogfish.” Elena motions to her book.
+
+        “During one of my jobs, we had to go visit a town close to the beach. I did all the research I could on the area and we left. However, when we got there, it was invaded by a monster I have never seen before. It was in none of my books and not a single person we asked knew what it was. It was a fish-like creature, but it was roaming on land like a person. We killed it in the end, but we still don’t know what it was.” Elena looks off at the forest.
+
+    # “What is Gwyn’s story?”
+
+        “You want my story? Okay, let’s see here…”
+
+        “I have been studying the different types of medicine my entire life, much to the dismay of others. Before joining the Wolves, no one appreciated my extensive knowledge of medicines and poisons.” Gwyn explained before faking a expression of offense. “They all thought I was mad, when all I was doing was learning the best methods to help someone.”
+        
+        “My methodologies worked wonders and nobody who has used them has complained. My potions work wonders to heal a wound or take care of a cold. A few years back I was asked to create a potion to save a lord who caught a nasty cold. They feared the worst, but my potions helped bring him back from the brink and he was better within a week!” Gwyn exclaimed
+
+    # “What was Anwen’s story?”
+        “Why do you want my story? Fine. Hmmm…”
+
+        “The Wolves saved me from a group of bandits. There, that’s my story.” Anwen huffed out.
+
+        “That isn’t much of a story, what exciting thing happened before or maybe a journey you took with us is worthy of a story” Leon pouts.
+
+        “… Before I joined the wolves I was the local tinker. If someone broke their weapon or something was not working properly, they came to me. I fixed it as well as I could and continued on with life. That wasn’t the life for me, so I set out. I left my town and became a traveling craftswoman. I visited towns during my travels and fixed things for food.” Anwen looked into the fire.
+
+        “That isn’t to say I didn’t have my hardships. Many didn’t trust an elf to fix their stuff, but the ones who did got their equipment back in better condition than they first got it. If they allowed, I would improve the design. From what I’ve heard, some of my inventions helped many out of bad situations.
+
+    # “How did Rip become the leader?” (End story time)
+        *goto MC5StoryLoopEnd
+    
+*goto MC5StoryLoop
+*label MC5StoryLoopEnd
+
+“You want Rip’s story? I guess it does make sense… Hey Rip! It’s story time!” Leon calls out.
+
+Rip gets off of the tree and walks over the fire. Tyr not leaving his side.
+
+“What story is it this time?” Rip asks when he gets to the fire. He is standing beside Gwyn, looking up at Leon.
+
+“Your’s, you get to tell your own story.” Leon jumps off of the log and goes to stand by Elena. “Go on, stand on the log!”
+
+Rip shakes his head, “Why? I’ve told these stories a million times too many.”
+
+“Because you hate it when I tell it, always say I’m telling it wrong,” Leon pouts. Rip takes a seat on the log.
+*page_break
+
+“That’s because you are… Alright, I guess I’ll begin with the crime boss… It was… About three years after I joined the Wolves of Davenport when we heard of a local criminal that went from petty theft to the leader of a criminal organization. I led a small group into the city and began searching for him. I found him in a back alley with a few of his own tormenting a small group of gnomes. All at once we surrounded him and attacked. I fought the crime boss one on one while the rest of my group dealt with his lackeys. It was a tough fight and I still have the scar on my left arm because of it. However I did it. I got a good cut on his arm and from there I was able to finish him off.”
+
+Everyone seems to be enjoying the story. Leon has a smirk with his arms crossed, Elena has placed her book beside her, Gwyn has his hands fouled on his lap, and Anwen is staring at the forest, without her usual grumpy look.
+
+“What’s your story? Are you ready to share it?” Leon askes you, softer than his usual voice. 
+
+How do you tell the story?
+
+*fake_choice
+    # “I happened to be at the wrong place at the wrong time…” 
+        “It’s more common than you would think,” Elena comments.
+        
+        “Yeah… I guess so.” You mumble looking down.
+        
+        “But you are here now and we’ll help you where we can.” Elena offers you a smile.
+
+    # “I was on my way home when a murder got pinned on me!” 
+        “Woah now, I can get the frustration, but you are safe now.” Leon jokingly takes a step back. “Maybe I shouldn’t have asked so soon.”
+
+    # “I’m not so sure myself. I’m going to need some time to sort it and understand it.”
+        “That’s understandable. A lot has to happen in such a short amount of time for you to turn to us.” Gwyn turns to look at you. “You can tell us when you are ready.”
+
+
+*comment This kinda, sucks to read, but it makes it easier to reimport if needed.
+*temp mc5_path gender
+
+*comment if Gender is "Other," allow player to choose their path
+*if mc5_path = "Other"
+    “Who do you want to share with? Gwyn or Elena?” Rip asks you.
+    *fake_choice
+        # Gwyn
+            *set mc5_path "Male"
+        # Elena
+            *set mc5_path "Female"
+*elseif (not (mc5_path = "Male")) and (not (mc5_path = "Female"))
+    *comment Handle if gender isn't set
+    *rand mc5_path 0 1
+    *set mc5_path "@{mc5_path Female|Male}"
+
+*if mc5_path = "Female"
+    “Elena, could you show ${name} to their tent?” Rip asks.
+
+    “Huh, oh yeah.” Elena closes her book before standing up and walking towards the tents.
+
+    It is a decent sized tent, two sleeping bags, a small chest full of books, and plenty of space to move around. You walk over to the emptier side of the tent and place your stuff there.
+
+    You sit on the ground and lean back against your bag, sighing. ‘How did I get in this mess? All I wanted to do was treat myself at the market…’
+
+    Before you know it, Elena walks into the tent. “How are you doing? I know it isn’t much, but feel free to read any of the books. Just don’t drop them in mud or something.”
+
+    “I’m doing alright, thank you. Just so much has happened in such a short amount of time I don’t know what to do…” You respond, staring at the roof.
+
+    “Life does that sometimes and you end up having to make do with what you’ve got. Dinner is almost ready, feel free to come join us.” Elena takes one last look at you before leaving. 
+
+*elseif mc5_path = "male"
+    “Come on, I’ll take you to your tent. You’ll be sharing with Gwyn.” Rip waits a second before walking towards the tents.
+
+    It is a decent sized tent, two sleeping bags, what looks to be a small portable work table, and plenty of space to move around. You walk over to the emptier side of the tent and place your stuff there.
+
+    “I’ll send someone to get you for dinner. It’s going to be busy from this point onward, so I’d suggest to relax while you can.” Rip explains before he leaves the tent
+
+    You sit on the ground and lean back against your bag, sighing. ‘How did I get in this mess? All I wanted to do was treat myself at the market…’
+
+    Before you know it, Gwyn walks into the tent. “Hey, how are you doing? Dinner is almost ready.”
+
+    “I’m doing alright, thank you. Just so much has happened in such a short amount of time I don’t know what to do…” You respond, staring at the roof.
+
+    “Life has its ups and downs, sometimes you have to make the best of what you’ve got. Feel free to come out when you are ready.”
+
+    You walk out of the tent to see Leon teasing Anwen by keeping her knife away, Elena and Gwen deep in conversation, and Rip brushing Tyr. 
+*page_break
+
+Anwen is the first to notice you, Leon uses this chance to throw the knife at a nearby tree. “Hey!” Anwen grumbles before walking over to the tree.
+
+“Come and join us ${name}! The food is just about ready, we’re having deer!” Leon shouts at you before walking to the fire.
+
+You join the group around the fire and sit on the log across from Elena and Gwyn. Now that you are closer, you can see venison cooking on the fire, though the rest of the deer seems to be missing. You look over at Tyr and notice that his fur seems a bit bloody.
+
+“Now I need to sharpen this before tomorrow and make sure that you didn’t chip it,” Anwen mumbles when she walks back the fire.
+
+“It wasn’t enough to destroy your precious blade, it’ll be fine. You need to stop being such a grouch.” Leon laughs as he sits by the fire.
+
+“What’s happening tomorrow?” You ask.
+*page_break
+
+“We’re hunting the mogfish that has been terrorizing the area.” Rip mentions as he looks up.
+
+“People have been going missing along this road and we suspect it has something to do with the mogfish.” Anwen says as she is inspecting her knife.
+
+“That’s why you were in Summerlight?” You ask.
+
+“That and your lord had paid us to keep an eye out for rot. We helped take care of some of it, but we don’t have enough power to push it back. All they wanted from us was to keep anything from getting into town and to keep the priests safe as they pushed it back.” Rip explained as he was putting away Tyr’s brush.
+
+*if CH2_followed_voice
+    *comment If the player followed the voice in chapter 2
+
+    “It wasn’t the first time, a few years back I was here when there were some Jackaloids running around. Troublesome creatures, heard it bit a child that was playing in the woods.” Anwen mentions while staring at the forest.
+
+    “Reese…” You whisper while looking down, you don’t think anyone heard you.
+
+    Leon gets up not long after and starts dishing out the venison. When he gets to you he pats your shoulder and gives you an understanding look before sitting down.
+
+*else
+    *comment If the player chose to ignore the voice in chapter 2
+
+    “It wasn’t the first time, a few years back I was here when there were some Jackaloids running around. Troublesome creatures, bit a small child. I feel bad for their friend though, cared a great deal for them.“ Anwen mentions while staring at the forest.
+
+    “You're the mercenary that tried to help, I never did get a chance to thank you.” You look up at Anwen.
+
+    Anwen looks surprised. “You’re the… Huh, should have guessed, always getting into trouble.” Anwen gave a small smile before it fell.
+    “I’m sorry for what happened to your friend, there… There wasn’t anything that could have been done. The only people who can cure the illness your friend had are the high priests and they were days if not weeks out. Your friend only had a couple of days left… I… I made sure that they weren’t in pain in the end.” 
+
+    Everyone had a somber look around the fire before Leon walked to the fire and started handing out the venison. When he got to you, he patted you on the shoulder before sitting on a nearby log.
+*page_break
+
+“What’s the plan?” Leon asks with his mouth full.
+
+“We will scout out the area and try to kill some mogfish before dark.” Rip answers, taking a bite of his own.
+
+“What do we do with the newbie?” Anwen asks.
+
+“They can either stay in camp or we can use this time to test (him, her, them) in the field. There is more to (him, her, them) than meets the eye. It’s up to (him, her, them).” Rip turns to look at you. “You will have to stay in the back of the group.”
+
+“What can you tell me about mogfish? I didn’t even know they were this close to town.” You ask.
+
+“They are usually found in swampy areas or near river beds. They bury themselves underneath the ground with their mouth up. When something lands on them, they will suck in everything in the area to eat it. Sometimes you’ll see a glowing light above them, but since we are doing this in the morning, that won’t be much of a problem.” Elena answers.
+
+“We’re going to be using these sticks to find the mogfish. Trick them into thinking they caught something and lure them out.” Anwen holds out a long stick that is a little taller than she is.
+
+“So, what do you think? Wanna join us on an adventure?” Leon asks you.
+
+*fake_choice
+    # “I’ll join, but I’ll want to read up on it first.”
+        *goto MC5EndBranch1
+    # “I want to stay here. I don’t think I’m ready for an adventure just yet”
+        *goto MC5EndBranch2
+
+*label MC5EndBranch1
+“I lost my creatures book, but I have a book on the area. Maybe that could be of some help.” Elena offers
+
+*if item = "book"
+    *comment If player has book
+
+    “You don’t have to worry about it, I’ve brought my own book.” You smile at Elena before eating your food.
+    
+    After eating you return to your tent and read up on mogfish.
+*else
+    *comment If player does not have book
+
+    “It’s better than nothing, thank you Elena.”  You smile before eating your food.
+
+    After you are done eating Elena hands you the book and you return to your tent. You read about Trivell and Davenport.
+
+A few days later, (ROOMATE) wakes you up and you both go to the campfire.
+
+“Okay, we need to get out there before the mogfish move. Is everyone ready?” Rip asks at the campfire. Everyone nods their head in agreement.
+
+“Okay, let’s head out.” Rip walks over to the sticks and starts handing them out to everyone except Gwyn. “Gwyn, it is your turn to watch the camp. Keep an eye out for anything and be ready in case something happens.”
+
+“Yes sir.” Gwyn nods his head and goes to a portable table and takes out some supplies. It looks like bandages and elixirs.
+
+“(PLAYER), you stick with Elena in the back. Leon, you’re with me. Anwen, keep an eye on everyone, make sure nothing happens.”
+
+‘Yes sir!”
+*page_break
+
+With that, everyone went out into the forest. Rip and Leon in the lead, pressing the stick into the ground where they are about to step. Anwen is in the middle, keeping an eye on the forest. Making sure they don’t get jumped by an animal. You and Elena are in the back, stabbing the ground around the area. 
+
+“How are you holding up?” Elena asks.
+
+“Alright I guess. Everything feels like a bad dream. Like one day I will wake up in my bed and none of this would have happened.” You sigh, the next stab seemed harder than usual.
+
+“A lot had happened. It can leave a mark, but you’ve got people here to help you get through it.” Elena offers you a small smile before continuing her task.
+
+[i][b]SLURP[/b][/i]
+
+Before you know it, Leon’s stick was sucked into the ground. Leon was almost sucked in before Rip pulled him back. 
+
+“Found one!” Shouted Leon with a sinister grin.
+
+The mogfish slowly pulled itself up from the ground. It is bigger than you expected, big enough to eat a dwarf or a small human. You knew the creature was going to be terrifying, but seeing one up close. It was like nothing you have seen before.
+*page_break
+
+Rip and Leon brought out their swords and Anwen grabbed her bow. Elena stayed back, but kept an eye on them. You move towards a tree to lean your stick against a tree, when another mogfish tries to eat it. Jumping back, you let go of the stick and take out your dagger. 
+
+The creature looks worse up close, with a huge mouth and emotionless eyes. This creature is nothing like what you had expected.
+
+You take a few steps back as it drags itself out of the mud. 
+
+**(Terrified Fight Scene)**
+
+**(Elena’s leg gets injured)**
+*page_break
+
+Anwen and Leon quickly run over to Elena and help her up. Leon hold her up and begins to slowly walk her back to camp. You stare at her, horrified over what had happened.
+
+Rip walks over to you and puts a hand on your shoulder. 
+
+“Come on, let’s go back. Elena will be okay and the creature is dead.” Rip starts to walk back to camp, watching his step while he does. You follow him.
+
+“Stuff happens that is completely out of your control. Remember the story I told? I lost a lot of good people that day. The crime boss had an arcane user. None of the scouts and rumors said anything about magic. We still won the battle, but it was a close one. Everyone looks up to me because of that story and I don’t understand why they always leave out that last part. I’ve gotten so used to it that even I will sometimes miss that part.”
+
+You look at him and then continue walking the path.
+
+“People don’t want to hear about the bad parts, they just want to listen to a story about a hero saving the day.” You mumble, watching the ground.
+
+“Yeah, it really does seem like that sometimes.”
+
+Leon and Anwen are sitting by the fire, looking over at Elena’s tent when they notice that both of you are back.
+
+“Gwyn is bandaging her wound, said that it’s not as bad as it seemed.” Anwen comments.
+*page_break
+
+“That’s good to hear, were there any other injuries?” Rip responds.
+
+“The two of us only got some minor scrapes. That does remind me, Gwyn asked for you two to join him in his tent when you got back. He wants to check for injuries.” Leon looks over at the two of you and then looks at the fire.
+
+When you get to the tent, Elena is laying in the cot and Gwyn is bandaging her leg.
+
+“Welcome back you two. I’ll be with you in just a moment.” Gwyn ties off the bandage and sets down a bottle on a nearby table. “Heard that there was some trouble during the hunt, are either of you two injured?”
+
+“Nothing more than usual, a couple cuts and scrapes, but nothing major.” Rip looks over at Elena. “How is she?”
+
+“She’s doing just fine, just needs to rest for a while and she’ll be ready to help.”
+
+You look over at Elena and turn away. Seeing her laying in a cot reminds you of Reese and what happened to them.
+
+“How are you ${name}?”
+
+**(Change based on how fight goes)**
+*finish
+
+*label MC5EndBranch2
+“Okay, then you’ll help watch the camp.” Rip explains.
+
+A few days later, (ROOMATE) wakes you up and you both go to the campfire.
+
+“Okay, we need to get out there before the mogfish move. Is everyone ready?” Rip asks at the campfire. Everyone nods their head in agreement.
+
+“Okay, let’s head out.” Rip walks over to the sticks and starts handing them out to everyone except Gwyn. “Gwyn, it is your turn to watch the camp. Keep an eye out for anything and be ready in case something happens. (PLAYER), you can help him out with any chores that needs to be done.”
+
+With that, the group grabs their stick and heads out. You turn to Gwyn and see him standing by a portable table.
+
+“Come here ${name}, I’ll show you what I am doing.” Gwyn motions for you to come closer.
+*page_break
+
+You walk over to the table and see bandages and elixirs on it. You can’t read what is on the elixir, but based on everything else on the table you think it’s for healing.
+
+“This is a health potion, it helps speed up the recovery of any injury the person may have. I’m getting them ready in case someone gets hurt>” Gwyn explained while holding up the bottle.
+
+“How often does that happen?” You ask, watching the red swirls in the bottle.
+
+“Far more often than it should… They are a clumsy group of fellas and always seem to get themselves into trouble.” Gwyn sighs as he puts down the bottle.
+
+“But that’s nothing for us to worry about right now. It’ll be a long while before they get back. For now, let’s get some work done. (PLAYER), could you get the firewood?”  Gwyn asks you.
+
+You grab the firewood and help Gwyn finish up some chores. Afterwards the two of you patrol the outskirts of the camp.
+*page_break
+
+“What do you know about the mogfish?” You ask him.
+
+“That they are annoying creatures that go after unsuspecting prey. Although, their glowing orb is really good for making ink that glows.” Gwyn hums.
+
+“I thought that was a myth. Stuff like that never made it to my village, I wonder if I’ll be able to see it.” You say thoughtfully, throwing a stone.
+
+“When they get back, we’ll see if any of the mogfish have a glowing orb on them and I’ll make some ink for you.”
+
+You hum in response and throw another, bigger stone, this stone hits a small tree and breaks it. The tree lands on the mud and then gets sucked in.
+
+“Uh oh, we need to run!” Gwyn says before grabbing your arm and running back to camp.
+*page_break
+
+You turn around and see what you assume is a mogfish climbing out of the ground. It is much bigger than you expected, bigger than Gwyn.
+
+The two of you run towards camp when you trip. While Gwyn is helping you get up, you hear a loud THUMP
+
+The mogfish landed right next to you. You quickly grab your dagger and stand with Gwyn.
+
+“I don’t think we can outrun it, we’re going to have to fight!” Gwyn shouts.
+
+**(Fight scene)**
+
+**(Gwyn gets injured)**
+*page_break
+
+You help Gwyn up and let him lean against you. For a second you see Reese beside you, giving you a weak smile before you shake your head and begin walking. 
+
+You head back to camp, helping Gwyn walk. When you get there you put Gwyn on the log and run to the portable table. After a bit of searching, you grab the red bottle and give it to Gwyn.
+
+Gwyn laughs and drinks it. “See, staying behind isn’t that bad, you learned a new skill. Now, could you help me back to my tent? I should rest.”
+
+After you take Gwyn back to his tent everyone gets back.
+
+“We’re back! And we killed a few of them! Hey, where is everyone?” Leon asks while holding an object with an orb at the end of it. “Gwyn! We got the thing you asked for!”
+
+“Gwyn got hurt. We were patrolling the camp with I spooked a mogfish and we had to fight it. He’s currently in his tent…” You say while looking down.
+
+Rip was the only one to stay behind, everyone else ran into the tent to check on him.
+*page_break
+
+“I didn’t mean for him to get hurt. I was just throwing a stone to pass the time, I didn’t know it would break the tree…” You start apologizing.
+
+“What’s done is done. You don’t learn anything if you don’t make a few mistakes.  I’ve made a fair share of them. Come by the fire, I’ll tell you another story.” Rip says as he walks to a log. You join him.
+
+“Remember the story I told? I lost a lot of good people that day. The crime boss had an arcane user. None of the scouts and rumors said anything about magic. We still won the battle, but it was a close one. Everyone looks up to me because of that story and I don’t understand why they always leave out that last part. I’ve gotten so used to it that even I will sometimes miss that part. Look at it this way, both of you are okay. Gwyn will make it through.”
+
+You nod, looking into the fire. You try to understand what Rip is telling you, but it is difficult since it’s your fault Gwyn got hurt. It reminded you too much of what happened to Reese.
+
+When you look up you see Elena and Leon walking out of the tent. They are talking about something, but you can’t hear it from here.
+
+“Hey ${name}! Rip! Who would win in a fight, a bear or a direwolf?” Leon asks.
+*page_break
+
+“We both know a direwolf would win, I don’t even understand where this came from…” Elena shakes her head.
+
+“Well, anyway, are you okay ${name}? I doubt that scuffle would have been easy.” Leon asks you as he sits on a log.
+
+“I’m alright, Gwyn took the brunt of it…” You mumble.
+
+“He’ll be okay, he’s had worse. Now, What about a direwolf and a-” Leon is about to say something when Anwen bonks him on the back of the head.
+
+“Direwolf next.”
+
+*finish
