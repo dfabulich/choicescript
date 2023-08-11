@@ -2,8 +2,8 @@
 
 *comment This subroutine increments skills
 *comment this should probably be a command...
-*comment vars:
-*comment    GP_arg0 - the skill to be incremented.
+*comment params:
+*comment    GP_arg0 (string) - the skill to be incremented.
 *comment return:
 *comment    None
 *label IncrementSkill
@@ -40,7 +40,7 @@
 *return
 
 *comment This subroutine updates attributes based on skills
-*comment vars:
+*comment params:
 *comment    None
 *comment return:
 *comment    None
@@ -55,16 +55,12 @@
 *return
 
 *comment This function randomly determines if a random chance passes
-*comment vars:
+*comment params:
 *comment    GP_arg0 (attr) - the attribute to be tested.
 *comment    GP_arg1 (succPercent) - what chance needs to be greater than.
 *comment return:
 *comment    returnData (bool) - returns if the check succeeded or failed.
 *label AttributeSkillCheckBase
-*comment Ported from this js code
-*comment function AttributeSkillCheckBase(attr, succPercent) {
-*comment     return (attr * succPercent) > Math.floor(Math.random() * attr); 
-*comment }
 
 *temp attr GP_arg0
 *temp succPercent GP_arg1
@@ -78,7 +74,7 @@
 
 *comment This function randomly determines if a random chance passes
 *comment WARNING: This subroutine replaces GP_arg1 with the corresponding success percentage.
-*comment vars:
+*comment params:
 *comment    GP_arg0 (attr) - the attribute to be tested.
 *comment    GP_arg1 (difficulty) - Difficulty Level.
 *comment return:
@@ -116,8 +112,9 @@
     *return
 *bug Somehow, "RollChanceOnAttribute" failed. Is "${difficulty}" spelled correctly? 
 
+*comment DUPLICATE!!!
 *comment This subroutine calculates and sets all base attributes
-*comment vars:
+*comment params:
 *comment    NONE
 *comment return:
 *comment    NONE

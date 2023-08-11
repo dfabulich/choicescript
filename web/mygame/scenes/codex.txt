@@ -43,18 +43,18 @@ The rest of the codex sections are underpopulated.
 *comment -------------------------- Characters Choice --------------------------
 *label Characters
 [head]Cel Storm[/head]
-Cel Storm is a priestess of the Flames of Sigel. She joined the order at a young age when Dustin saved her from icgor-swogs. The rotted creatures overwhelmed her old town. She was one of the few survivors when the Flames of Sigil showed up. Cel managed to hide herself in an old storage shed and used the holy water her parents gave her to protect herself. Dustin was the one who found her and took her to the order’s temple.
+Cel Storm is a priestess of the Flames of Sigel. She joined the order at a young age when a priest named Dustin saved her from icgor-swogs. The rotted creatures overwhelmed her old town. She was one of the few survivors when the Flames of Sigil showed up. Cel managed to hide herself in an old storage shed and used the holy water her parents gave her to protect herself. Dustin was the one who found her and took her to the order’s temple.
 
-As she grew up in the temple, Dustin became a father figure for her. She looked up to him and wanted to make him proud. To do this she studied hard to become a priestess and to follow in his footsteps. The month before her big test Dustin went on a rot patrol, promising to be back on time. He wasn’t there for her test. Nor did he come back for her ceremony. A week later another priestess gave Cel a letter. It was muddy and it had tears in it.
+She is seen helping anyone who needs help, much to the dismay of the order. She followed Dustin’s footsteps in that regard. She doesn’t care who you are or where you came from, if you need help she will find a way to help. She has been seen saving people form Krigania from the jackaloids and mogfish.
 
-Dustin was killed in a direwolf attack. The direwolves were forced out of their territory because of the incoming rot. The letter was written right before he went into town and he never got the chance to send it. 
+When her mentor Dustin was killed because some direwolves were forced out of their territory because of the incoming rot. Cel did some research on direwolves and partitioned a new branch in the order. One that patrolled towns near direwolf territories. She didn’t want these wolves to hurt anyone else.
 
 [head]Dustin[/head]
 Dustin was the priest that took Cel Storm to the Flames of Sigel’s temple. He is the one who took care of her during her childhood after her town was taken over by ichor-swogs.
 
-He was known for taking in strays even before his wife died. She always talked about how the order should protect and help the people who have lost their homes to the rot. Not many of the strays made it far in the order, and some would leave after getting back on their feet. This didn’t sway her. She was always a kind person and Dustin loved that about her. After she died Dustin continued to help people to honor her memory. 
+He was known for taking in strays even before his wife died. She always talked about how the order should protect and help the people who have lost their homes to the rot. Not many people she took in made it far in the order, and most would leave after getting back on their feet. Some will stay and fully join the order, but they don’t make it far. This didn’t sway her. She was always a kind person and Dustin loved that about her. After she died Dustin continued to help people to honor her memory. 
 
-When he brought Cel in, he treated her like his own. The priest thinks she reminded him of his wife. He helped her get accommodated to the temple and got her a private tutor to help her along. Cel grew to look up to him and did her best to make him proud. In return, Dustin tried to be the kind of role model she needed. 
+When he brought Cel in, he treated her like his own. The priests thinks she reminded him of his wife. He helped her get accommodated to the temple and got her a private tutor to help her along. Cel grew to look up to him and did her best to make him proud. In return, Dustin tried to be the kind of role model she needed. 
 
 Dustin died to a direwolf attack when he was patrolling the towns along the rot border. The direwolves got pushed out of their territory by the rot and attacked a nearby town. From what Cel said, he was protecting a family when the direwolves got him.
 
@@ -87,6 +87,7 @@ Recognizing the fragility of life on Teren, Tera sought Sigel's protection, show
 
 Skadon, as the God of Darkness and The Void, represents the ever-present threat of oblivion. His eternal conflict with Sigel shapes the world of Teren, while Tera nurtures life and Galdor tames the forces of magic. Within this delicate equilibrium, Lune, the goddess of the moon, and other deities emerged. The struggle between light and darkness remains an enduring theme, influencing the destiny of Teren and its inhabitants throughout time.
 
+
 [head]Teren[/head]
 TODO:!!!
 
@@ -96,10 +97,24 @@ TODO:!!!
 *comment --------------------------- Factions Choice ---------------------------
 *label Factions
 [head]Flames of Sigel[/head]
-TODO:!!!
+The Flames of Sigel is a band of priests and priestesses, joined together as devout followers of Sigel and the Holy Order. Using their skills in battle and unwavering dedication, they fight against the encroaching rot and strive to protect the people of Teren from all the beasts and terrors lurking in the dark. This order is currently overseen by the Zealot, a brave man who is adorned in armor that shines like the morning sun. With his stalwart presence and commanding voice, many have been swayed into joining the Flames just for a chance to be acknowledged by this legendary man.   
+
+The Flames of Sigel follows these tenets:
+ - Devote yourself to Sigel.
+ - Devote yourself to the Holy Order.
+ - Protect your people.
+ - Fight against Skadon and all other forces of darkness.
+ 
+With these tenets guiding their actions, the members of this group are regarded as a force of good throughout the land. Members are brought in from all corners of the world. The Flames of Sigel has brought together warriors of sword and bow, scholars who know all the secrets of the land, and even mages who are strong enough to push back darkness. All of them have been brought together due to their devotion to Sigel and their desire to make the world better for all who live in it.
+
+While there are many exceptional members, Cel Storm stands out as a pillar of the Flames of Sigel. Her grace and power leaves an impression as she travels with her entourage as she is known for offering aid to any who ask. A true example of the goodness the Flames of Sigel are determined to spread. With Cel’s name beginning to spread far and wide, The Flames of Sigel are only growing in renown. With each new town or city they pass through, they continue  to spread the word of Sigel and protect the people from evil.
 
 [head]Wolves of Davenport[/head]
-TODO:!!!
+The Wolves of Davenport are a legendary band of mercenaries whose name strikes fear into the hearts of their enemies across the realm of Teren. Led by the seasoned warrior Alistair Blackthorn, this renowned group embodies the epitome of skill, camaraderie, and unwavering determination. With each member possessing unique talents, they form a formidable force that stands as a bulwark against the encroaching darkness.They are a diverse group, drawing individuals from all walks of life, each bringing their own set of exceptional skills to the table.
+
+From expert archers to masterful tacticians, from skilled trackers to powerful spellcasters, their combined expertise makes them a well-rounded and adaptable team. Bound by a shared purpose, they have forged an unbreakable bond, where trust and loyalty are paramount. Their reputation is built on a long and storied history of successful missions and epic battles fought in defense of Teren. They have faced and triumphed over formidable foes, ranging from hordes of monstrous creatures to powerful sorcerers. The Wolves' relentless pursuit of justice and their unwavering commitment to protecting the realm has earned them both respect and fear throughout the land.
+
+Though Alistair Blackthorn's fall in battle was a devastating loss, it paved the way for Rip Daring, his trusted protege, to step up and assume leadership. Under Rip's guidance, The Wolves of Davenport continue to stand as a beacon of hope, defending Teren against the rising tide of darkness. Their saga of courage, unity, and unwavering resolve has etched their name into the annals of Teren's history, leaving a lasting legacy that will inspire generations to come.
 
 *page_break
 *goto CodexStart
@@ -226,26 +241,23 @@ As twilight descends upon the city, the glow of countless lanterns casts an ethe
 
 To visit Davenport is to immerse oneself in a vibrant tapestry of life, to witness the ebb and flow of ambition and inspiration that weaves the very fabric of this remarkable city. Whether you seek treasures, knowledge, or a chance encounter that may shape the course of your journey, Davenport awaits, ready to unveil its secrets and welcome you into its embrace.
 
-[head]Lindow[/head]
-TODO:!!!
-
 [head]Krigania[/head]
 TODO:!!!
 
 [head]Teville[/head]
 The capital city Teville is located by the Ironmount mountains on the west side of the country Teville. The capital is broken up into ten different districts. Each district is split up depending on the wealth of the people living in it. With four slums and a castle amongst the city, there is something for everyone.
 
-Starting from the top is the castle. In the castle lives the Queen of the country. They are the ones running and taking care of their county. Not very many have seen the inside, but it is said there is a huge strategy room they use to keep an eye on the rot. Next is Lowrock. This is where most of the middle-class live and where The Beggar’s Tavern is located. Most other shops and taverns can also be found in this district. 
+Starting from the top is the castle. In the castle lives the King of the country. They are the ones running and taking care of their county. Not very many among the common populace have seen the inside, but rumor has it an entire war-room is dedicated to keeping an eye on the Rot within the nation’s borders.. Next is Lowrock. This is where most of the middle-class live and where The Beggar’s Tavern is located, a famous pitstop for many mercenaries and adventuring parties. Most other shops and taverns can also be found in this district. 
 
-The Old District is where you can find the largest temple in the city. It is said to be the very first temple and the foundation of Teville. Right next to it is the docks. This is where the largest melting pot can be seen within the city and where most outside trades happen. Then there is Noblicar’s Road. The district that produces anything from the weapons and the wagons people travel with.
+The Old District is where you can find the largest temple in the city. It is said to be the very first temple and the foundation of Teville. Right next to it is the docks. This is where the largest melting pot can be seen within the city and where most outside trades happen. Then there is Noblicar’s Road. The district that produces anything from the weapons the army uses to the wagons people travel with.
 
-Hearthgate is named after the wife of the King who died during childbirth. Her daughter, Dianica, became the first ruling Queen in the nation and a great ruler. In the local park you can find statues of great war heroes who made sacrifices for their country. Among them you can find Dianica’s mother Heather. Pelor’s Performance Centre can also be found here. Formally known as The Bone Bleachers, here you can watch yearly battles as knights are pitted against each other. With ample healers and healing potions, this event is one of the safer ones in the country as well as the most popular.
+Heathergateis named after the wife of a past King who died during childbirth. Her daughter, Dianica, became the first ruling Queen of the nation and a great ruler. In the local park you can find statues of great war heroes who made sacrifices for their country. Among them you can find Dianica’s mother Heather. Pelor’s Performance Centre can also be found here. Formerly known as The Bone Bleachers in a time when they were once used for vicious gladiatorial combat, here you can watch yearly battles as knights are pitted against each other. With ample healers and healing potions, this event is one of the safest ones in the country as well as the most popular.
 
-The Six Lodges is the nicest of the outside slums. Although it only has six lodges, it is the second biggest slum in the city of Teville. The biggest goes to the Goldensprawl. While the Goldensprawl isn’t the best slum, it isn’t the worst. It got its name from how the sun hits the buildings in the morning, making it look like it's showered in gold. There is also a rumor going around that the true birthplace of Teville is hidden somewhere in here.
+The Six Lodges is the nicest of the outside slums. It has six large inns, each famous in their own right, and is the second biggest slum in the city of Teville. The biggest goes to the Goldensprawl. Far from the glory of the Six Lodges sector of the city, Goldensprawl is still much nicer than the seedier areas of the city. It got its name from how the sun hits the buildings in the morning, making it look like it's showered in gold. There is also a rumor going around that the true birthplace of Teville (the founder of the kingdom) is hidden somewhere in here.
 
-Next is Woolrock, the second nicest slum. Here you will find a lot more elves, dwarves, and gnomes roaming the streets. With many shrines dedicated to their gods and some of the nicer buildings in the area, this isn’t the worst place to visit. The worst place is Ratbowl. Ratbowl has the highest crime rate and the worst people. Not a place you would want to visit on your next trip to Teville.
+Next is Woolrock, the second nicest slum. Here you will find a lot more elves, dwarves, and gnomes roaming the streets. With many shrines dedicated to their gods and some of the nicer buildings in the area. The worst place in the city is Ratbowl. Ratbowl has the highest crime rate and the worst people. A thieve’s guild has a heavy presence here, and not much attention is paid to crimes that occur within its streets. Not a place you would want to visit on your next trip to Teville.
 
-[head]Starting Town[/head]
+[head]Summerlight[/head]
 TODO:!!!
 *page_break
 *goto CodexStart
