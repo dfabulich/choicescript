@@ -7,6 +7,12 @@
 	chapter2
 	chapter3
 	chapter4
+	chapter5
+	chapter6
+	chapter7
+	chapter8
+	chapter9
+	chapter10
 	combat_test
 	general
 
@@ -17,7 +23,7 @@
 *comment fall out of an if statement.
 *create implicit_control_flow true
 
-*comment ///////// Generic Globals /////////
+*comment ///////// User-facing Globals /////////
 *create name "???"
 *create gender "???"
 *create faction "None"
@@ -25,6 +31,7 @@
 *create bought "None"
 *create coin 0
 
+*comment Colors
 *create brawn_color   "#d60d0d"
 *create agility_color "#FF9900"
 *create cunning_color "#4A86E8"	
@@ -64,6 +71,8 @@
 *create Divine 0
 *create Arcane 0
 
+*comment ///////// Phase Globals /////////
+*create P2_branch 0
 
 *comment ///////// Codex Globals /////////
 
@@ -85,14 +94,30 @@
 WIP build for the UAT production studio milestone review
 
 What chapter?
-*choice
-	#chapter 1 
-		*goto_scene chapter1
-	#chapter 2
-		*goto_scene chapter2
-	#chapter 3
-		*goto_scene chapter3
-	#chapter 4
-		*goto_scene chapter4
+*fake_choice
+	#Phase 1
+		*choice
+			#Chapter 1 
+				*goto_scene chapter1
+			#Chapter 2
+				*goto_scene chapter2
+			#Chapter 3
+				*goto_scene chapter3
+			#Chapter 4
+				*goto_scene chapter4
+	#Phase 2
+		*choice
+			#Chapter 5 
+				*goto_scene chapter5
+			#Chapter 6
+				*goto_scene chapter6
+			#Chapter 7
+				*goto_scene chapter7
+			#Chapter 8
+				*goto_scene chapter8
+			#Chapter 9
+				*goto_scene chapter9
+			#Chapter 10
+				*goto_scene chapter10
 	#TEMP: Combat Test
 		*goto_scene combat_test

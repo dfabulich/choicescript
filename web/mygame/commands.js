@@ -1,5 +1,6 @@
 //------------------------------ Custom Commands ------------------------------
 Scene.validCommands["exec"] = 1;
+Scene.validCommands["bug_continue"] = 1;
 
 // Totally not a rebadged script function, I promise :).
 Scene.prototype.exec = function exec(code) {
@@ -16,4 +17,14 @@ Scene.prototype.exec = function exec(code) {
             .concat(e.stack ? "\n" + e.stack : "")
         );
     }
+}
+
+// Allow the printing of a bug, but continue because it's not fatal :)
+Scene.prototype.bug_continue = function bug_continue(message) {
+    if (message) {
+        message = "Bug: " + this.replaceVariables(message);
+    } else {
+        message = "Bug";
+    }
+    alert(this.lineMsg() + "\n" + message);
 }
