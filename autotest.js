@@ -33,6 +33,7 @@ load("web/scene.js");
 load("web/navigator.js");
 load("web/util.js");
 load("headless.js");
+load("web/"+gameName+"/commands.js");
 load("web/"+gameName+"/"+"mygame.js");
 load("editor/embeddable-autotester.js");
 print = function print(str) {

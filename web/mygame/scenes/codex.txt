@@ -100,10 +100,10 @@ TODO:!!!
 The Flames of Sigel is a band of priests and priestesses, joined together as devout followers of Sigel and the Holy Order. Using their skills in battle and unwavering dedication, they fight against the encroaching rot and strive to protect the people of Teren from all the beasts and terrors lurking in the dark. This order is currently overseen by the Zealot, a brave man who is adorned in armor that shines like the morning sun. With his stalwart presence and commanding voice, many have been swayed into joining the Flames just for a chance to be acknowledged by this legendary man.   
 
 The Flames of Sigel follows these tenets:
- - Devote yourself to Sigel.
- - Devote yourself to the Holy Order.
- - Protect your people.
- - Fight against Skadon and all other forces of darkness.
+- Devote yourself to Sigel.
+- Devote yourself to the Holy Order.
+- Protect your people.
+- Fight against Skadon and all other forces of darkness.
  
 With these tenets guiding their actions, the members of this group are regarded as a force of good throughout the land. Members are brought in from all corners of the world. The Flames of Sigel has brought together warriors of sword and bow, scholars who know all the secrets of the land, and even mages who are strong enough to push back darkness. All of them have been brought together due to their devotion to Sigel and their desire to make the world better for all who live in it.
 

@@ -20,11 +20,19 @@ Scene.prototype.exec = function exec(code) {
 }
 
 // Allow the printing of a bug, but continue because it's not fatal :)
-Scene.prototype.bug_continue = function bug_continue(message) {
+Scene.prototype.bug_continue = function(message) {
+
     if (message) {
         message = "Bug: " + this.replaceVariables(message);
     } else {
         message = "Bug";
     }
-    alert(this.lineMsg() + "\n" + message);
-}
+    
+    // Stop Autotest from failing (alert doesn't work on the command line)
+    if (typeof window === "undefined") {
+        this.warning(this.lineMsg() + "\n" + message)
+    } else {
+        alert(this.lineMsg() + "\n" + message);
+    }
+
+}//Important!
