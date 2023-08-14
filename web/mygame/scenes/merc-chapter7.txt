@@ -1,4 +1,271 @@
 *label StartChapter7
+[head]Chapter: Downtime[/head]
+Amidst the tumultuous journey and the constant perils faced by you and your newfound companions, there comes a brief respite in the form of a lull in the story.
 
-TESTING MERC CHAP7
+You find yourself settling in a makeshift mercenary camp, nestled in a clearing surrounded by towering ancient trees. The camp exudes a sense of camaraderie and worn-out vitality, as battle-hardened warriors unwind from their arduous endeavors.
+
+In this temporary haven, you can hear snippets of conversations across the camp. Stories of hard battles they won, creatures they have found, or where the rot has been spotted. The intermingling with the aroma of campfire-cooked meals along with the sound of distant laughter. You find yourself welcomed into the circle of mercenaries, their acceptance gradually solidifying as they prove their mettle in battle and demonstrate unwavering loyalty.
+
+The sunlight filters through the leafy canopy, casting dappled patterns on the ground below. There is a  sense of quiet solitude that pervades the camp, interrupted only by the distant sounds of birdsong and the rustling of leaves in the gentle breeze. 
+
+The camp is organized with a sense of purpose, with well-worn paths crisscrossing between various sections. Tents of different sizes and conditions are scattered throughout, forming a makeshift village. Each tent reflects the personality of its occupant, adorned with personal belongings, trophies from past battles, and mementos of loved ones left behind.
+
+A central gathering area serves as the heart of the camp, where a crackling bonfire provides warmth and illumination during the cool evenings. Here, mercenaries gather to exchange tales of valor, engage in friendly sparring matches, or simply unwind after a long day of training or scouting. You can see Anwen talking with a blacksmith, Leon joining in on the sparring matches, and Elena reading by the fire. Gwyn must be in the medical tent and Rip is taking care of Tyr.
+*page_break
+
+The scent of roasted meat and freshly brewed ale wafts through the air, mingling with the sound of laughter and animated conversations. The camp's outskirts house essential facilities for the mercenaries' daily needs.
+
+A mess tent offers sustenance with hearty meals cooked over open fires, while nearby, a communal well provides fresh water for drinking and washing. A training ground, marked by well-worn sparring circles and target dummies, stands as a testament to the mercenaries' dedication to honing their combat skills.
+
+Several makeshift stalls and merchants line the edges of the camp, offering a variety of goods and services. Weaponsmiths ply their trade, hammering and shaping weapons of steel and iron, while armorers repair and polish battle-worn gear. A makeshift infirmary tends to the wounded and sick, with healers and apothecaries providing their expertise to mend injuries and alleviate ailments.
+
+In a quieter corner of the camp, a shrine dedicated to a deity revered by the mercenaries stands. Around it are small shrines for the individual deities that are worshiped by many of the mercenaries there. They serve as a place of solace and reflection, with candles flickering and offering a sense of peace amidst the chaos of their profession. 
+
+As evening falls, the camp takes on a different ambiance. The soft glow of torches and the occasional strumming of a lute fill the air as mercenaries gather around the campfire, their weary bodies finding respite on makeshift benches or tree stumps. Stories of triumph and tragedy intermingle, forging bonds of camaraderie and shared experiences.
+*page_break
+
+Leon is at the front of it. Standing on a stump with a crowd of people, telling stories and engaging with the people listening. You have no idea how he does it so well. Everyone is on the edge of their seats when he reveals the climax of the story, which is followed by gasps. He just revealed that the main villain was the client all along.
+
+The camp exudes a rugged charm, a place where warriors find solace and temporary respite from the harsh realities of their chosen path. Within these simple yet vibrant surroundings, you find yourself embraced by the tight-knit community, gaining not only allies but also a sense of belonging in this transient home away from home.
+
+During the downtime at the mercenary camp, you have a rare opportunity to rest and recharge after the intense battles against the mogfish and The Rot infection.
+
+*label CH7M_dayone
+What will you do with your free time?
+*fake_choice
+    # Train with Rip Daring
+        In the early mornings, before the sun has fully risen, you join Rip Daring for rigorous training sessions. He makes you take laps around the camp, after he gives you a wooden sword.
+
+        “Attack this dummy.” He points at a straw dummy in the training grounds.
+
+        You remember building your own dummy to practice fighting. You were determined to learn how to protect yourself and those around you. You attack the dummy with untrained, but determined strikes. Rip adjusts your form a little bit, but seems happy with what he sees.
+        *page_break
+        
+        "Alright, kid," Rip said, his gravelly voice carrying an air of authority. "Let's see what you're made of." 
+
+        And so, the training began. Rip takes you to the sparring ring and walks in. You follow him with a mix of fear and respect. Rip is a much better fighter than you, but you know this will be a good chance to test your skills.
+
+        He first teaches you how to anticipate an opponent's moves, and how to exploit weaknesses in their defenses. After he is satisfied, he walks to the side of the ring.
+
+        *temp ch7m_has_won_training true
+        *bug_continue Fight not implemented, assuming player has won
+        TODO: (FIGHT HERE)
+        *page_break
+
+        *if ch7m_has_won_training
+            *comment Pass (Minor reputation increase with Rip)
+            “You did well.” Rip bestowed upon them a rare smile, clapping a firm hand on their shoulder.
+        *else
+            *comment Fail (Insignificant increase increase with Rip)
+            “It takes time and practice, you’ll get there.” Rip pats you on the back before returning the weapons to the pile.
+
+        "But remember, it's not just about raw strength. It's about using your head too." With that, Rip shared his insights on battlefield tactics, teaching you how to read the flow of battle and make split-second decisions that could turn the tide.
+
+        By the end of the lesson, you’ve learned a lot more about how to handle yourself in battle. You hope to never have to use this knowledge, but will likely have too in this line of work.
+        
+    # Archery Contest
+        During the leisure hours, the camp came alive with friendly sparring matches and competitions that brought out the playful spirit of the Wolves of Davenport. 
+
+        You eagerly joined in on these activities, feeling the rush of adrenaline as they squared off against their fellow mercenaries.
+
+        The first challenge was a friendly archery competition, where each participant took turns showcasing their marksmanship.  Anwen can be seen in the competition, competing against another mercenary group.
+
+        You are pitted against an experienced archer named Thalia, who had a reputation for her deadly accuracy.
+        *page_break
+
+        *comment (Motor Skill: Moderate(60%))
+        *set GP_arg0 MotorSkill
+        *set GP_arg1 "moderate"
+        *gosub_scene general AttributeSkillCheck
+        *temp CH7M_ms_bool returnData
+        [head]Motor Skill Check @{CH7M_ms_bool Success|Failure}![/head]
+
+        *if CH7M_ms_bool
+            *comment Pass (Minor reputation increase with the Wolves):
+            As the crowd gathers around, cheering and placing friendly bets, you take a deep breath, steadying your bow, and lets the arrow fly. It soars through the air, hitting the target dead center.
+    
+            The cheers erupt as you earn a round of applause, even from Thalia herself. The archer smiles, giving a nod of approval, and the two of you exchange a friendly fist bump, your bond strengthened through the shared passion for the art of archery.
+    
+            “Good job.” A voice calls out. You turn around and see Anwen. “We should have a friendly competition of our own next time.”
+        *else
+            *comment Fail (Insignificant reputation increase the Wolves):
+            As the crowd gathers around, cheering and placing friendly bets, you take a deep breath, steadying your bow, and lets the arrow fly. It soars through the air, and hits the outer circle. 
+    
+            The cheers erupt as Thalia’s arrow hits the target. She gives you a small nod before turning to the crowd.
+    
+            “Better luck next time.” A voice calls out. You turn around and see Anwen. “The next time we have time to rest I’ll give you some pointers.”
+
+    # Foot Race
+        *set GP_arg0 Endurance
+        *set GP_arg1 "challenging"
+        *gosub_scene general AttributeSkillCheck
+        *temp CH7M_ea_bool returnData
+
+        *set GP_arg0 Acrobatics
+        *set GP_arg1 "moderate"
+        *gosub_scene general AttributeSkillCheck
+        *set CH7M_ea_bool returnData and CH7M_ea_bool
+
+        [head]Endurance & Acrobatics Skill Check @{CH7M_ea_bool Success|Failure}![/head]
+
+        This challenge is a foot race around the camp, winding through tents and obstacles. You are matched against a quick-footed rogue named Rook.
+
+        *if CH7M_ea_bool
+            *comment Pass (Minor reputation increase the Wolves):
+            The race is intense, with both competitors giving their all. Rook seems to have the lead, but you found some hidden strength and summoned your agility, sprinting past tents and leaping over logs. In a photo finish, you narrowly edge out Rook, claiming victory by a whisker.
+    
+            “Good job newbie, next time I won’t stumble on a root.” Root teases you.
+    
+            “We’ll see, you never know what may happen.” You retort, smiling.
+
+        *else
+            *comment Fail (Insignificant reputation increase the Wolves):
+            The race was intense, with both competitors giving their all. Rook is in the lead when you trip on a log. When you stand up and begin running, you can see Rook is far in front of you. When you reach the finish line, Rook is there waiting.
+    
+            “Better luck next time, newbie.” Rook smiles. You nod in response.
+
+    # Storytelling with Leon (End day) 
+        As the sun set, the camp gathered for a hilarious competition of storytelling. Each mercenary took turns spinning exaggerated tales of their adventures, trying to outdo one another with outrageous anecdotes and fantastical tales. 
+
+        You join in the fun, sitting next to Leon. You tell the story of the mogfish, how it jumped into a tree while chasing you. Leon joins in on the story and helps you add more flare to it. The camp roars with laughter after you use the tips Leon gave you to expand the story with how the mogfish fell flat on its face and struggled to get up. Giving you just enough time to kill it.
+
+        Through these challenges and competitions, you earn the respect of the mercenaries in the camp. From participating in the competitions, you feel more welcomed among the Wolves of Davenport. 
+
+        As the night wore on, the camp became a place of warmth and belonging, a true family bonded by the shared experiences of both battle and revelry. You feel the sense of kinship that only a group of kindred spirits could provide, knowing that you are not alone in the world but part of something greater - a family of warriors who fought not only for fortune but for the unbreakable bond that united them together. 
+
+        The next day, you are given the task of leading a small group to the nearby towns and villages to acquire essential provisions such as food, medical supplies, and equipment. They sent you on this mission to test your leadership skills and to show you the impact the wolves have on the local communities.
+
+        With a list of essential supplies in hand, you take on the responsibility of leading a resupply expedition to nearby towns and villages. As the sun rose over the horizon, your group set out on their journey, marching through thick forests and crossing meandering rivers. 
+
+        *goto CH7M_daytwo
+*page_break
+*goto CH7M_dayone
+
+*label CH7M_daytwo
+Where do you go?
+*fake_choice
+    # Get food for the camp
+        *set GP_arg0 Endurance
+        *set GP_arg1 "challenging"
+        *gosub_scene general AttributeSkillCheck
+        *temp CH7M_e_bool returnData
+        [head]Endurance Skill Check @{CH7M_e_bool Success|Failure}![/head]
+
+        You stop at the quaint village of Bexley, known for its delicious homemade pies and friendly villagers.
+
+        Entering the village, you are greeted by the jovial townspeople who recognized the Wolves of Davenport crest emblazoned on your armor. 
+        
+        The local innkeeper, an amiable fellow named Bartholomew, was more than happy to supply the mercenaries with a hearty meal. However, in exchange for the delectable pies they sought, he demanded a favor in jest.
+
+        "The annual pie-eating contest is upon us, and our reigning champion is boastful as ever," Bartholomew said with a chuckle. "If you can beat him in a pie-eating showdown, I'll fill your carts with all the pies you need!"
+
+        *if CH7M_e_bool
+            *comment Pass (Minor reputation increase the Wolves):
+            Unfazed, you accepted the challenge, entering the contest with a grin. The village gathered to witness the spectacle, and as the countdown began, you into the first pie. 
+    
+            With each crust and filling devoured, the crowd's cheers grew louder. In a comedic whirlwind of pie and laughter, you emerged as the new pie-eating champion, earning a cart full of pies, much to the villagers' amusement.
+        *else
+            *comment Fail (Insignificant reputation increase the Wolves):
+            Unfazed, you accepted the challenge, entering the contest with a grin. The village gathered to witness the spectacle, and as the countdown began, you into the first pie.
+        *page_break
+
+        It was too much, you barely manage to finish the third pie before calling it quits.
+
+        Continuing your journey, the group arrives at the town of Aston, known for its skilled blacksmiths. You need to get new weapons and armor to keep their mercenary group well-equipped.
+
+        You step into the bustling smithy run by the burly and boisterous blacksmith, Gruff, who prided himself on crafting the finest blades.
+
+        "I hear you Wolves are in need of some top-notch steel!" Gruff bellows, sizing up the player. "Well, let's see if you're worthy of wielding one of my masterpieces!" 
+
+        You feel the eyes of your companions and accept the challenge with a smirk. It was an epic clash of strength, with the smith's bulging muscles against your determination.
+
+    # Get weapons for the camp
+        *set GP_arg0 Endurance
+        *set GP_arg1 "challenging"
+        *gosub_scene general AttributeSkillCheck
+        *temp CH7M_e_bool returnData
+        [head]Endurance Skill Check @{CH7M_e_bool Success|Failure}![/head]
+
+        *if CH7M_e_bool
+            *comment Pass (Major reputation increase the Wolves):
+            You managed to overpower Gruff, and the blacksmith roared with laughter, slapping the player on the back. "You've got some real brawn, I'll give you that! Choose any weapon you want, it's yours!" 
+
+            With the carts filled with supplies, the group returned to the camp victorious, laden not only with essentials but also with tales of their humorous exploits.
+        *else
+            *comment Fail (Minor reputation increase the Wolves):
+            The struggle lasts so long that the group doesn’t know who is going to win. After putting up a valiant fight, Gruff manganese to beat you
+
+            "You've got some real brawn, I haven’t had a fight like that in a long while. Here, this is what I’ll do for you.” Gruff walks over to a rack of weapons. “Take any of these that you’d like. They aren’t my strongest weapons, but your enemy won’t know that.”
+
+    # Return to camp
+        As the group settles around the campfire that night, sharing stories and laughter, you realize the true impact the Wolves of Davenport had on the lives of those they encountered - not just as fearsome warriors, but as quirky, humorous, and lovable characters in this grand tale of adventure.
+*page_break
+*goto CH7M_daytwo
+
+*label CH7M_daythree
+It’s the next day, you look for other ways to help the camp,
+
+*fake_choice
+    # Explore
+        Rip Daring recognizes the value of knowing the lay of the land. He assigns you the job to explore the nearby forest, mapping out potential dangers, hidden resources, and possible routes for future missions.
+
+        This exploration not only allows you to contribute to the camp's safety but also a chance to connect with the natural beauty of the wilderness.
+
+        Under the guidance of Rip Daring, you, Rip, and Elena set out to explore the nearby forest. With a map and compass in hand, you venture deep into the heart of the wilderness.
+
+        The forest was alive with the sounds of rustling leaves, the distant calls of birds, and the occasional growl of unseen creatures.
+
+        As you trek through the dense foliage, the group encounters a peculiar-looking stone monument hidden among the trees.
+
+        Etched upon it was an ancient symbol - the iconic mark of Vecna, a powerful and malevolent lich. Elena remembers seeing this rune in one of her books. She tells the story and shares the unsettling tale of Vecna's quest for godlike power and the betrayal that led to his fall.
+        *page_break
+
+        Despite the eerie discovery, the team presses on, leaving the monument behind to continue their survey. Along the way, you notice a cave, the entrance is cleverly concealed by vines and moss. 
+
+        Deciding it is better to check it out, then to leave any stone unturned, you explore further. Rip and Elena following close behind.
+
+        Inside the cave, a faint glow is seen deeper into the cave. The light is being produced by a collection of enchanted crystals, their faint glow illuminating the cavern walls. These magical gems were said to be remnants of an ancient elven civilization that once inhabited the area.
+
+        Carefully documenting the location of the cave and its treasures, Elena senses a faint magical presence. Guided by instincts, she leads them to an old elven rune etched into a wall, which bore the mark of Corellon, the elven god of art and magic. Rip recalls hearing tales of Corellon's benevolent guidance and the blessings bestowed upon those who honored the ancient ways.
+        *page_break
+
+        With the newfound knowledge of this enchanted cave and its significance, the group continues their exploration, charting potential dangers and valuable resources. Throughout their journey, you encountered various flora and fauna that isn’t seen in Summerlight. It gives you a new appreciation of the natural beauty of the wilderness.
+
+        Upon returning to camp, you share the tale of the Vecna symbol and the mysterious cave with the rest of the mercenaries. This newfound knowledge not only adds to their understanding of the surrounding area but also reinforces the sense of camaraderie among the group.
+
+        “You did good out there. We wouldn’t have found that cave without you.” Rip tells you while staring at the fire. 
+
+        You are scared yet excited for the discoveries future expeditions will bring.
+
+    # Assist
+        The infirmary in the camp is always busy with injured mercenaries. You decide to lend a hand to the healers, learn basic first aid and herbal remedies. 
+
+        As you tend to the wounded, you gain a deeper understanding of the sacrifices and risks involved in the life of a mercenary.
+
+        In the bustling infirmary of the camp, you  immerse yourself in a world of healing and care.
+
+        The injured mercenaries, with wounds ranging from minor cuts to severe gashes, sought solace and treatment in the hands of the skilled healers. Feeling the need to contribute, you approached Gwyn, expressing your desire to lend a helping hand.
+
+        Gwyn laughs at your eagerness to learn, and takes you under his wing. He starts with the basics of first aid, teaching you how to clean and dress wounds, apply bandages, and administer simple remedies to ease pain and inflammation. You watch closely, absorbing every detail and technique, with the determination to be a valuable asset to the team…
+        *page_break
+
+        As time passes, Gwyn entrusted you with more responsibilities, allowing him to tend to less critical injuries on his own. With newfound confidence, you assist in the preparation of herbal remedies, learning the properties of various plants and their applications in healing.
+
+        You discovered the importance of identifying and gathering medicinal herbs from the surrounding wilderness, and how nature's bounty could be harnessed to aid those in need.
+
+        Throughout your time here, you witness the sacrifices and risks faced by their fellow mercenaries. You hear stories of battles fought, injuries endured, and the unwavering determination to protect the innocent and uphold their mercenary code. Gwyn's words echoed in your mind, underscoring the importance of their role in the camp - not just as a fighter but as a caretaker for their comrades.
+
+        As you tended to the wounded, they formed connections with their fellow mercenaries. They listened to their stories, shared laughter, and provided comfort during difficult times. These interactions deepened their understanding of the tight-knit bond within the mercenary group, fostering a sense of unity and esprit de corps that would endure through the trials that lay ahead.
+
+    # Done
+        At the end of the day, you are sitting by the fire, listening to the stories that are being told. As you are enjoying the time you’ve got to rest, Rip walks up to you.
+
+        "You've earned this," Rip said, presenting you with a small amulet bearing the insignia of the Wolves of Davenport. "It's a symbol of your growth and our trust in you." 
+
+        The amulet glowed faintly in the twilight, a token of the bond that had formed between mentor and protege. You take the amulet with pride as you are now officially apart of the Wolves of Davenport.
+        *goto CH7M_chapter_end
+*page_break
+*goto CH7M_daythree
+
+*label CH7M_chapter_end
 *return
