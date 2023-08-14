@@ -1,3 +1,4 @@
 *label StartChapter8
 
 TESTING MERC CHAP8
+*return

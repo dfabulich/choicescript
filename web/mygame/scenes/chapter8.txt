@@ -1,10 +1,12 @@
 *comment Dummy scene to direct the flow of phase 2 branch
 
 *if P2_branch = "merc"
-    *goto_scene merc-chapter8 StartChapter8
+    *gosub_scene merc-chapter8 StartChapter8
 *elseif P2_branch = "divine"
-    *goto_scene divine-chapter8 StartChapter8
+    *gosub_scene divine-chapter8 StartChapter8
 *else
     *comment bug_continue defined in commands.js
     *bug_continue P2_branch: ${P2_branch} is not "merc" or "divine", defaulting to "merc"
-    *goto_scene merc-chapter8 StartChapter8
+    *gosub_scene merc-chapter8 StartChapter8
+
+*finish

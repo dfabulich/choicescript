@@ -76,6 +76,7 @@
 *create CH2_followed_voice false
 *comment Phase2
 *create P2_branch 0
+*create P2M_roommate 0
 
 *comment ///////// Codex Globals /////////
 

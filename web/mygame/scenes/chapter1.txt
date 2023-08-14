@@ -106,7 +106,11 @@ You decide to,
 				*set Brawn +1
 				*set Agility +1
 
-				After some resourceful thinking, you manage to gather a handful of vegetables, a few eggs, and a small loaf of bread. It may not be a lavish feast, but it's enough to appease your hunger. You set to work in the kitchen. By utilizing your creativity and culinary skills to prepare a small but semi-satisfying breakfast. The aroma of sizzling vegetables and the sound of cracking eggs fill the air, as you transform the modest ingredients into a nourishing meal. You use your strength to handle the knife and cooking utensils with skill and precision, chopping the vegetables and flipping the eggs with ease. Your agility allows you to swiftly move around the kitchen, multitasking between various cooking techniques.
+				After some resourceful thinking, you manage to gather a handful of vegetables, a few eggs, and a small loaf of bread. It may not be a lavish feast, but it's enough to appease your hunger. 
+
+				You set to work in the kitchen. By utilizing your creativity and culinary skills to prepare a small but semi-satisfying breakfast. The aroma of sizzling vegetables and the sound of cracking eggs fill the air, as you transform the modest ingredients into a nourishing meal. 
+
+				You use your strength to handle the knife and cooking utensils with skill and precision, chopping the vegetables and flipping the eggs with ease. Your agility allows you to swiftly move around the kitchen, multitasking between various cooking techniques.
 
 				Your mother walks into the kitchen from the farm and sees the breakfast you made.
 
@@ -130,16 +134,15 @@ You decide to,
 				While searching through the pantry, you stumble upon a hidden compartment. Confused, you open it and find a note from your father.
 
 				“I was wondering when you would find this. You’re such a clever child. In here you’ll find some toys I got you from Davenport. Thought you and Reese may enjoy playing with them. I hid them from you because I wanted it to be a scavenger hunt, but since you found them before I came back you can have them.”
-			
-				Your father would sometimes come back with toys or treats from out of town. He’ll try to get you some of your favorite bread baked by the dwarves. They bake the best bread you have ever had and whenever he leaves that is the one thing you ask from him.
-				
+
+				Your father would sometimes come back with toys or treats from out of town. He tries to get you some of your favorite bread baked by the dwarves. They bake the best bread you have ever had and whenever he leaves that is the one thing you ask from him.
+
 				“What did you find in there?” Your mother calls out.
-				*page_break
-				
+
 				“Wooden swords and a note from Dad!” You shout back.
-			
+
 				“Oh, you found the hidden compartment, I told your dad that you would find it. He needs to find better hiding places.” Your mother laughs. “You can play with them after you get back from the market. I need you to pick up some food.”
-			
+
 				You excitedly nod and grab the coin before running out.
 
 		*page_break

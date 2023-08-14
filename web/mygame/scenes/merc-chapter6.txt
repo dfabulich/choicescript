@@ -1,3 +1,394 @@
 *label StartChapter6
+[head]Chapter 6: First Mission[/head]
 
-TESTING MERC CHAP6
+The tent is warm when ${P2M_ROOMMATE} shakes you awake. 
+
+“C’mon. Time to pack up.” You look to see ${P2M_ROOMMATE} is nearly done with packing away all their gear. You rub the sleep from your eyes and begin rolling up your bedroll.
+
+Outside is abuzz as the rest of the Wolves of Davenport are busy taking down tents and tarps, smothering the lingering hot coals from last night's fire and filling canteens with water from the nearby stream. Everyone seems to work together smoothly with little to no direction. It’s clear just from watching that this group has been traveling together a long time. 
+
+You help ${P2M_ROOMMATE} take down the tent, only getting tangled in the ropes once, and then are tasked with filling up both your canteens. On your way back, you spot Rip securing the last of his gear on the back of his horse. 
+
+“Good m-morning.” You just manage to hold back a yawn when you speak. 
+
+“Mornin’. You sleep well? ${P2M_ROOMMATE} didn’t give you a hard time or anything?”
+
+*if P2M_roommate = "Gywn"
+    *comment If your roommate is GYWN
+    “Gywn snores like a bear with congestion on the best nights. Woke up once to him snoring and thought we were in the middle of a thunderstorm once.” Rip gives an amused smile.
+*else
+    *comment If your roommate is ELENA 
+    “Elena can be a bit of an insomniac when something catches her attention. I’ve caught her researching the most random things in the middle of the night more than once.” Rip gives an amused smile.
+
+You stifle a chuckle and shake your head. “No, nothing like that. I think I was too tired to notice anything. Um, by the way, where are we going exactly?” 
+
+“I was just about to announce that.” Rip turned slightly and clapped his hands once, drawing everyone’s attention. “Listen up! We’re heading back home to Davenport, but before that we’ve got to make a quick stop at Stormdenn. Got word that another pack might need our help with a little something.”
+
+Seemingly out of nowhere, Leon popped up behind you. “What kind of something are we talking about?” 
+
+“We’ll find out when we get there.” Rip said. “Now, let's get moving.” 
+
+With all the gear packed and ready to go, you head out on the road with the Wolves of Davenport. 
+
+[b]It feels strange leaving like this.[/b]
+*page_break
+
+You always thought that when you left home, it would be for some grand adventure or after you gained a great fortune. Reality is so much different. Instead, you're running away from a false accusation and a prison sentence. Still, meeting Rip and everyone else gives you a little hope. Maybe you will have that adventure you always dreamed of. 
+
+As you get further and further away from town, you find yourself murmuring a little goodbye to the life you had there. It wasn’t much, nothing that made it in the storybooks, but it was a good life filled with possibilities. You turn back to the road before homesickness can creep up on you. 
+
+The road to Stormdenn is an easy one. It's well traveled enough that getting lost would truly take some skill and the consistent flow of people means the guards keep it safe from bandits and wildlife alike. It's also a long road, just about two weeks of travel. You’re incredibly grateful that there was a spare horse to ride.
+
+The conversations are pretty lively, splitting off into little groups once and a while and then rejoining every so often. You can’t help but to be drawn to the animated way Leon tells a story or the random, incredible facts that Elena knows off the top of her head. Gwyn and Anwen almost always drifted away from the main conversation. Curious, you decide to listen in and realize they were discussing how to combine one of Gwyn’s poisons into a weapon. Both of them seem to enjoy inventing and letting their imaginations run wild. 
+
+[b]Thirteen days after you left home, the town of Stormdeen appears on the horizon.[/b]
+*page_break
+
+You arrive in the city at dusk, your stomach grumbling for something besides road food. Rip guides the group to a stable where the horses will be taken care of and then he leads you into the depths of the town.   
+
+Stormdeen is bigger than your hometown and so much more crowded. Being right outside Davenport, there are many who stop at Stormdeen on their way to the big city. Merchants with carts filled with products, families on the move for better homes, and so many swords for hire looking for a new client.  
+
+Rip navigates the stress with ease. In fact, his stalwart presence seems to part the crowds in front of them.
+
+You end up inside a tavern a little ways off the main road. Inside it’s dimly lit with a long bar filled with patrons and a group of musicians in the corner. Tables and chairs are scattered everywhere and loud, lively conversation almost drowns out the music. Rip motions towards a large round table near the back of the tavern. There are three people sitting there, but on the table there are at least six mugs. Rip walks over and you all follow. 
+
+A figure stands as you approach, a woman with broad shoulders and a thin scar running through her left eye brow. She clasped Rip’s hand with a firm looking handshake. 
+*page_break
+
+“Rip.” she greets.
+
+“Viper. Good to see you.” 
+
+Viper’s eyes immediately turn to you. “ Picking up strays again?” 
+
+“Guess so. This is ${name}. They ran into some trouble and you know how lazy the law can be about certain things.” 
+
+You watch Viper’s intense gaze change every so slightly. 
+
+You all sit down and a conversation begins. This being your first time out with the wolves, you feel a little out of place with all these mercenaries. It’s a little hard to keep up with some of the things they talk about. However, very quickly, the conversation turns from casual to serious. 
+
+Your attention perks up when Viper mentions the rot.
+*page_break
+
+“We just left Davenport this morning and were on our way to Lindow. There’s been a lot of chatter about something just south of the town taking out people left and right. All signs and gossip point to it being the rot.“
+
+The rot wasn’t something you were really familiar with. It felt like a danger from a completely different world. One with mages and warriors. You realize quite suddenly that you're on the cusp of this very world. 
+
+“We were heading down to Lindow in the morning, once we gather supplies.” Viper said. “You and your pack coming with us, Rip?” 
+
+Rip doesn’t hesitate. “Of course we are. Wouldn’t have wasted your time otherwise. We’ll be ready to go with you by morning. Leon, make sure the pup is geared up for their first mission.” 
+
+“You got it boss.” Leon rises from the table, tugging on your arm as he does. You go to follow him as he leads you up the stairs of the tavern where the Wolves of Davenport have a few rooms reserved for whenever they’re in town.
+*page_break
+
+Leon asked if you have a weapon. 
+
+*if item = "dagger"
+    *comment If player bought a dagger
+    You pull out the dagger you had bought back home. At Leon’s questioning look, you hand it over for him to inspect. 
+    
+    Leon tosses it between his hands a bit, checking the sharpness of the blade as well. 
+    
+    “Not bad, ${name}. This won’t need to be sharpened, and the wrap is well done.This is a good weapon. It’ll protect you where we’re going.” 
+
+*elseif item = "murder_weapon"
+    *comment If player has the dagger with a strange design
+    You hand over the dagger with the strange design. At Leon’s questioning look, you hand it over for him to inspect. 
+    
+    Leon tosses it between his hands a bit, checking the sharpness of the blade as well. He inspects the design on the blade closely. 
+    
+    “Do you recognize that design?” You ask, curious. 
+    
+    “No. Pretty fancy for a dagger, if you ask me. Anyway, it’s a good blade. It’ll protect you where we're going.” 
+*else
+    *comment If player did not get a new dagger
+    You take out the dagger you’ve had for years. The handle wrap is so smooth with age it’s almost slippery and there are a few minor chips in the blade. 
+    
+    “Yeah, that definitely won’t protect you.” Leon sighs. “I might have something…”
+    
+    Leon begins digging through his pack, emptying a good portion before he finds what he’s looking for. In his hands is a sheathed dagger, wrapped in strips of cloth for extra protection. He hands it to you. 
+    
+    You take your time unwrapping it. It’s a little longer than your old one, heavier too. The handle is wrapped in fine leather and when you pull it from its sheath, the blade gleams in the firelight. You gently press your thumb against the blade. It’s sharp enough to nearly cut you. 
+    
+    “It’s a little old, but well kept. It’ll protect you where we’re going.” 
+
+[b]Maybe you can use this time to ask Felix some questions.[/b]
+
+*label CH6M_nameloop_start
+*fake_choice
+    # What are the other people in your group names?
+        “The elves are Ailer and Edea. I’d tell you how to tell them apart, but they like to make it impossible to do that. They switch clothes, weapons, everything just to throw people off. Viper is the only one who can tell them apart at a glance.”
+        
+        “The dwarven woman is Thebeda. She’s pretty sweet once you get to know her, but damn it takes a while for her to warm up to you. I’m pretty sure she only really started liking me after my first year with the group. “
+        
+        “You know Viper, of course. Any idea you might have of her being a hard ass, straight forward woman is spot on. She's tough as hell, but a great leader. I don’t think any of us would say a bad word about her after everything we’ve been through.” 
+    # Why did you join the Wolves of Davenport?
+        “Me? I joined up because my uncle was a member. He died helping a family out of a burning building when I was about eleven. I always thought the Wolves of Davenport were better than the heroes in stories.”
+        
+        “Why’s that?” you ask. 
+        
+        “Well, the Wolves are real. Heroes don’t really exist outside of stories.”
+    # Have you seen the rot before?
+        A somber look overcomes Felix. He pauses before he speaks. 
+        
+        “Once. I wasn’t ready then. Now I am.” 
+    # Ask nothing.
+        *goto CH6M_nameloop_end
+*goto CH6M_nameloop_start
+*label CH6M_nameloop_end
+
+You continue chatting with Felix about this and that, doing your best to ignore the rest of the group's judging looks. 
+
+Rip and the rest of your pack also notice the odd tension. More often than not, one of them is present after Viper and her team snap at you for something. It leaves you feeling embarrassed for some reason. 
+*page_break
+*comment (This section will be based on the relationship with each character. If none of them care for the player, this section is skipped and proceed to the next section.)
+*comment Leon
+*comment “Hey (PLAYERS NAME), got a second?” Leon calls out to one night at camp. He guides you towards the horses, just out of earshot from where everyone is resting. 
+*comment “You okay?” he asks. “Viper and her crew, they’re not the nicest, huh?”
+*comment “I…guess not.” You don’t want to complain. 
+*comment “Listen, don’t let them get to you, alright? You're doing fine, better than most people I’d guess. Not everyone can roll with having their life changed like you. So just keep up your spirits, yeah?” 
+*comment You crack a smile. Leon’s words are comforting.
+*comment Anwen
+*comment “Hurry up, kid! We can’t be waitin’ on you all day!” The dwarf, Thebeda, has been scolding you for the past few minutes. Her first reprimand made you jump and spill the contents of your bag. 
+*comment “Maybe if you’d let the poor (GIRL, BOY, KID) be, (HE,SHE,THEY) would be able to pack. Instead we all have to bear the burden of your donkey bray of a voice.” Anwen shoved past Thebeda, glaring at the twins snickering just behind her. 
+*comment “Here ${name}, let me help.”
+*comment Anwen helped you pack and load your horse. You notice her sticking a little closer to you and defending you when the others begin to tease. 
+*comment Her protective actions are comforting. 
+*comment Elena
+*comment “${name}, come sit with me.” Elena calls you. You go and join her by the campfire, away from Viper’s group. “I know you're quite the curious one, so I was wondering if you would like to hear about my latest book?” 
+*comment She shows you the cover. There’s a beast you’ve never seen on the cover. Your interest has peaked. 
+*comment Elena smiles. “I thought you’d be interested. Now, the author is more a theorist than an actual scholar, but his ideas are actually quite sound…” 
+*comment You spend the night conversing with Elena, the same with the next night. You realize after the third time that Elena has been pulling you into conversation before Viper’s group has a chance to bother you. 
+*comment Elena’s subtle show of affection is comforting. 
+*comment Gwyn
+*comment “${name}! Come lend me a hand, will you?” Gwyn calls you over as soon as camp is set up. He has a whole line of dried herbs and bottles of strange liquids laid out on the ground. “I found these flowers on the side of the road. They make a simple healing potion that can help blood clot. It’s good to know how to recognize ingredients like this. Let me show you some things.”  
+*comment Before you can say anything, Gwyn begins a mini lecture about herbs and flowers commonly found in the area. You’re roped into helping pull petals and crush beetles the next night. After the third night of potion making, you realize that Gywn has recruited you long before Viper and her crew can bother you. 
+*comment Gwyn’s teaching and care is comforting.
+*comment Rip
+*comment After the third night on the road, after the twins Ailer and Edea made strange comments about your new armor, Rip pulls you aside. Tyr trots along beside him. Rip leads you away from camp a little while, where the grass is taller and the trees are less. Tyr explores freely, going in and out of the tall grass but always coming back to Rip’s side after a while. 
+*comment Eventually, you stop in a meadow. The moon is shining brightly before you.
+*comment Rip doesn’t say anything, just stands quietly under the moonlight. You take a deep breath and just concentrate on the world around you. It's so peaceful here you completely forget about the frustrations of the day.  
+*comment Eventually, you head back to camp, your mind more settled than before. You find the comments and sneers from the others don’t bother you as much. 
+*comment Seeing Rip’s care as a leader is comforting. 
+
+When you arrive at Lindow, your group is immediately met with a pair of stressed looking towns guards. They approach you with hands braced on their spears and ask why such a large group is coming to Lindow. 
+
+“We’re here to help protect this place against the rot.” Rip answers. 
+
+The guards immediately look relieved.
+
+“Thank Sigel, we need all the help we can get. It’s been spreading faster than we anticipated. We’ve sent word for help from the Flames of Sigel, but with how fast it’s moving, they probably won’t get here in time.” 
+*page_break
+
+Viper speaks up this time. “Our group has two arcane mages. They can hold it back until the priests arrive.” She looks over to the twins, Ailer and Edea. You had no idea that they were trained in the arcane.
+
+The guards thank Viper over and over and eventually one of them leads the twins deeper into the city, towards the approaching rot. The second guard takes the rest of the group to a stable to settle the horses, and then to a tavern where many have arrived to aid the town. 
+
+The tavern has been turned into a holding ground. There are more people waiting for word on the rot than there are chairs in the whole place. You pity the people who are staying at the tavern’s inn. They’re probably overwhelmed by the amount of swords and bows in the building. 
+
+Rip and Viper break off from the party and manage to find a secluded corner. You try to follow them, but are quickly herded to a large round table that just opened up. Leon jovial shoves you down into a seat and a few seconds later, a cup of ale is placed in front of you. Leon and the others begin talking and drinking, their energy building. They seem almost playful, like they aren’t on the precipice of a battle. Many people in the tavern have the same kind of hyper energy. 
+*page_break
+
+The first round is finished quickly and you’re volunteered to grab the next. 
+
+As you make your way to the bar, a large man suddenly pushes his chair back into you. You quickly step out of the way and end up pressed up against the window. A gleam of light catches our eye. 
+
+Outside, riding a regal looking gray horse, there is a man in golden armor. The armor is practically glittering in the sunlight, but you can see several places where it has been repaired. It clearly wasn’t just for show. A crimson cape fluttered in the breeze as he rode. Surrounding him was a litany of well dressed soldiers in similar, but far less regal armor. You stare at the man until he rides out of view. 
+
+A loud shout behind you startles you. Right, you were getting drinks for your crew. 
+
+After delivering the drinks, you:
+*fake_choice
+    # Stay with Rip’s group (Increase relationship with entire party)
+        You sit down at the table, right in the middle of a gripping story. 
+        
+        Leon is standing with one leg up on his chair. Surrounding him is a collection of people, enraptured with the story he weaves. 
+        
+        “…and before we knew it, the little beast had surrounded me. I reached for my blade only to feel nothing at my side. Somehow in the chase, my belt had become loose, falling from my hip when I needed it most. I called out for my brave fellow wolves, but all I heard was the monster’s growls!” 
+        
+        Leon made a strange growling noise, scaring a few townsfolk and making others laugh. He had them captivated, sitting on the edge of their chairs with every word he spoke.
+        
+        “To be fair,” Anwen chimed in, “We were all dealing with our own problems. We couldn’t have helped you if we wanted too.” 
+        
+        Leon waved her off. “Yes, yes, creepy creatures in the dark were attacking all of us, but back to me. So next…”
+        *page_break
+
+        You chuckled at Leon’s expressive face and Anwen’s dry commentary. Next to you, you see Elena is completely unfazed by the loud atmosphere as she quietly sips her drink and reads a book. You glance at the title and see that it has to do with magic. No doubt she’d prepared for the fight ahead.
+        
+        Gwyn is also outside of the chaos, drinking tea of his own making and watching the dramatic reenactment of one of their adventures with a smile on his face. This is probably something he sees often. 
+        
+        “${name}!” Leon shouts. “Come, come! I was just getting to the part where you joined up!” 
+        
+        Leon drags you to his side of the table and suddenly you're in the middle of the chaos. It’s a little overwhelming, but you find yourself smiling more than you have in a long time. 
+        *page_break
+    # Talk with Felix, the one member of Viper’s group that you get along with (Increase reputation)
+        You spot Felix heading out of the tavern. Curious, you follow him. 
+        
+        Outside, Felix is leaning against the building. “Oh, hey ${name}. What are you doing out here?”
+        
+        “I was following you.” You say a little sheepishly. Felix chuckles. You hear a loud fake growling sound, followed by a wave of laughter. You both turn and glance inside to see the table with Leon and the others surrounded by people. 
+        
+        “The group you’re traveling with, they're…something. Are they always like this?” he asks. You smile and explain that they have fun, but when the moment calls for it they can be serious and focused too. 
+        
+        “From what I can tell, they just try to make the best of every moment.” You finish with a shrug, hoping you got your point across. 
+        *page_break
+
+        Felix is quiet for a moment. You notice his attention drifts from Viper to the Thebeda. You wonder if he’s also thinking about Ailer and Edea. You think back to the trip, the long days on horseback. Viper’s group wasn’t quite as loud as yours, but they had their own jokes, their own quiet comradery. They may not have shown you the greatest hospitality, but you could tell they were just as close as Rip and his Wolves. 
+        
+        “Hey, I’ll talk to the others.” Felix says. “I know they’ve kind of shown you the cold shoulder, but they’re good people. Even the twins. We all need allies we can count on. I think our teams could do that for each other.”
+        
+        You thank Felix for his words and his friendship. You chat for a little while longer before both returning to your groups. Felix sits next to Thebeda, saying something under his breath that instantly makes the dwarven women laugh. 
+        
+        Maybe in the future, you can also have that easy camaraderie. 
+    # Talk with the townsfolk in the tavern (Gain some knowledge on the rot)
+        You return to the bar with your own drink, slowing sipping while listening to the people around you. You were always good at blending into the background and eavesdropping when it suited you. 
+        
+        The man sitting next to you had his back turned as he spoke to his elvish friend. 
+        
+        “…I heard from Johanna across the road that there was a magic user in town, just a few weeks ago.”
+        
+        The elven woman frowned. “Really? Arcane or divine?”
+        
+        “Wouldn’t know the difference to be honest. But old Johanna said that they went to the westside of town and didn’t come back out.” 
+        
+        The west side…that's where the guard led Ailer and Edae. It was the epicenter of the rot in town. Doesn’t magic bring about the rot? If so, what kind? Feeling a little bold, you tap the man on the shoulder and join the conversation. 
+        *page_break
+
+        You quickly explain that you're a part of a group that wishes to help and that two are already holding back the rot. The two nod and bring you into the conversation. 
+
+        The man doesn’t seem to know too much about magic, only seeing it from a distance twice in his life. The elf is a little more knowledgeable, but only on a scholarly basis. They explain that magic can bring the rot.
+
+        “Dark, evil magic. Magic that should never be performed by a being of Teren. Study of these magic’s is forbidden and any record that is found is destroyed. To learn it, a person must be thoroughly corrupted by the rot.” 
+
+        You talk a little more, trying to gain an understanding of what's going on. They man and elf share what little information they have. You thank them, finish your drink, and head back to your table. 
+
+Night comes and Rip leads the group to a set of rooms in the tavern. It feels good to sleep in a reaal bed, but the anticipation of the coming battle makes you restless. 
+
+In the morning, the tavern is buzzing once again, but this time the energy is much more serious. No one is laughing and joking anymore. Anwen tells you to layer up, even suggesting wearing two pairs of pants. Elena hands you a pair of worn gloves.Gwyn passes around masks to cover your nose and mouth. He makes sure it’s tied tightly in two spots, one on the tip of your head and the other near your neck. You glance around and see others getting ready in a similar way. 
+
+Felix catches your eye. He gives you a reassuring smile before donning his own mask. Around him, Thebeda, Ailer and Edea are all wearing similar masks. You turn before any of them see you watching. 
+
+A call comes from outside. Rip and the rest of the Wolves head out. Taking a deep breath, you follow. 
+*page_break
+
+A procession of people is marching out on the street. At the head, was the man you saw yesterday. Splendid golden armor on top of a regal gray horse. Around you, people whisper, calling him a paladin, but just as often if not more, the people call him the Zealot. 
+
+Rip and Viper lead you all into the crowd. It's full of people prepared for battle just like you. You are led to the west end of town, at the edge of the forest. The man on the horse turns and begins to speak. 
+
+“You are all here today because of Sigel’s guiding light. You have come from far and wide to defend the defenseless in this time of encroaching darkness. Know this, brave warriors, Sigel favors those who serve under his light. Your names will be remembered as defenders of the peace and adversaries of the forces of Skadon. Do not waiver in the face of this darkness for dawn will alway follow the darkness night.” 
+*page_break
+
+The people around you seem bolstered by the man's words. Cheers ring out as warriors begin bangging their shields with their swords. All around you, weapons are being drawn. You grasp your dagger, willing your hand to stop shaking. 
+
+Groups start to form as people enter the forest. Rip and Viper stay behind a bit before turning to two wolf packs. 
+
+“The magic users will take front, clear out any rot you can see.” Viper says. The twins and Elena step up. “Rip and Tyr will stay close to guard your backs from any creatures that might come your way.”
+
+“Leon, Thebeda and Felix, you three will be helping clear out a pack of jackaloids.” Rip continues. “The beast was drawn to the area by the rot. Not sure how many are out there, but there are other groups out hunting them so you won’t be alone. Viper will also be accompanying you.”
+
+You're assigned to stay back with Gwyn and Anwen in the middle of the group, both of whom will be better at fighting from a distance and can lead aid if needed. Anwen tasks you with carrying her extra ammunition for her catapult so she'd be more free to aim her bow. Gwyn has two bags over his shoulders, one with healing potions and the other with combustion liquid. He makes you memorize which is which. 
+
+Being in the middle, you can help Gwyn heal people and assist Anwen when someone’s weapon breaks. It's the perfect place to help without getting in harm's way.
+*page_break
+
+Before you know it, the fight has begun. 
+
+You jump at the first howl of a jackaloid. The sound is followed by three, five, no– ten more? You quickly lose count of how many howls echo throughout the forest. You always knew jackaloids traveled in packs, but you never thought there would be this many. 
+
+Off in the distance, you can just barely see sparks of magic lighting up the trees. The magic users have run into the rot and are beginning to clear it out. The light attracts the beasts and suddenly you see thin humanoid figures darting towards the light. 
+
+Anwen aims her bow and begins firing her arrows at the monsters. They charge towards the magic without even caring. 
+
+Before the jackaloids can get close, a large steel sword cuts through one of the monsters. The small, sickly body falls to the ground in pieces. You catch a glimpse of golden armor rushing deeper into the forest before Gwyn pulls you over to help him with an injured warrior. 
+
+The battle continues, and the jackaloids are getting closer. Gwyn has you helping patch up the injured, occasionally tossing a vial of combustion liquid into the fray for Anwen to fire at. The explosions are small, but powerful. You flinch as one such attack blows a leg off a jackaloid in the blink of an eye. 
+*page_break
+
+Closer and closer, the monsters have broken through the front line. You catch glimpses of Leon, Felix and Thebeda, all fighting for their lives. Weren’t they supposed to be much farther away? Were there really that many jackaloids, brought here by the rot?
+
+Suddenly, all you can see is Reese. The monster that attacked them that day. You remember the terror of that moment. The pain of losing them that day. The memories are too much and they consume you. 
+
+“…${name}! Snap out of it!” Anwen slaps you. 
+
+You gasp, your mind slamming back to the present. Anwen is staring at you, a mix of concern and frustration on her face. 
+
+“You back with us?” She asks. You nod, not trusting your voice. “Good, then take this.” 
+
+She gives you her handheld catapult. “Shoot anything that attacks us!”
+
+**(FIGHT SCENE. Skill checks galore. Will end with player having to rescue Felix from a jackaloid)**
+*temp CH5M_battle_won true
+*bug_continue Fight not implemented yet, assuming battle was won.
+
+*if CH5M_battle_won
+    *comment Battle is won.
+    You stare down at the body of the jackaloid. They look so much smaller now that you’ve grown. 
+    
+    Felix is breathing hard, he fell to his knees and seems to be in shock. You grab his arm and help him walk. You need to get him back to Gwyn to make sure he’s okay. And  even though you killed the jackaloid, this area isn’t safe. The rot is still creeping closer. 
+    
+    As you hurry to safety, a group of ten or more priests and priestesses rush past you. Both you and Felix nearly stumble as a burst of warm magical energy erupts behind you. You’ve never felt anything like it. The rot is instantly burned away without a single trace. 
+    
+    More people fly past you, taking out any lingering jackaloids still in the area. The wide bursts of magic keep going off, finally cleansing the land for good. 
+    
+    Gwyn rushes over to you when you get to safety. You push Felix forward. 
+    
+    “Help him first. I’m okay.” As you turn to go help more, Felix grasps your arm. 
+    
+    “Thank you, ${name}.”
+    *page_break
+
+    You smile and head out to see who else needs help. 
+    
+    The battle slowly winds down as more of the rot is cleared away and less and less jackaloids appear. Once the last beast has been defeated, everyone gathers at the forest entrance to heal their wounds and find their friends. 
+    
+    You see the twins crowding around Felix who has his arm wrapped and a fresh bruise on his eye. You think you hear your name in the conversation, but don’t stay long enough to confirm it. 
+    
+    Eventually, the priests file out of the forest, looking tired and worn. They thank everyone for their bravery in the battle. 
+    
+    “The rot has been contained. We will be leaving a small contingency here to watch over the epicenter so it doesn’t spread to this magnitude again.” 
+    
+    Relief is palpable in the air. Today’s battle was a success. 
+    *page_break
+
+    Rip pats you on the back, “Heard what you did out there. It was a little reckless, but you managed to save one of our own. Nice job kid.” 
+    
+    Viper also steps up and holds out her hand. “I owe you a thanks as well. Turns out, you're not as bad as we thought you were. But really, thank you for saving Felix. Our group wouldn’t be the same without him.”
+    
+    The others in Vipers group all come up and offer their thanks as well. You realize suddenly that they are finally looking at you like an equal now. You stand a little taller. 
+    
+    Amidst the thanks and cheerful conversation with your new allies, a figure in gold finally emerges from the forest. You frown to see him limping slightly, a strange blot of dirt or something on the side of his armor. 
+    
+    Your attention is quickly pulled away by Felix clapping you on the shoulder as you all make your way back into town. 
+*else
+    *comment Battle is lost.
+    You stare down at the body of the jackaloid, and next to it, Felix covered in blood. The jackaloid looks so much smaller now that you’ve grown, but the terror you feel is just like before. 
+    
+    Felix is still alive, but you know what that wound means. You know what he will become. You're frozen, staring at the blood. In your mind, one thing keeps repeating itself. How could I let this happen again?
+    
+    Suddenly, a group of ten or more priests and priestess rush past you. You nearly stumble as a burst of warm magical energy erupts behind you. You’ve never felt anything like it. The rot is instantly burned away without a single trace.
+    
+    One of the priestess turns back and rushes to you. 
+    
+    “You must leave this place!” She shouts. Her eyes are shimmering with magical power. 
+    
+    “I-I…” You can’t find the words, your eyes darting down to Felix on the ground. 
+    *page_break
+
+    The priestess kneels down and pulls Felix’s arm over her shoulder. You quickly jump up to help her and the two of you hurry to safety while warriors rush past you to fight off the remaining jackaloids. After that, things begin to blur. 
+    
+    Felix is taken away from you. The priestess runs back to the battle. Someone, maybe Rip, pulls you out of the crowd. You hear his voice, but his words do nothing to ease this old guilt. 
+    
+    “You can’t save everyone, ${name}. It’s just a fact of life. You did what you could.” 
+    
+    Just like before, you wish with your whole heart that you could do more. 
+    
+    Viper and the rest of her group make a point of avoiding you even more. What was once teasing looks and judgmental comments have now faded into nothing. You don’t even exist to them anymore, their dislike is so potent. 
+    *page_break
+
+    It’s fine, you think. You had a chance to save Felix and messed it up. Just like before. 
+    
+    Amidst the guilt floating in your mind, you vaguely notice a figure in gold finally emerging from the forest. You frown to see him limping slightly, a strange blot of dirt or something on the side of his armor. 
+    
+    Your attention is quickly pulled away by Rip leading you towards town. Viper and the rest of her group are already gone. 
+
+*return

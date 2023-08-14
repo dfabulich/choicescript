@@ -1,3 +1,4 @@
 *label StartChapter8
 
 TESTING DIVINE CHAP8
+*return

@@ -289,10 +289,11 @@ How do you tell the story?
             *set mc5_path "Female"
 *elseif (not (mc5_path = "Male")) and (not (mc5_path = "Female"))
     *comment Handle if gender isn't set
-    *rand mc5_path 0 1
+    *rand mc5_path 1 2
     *set mc5_path "@{mc5_path Female|Male}"
 
 *if mc5_path = "Female"
+    *set P2M_roommate "Elena"
     “Elena, could you show ${name} to their tent?” Rip asks.
 
     “Huh, oh yeah.” Elena closes her book before standing up and walking towards the tents.
@@ -308,6 +309,7 @@ How do you tell the story?
     “Life does that sometimes and you end up having to make do with what you’ve got. Dinner is almost ready, feel free to come join us.” Elena takes one last look at you before leaving. 
 
 *elseif mc5_path = "male"
+    *set P2M_roommate "Gwyn"
     “Come on, I’ll take you to your tent. You’ll be sharing with Gwyn.” Rip waits a second before walking towards the tents.
 
     It is a decent sized tent, two sleeping bags, what looks to be a small portable work table, and plenty of space to move around. You walk over to the emptier side of the tent and place your stuff there.
@@ -483,7 +485,7 @@ You look over at Elena and turn away. Seeing her laying in a cot reminds you of 
 “How are you ${name}?”
 
 **(Change based on how fight goes)**
-*finish
+*return
 
 *label MC5EndBranch2
 “Okay, then you’ll help watch the camp.” Rip explains.
@@ -576,4 +578,4 @@ When you look up you see Elena and Leon walking out of the tent. They are talkin
 
 “Direwolf next.”
 
-*finish
+*return
