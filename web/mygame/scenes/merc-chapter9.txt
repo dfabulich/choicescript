@@ -1,4 +1,234 @@
 *label StartChapter9
+[head]Chapter 9: Siege on Silvervein[/head]
 
-TESTING MERC CHAP9
+Silvervein is a mining town; that’s what Rip told you. With the name, it isn’t so surprising. It’s the sort of place that’s clearly seeing its last days of prosperity, and will either adapt, or fail to do so. Indeed, it seems that Silvervein has fallen into the latter category.
+
+With ore veins depleting, the miners were given new orders to mine into a particularly abandoned excavation. The mining town, after all, had been going for quite a while; long enough for some things to have faded from the cultural zeitgeist.
+
+“For example,” Rip had informed you and the other wolves on the way here, “did you know that the people of Silvervein haven’t excavated a particular site in nearly a century?”
+
+A group of miners fled the town screaming bloody murderer in the small hours of the morning, claiming that Ichorswog poured out of the mines in droves…
+
+The village center you stand in front of is in absolute shambles. Windows are broken, injured villagers are strewn about like confetti, and living ones are running to and fro. At some point, when all of this started, someone must have thought that a line of burning oil might protect them. The ineffective fire, luckily, hasn’t spread.
+
+That isn’t even to mention the presence of various mercenary groups, not unlike your own, all shades of people from the nearby Sigilic Temples, ang, by Sigil, the Ichorswog. You’ve never seen so many.
+
+*label CH9M_BattleField
+You shouldn’t strike out on your own. Rip and the others would never discourage you from “being a hero,” but you’re still arguably the runt of the litter here. For now, you’re better off as auxiliary to your comrades…
+
+You decide to lend a helping hand to…
+*fake_choice
+    # Aid Leon!
+        You make your way to the part of the village Leon splintered off to. You pick off a few stray Ichorswog on your way there. These spawns of Skadon bleed without the slightest tinge of red: pure darkness.
+        
+        The village centre’s built around a water well, though the water in it now runs black and corrupted. The homes in this part of the village are actually standing rather strong. The wealthy tend to live nearer to amenities such as wells…
+        
+        You spot Leon. He’s fending off a pack of those things all by himself, and, even though he’s managing, it’s rather clear that he can’t keep this up for very long, even if he picks off a few. 
+
+        (TODO: Implement fight scene, assuming won)
+        *page_break
+
+        *temp won_leon_fight true
+
+        *if won_leon_fight
+            Leon draws his blade from the last of these vile things. Somehow, you find yourself surprised to see him wipe the sweat from his brow.
+            
+            “I could’ve taken them, you know…” he says
+            
+            After a brief pause, he continues “but, I’m thankful for the help. Good work.”
+            
+            You and Leon split ways to cover more ground.
+            *page_break
+            *goto CH9M_BattleField
+        *else
+            Your vision does not fade, the way you would imagine it would, but, rather, abruptly cuts off. The finality of death, however, evades you for today.
+            *page_break
+            *goto CH9M_Loss
+    # Aid Elena!
+        (OUTLINE, Assuming win)
+        The player receives a plan of action from Elena; they won’t be able to do much about all of the ichorswog in the area, and so all they can do is clear out a chunk of them… they’ll need to act fast (The player is left with the choice of which chunk to clear.)
+        
+        Clearing the inside of the cave will prevent any further spread of Ichorswog, while clearing the area outside will save the miners who are there. (Combat!)
+        
+        Save the Miners (GOTO: [BTL_FLD])
+        
+        Elena thanks the player for taking some of the weight of the decision, and helping put the plan into motion.
+        
+        Beat back and blockade the Ichorswog (GOTO: [BTL_FLD])
+        
+        Elena thanks the player for taking some of the weight of the decision, and helping put the plan into motion.
+        
+        Fail (GOTO: [LC])
+        
+        Play KO text.
+        *page_break
+        *goto CH9M_BattleField
+    # Aid Gwyn!
+        You decide, for right now, to leave behind the chaos of this doomed village, and, instead, head for the infirmary. After all, your presence in this village serves more as a prevention of further death than it does an attempt to “save the village.” No, no such thing will be happening today, unfortunately.
+        
+        As you close the door behind you, the infirmary certainly doesn’t seem that much better, though the bodies here aren’t strewn about nearly as haphazardly as they are outside. There are so many bodies, in fact, that you almost have trouble spotting Gwyn, or any of the healers, for that matter.
+        
+        “Ah, you’ve arrived!”
+        
+        Gwyn doesn’t hesitate to hand you some items. He begins ordering you around, sending you from corner to corner of the building. Bring this concoction here! Oh, and that ointment needs to go there! Oh, drats, all out of gauze!
+        
+        All things considered, it’s not nearly as overwhelming as what’s going on outside, though you can see Gwyn’s disposition darkening more until he’s unable to contain it anymore.
+        
+        “There’s too many… Too darn many…”
+        
+        You raise an eyebrow at Gwyn. Like a waterfall, unable to contain himself, he gushes.
+        
+        “There’s too many injured! Too many, in too frail a condition, and too few of us! Even with your help, even now, it… it just…”
+        *page_break
+
+        Gwyn can’t seem to continue. The two of you sit in silence.
+        
+        Compared to when you’d originally come in, there were certainly more injured. Some are on the ground, some are stacked on top of each other, some are… No, wait…
+        
+        “Yes, the living are resting over the dead… this building was never meant to fit the entire village, let alone even this portion of it! There aren’t enough supplies… There aren’t even enough of us!”
+        
+        Gwyn’s begun pacing back and forth. Your eyes get tired following him. You wonder what it is that’s eating at him…
+        
+        “You don’t get it, do you?” Gwyn says, losing his temper.
+        
+        “We have to make a choice. We need to decide which lives matter more…”
+        *page_break
+
+        You give him a look. You imagine he’s had to deal with such occurrences very few times in his life, and never on such a scale. He continues pacing, You imagine he’s thinking to himself. There are villagers in nice clothing and villagers with miner’s caps, though they’re both equal in their blood loss.
+        
+        Gwyn comes from nobility… This choice… It’s not one he can make, is it? Gwyn, distressed, continues to pace. You decide to speak up.
+
+        [b]You think Gwyn should…[/b]
+        *fake_choice
+            # Prioritize the miners
+                This option should increase reputation… 
+        
+            # Prioritize Nobles
+                This option will increase profit. 
+        
+            # The room smells of death… it’s quite sickening…
+                As you scrutinize the bodies, engaging in the exercise in madness that is deciding who should live and who should not, the combination of bloodied clothing, spilling entrails, the scent of septic… it seems to hit you all at once.
+            
+                Unable to quite handle it, you feel sick. The last thing you see is the floor coming to meet you.
+                *goto CH9M_Loss
+        
+        Gwyn finishes patching up the last of the injured. There will be more, but, for now, the people of Silvervein are dying just a bit less.
+        
+        “I wanted to thank you for what you did back there. Why, if you hadn’t intervened right then and there, I don’t know that I would’ve been able to keep working!”
+        
+        He lets out a deep sigh.
+        
+        “It’s just nice to have a reprieve, if even for but a moment…”
+        
+        You leave Gwyn to his devices. The battlefield still calls to you…
+        *page_break
+        *goto CH9M_BattleField
+    # Aid Anwyn!
+        You slink into the armory. You took the long way around, so as to avoid any more trouble than you need right about now. The armory isn’t the worst place to take a short break. Falling from exhaustion doesn’t do any good for anyone.
+        
+        People of various backgrounds are seated at tables, grindstones, or workbenches, either resting or fixing up their equipment. Here, the smell of metal is the smell of metal. Outside, it’s blood.
+        
+        You feel someone pat your shoulder from behind, and turn to face Anywyn. Looks like the two of you had the same idea. She gives you a smile.
+        
+        “Fancy seeing you here. Let’s sit at that workbench; I’m feeling all sorts of chips in my armor, and that’s not even to speak of my poor bow!”
+        *page_break
+
+        You must admit, seeing Anwyn so concerned about her bow, silly as it is, does lift your spirits a little. You sit down at the bench, glad to have her company.
+        
+        It doesn’t take either of you very long to tend to your equipment, so you begin tending to the equipment of others. In its own way, this is a relaxing activity. Well, relaxing compared to what’s outside, that is.
+        
+        Anwyn doesn’t say much as the two of you tend to various swords, helmets, and other equipment. It seems to you that there’s something on her mind, and eventually you decided to ask her about it.
+
+        [b]“Well, I suppose I just wanted to ask you something… are you feeling alright? For your first time fighting a battle of this size, I imagine you must be at least a little bit overwhelmed.”[/b]
+        *fake_choice
+            # Yes
+            # No
+            # I don’t know…
+        
+        Anwyn’s expression drops to one of concern.
+        
+        [b]“Would you like to talk about it? I just really want to make sure… I know I had a lot on my chest in the middle of my first large-scale battle…”[/b]
+        *fake_choice
+            # Yes 
+            # No 
+                Anwyn doesn’t press any further. The two of you continue your work in silence, and then split ways.
+                *page_break
+                *goto CH9M_BattleField
+        
+        Anwyn nods her head at you. Putting a knife to the side, looking brand new, she picks up another one, completely wornout.
+
+        [b]“Have you had any particularly bad fights? For me, the worst of them are the ones when you’re not sure if you’ll make it out…”[/b]
+        *fake_choice
+            # Yes
+            # No 
+                Anwyn goes on to give you some pointers, emphasizing the importance of keeping cool. Things will go wrong, she tells you, but if you stop moving, you might as well be dead. 
+
+                The conversation ends there, and the two of you part ways.
+                *page_break
+                *goto CH9M_BattleField
+
+        
+        You explain to her some of what’s happened to you thus far. Anwyn listens patiently, sharpening knife after knife, smooth and methodical. One you finish, she takes a small pause before grabbing the next knife.
+        
+        “Back when I lived in the forest, amongst the druids, we’d experience all sorts of things. Heavy rains, winds, and other strange phenomena. At times, the ground itself would shake. Every time, our numbers would dwindle, and we’d have to rebuild…”
+        
+        She looks down solemnly for a moment, before resuming her tale.
+        
+        “Chaos is natural, and it’s inevitable, but it also sucks. Some of us know how to build back better, and some of us don’t…”
+        
+        You aren’t sure where it is that she’s going with this. Sensing your confusion, Anwyn puts down her last dagger, and gives you a rather serious look.
+        
+        [b]“What I’m asking is if you think you can go back there or not. You’ve seen hardships out there. You’ve felt danger; the real kind. I wouldn’t hold it against you if you fled to live another day; just don’t expect a cut of the money if you do.”[/b]
+        *fake_choice
+            # Yes
+                Anwyn flashes a brief smile. You sense that she’s a little surprised to hear you say that.
+                “Well, considering you aren’t Leon, I take that as a good sign. Best of luck.”
+                Finished tending equipment, the two of you leave the armory and split ways.
+                *page_break
+                *goto CH9M_BattleField
+            # No
+                Anwyn gives an understanding nod, and reassures the player that nobody will blame them for leaving, if that’s the case.
+                *page_break
+                *goto_scene merc-chapter9-5 CH9fiveM_anwyn
+                *return
+    # Help that priestess!
+        You see a priestess dashing around, doing what she can for the injured, bringing them to the building that the healers are holed up in, and, at times, even tending to their wounds out in the open.
+        
+        Your eyes are particularly drawn to her as an Ichorswog pounces, knocking her down. From where you are, you can see steadfast determination morph into something else… something… rather concerning.
+        
+        She’s frozen with fear.
+        
+        Swerving between debris and people, as if by some instinct, you run towards her. Once you reach her, for a second, and only a second, you recognize it; the determination she had, the fear she now suffers from… They’re born of a far older wound.
+        
+        Recognizing your own, you find yourself unable to hesitate. (Combat!)
+        (Assuming win)
+        *temp CH9M_priestess_battle_win true
+        *if CH9M_priestess_battle_win
+            You help the priestess up from the ground. She takes a deep breath in… and then lets out an exhale.
+        
+            “I’m rather sorry about that, friend…” she says “I’ll take better care where I tread from here on!”
+        
+            You don’t get even a second to respond, as she runs off, fading into the distance. Something tells you she’s going to pick up right where it is that she left off… 
+            *goto CH9M_BattleField
+        *else
+            Your vision does not fade, the way you would imagine it would, but, rather, abruptly cuts off. The finality of death, however, evades you for today. 
+            *goto CH9M_Loss
+    
+    # Themselves… This is too much!
+        *goto_scene merc-chapter9-5 CH9fiveM_toomuch
+        *return
+
+    # DEBUG: VICTORY (This is the only way to activate this ending...)
+        *goto CH9M_Victory
+
+*label CH9M_Loss
+In which the player, at one point or another, loses a combat encounter. They’ll live to fight another day.
+
+Chapter ends on the bittersweet note of the battle’s end, carrying the sentiments of “many died, and the team is weathered, but at least it’s over.”
+*return
+
+*label CH9M_Victory
+In which the player pushed themselves to their very last breath, and, unwavering, emerged a victor from this battle.
+
+Chapter ends on the bittersweet note of the battle’s end, carrying the sentiments of “many died, the team is weathered, but at least it’s over.” In this version of events, the player’s sorrows are numbed, if only a little, by adrenaline, victory, and the company of their comrades.
 *return

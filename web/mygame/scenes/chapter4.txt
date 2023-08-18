@@ -91,7 +91,7 @@ Deciding that it is none of your business, you continue your way into the market
         *set coin -5
 *page_break
 
-You find it odd that there are so many ${faction} around. The last time you saw this many was… Five years ago, when you went out exploring with (FRIEND). It made you nervous, maybe you should visit them again soon. However, first you need to take your ${item} back to your house and put it away. Maybe you’ll visit after-
+You find it odd that there are so many ${faction} around. The last time you saw this many was… Five years ago, when you went out exploring with Reese. It made you nervous, maybe you should visit them again soon. However, first you need to take your ${item} back to your house and put it away. Maybe you’ll visit after-
 *page_break
 
 [b] SCREAM [/b]
@@ -216,13 +216,14 @@ When you look up you see a shadowed figure running through the backdoor.
         *goto C4_Prison
 
 *label C4_Cemetary
+*set CH4_visited_reese_grave true
 You decide to say one last goodbye to your childhood friend. You would visit their grave from time to time and tell them what has happened. You haven’t visited in a long time and this seemed like your last chance.
 
 You make your way through the alleys and narrowly avoid the guards until you make it to the cemetery. Once there, you take a familiar path towards your friend, not noticing the person following you.
 
 The cemetery is right next to the forest with a small fence around it. There are a lot of graves here, but you know it's actually pretty small for a town like your's. You make your way pass the graves, being extra careful because mockgardens like to make their home here.
 
-When you get to (FRIEND)'s grave, you kneel over it and leave some flowers.
+When you get to Reese's grave, you kneel over it and leave some flowers.
 
 “Someone murdered Lord Odel. I don’t know who, but they got away. The guards seem to think I did it. That jerk managed to leave some evidence on me, so I’m going to have to leave. This will probably be the last time I’m able to visit, I really miss you old friend.”
 *page_break

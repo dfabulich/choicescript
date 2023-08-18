@@ -1,4 +1,307 @@
 *label StartChapter10
+[head]Chapter 10: Home[/head]
+After leaving Rip and the party, you found some traveling merchants that are heading towards Davenport. You asked if you could join them in their travels until you reach your destination. They agreed and you’ve been traveling with them since.
 
-TESTING MERC CHAP10
+You are not quite sure where they are heading, but you know that you’re still east of Davenport. The merchants talked about the upcoming town, but either they never mentioned the name or you missed it. You don’t care either way, you’re just grateful for the chance to think away from all the chaos of what happened.
+
+You are walking near the back of the caravan, there are a few merchants ahead of you along with their wagons. You can’t hear what the merchants are saying, but they seem to be in deep conversation about something. 
+
+As you are looking around, keeping an eye on the forest, you see a deep cut in a tree. It looks like something was embedded in the tree for a period of time, the mark is deep enough that the new growth hasn’t erased the mark yet. It reminds you of the time a salesman came to Summerlight and told everyone that he hid an axe in the forest and the first person to find it gets a free weapon.
+
+You weren’t the one to find it, but you remember  the person who did. You asked them later where it was and they took you into the forest and showed you. It wasn’t that far off the beaten path, just enough that it wasn’t visible to the unaware. You’re surprised that you noticed the tree, but you shook it off. No need to worry about it now.
+*page_break
+“Mockguarden, right!” One of the merchants cried  and everyone moved to the left side of the road.
+
+You admire the group's way of keeping everyone safe. Whenever a mockguarden was spotted, someone would shout where it was and everyone moved away from it. If there was no way around it, then they’d look for a side path to go down.
+
+Taking a closer look at the mockguarden hole, you notice that it looks vaguely familiar. Bigger than you remembered, but there are markings around the hole that remind you of something. You can’t place what exactly, but you feel as though you’ve been here before.
+
+As you are pondering where you may have seen those mockguardens from, you see something in the distance. It’s a mossy hollowed out log that looks like it’s been there for a long time. The sight of it makes your blood go cold. You know exactly where you are.
+
+You and Reese used to play by that log. It was the farthest either of you would go before that dreadful day. After that day, you wouldn’t dare go this far into the forest without company and a dagger.
+
+As if to mock you, the merchants walk up to a fork in the road and to the sign pointing left says ‘Summerlight’. The merchants are heading down that path.
+
+You hurry  up to the head of the caravan and find the merchant leading it.
+*page_break
+
+“This is where I depart. It’s been a pleasure traveling with you.” You tell the merchant.
+
+“So soon? Come on, it’s nearly dark. Join us in town and stay the night, then when it’s morning you can leave.” The merchant advises.
+
+“Sadly, I can’t. I must get to the next town as quickly as possible and I know the way. I know a safe place down the path where I can stay the night.” You explain.
+
+He takes a look at you before sighing. “I cannot understand why you would risk so much just to get to the next town a few hours faster. However, you seem determined and nothing I say  will convince you. Be safe and get to that  hideout as quickly as possible.”
+
+“Thank you, it’s been a pleasure traveling with you.” You give him a small smile and go back down the path to the fork. Everyone looks at you strangely when they notice you are leaving. Some even give you concerned looks.
+
+When you reach the fork, you go down the other road towards Greenpeak, before stopping. You weren’t lying, you did know of a safe location down this path. There is a small hut just a little ways down and into the forest, you and your father used to stay in it while traveling. 
+
+You want to go visit your home, despite the fact that you’re still a wanted criminal there. You want to see how your friends are doing and if your job survived the rumors. You even consider sleeping in  Reese’s old house, despite the heavy memories that will always linger there.
+
+Camping at the hut, you wouldn't have to worry about getting caught by the guards and you’ll have some time to yourself away from any town. However, you don’t know how well the hut held up over the years and you’ll have to deal with the monsters that come out at night. More than anything, you just want to rest in a safe place.
+
+[b]You are pacing around, trying to make a decision. The light is fading fast and there isn’t much time left.[/b]
+*fake_choice
+    # You go to the hut
+        You continue down the road. The hut isn’t that far away and you are not going to risk getting caught in town. There is no way you’ll be able to escape the guards a second time around. Besides, the life that you knew is over and there is no point in reminiscing about the past, only to look forward to the future.
+
+        You walk until you find an overgrown pathway on the right side of the road. It doesn’t look like anyone has touched it since the last time you and your father walked it.
+
+        There is tall grass slowly taking over the small gravel path, a few bushes have overgrown  one side, and an entire tree fell across the path. When you make it to the hut, it doesn’t look much better.
+
+        It’s still standing, but there are heavy vines all across it, causing the roof to slowly cave in, and the walls to begin to fall apart. However, it is still safer to stay here than it is to be out in the open.
+
+        You open the door and see that the inside is in disrepair. Pieces of the roof have fallen across the floor and most of the furniture is broken.
+        *page_break
+
+        You sigh and place your stuff by the door before closing it. You step farther into the room and evaluate how bad it really is. Luckily, only a small part of the roof has caved in and it doesn’t look like it’ll rain tonight. The broken wall has a table on its side and is pushed up against it. At least the windows aren’t broken, the door closes alright, and the fireplace is mostly undamaged. All in all, it’s a place you can sleep without much worry.
+
+        You begin picking up the splintered wood from the broken furniture strewn across the floor and throwing them into the fireplace.
+
+        While you are cleaning up you remember all the times you’ve been here with your father. He passed a few years back and you don’t have anything with you left to remember him by. Everything is still in your old house.
+
+        Right as you threw the last loose piece into the fireplace, there was a knock at the door.
+
+        You freeze,  nobody knows where this place is, no one should be at the door.
+
+        You stay extremely still and quiet in a hope they would go away when-
+        *page_break
+
+        “I know you’re in there, would you let me in?” A familiar voice called out. Rip’s voice, how did Rip know that you are here?
+
+        You consider not answering for a moment, but you better. Rip isn’t the type of man to just walk away. You walk up to the door and open it. 
+
+        “How did you find me?”  You ask him, moving out of the way to let him in.
+
+        “You aren’t as good at covering your tracks as you may think.” He explained. “I followed you here. Can’t have a loose pup running around with no way to defend themselves.”
+        
+        You glared at him.
+
+        *bug_continue affinity system not implemented yet, assuming party likes player
+        
+        *if true
+            *comment If the party likes the player
+            “Look, everyone is worried about you after you disappeared. Even Anwen. ${puppy_name} has been looking for you every time someone returns to camp. You could have waited until we were in a town or back at Davenport before leaving. Could have taken ${puppy_name} with you.” Rip explained.
+        *else
+            *comment If party doesn’t like the player
+            “${puppy_name} has been looking for you every time someone returns to camp. You could have waited until we were in a town or back at Davenport before leaving. Could have taken ${puppy_name} with you.” Rip explained.
+        
+        “I needed to get out of there and think. I couldn’t do that with everyone looking at me in pity. Besides, I couldn’t take ${puppy_name} with me, he would be happier if he’s with a group of people who aren’t scared of him. He also has Tyr to teach him, I wouldn’t be able to give that to him.” You turn around as you explain.
+        
+        “Direwolves are fiercely loyal. Treat them well and you have a friend for life. You saved that  pup’s life and he won’t forget that. Don’t waste that on something as trivial as a disagreement.” Rip replies sharply. 
+        
+        [i][b]***Argument about chapter 9***[/b][/i]
+        *page_break
+
+        [i][b]BOOM[/b][/i]
+        
+        There was an explosion outside, it sounded close. Both you and Rip look at each other before running outside. You grab a dagger from your bag as you pass the door.
+
+        You can see a bright fire and smoke coming from deep in the forest. Growing up in this area, you instantly realize that it’s in the direction of Summerlight. 
+
+        “Shit!” You run across the gravel path towards the main road. Rip is close behind you.
+
+        As you reach the main road another explosion goes off, this time sounding closer.
+
+        You don’t bother following the path and run straight through the forest. You’ve run down this way many times and know your way around the forest. Rip is staggering behind slightly, but that doesn’t matter.
+
+        When you reach the town you can see familiar buildings up in flames.
+
+    # You go to Summerlight
+        You want to see your old town, even if you can never live that life again. It’s comforting to remember the good times and not always think about the bad.
+
+        You wait a few more minutes and let the caravan get farther ahead before turning around and following them. 
+
+        You take your time and reminisce while looking into the forest. All of the places you’ve played with your friends or all of the spots where your father stopped to show you something. All of the good memories that happened along this road. 
+
+        It isn’t long before you’ve caught up with the merchants. They seem to have been stopped by the guards and are waiting to be let through.
+
+        Before you are seen, you walk slightly into the forest and start searching for a hiding spot. Some place to stay before dark.
+
+        You find a tree that has fallen onto another tree. It seems like the weight of the second tree knocked them both to the ground.
+
+        You hide behind it and rest. Staring out into the forest, you remember running through it with your friends. You and Reese would run through the woods pretending to be knights or mercenaries and get into battles. After he passed you made some new friends, but not many of them wanted to go into the forest. They were good friends, and grew up to be great people, but the bonds you shared with them never grew as deep as your oldest friendship.
+        *page_break
+
+        Your new friends always looked at you with pity for after Reese died. Sure they all mourned their loss, but none of them really understood what you went through. It was less like losing a friend and more akin to losing a sibling. Part of your family was taken away that day. It took months before you even left the house, let alone went to play with your other friends. They’d come to visit, but you didn’t feel like playing and they’d leave.
+
+        You shake your head and come back to the present. It has gotten dark and you look over at the logs. The caravan went into the town a while ago and there doesn’t seem to be anyone at the gate.
+
+        Taking this chance, you run towards the left side of the wall and walk down the path beside it.
+
+        Following the path, you stumble upon an abandoned cart. It seems to have been there for a few days and you’re not sure how it got there. The cart is empty, but doesn’t seem to have any damage on it aside from the small scratches on the side of it.
+
+        You walk up to it, but nothing seems out of the ordinary in the already strange situation.. There are some destroyed crates and a pile of leaves, noting that would indicate what happened or why it was left here.
+        *page_break
+
+        You decide it is none of your business and continue down the path. 
+
+        Along the path there is a row of well kept bushes. You are looking for a break in the bushes, a crack that is just big enough for a person to squeeze through.
+
+        When you find it, it’s smaller than you remembered. It has been many years since you’ve crawled through it, you just thought it would have gotten bigger.
+
+        You walk up to the crack and realize it’s going to be a tight squeeze. You toss your bag onto the other side of it and work your way through it.
+
+        It took some effort, but you manage to get to the otherside without getting stuck.
+
+        After walking through some of the alleys, you notice that there are more guards roaming around. It’s going to be difficult walking through town.
+
+        It will be practice for how your life is going to be.
+        *label CH10M_walkloop
+        [b]You continue walking down the alleys, you decide to-[/b]
+        *fake_choice
+            # Walk by your old house.
+                You decide to visit your house. You’re curious if they had already sold it. 
+
+                As you walk by the many houses, you notice most of them are boarded up. They don’t usually board up their houses unless something bad has happened. It makes you worried.
+
+                At the end of the alley, you see your house. It still has the doormat that you made many years ago. You can also make out your name on the wooden sign by the door. 
+
+                As you are about to walk up and take a closer look, a guard walks by your house. It seems they still have the place under watch.
+
+                You figured this is as close as you can get to the house and turn back. You don’t live there anymore and you left nothing of importance behind.
+            # Walk by your old workplace.
+                You decide to visit your old workplace. You’re curious if they are still in business. 
+
+                You get there with little to no problem. While there seems to be more guards around, they don’t notice you.
+
+                It seems like there are more of them around since the last time you’ve been here.
+
+                You walk up to the building and look inside. There are papers scattered about, but all of the tools seem to be in place. It doesn’t look like they have lost any business since you left. In fact, they look busier.
+
+                You wonder why? Not many people need this kind of work, add a rumor of one of the employees and you thought it would go under. Not get more customers.
+
+                You don’t ponder this for long as you see a guard walk out of an alleyway in the distance.
+            # Checkup on a friend. (end walk)
+                You decide to check up on an old friend. You met them a few years ago during a job and became fast friends. You felt bad for leaving without a notice.
+
+                You are walking through the alleys when you see a guard keeping watch down an alley. You rack your brain , trying to remember what is so important about this area. It’s just a random road in the neighborhood.
+
+                Then you remember, many nobles will use a nearby house when they stay in town and don’t want anyone to know. Some important person must be here. They always add more security when important people visit.
+
+                You decide to take the long route and make it to your friend’s house. You can see them reading by the window. You give a small smile, remembering their excitement when talking about their new book. You’re happy to see that they are okay.
+
+                You go back down the alley, you don’t want to get them mixed up in your mess.
+                *goto CH10M_walkloop_end
+        *goto CH10M_walkloop
+        *label CH10M_walkloop_end
+        *page_break
+        
+        You head towards the cemetery to see Reese. You follow the familiar path all the way there. There is a surprising lack of guards along the path. With how much security there is everywhere else, this is an unnerving surprise. You try to ignore it while walking, hoping that it’s just your imagination.
+        
+        *if not (CH4_visited_reese_grave)
+            *comment (If player did not visit Reese’s grave in chapter 4)
+            It doesn’t take you long to reach the grave. It doesn’t look like anyone has been taking care of it since you left. The grass is taller and there are some flowers growing beside it. You fall to your knees and stare at the tombstone.
+
+            You stare at the tombstone for what seems like ages before you look up and stare at the sky.
+
+            “Hello Reese, it’s been awhile. Sorry I haven’t been able to take care of the area. It’s been a hectic few months.” You begin.
+
+            “Lord Odel is dead, some mercenary finally got him. I happened to be walking by the house he was murdered in and the guards thought it was me, pretty sure they still do… I got rescued from a death sentence by another band of mercenaries, The Wolves of Davenport. Dad used to talk about them. How they were a good group of people that genuinely wanted to help people. I’m still not so sure how true that is, but they helped me get out of Summerlight.” You explain.
+
+            “Then we fought some mogfish. They’re weird creatures that are big enough to eat a dwarf whole. Scary things, but pretty slow. Then we went out and joined another group from the Wolves of Davenport and fought against the rot. We’ve only heard stories about it and I got to see it in person.(Chapter 7).” You continued, brushing some dirt off of Reese’s tombstone.
+            *page_break
+
+            “After that we went and saved a town from direwolves. They’re really big smart wolves that live in the forests. I managed to save a puppy, named him ${puppy_name}. I hope he’s doing alright, I left him with Rip and Tyr after… It doesn’t matter. I just hope to see him again some day.” You trail off, looking towards your lap.
+
+            “Sounds like you went on some adventure.” A female voice calls out behind you.
+
+            You whip around to see a priestess. You remember her from before, when you had just been arrested. She offered you safety, believing in your innocences. It feels like ages since you met, but you still remember her introducing herself as Cel.
+
+            “My apologies for scaring you. I was doing my rounds and I saw you. You shouldn’t be here. The guards are on high alert and you’re still a wanted criminal.” She said while walking up beside you. Her eyes glance down to the grave.
+
+            “Friend of yours?” She asked.
+
+            “Yeah… They died in a jackaloid attack many years ago.” You explain as you turn your head back to the grave.
+        *else
+            *comment (If player did visit Reese’s grave in chapter 4)
+            It doesn’t take you long to reach the grave. When you get there, you realize that it looks clean. Like someone was taking care of it while you were gone. The groundsman doesn’t do much aside from making sure no one steals, so you don’t know who else it could be.
+
+            You fall on your knees and take a closer look at the tombstone. There isn’t even dirt within the letters. You stare at the tombstone for what seems like ages before you look up and stare at the sky.
+
+            “Hello Reese, it’s been awhile. Sorry I haven’t been able to take care of the area. It’s been a hectic few months.” You begin.
+
+            “I got rescued from a death sentence by another band of mercenaries, The Wolves of Davenport. Dad used to talk about them. How they were a good group of people that genuinely wanted to help people. I’m still not so sure how true that is, but they helped me get out of Summerlight.” You explain.
+
+            “Then we fought some mogfish. They’re weird creatures that are big enough to eat a dwarf whole. Scary things, but pretty slow. Then we went out and joined another group from the Wolves of Davenport and fought against the rot. We’ve only heard stories about it and I got to see it in person.” You continued, playing with the grass.
+
+            “After that we went and saved a town from direwolves. They’re really big smart wolves that live in the forests. I managed to save a puppy, named him ${puppy_name}. I hope he’s doing alright, I left him with Rip and Tyr after… It doesn’t matter. I just hope to see him again some day.” You trail off, looking towards your lap.
+            *page_break
+
+            “Sounds like you went on some adventure.” A female voice calls out behind you.
+
+            You whip around to see a priestess, You remember her from before, when you had just been arrested. She offered you safety, believing in your innocences. It feels like ages since you met, but you still remember her introducing herself as Cel., you think her name is Cel.
+
+            “My apologies for scaring you. I was doing my rounds and I saw you. You shouldn’t be here. The guards are on high alert and you’re still a wanted criminal.” She said while walking up beside you. Her eyes glance down to the grave.
+
+            “Friend of yours?” She asked.
+
+            “Were you the one who was taking care of the grave?” You ask, dodging the question.
+
+            “I was, there is still someone out there who cares for this person, they just can’t be here to care for the grave.” She explains.
+
+            You nod before thinking again.
+
+            “They died in a jackaloid attack many years ago.” You explain as you turn your head back to the grave.
+        *page_break
+        
+        “My condolences, that must have been hard. What happened to Rip and his group of people? I wouldn’t think they’d let you roam free this close to the town.” She stared down at you quizzically.
+
+        “... Something happened and I left. I… Don’t want to talk about it. Let’s just say we had differing… Ideals…” You stare at your hands.
+
+        “Not the life you were expecting? Mercenary life is difficult and you have to make hard choices at times. The line between good and evil can be burred at times.” She clarified.
+
+        “It can be difficult to see the line until you’ve crossed it. I’m trying to think about the choices  I’ve made. Where they fit along the line.” You sigh.
+
+        “You can join me to the temple. It will be safer and you can think there. Try to understand your decisions.” Cel offers.
+        *page_break
+
+        You humm as a response before you hear a noise from the forest.
+
+        Tyr comes bursting out from the trees, running straight towards you with an excited look in his eye. Tyr skids to a stop in front of you, rustling your hair with a few loud sniffles before sitting next to you, guarding you from Cel.
+
+        “Pup, what are you doing here? You know that if you get caught, no one will be able to help you.” Rip reveals himself from behind a tree.
+
+        “Rip, what are you doing here? How did you find me?” You ask
+
+        “You aren’t as good at covering your tracks as you may think.” He explained. “I followed you here. Can’t have a loose pup running around with no way to defend themselves.”
+
+        [b]You glared at him.[/b]
+        *page_break
+
+        *bug_continue affinity system not implemented yet, assuming party likes player
+        *if true       
+            *comment If the party likes the player
+            “Look, everyone is worried about you after you disappeared. Even Anwen. ${puppy_name} has been looking for you every time someone returns to camp. You could have waited until we were in a town or back at Davenport before leaving. Could have taken ${puppy_name} with you.” Rip explained.
+        *else
+            *comment If party doesn’t like the player
+            “${puppy_name} has been looking for you every time someone returns to camp. You could have waited until we were in a town or back at Davenport before leaving. Could have taken ${puppy_name} with you.” Rip explained.
+        
+        “I needed to get out of there and think. I couldn’t do that with everyone looking at me in pity. Besides, I couldn’t take ${puppy_name} with me, he would be happier if he’s with a group of people who aren’t scared of him. He also has Tyr to teach him, I wouldn’t be able to give that to him.” You turn around as you explain.
+
+        “Direwolves are fiercely loyal. Treat them well and you have a friend for life. You saved this pup’s life and he won’t forget that. Don’t waste that on something as trivial as a disagreement.” Rip replies sharply. 
+            
+        [b]You go with,[/b]
+        *fake_choice
+            # Cel
+                You look up at Rip. ” I need some time to think Rip. Where are you going? I’ll catch up after I get my thoughts straight.”
+
+                “Stormdenn, but we won’t be there long. Head to Davenport, find the dwarven tavern with a wolf on it and tell them you a black martini with extra gin and blackberry. The bartender will give you a paper with the drink. Go around back and hand the paper to the elf smoking, tell him you were sent by Rip Daring and he’ll let you in.” Rip explains.
+
+                You nod.
+
+                “Oh, and don’t worry about ${puppy_name}, I’ll take care of him until you get back.” Rip says before calling over Tyr.
+
+                Tyr looks at you with a betrayed expression before running to Rup.
+
+                You stare at the two wolves and begin to walk over towards Cel when there is an explosion. You look towards the town when there is another explosion. You look over at Cel then Rip and begin running towards town. They follow suit.
+
+            # Rip
+                “Thank you Cel, but I think I will stay with the Wolves.” You look at her with an apologetic expression.
+
+                “The offer is always up if you decide to change your mind. May Sigel watch over you.” She gives you a small smile before turning around.
+
+                You walk towards Rip when there is an explosion. You look towards the town when there is another explosion. You look over at Rip then Cel and begin running towards town. They follow suit.
+
 *return

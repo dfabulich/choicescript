@@ -1,4 +1,147 @@
 *label StartChapter8
+[head]Chapter: Downtime[/head]
 
-TESTING MERC CHAP8
+As the days grew colder, an unsettling silence descended upon the once-thriving town south of Davenport, Bexley. There have been rumors spreading of a sinister presence lurking in the nearby forests. Tales of howling in the dead of night and strange sightings haunted the townsfolk. As fear gripped their hearts, the Wolves of Davenport mercenary group receives a distress call.
+
+A series of wolf packs, driven by an unseen force, had launched a relentless invasion. The townspeople were barricaded behind their meager defenses, but the relentless onslaught was pushing them to the brink of despair.
+
+The call for help echoed through the region, reaching the ears of Rip and the rest of the Wolves of Davenport. Upon hearing the dire news, Rip Daring takes his team to face this formidable threat. 
+
+As you made your way towards the town, the wind carried the chilling howls of the wolves, foreboding what awaited them in the shadowy woods.
+*page_break
+
+Approaching the outskirts of the beleaguered town, you spot two enormous figures leading the wolf packs - Direwolves. Their red eyes glow like embers, and their sinister intelligence is evident in their every move.
+
+“Direwolves aren’t known for straying this far away from their homes. Something must have happened.” Rip comments.
+
+As you approach the town, a scene of chaos and despair unfolds before your eyes. Smoke billows from homes set ablaze, the acrid scent filling the air. The distant sound of terrified cries and the clash of metal against fang echos through the streets, a cacophony of fear and desperation. 
+
+Upon entering the town's outskirts, you and your companions are met with a harrowing sight. Buildings lay in ruins, their once vibrant facades reduced to rubble. Panic-stricken townsfolk scurry through the streets, seeking shelter from the onslaught of the wolf packs. 
+*page_break
+
+The air is thick with tension, the weight of impending doom hanging heavily in the atmosphere. Rip Daring, ever the steadfast leader, surveys the scene with a mix of determination and concern etched upon his face. His eyes meet yours before he looks at the rest of the party. Silently conveying the gravity of the situation. With a resolute nod, Rip motioned for the party to fan out, his eyes scanning for signs of the Direwolves and their relentless minions.
+
+You find a direwolf and a small pack of wolves surrounding a house. You can feel the adrenaline surge through your veins, senses sharpening as you prepare to face the ferocious onslaught. 
+
+Gripping your weapon tightly, you took a deep breath, drawing upon the training and the camaraderie of your mercenary comrades. 
+
+In this moment, the fate of the town hung in the balance, and the Wolves of Davenport stood as the last line of defense against the encroaching darkness.
+
+[b]You are faced between three choices, each requiring a different set of skills.[/b]
+
+*temp isFollowing false
+
+*fake_choice
+    # The Bold Charge [color=${brawn_color}](Strength)[/color]
+        *set GP_arg0 Strength
+        *set GP_arg1 "challenging"
+        *gosub_scene general AttributeSkillCheck
+        *temp CH8M_Strength_bool returnData
+        Your heart pounds with adrenaline as you decide to lead a fearless charge against the wolf packs. Using your strength, you barrel forward, wielding your weapon with precision and power. 
+
+        The goal is to engage the Direwolves head-on, disrupting their attacks and creating an opportunity for your companions to strike. This approach requires raw strength and unwavering bravery to face the ferocity of the wolves head-on. 
+
+        With a surge of bravery, you choose the Bold Charge. Your heart is pounding as you prepare to lead the charge against the wolf packs. You grip the weapon tightly, channeling all of your strength and determination into a single decisive move.
+
+        *if CH8M_Strength_bool
+            Your muscles tense as you sprint forward, powerful strides closing the distance between you and the enemy. With a mighty roar, you crash into the midst of the wolf packs, your weapon swings with precision and force.
+
+            Your strength and combat prowess prove to be formidable as you engage the Direwolves head-on. Disrupting their attacks and creating an opening for your companions.
+
+            The wolves are momentarily caught off guard, allowing the rest of the group to swiftly move in and strike, turning the tide of the battle in your favor.
+            *set isFollowing false
+        *else
+            As you charge forward, your steps falter and balance wavers. Perhaps you underestimated the strength of the enemy or overestimated your own abilities.
+
+            In a moment of vulnerability, you stumble and find yourself within the reach of the Direwolves' vicious jaws.
+
+            The wolves seize the opportunity and launch a coordinated counterattack, their fangs and claws tearing at your armor. Despite your valiant effort, you get overwhelmed and forced to retreat.
+
+            Rip quickly gets you out of harm's way and Leon attacks the wolf before it gets you. 
+            *set isFollowing true
+
+    # The Agile Flanking Maneuver [color=${agility_color}](Reaction Speed)[/color]
+        *set GP_arg0 ReactionSpeed
+        *set GP_arg1 "challenging"
+        *gosub_scene general AttributeSkillCheck
+        *temp CH8M_ReactionSpeed_bool returnData
+        Recognizing the need for speed and agility, you choose to navigate the chaotic battlefield with nimble footwork. You slip through the shadows, dodging wolf attacks and positioning yourself strategically behind the wolves lines.
+
+        With swift and precise strikes, you target the vulnerable flanks of the wolf packs, exploiting your speed and reflexes to unleash a series of devastating blows. 
+
+        With agility and quick thinking in mind, you choose the Agility Flanking maneuver. Relying on your nimble footwork and swift reflexes to navigate the chaotic battlefield and find an advantageous position from which to strike.
+
+        *if CH8M_ReactionSpeed_bool
+            Moving swiftly and darting through the chaos with grace and precision. You find yourself behind the wolf packs, hidden in the shadows.  Leon sees your plan and distracts the wolves, giving you time to get in position.
+    
+            With your weapon at the ready, you time the strikes carefully, exploiting the wolves' blind spots and vulnerable flanks.Your agile movements allow for easy evasion of the wolf’s attacks, while delivering swift and devastating blows.
+    
+            The element of surprise works in your favor as you dispatch several wolves, causing confusion among those that remain.
+    
+            The successful flanking maneuver not only inflicts significant damage but also creates an opening for your companions to press the advantage and gain control over the battle.
+            *set isFollowing false
+        *else
+            Despite your best efforts, the agile maneuvers are met with fierce resistance from the wolf packs.Your movements, while nimble, are anticipated by the keen senses of the wolves. 
+    
+            The wolves quickly adapt, countering your evasive actions and launching a coordinated assault. You find yourself outnumbered and surrounded, struggling to defend against the relentless attacks. The failed attempt at flanking leaves you vulnerable, the maneuvers falling short of their intended effectiveness. 
+    
+            You need to fall back and quickly find a way to escape the dire situation. You regroup with your companions and think of a new plan.
+    
+            Rip quickly gets you out of harm's way and Leon attacks the wolf before it gets you. 
+            *set isFollowing true
+
+    # The Cunning Ambush [color=${cunning_color}](Knowledge)[/color]
+        *set GP_arg0 Knowledge
+        *set GP_arg1 "challenging"
+        *gosub_scene general AttributeSkillCheck
+        *temp CH8M_Knowledge_bool returnData
+        Embracing your cunning nature, you decide to set a trap for the Direwolves and their minions. With keen perception and understanding of the wolf’s behavior, you identify a strategic location to lay an ambush.
+
+        Using your knowledge of the wolves' tactics and instincts, you carefully position the mercenaries and yourself, waiting for the perfect moment to spring the trap
+
+        *if CH8M_Knowledge_bool
+            You carefully analyze the movements of the wolf packs, identifying a strategic location to lay the ambush.
+
+            You position your pack discreetly, blending into the environment to remain undetected. Patiently, you wait for the perfect moment to strike.
+
+            As the wolves pass into the trap's trigger zone, you signal everyone to go. That sets off a cascade of events. Nets ensnare several of the creatures, immobilizing them, while hidden archers rain arrows down on the remaining foes. 
+
+            The ambush proves successful, catching the Direwolf off guard and causing chaos within their ranks.
+            *set isFollowing false
+        *else
+            Despite your careful planning, the ambush is compromised. An unexpected shift in the wolves behavior or a slight miscalculation in timing leads to the failure of the trap.
+        
+            The Direwolf and their minions remain unscathed as the ambush springs prematurely or fails to ensnare the intended targets. The wolves quickly adapt to the situation, retaliating with ferocious attacks.
+        
+            You and your companions are caught off guard, scrambling to regroup and adjust strategies.
+            *set isFollowing true
+
+*page_break
+
+*if isFollowing
+    Rip breaks the party up into groups, with you following him and Leon. Anwen and Elena use their long range attacks and Gywn is providing support with poison for the weapons. Tyr hangs back and protects the townspeople from any stray wolf attacks.
+    
+    You, Rip, and Leon run in with your newly poisoned swords and fight against the wolves.
+    
+    The five of you take on the wolves with some difficulty, but are successful in breaking up their formation. With the wolves separated, it makes it easier to bring them down.
+    *page_break
+
+Under the watchful eyes of the Wolves of Davenport, you charge into the fray, engaging the wolf packs with unwavering determination. The battle was fierce, and the wolves fought with a coordinated ferocity that was chilling to witness.
+
+Just as the moon reaches its peak, the battle reaches its climax. You are in a fierce encounter, facing one of the Direwolves with Leon. The beast's size and strength were formidable, but your skills prove to be invaluable. With a final, decisive strike, the Direwolf fell, its malevolent presence vanishing from the world.
+
+Yet, the battle is far from over. The other Direwolf, sensing the loss of its mate, unleashes a savage fury upon the town. You are fueled by a determination to save the innocent and aid your comrades, fighting bravely to turn the tide.
+
+In a moment of unexpected compassion, you notice a small, whimpering figure amidst the chaos - a direwolf puppy, seemingly lost and frightened. Despite the violence surrounding them, you could not turn away from the innocent creature's plight. With a daring rescue, you whisk the puppy to safety, determined to give it a chance at a different life.
+
+As the sun rose on the horizon, the battle-weary mercenaries stood victorious. The wolf packs have been defeated, and the townspeople are filled with gratitude for their saviors. Among them, the direwolf puppy found an unlikely home - your heart, where it would grow and learn to trust its new family.
+
+Tyr runs up to the player and stops, noticing the new puppy. He stares at you and the pup, seemingly thinking about something before walking to the pup. The pup is scared and trying to make himself smaller when Tyr bumps his head against the pup, accepting him into the family.
+
+The pup still looks scared, but is no longer trying to hide. You know it’s going to be a while before the pup is no longer scared of everything. You are determined to take good care of this pup.
+*page_break
+
+First thing, you need to name him:
+*input_text puppy_name
+
 *return

@@ -1,0 +1,25 @@
+*label CH9fiveM_toomuch
+[head]Chapter 9.5M: Escape From Silvervein[/head]
+The battlefield is unlike anything you’d ever seen. What was once a peaceful, normal village was now completely overrun with death and decay. Fires are still burning, a small weak protection against the swarm of Ichorswogs but for the villagers, it’s the only defense they have.
+
+You watch people fall, consumed by the terrible little beasts. You watch those still alive run and leap over their fallen neighbors, their dead and dying kin. Survival is the only thing on their minds.
+
+The rest of the Wolves had moved quickly, heading off into the fray without a hint of hesitation. They all have roles in this fray and instinctually move to where they are needed. You come to the startling realization that no matter how much time you might have spent with them, the nights under the stars and days riding next to one another, you are nothing like them. You’re not a warrior or a hero. You're just a normal person, swept up in an extraordinary world. 
+
+A world that you are not prepared for at all.
+*goto CH9fiveM_continue
+
+*label CH9fiveM_anwyn
+[head]Chapter 9.5M: Escape From Silvervein[/head]
+Anwen turns around, seemingly pretending that you were already gone. You're grateful to her, for her words and for the fact that she didn’t judge you. Anwen is a seasoned warrior, as are the rest of the Wolves. They’ve been traveling and fighting together for ages, and you…
+
+You feel like just a blip in their story. A stray that they picked up and would forget about eventually. 
+
+All this fighting and magic and death, it isn’t your life. You’re just not ready for it. You thought you might be, after traveling with the Wolves for a while, but this is different. This is too much. 
+
+Glancing around, everyone else in the room seems too busy with their own tasks to notice you. With one last glance at Anwen’s back, you find the nearest exit and slip out into the shadows. 
+*goto CH9fiveM_continue
+
+
+*label CH9fiveM_continue
+*return
