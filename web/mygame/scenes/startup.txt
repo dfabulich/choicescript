@@ -13,6 +13,12 @@
 	chapter8
 	chapter9
 	chapter10
+	merc-chapter5
+	merc-chapter6
+	merc-chapter7
+	merc-chapter8
+	merc-chapter9
+	merc-chapter10
 	combat_test
 	general
 
