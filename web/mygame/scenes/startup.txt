@@ -3,25 +3,32 @@
 *title Tales From Teren: The Approaching Rot
 *author Team Teren
 *scene_list
-	chapter1
-	chapter2
-	chapter3
-	chapter4
-	chapter5
-	chapter6
-	chapter7
-	chapter8
-	chapter9
-	chapter10
-	merc-chapter5
-	merc-chapter6
-	merc-chapter7
-	merc-chapter8
-	merc-chapter9
-	merc-chapter9-5
-	merc-chapter10
-	combat_test
-	general
+    chapter1
+    chapter2
+    chapter3
+    chapter4
+    chapter5
+    chapter6
+    chapter7
+    chapter8
+    chapter9
+    chapter10
+    divine-chapter5
+    divine-chapter6
+    divine-chapter7
+    divine-chapter8
+    divine-chapter9
+    divine-chapter9-5
+    divine-chapter10
+    merc-chapter5
+    merc-chapter6
+    merc-chapter7
+    merc-chapter8
+    merc-chapter9
+    merc-chapter9-5
+    merc-chapter10
+    combat_test
+    general
 
 *comment ------------------------------ GLOBALS --------------------------------
 *comment Why use the implicit_control_flow variable?
@@ -38,6 +45,9 @@
 *create bought "None"
 *create coin 0
 *create puppy_name "???"
+
+*comment ///////// Story Globals /////////
+
 
 *comment Colors
 *create brawn_color   "#d60d0d"
@@ -81,7 +91,9 @@
 *comment ///////// Phase Globals /////////
 *comment Phase1
 *create CH2_followed_voice false
+*create CH3_ending "good"
 *create CH4_visited_reese_grave false 
+*create CH4_murderer "lost"
 *comment Phase2
 *create P2_branch 0
 *create P2M_roommate 0
@@ -107,33 +119,54 @@ WIP build for the UAT production studio milestone review
 
 What chapter?
 *fake_choice
-	#Phase 1
-		*choice
-			#Chapter 1 
-				*goto_scene chapter1
-			#Chapter 2
-				*goto_scene chapter2
-			#Chapter 3
-				*goto_scene chapter3
-			#Chapter 4
-				*goto_scene chapter4
-	#Phase 2
-		These chapters are in an alpha state, Some systems may not be implemented
-		*choice
-			#Chapter 5 
-				*goto_scene chapter5
-			#Chapter 6
-				*goto_scene chapter6
-			#Chapter 7
-				*goto_scene chapter7
-			#Chapter 8
-				*goto_scene chapter8
-			#Chapter 9
-				*goto_scene chapter9
-			#Chapter 10
-				*goto_scene chapter10
-			#Back
-				*goto GAMESTART
+  #Phase 1
+     *choice
+       #Chapter 1 
+          *goto_scene chapter1
+       #Chapter 2
+          *goto_scene chapter2
+       #Chapter 3
+          *goto_scene chapter3
+       #Chapter 4
+          *goto_scene chapter4
+  #Phase 2
+      These chapters are in an alpha state, Some systems may not be implemented
+      
+      *fake_choice
+          # Merc
+              *choice
+                  
+                  #Chapter 5 M
+                      *set faction "merc"
+                      *goto_scene chapter5
+                  #Chapter 6 M
+                      *set faction "merc"
+                      *goto_scene chapter6
+                  #Chapter 7 M
+                      *set faction "merc"
+                      *goto_scene chapter7
+                  #Chapter 8 M
+                      *set faction "merc"
+                      *goto_scene chapter8
+                  #Chapter 9 M
+                      *set faction "merc"
+                      *goto_scene chapter9
+                  #Chapter 10 M
+                      *set faction "merc"
+                      *goto_scene chapter10
+                  #Back
+                      *goto GAMESTART
+              
+          # Divine
+              *choice
+                  
+                  #Chapter 5 D
+                      *set faction "divine"
+                      *goto_scene chapter5
+                  #Chapter 7 D
+                      *set faction "divine"
+                      *goto_scene chapter7
+                      *goto GAMESTART
 
-	#TEMP: Combat Test
-		*goto_scene combat_test
+  #TEMP: Combat Test
+      *goto_scene combat_test

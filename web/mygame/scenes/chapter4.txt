@@ -400,19 +400,19 @@ That night the priestess walks in through the main door and the mercenary walks 
 
 *choice
     #"I choose to go with the priestess and stay at the temple."
-        *set item "nothing"
         "I'll talk with the captain and get you released into my custody." The priestess walks out of the room. When you look over at the mercenary, he is gone.
         
         She comes back with the captain and he unlocks the gate.
         
         "Don't come back. I'm already going to be in a rot full of trouble because of this."
+        *set faction "merc"
         *finish
         *comment *goto_scene Divine
         
     #"I choose to go with the mercenary and find out who did this."
-        *set item "dagger with odd design"
         "I'll make sure we get them and clear your name. Until then you'll be under my custody." The mercenary grabs a key from his pocket.
         
         "You probably won't be allowed back into this town no matter what you choose. However, we'll make sure to keep you safe. Oh, and before I forget. While I couldn't get you your ${bought} back, I was able to snatch the dagger. We'll get it cleaned up for you."
+        *set faction "divine"
         *finish
         *comment *goto_scene Mercenary

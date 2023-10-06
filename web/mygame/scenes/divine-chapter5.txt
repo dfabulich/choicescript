@@ -1,5 +1,806 @@
-
+*ending
 *label StartChapter5
+[head]Chapter 5D: The Flames of Sigil[/head]
 
-TESTING DIVINE CHAP5
+“Come, right this way” the priestess whispers to you, hesitant to wake anyone in the dead of night.
+
+You aren’t sure how long you’ve been following her. You can tell that, for now, you’re still in town, though you couldn’t quite be sure what part. More likely than not, this is the opposite end to the one where you lived. Being on the outskirts, you certainly spent a lot more time on your side than this one.
+
+She escorts you into a somewhat weathered cabin with stained glass windows. If this is a resting cabin, it makes sense that it's seen better days; no one ever comes to this town, save for the rare times when something big actually happens. An incident from the past threatens to well up in your memory, but you put it away for right now.
+
+*page_break
+
+The inside of the cabin doesn’t look so different from its exterior. A particular must stubbornly lingers in the air, melding with the scent of herbs, incense, and some mild paper notes. As your eyes catch up to your nose, you confirm that you’ve identified most of what’s in the room, save for a line of bags stuffed with hay.
+
+You chuckle to yourself at the absurdity of going to the trouble of staining the window glass, but adhering to modesty by forgoing a more proper place to sleep.
+
+The priestess, who you lost track of while you were inspecting the room, sits down on one of the hay bags. You briefly wonder if she’d be awake this late at night if not for your earlier encounter with her…
+
+*page_break
+
+“As I’m sure you’ve gathered, this is an old resting point that followers of Sigil will use as needed. My apologies for the lack of a bed; I keep telling the zealot that we should have added some last century, you know”
+As the priestess lightly chuckles to herself, you can’t help but stare. She meets your eyes with a look of understanding.
+
+“Oh, well of course; how could I forget? My name is Cel Storm; I am a priestess of Sigil. In particular, I’m the priestess of the temple that we’re going to come sunrise…”
+
+Cel pauses for a few seconds, and then puts on a reassuring look.
+
+“You’ve been understandably tense since I met you, but really, you are safe now…”
+
+*fake_choice
+    #“I’m (Player_Name), of… The opposite end of this village...”
+        Cel frowns for a moment
+        
+        “I see… I’m so sorry…” she apologizes, not having done anything wrong.
+
+    #“(Player_Name). My name is (Player_Name). Thank you again for helping me…”
+        “Of course. Those men had no right, putting you in a cell like that…”
+        
+        You consider how obvious it was to both her and the other person that visited you that you hadn’t done anything. With that in mind, she probably has a point.
+
+    #“I’m sure you’re just glad to have sheep to help around the temple… ”
+        
+        Your words catch Cel completely off guard, but the expression she makes isn’t one of anger. Failing to hold back a frown, she looks away from your gaze.
+ *page_break
+ 
+ Cel slowly lays down, clearly not used to being awake this late into the night. You’ve heard that the dedicated of Sigil’s followers wake up with the sun. Of course, you’ve never gotten the chance to ask anyone if that’s true, but you suppose now you’ll have your answer.
+ 
+ *if item = "dagger"
+          You pull out your dagger. It feels like so long ago that you got it… Would Cel keep helping you if she found it on your person? You don’t know enough to say, but you decide to…
+          *fake_choice
+              #Hide the dagger
+                  You put away the dagger; you don’t know what could happen. You would rather avoid putting your blind faith in this woman, even if you are going to join a Sigilic temple...
+              #Give the dagger to Cel
+                  You decide to speak up.
+                  
+                  “Cel? Are you still awake?”
+                  
+                  You hear some stirring, followed by Cel sitting up.
+                  
+                  “I’m awake… Was there something that you needed?” she asks
+                  
+                  “I… still have a weapon. Is that alright?” you ask, tentatively.
+                  
+                  Evidently, Cel was almost asleep, because there’s an uncomfortable lag before she finally responds.
+                  
+                  “Well, you didn’t kill that man, did you?”
+                  
+                  Cel doesn’t wait for your response; she gets back into sleeping position as quickly as she sat up. You guess she doesn’t mind…
+                  
+*else if item = "bread"
+    You turn over the bundle of bread in your hands. Bread… that’s what you got into this mess over, huh?
+    
+    As you feel your stomach rumble, the bread looks quite appetizing, but… You can’t possibly know how long tomorrow’s journey will be. Better to save it…
+
+*else if item = "book"
+    You look over the book in your hands. What even was this book? In all the chaos since you bought it, you’re not sure if you even got the chance to read it…
+    
+    You decide to turn through the pages of “The Flora and Fauna of Teren” until you’re tired enough to stop.
+    
+*else if item = "murder_weapon"
+    The knife is covered in intricate designs. Of course you kept it; you ought to get something in return for what you’ve been through.
+    
+*page_break
+
+You get enough sleep, though not as much as you would have liked. As you peer at the red light making it in through the open windows, you think to yourself that what they say about devotees of Sigil is definitely true.
+
+Cel takes notice of your displeasure, and points at the open window.
+
+“Look out there; how often do you get to see the rising sun?”
+
+You reluctantly stare at the red ball consuming the horizon. It is nice to look at, you’ll admit.
+
+“Did you know that some people go their entire lives without seeing a single sunrise? How frightful…”
+
+*page_break
+
+Once the sun is finished rising, Cel begins taking some bags, likely packed with her belongings, out of cupboards. You take this moment to lament how little there really is for you to pack. Your mobility in the village is rather limited, since what happened. The news spread too fast; it just wouldn’t be very safe to make any extra trips, no matter how important.
+
+The journey begins as soon as the two of you reach the end of town. You begin to recognize the area more. Throughout your childhood, you would circle around the town’s perimeter to get here, as a way of taking the scenic route, but now you were seeing this place from the edge of town…
+
+Once you’ve boarded the carriage, you…
+
+*fake_choice
+    #Quietly await your destination….
+    *if CH3_ending = "good" #Ask Cel if it would be at all possible to check in on some old friends
+        Yes, that’s right; all those years ago, you helped out a druid enclave in this forest. Throughout the rest of your childhood, you tried to keep a habit of talking to them, though you’ve seen them less and less as you’ve gotten older…
+        
+        It seems that they’re the only ones you’ll be able to say goodbye to now, so you decide to make yourself heard.
+        
+        *page_break
+        
+        “Cel? Would it be possible for us to make a stop somewhere?” you ask.
+        
+        She looks up from her text and raises an eyebrow.
+        
+        “Well, I don’t see why we wouldn’t be able to, but… Is there a reason?”
+        
+        “I have some history with a druid enclave further down the road; figured I ought to say goodbye while I can” you explain.
+        
+        Cel ponders for a moment, but only a moment, before giving you a smile.
+        
+        “Well, I don’t see why not; just don’t be too long.”
+        
+        *page_break
+        
+        She relays your directions to the carriage drive for a while, before you, through the carriage window, see the familiar trail. You walk out, finding your way to the same spring from all those years ago.
+        
+        *page_break
+        
+        Milva and the others swarm you as soon as the news has been broken. You have a tough time keeping your promise to Cel about not taking too long, but you try to be out of there sooner than later.
+        
+        The last thing Milva tells you is to try to come back some day. These druids have all but accepted you as one of them, which is quite the honor with them. You tell them that you’ll try your best.
+        
+        As you get back into the carriage, you feel glad that you got the chance to say goodbye to Milva and the others.
+
+There’s something of a silence that seems to pervade in the carriage. There seems to be something on her mind and, evidently, you must look rather deep in thought too.
+
+“Are you still thinking about it?” she asks.
+
+It takes you but a moment to grasp what it is that she means by that. Before you get a chance to answer, she continues.
+
+“Would you like to talk about it?” she asks you, referring to the murder you were a witness to, and suspect for, not very long ago. 
+
+Would you like to talk about it? Well…
+*fake_choice
+    #No
+        “No… I’m still a little shaken up about it.”
+        
+        Cel gives you an understanding look.
+        
+        “I understand; these things can take a lifetime to heal from… I hope you’re able to find that peace.”
+        
+        You don’t give her a response; there seems to be a silent understanding between the two of you that says far more than anything either of you could speak out loud.
+
+    *if CH4_murderer = "caught" #Yes
+        “Well… there isn’t much to say. I heard a scream, I went inside, and I chased the man responsible.” you tell her
+        
+        “Chased? You mean…” she trails.
+
+        “Yes, I saw him.”
+        
+        *page_break
+
+        Cel is quiet for a minute, turning the thought over in her head. Left in anticipation, you await her thoughts.
+        
+        “Did you see his face?”
+
+        “I did, yes.”
+        
+        *page_break
+        More silence.
+        
+        Somewhat longer than before.
+        
+        What’s she thinking?
+        
+        *page_break
+        
+        “Please don’t seek him out… I’m sure it would be far more trouble than it could ever be worth…” she says, breaking her silence
+        
+        “So, you won’t let me pursue him?”
+
+        “No… I hope you can forgive me for that.”
+        
+        The two of you sit in an awkward silence for the rest of the trip as you let that order set in.
+
+    *if CH4_murderer = "lost" #Yes
+        “Well… there isn’t much to say. I heard a scream, I went inside, and I chased the man responsible.” you tell her
+        
+        “Chased? You mean…” she trails.
+
+        “I wasn’t fast enough; I didn’t get a very good look at him.”
+        
+        *page_break
+        
+        Whatever tension had been building on Cel’s face quickly turns to relief.
+        
+        “Well, in a way, isn’t that a good thing? It would’ve been quite the weight on you if you had seen him…”
+
+        “Well… You could be right.”
+
+        Cel gives you a smile. This woman sure does smile and frown a lot, doesn’t she? That’s not a bad thing; it makes her a lot easier to figure out than others.
+        
+        *page_break
+        
+        “Well, since you didn’t see his face, that’s one less obstacle to putting all this behind you, isn’t it?” she asks.
+        
+        You look down for a moment, but quickly give her a nod. The two of you make occasional small talk for the rest of the trip.
+
+    *if CH4_murderer = "ignored" #Yes
+        
+        “Well… there isn’t much to say. I heard a scream, and tried to mind my own business…” you tell her.
+        
+        “Mind your own business? You mean you…”
+
+        “Yes, I tried to run.”
+        
+        *page_break
+        
+        She frowns for a moment, but quickly does away with it, putting on a more stern expression.
+        
+        “You shouldn’t blame yourself for that… I’m sure you were on your way to tell the guards, after all.”
+
+        “I was, but… Well, you know the rest. Bastard planted the murder weapon on me when I wasn’t even looking…”
+
+        “It truly is shameful what some people get up to…”
+        
+        “You’re telling me…”
+
+        The two of you keep relatively quiet for the rest of the trip, though you catch Cel glancing at you with worry every once in a while. From what little you’ve seen, you think she’d never be able to stop thinking about it if she were in the same situation…
+*page_break
+
+        Pretty soon, the carriage reaches its final destination. The last leg of the trip was up a little bit of an incline. If you had to guess, you’d say you were at the side of a mountain, which makes a bit of sense. You can tell that there’s a great view of the sun up here.
+
+        You get out of the carriage, and are met with a handful of people, who you assume are also a part of this temple.
+
+        One of them, a fellow on the much, much older side, gives you a bow.
+*fake_choice
+    #Bow back
+        You’re not completely sure what this gesture means, but you’d have to imagine it’s something devotees of Sigil do as a greeting. 
+        
+        In an attempt to make friends, rather than enemies, you mirror his bow. Out of the corner of your eye, you catch him smirking, which probably means you gave the wrong response…
+
+        How humiliating.
+
+    #Wave nervously
+        You wave nervously at him, not really getting the gesture, but wanting to greet him nonetheless. He looks unimpressed, but… At least he doesn’t seem mad about it.
+        
+    #Ignore the gesture entirely
+        You don’t really know this old hermit, and you’d rather not be a part of whatever thing it is he’s doing. You decide to pretend he isn’t there, which causes him to scowl at you.
+        
+        Well, you didn’t have any intentions of fitting in here, did you?
+
+*page_break
+Cel gets off the carriage from behind you, and walks in front of you.
+
+“Everyone, I’ve brought back someone new to join our family” Cel says, addressing the four other people outside of the temple
+
+Cel turns back to you, and gestures at you,
+
+“This is ${name}. ${name}, let me introduce you to…”
+
+*page_break
+
+“That’s Berthold; he’s been around even longer than me. He won’t usually say a whole lot, but if you ever need any advice, he has decades of wisdom to offer.”
+
+He does another bow. You respond just as you did the first time.
+
+You watch Cel point at the largest man in the group; he looks older than you, and probably a little older than Cel, but not anywhere near the age of Berthold… or should you call him Klepper? He is your elder…
+
+*page_break
+
+“That’s Winfred; he’s been a great help with heavy lifting, and a pleasure to have around!”
+
+“Welcome.” he says, smiling. He seems like a man of few words, but high spirits.
+
+You can’t get over how tall and wide he is. Everyone in town told you to eat your vegetables, but… Well, if this man told you, maybe you would’ve listened. He’d obviously know from experience.
+
+*page_break
+
+Cel moves her arm over to the next person in your field of view. Somehow, she stands out even more than Berthold, in that she doesn’t look like she belongs here at all. In fact, she looks more like the other man who tried to help you that day; the mercenary,
+“That’s Ivy; she grew up here, just like I did.”
+The girl’s stern expression doesn’t budge, but she gives you a hand gesture, which you suppose is probably some kind of greeting. She looks the same age as you…
+“Run while you can; Cel kidnapped me when I was young, and she’s never let me go since…”
+
+*page_break
+
+Her delivery is rather dry, and, as a result, you do put on a look of panic for a second, before Cel cuts in.
+“She’s joking, by the way. Right, Ivy?” she asks.
+
+There’s a moment of silence.
+
+“Ivy, please tell our new member that you’re joking…”
+
+The girl, Ivy, reluctantly lets out a chuckle.
+
+“Kidding, kidding. The part about Cel barely letting me leave was true, though.”
+
+Cel sighs. You can tell it takes all her strength to hold back a “well, that’s because” statement. That’s your guess, anywho. You think they act kind of related, despite them not really looking alike in the slightest.
+
+*page_break
+
+Cel puts back on her joyful demeanor, and points at the next member. You actually didn’t notice her until Cel pointed. She’s a wood elf, maybe a couple of years older than you. Her entire posture seems to be doubled in on itself, like she’s scared to be seen. You can see a couple leaves in her hair, though none on her clothing.
+
+“This is Riva; she’s still really shy, but she’ll warm up to you with time.” Cel says.
+
+The girl doesn’t react. You can’t tell if she’s shy or just living in her own world…
+
+This is quite a few new people, though, and quite a lot of questions on your end…
+
+*page_break
+
+Everyone funnels back into the temple building. It’s reminiscent of the place that you slept in last night, though this building is made of stone, rather than wood, and seems to have received far more use over the years.
+
+The temple is rather large, so you get your own room. You don’t know anyone too well, but you decide to take the vacant room next to…
+
+*fake_choice
+    #Riva’s Room
+        *set P2M_roommate = "Riva"
+    #Ivy’s Room
+        *set P2M_roommate = "Ivy"
+    #Winfred’s Room
+        *set P2M_roommate = "Winfred"
+    #Berthold’s Room
+        *set P2M_roommate = "Berthold"
+    
+You hope they’re a good neighbor…
+
+*page_break
+
+Conveniently, not long after you’re settled, you hear a call from the dining hall. It’s time for lunch. You hadn’t considered it up until now due to everything you were thinking about, but you’ve barely eaten since… Since what happened. You’d rather not think about it again.
+
+*label DC5StoryLoop
+
+Once you’re seated, you decide to get to know the people you’ll be living with for the foreseeable future. How about…
+
+*fake_choice
+    #Cel. Admittedly, you haven’t asked her a whole lot about who she is.
+        “Cel?” you call.
+        
+        “Hmm? Is there something you need?” she responds.
+        
+        “How did you end up a priestess here?” you ask.
+
+        She raises an eyebrow, a little surprised by the question. Evidently, it isn’t something a lot of people ask her.
+
+        “Why, she was brought in by her predecessor…” Berthold answers for her.
+        
+        *page_break
+        
+        You notice a glint of sadness cross Cel’s face for a moment, before she recomposes herself.
+        
+        “What Berthold says is true; I was brought in by the previous priest of this temple. He took me in when I was very little.” she says.
+
+        “Took you in? Did something happen?” you ask, realizing all too late that you shouldn’t ask her such a sensitive question.
+
+        She doesn’t shy away, though. She puts on a calm face.
+
+        “Well, I’m from Western Davenport, same as you, from a little town… That you wouldn’t know. It met an ill fate after an Ichor-Swog infestation went too far. I was one of the survivors.”
+        
+        *page_break
+        
+        You think for a moment. If she was young enough… it might have been before you were born. She’s been here for that long?
+        
+        “To answer your question, though, I’m the priestess because the man who saved me passed away some years ago.”
+
+        Cel smiles at you and gets back to her food. You’re a little surprised she can smile like that after having to remember those things… You hope to be that strong some day.
+        
+    #Riva hasn’t said a word to you yet… You wonder if she can talk.
+        
+        “Um… Riva?” you ask, trying not to startle her.
+        
+        She flinches regardless.
+
+        “Yes?” she responds.
+
+        Her voice is meek and quiet. She talks a little like the druids did in Frontierwood.
+
+        “Could you… tell me a bit about yourself?” you ask politely.
+        
+        *page_break
+        
+        She’s quiet for a few seconds, and then gives a hum in the affirmative.
+        
+        “I’m from the oak woods…” she says.
+
+        You almost correct her, before remembering that druids just have names like that for their forests.
+        
+        “So, you are a druid?” you ask. You had a feeling she was, but you weren’t sure.
+
+        “I was.” she says.
+
+        And then a silence hangs in the air again.
+
+        “Why do you live here? Did something happen?” you ask.
+
+        “Cel saved me…” she says
+
+        *page_break
+        
+        “From…?” You ask.
+        
+        You worry that you may be prodding a bit much, but she seems to just be taking some time to put things together.
+
+        “The enclave I came from… was not a very good enclave.”
+
+        You ponder asking further, before Cel speaks up.
+
+        “She was as thin as a stick when we found her the first time. And the second time. After the third, I told her she didn’t have to go home.” Cel explains.
+
+        Riva quietly continues eating. That… was an odd conversation.
+        
+    #Ivy is the only person here who seems to be the same age as you.
+        
+        “Hey, Ivy?” you ask.
+        
+        Ivy, who’s been staring at you the whole time, answers.
+
+        “Yes?”
+
+        “Is it true that Cel kidnapped you?” you ask.
+
+        Cel nearly chokes on her bite when she hears that.
+
+        Ivy smiles at you; quite the departure from the disinterested look you’ve been getting from her since you arrived.
+        
+        *page_break
+        
+        “Yes, traveler, I’ve been kidnapped… I want to go home to my mama and papa so badly; would you help me escape this awful place?” she says, not missing a beat.
+        
+        You continue this joke for another minute before Cel decides to set things right,“She doesn’t have parents.” Cel corrects.
+
+        Ivy pouts “You’re no fun, Cel…”
+
+        Cel frowns. She doesn’t seem to know how to respond.
+
+        *page_break
+
+        “Well, the jig is up; I’m an orphan. Used to be everyone’s least favorite street urchin in Davenport before Cel picked me up.” Ivy says.
+        
+        “Street urchin?” you ask
+
+        “Thief. Ruffian. You know the type.” she says.
+
+        Suddenly, her contrast with everyone else in the room makes a lot more sense. She doesn’t come off as the Sigilic type.
+
+        You talk to her a little bit more before deciding to move on.
+        
+    #Winfred looks like a jolly fellow. What’s he about?
+        
+        “Winfred, what’s your background?”
+        
+        You don’t really feel the need to take any formalities with this man; he just doesn’t strike you as the type.
+
+        “Porter, though I used to be in some pretty bad business before I found my way here.”
+
+        Wow, that was as direct and all-encompassing as you were expecting.
+
+        “Do you ever miss that sort of work?” you ask.
+
+        *page_break
+        
+        “Not really. It was with the wrong sort of people, and everyone else involved usually got hurt. I decided to get out while I could, tip the right authorities, and come here.”
+        
+        “That’s pretty noble” you say.
+
+        “Would have been better if I’d never done it in the first place, but we can’t change the past…”
+
+        That marks the end of a pretty light and simple conversation. It’s rather refreshing, given how the past couple days have been for you.
+        
+    #Berthold was the first person to greet you; you wonder what he’s like.
+        
+        “Klepper?” you ask.
+        
+        “You can call me Berthold. Or Klepper. Whichever you’d like…” he responds.
+
+        “Oh… Alright. Well, I was wondering, how long have you been here?”
+
+        Berthold gets a far off look in his eye for a few seconds, before he responds.
+
+        “Why, I’ve been here nearly a century… Used to be as big as the Zealot is now, in fact.”
+
+        You look at him with a bit of surprise “Really?”
+
+        “Yes, indeed… Most of what I do now is meditation, though…” He pauses.
+
+        *page_break
+        
+        “My wits are still sharp, though. So, before you get any ideas about messing with the old man, think again.”
+        
+        He gives you a smile before returning to his food. You’re surprised someone this old can have that sort of an edge… You almost don’t believe him.
+
+        Still, if he’s made it this long and still had it in him to say things like that… Maybe you’ll want to hear out the old man’s advice.
+
+    #No one
+        *goto MC5StoryLoopEnd
+    
+*goto MC5StoryLoop
+*label MC5StoryLoopEnd
+
+*page_break
+
+Everyone looks at you expectedly. At first, you don’t pick up on it, until Ivy speaks up.
+“Well, we’ve all told you our backgrounds; who are you?” she asks
+
+You consider what you should tell them…
+
+*fake_choice
+    #Reflect on murder
+        
+        “To put it simply, I’ve been framed for murder.” you say.
+        
+        There isn’t a whole lot of a point in overcomplicating it; you’re sure Cel’s testimony is enough for them to believe you. Besides… You don’t want to remember those cursed details.
+
+        “Woah, seriously?” Ivy asks.
+
+        “It’s true” Cel confirms.
+
+        Berthold and Winfred both give you a sympathetic look, and Riva seems unfocused again. 
+        
+        The surprise is enough to bring that conversation to a halt, which you’re perfectly happy with.
+
+    #Reflect on past
+        
+        “Summerlight. I’m from Summerlight.” you say.
+        
+        “Well, that’s pretty vague” Ivy says, a little disappointed.
+
+        “Alright, fine, then I’ll tell a story. I have a couple of those. Let’s see…”As you ponder, your mind touches on… that. It’s even worse than the framing. You try to put it out of your mind, but it’s way too late.
+
+        “That look on your face; what’s it about?” Ivy asks.
+
+        You’re silent for almost a minute.
+        
+        *page_break
+        
+        “Ivy, don’t push it. I’m sorry, you don’t need to answer that.” Berthold steps in this time.
+        
+        “No, no… It’s fine.” you say.
+
+        You take a deep breath and start from the top. Honestly, you blank out for most of it. You tell them about what happened with Reese, and the Jackaloid, and all of… All of it. It’s one of the biggest things that’s happened to you besides the murder, and you already made the mistake of letting Ivy know that there was something.
+
+        Cel has a hand over her mouth, Berthold and Winfred look sympathetic to your situation, and even Riva looks shaken up. Ivy seems to be regretting pushing for the story in the first place.
+
+        You clear your throat “I’d like to stop thinking about it now, if that’s alright with you all.”
+
+
+    #Reflect on future
+        
+        “I’m someone without a past whose come to start a new life at this temple” you explain.
+        
+        Ivy seems surprised by your answer, but Cel looks overjoyed to hear it.
+
+        “Aww, that’s wonderful! You’ll fit right in!” Cel says.
+
+        Her energy overrules Ivy’s for now, and you get away with relatively little explaining. That’s good, you think. You’d rather leave it behind… Everything that happened in Summerlight. Very little good came of your time there.
+
+*page_break
+
+Once dinnertime is over, you return to your new bedroom and, for the first time in what feels like far longer than it is, go to sleep in a bed.
+
+You’d expect to be haunted by dreams of what occurred in the past, but tonight you sleep peacefully, rejuvenated and ready for the next day.
+
+*page_break
+
+When you wake, you hear talking from the main hall. Looks like you slept in. You walk to the hall to see what everyone’s discussing.
+
+“Yes, right in Wildewatch; that’s what the messenger told me.” Winfred says, with something of a sense of urgency.
+
+“Well, we’d better head for Wildewatch, then. Who knows how long they can last shut in their homes like that… Make haste.”
+
+You interrupt the entire scene with a yawn. You’re a little embarrassed, but not by that much.
+
+“Oh, good morning to you; you sure are a late sleeper, aren’t you?” Cel says, trying to revert to her calmer tone. It’s not working very well.
+
+“Winfred, Ivy and I are going to go deal with a bit of an ogre problem; would you mind helping Riva with her… her…”
+
+Riva? Where’s Riva? Oh, she’s tucked into the corner of the room, right out of sight. You completely blanked her out.
+
+Riva cuts in “herbs… and crops… Do you want to join…?”
+
+Do you want to help Riva with her herbs?
+
+*fake_choice
+    #Yes. Yes you will.
+        
+        You decide to help Riva with her herbs. As obvious as it is that Cel is intentionally trying to keep you out of that ogre situation, you’d really like to avoid violence for the week anyways. It would seem that you and Cel’s interests are aligned.
+        
+        As soon as you nod, Cel runs out of the temple, followed by Winfred and Ivy. You hope none of them get hurt at all. You’ve seen too much bloodshed lately.
+        
+        Riva doesn’t say anything; she just begins walking in a direction. 
+        
+        *page_break
+        
+        “Where are we going?” you ask her.
+
+        “Greenhouse…” she responds quietly.
+
+        “Greenhouse?”
+
+        “Yes… I grow herbs… and food… For the others.” she says.
+
+        You really struggle with hearing her, but you’re not cruel enough to make a fuss over something like that.
+        
+        *page_break
+        
+        You eventually arrive at the greenhouse, which is a repurposed second floor of the temple. All the pews seem to have been repurposed as vessels for soil and greenery. Suddenly, you see something that you didn’t even get to see around Milva, or anyone in her enclave, for that matter.
+        
+        Little balls of bright green light begin forming at Riva’s outstretched hands, floating towards different plants. Every ball of light that leaves her hand is slowly replaced with another, and the loop continues.
+
+        “Woah… is that druid magic?” you ask, sounding somewhat ignorant
+
+        She just gives a hum in the affirmative.
+        
+        The plants all seem just a bit more lively by the time she’s done. Just when you begin wondering what it was that she needed your help with in the first place, she picks up a sickle from one of the dark corners of the room and hands it to you, then points at some overgrown, and clearly fruiting, branches.
+        
+        *page_break
+
+        “Help me… With those.”
+        
+        You look at the sickle in your hand and then at the plant. You wonder for a few seconds how you ended up here, compared to where you were a few nights ago, before deciding to disregard the thought.
+
+        You and Riva carefully hack away at the overgrown herbs. There’s a surprising amount. You eventually hit a rough spot, and ask Riva for help.
+
+        Riva applies pressure in just the right spot before…
+        
+        *page_break
+        
+        **(Fight scene)**
+
+        **(Riva gets injured)**
+        
+        *page_break
+        
+        Riva was the one who took the brunt of the initial attack. She’s bleeding more than you would’ve expected from something so small. You weren’t exactly a farmer, so you never dealt with those things…
+        
+        It’s not as bad as what happened to Reese. You take comfort in that; it means she won’t die. Still, though, you definitely need to get her some help. You pick Riva up, finding that she’s… about as light as she looks. In this case, that’s helpful. You bring her back downstairs to Berthold, who gasps when he sees her.
+
+        “What happened to her?” he asks
+
+        “Large worm…”
+        
+        You don’t know what it’s called. You just look at her in concern. 
+        
+        *page_break
+        
+        Berthold takes her from you; he’s stronger than he looks. He sets her down and begins to treat her wounds, saying something about “Mockworms.” This image… You’re trying your best to think about how it’s different, but it’s just reminding you… of that day.
+        
+        You hope Riva’s going to be alright.
+        
+        *goto CLC
+
+    #You’ll fight the ogre too. You can’t just sit back, can you?
+        As soon as the four of you arrive at the town, it becomes clear that something just isn’t right. Everything’s so silent. Of course, you quickly realize that the silence is more a symptom of the people hiding than the ogres themselves. Actually…
+        
+        “How many are there…?” you ask.
+
+        “Just one” Cel tells you.
+
+        One ogre was enough to get a town on its knees? That’s rather horrifying.
+
+        If life’s taught you anything, it’s that these woods, and the things that come from them, can be quite unforgiving.
+
+        Before any of you have a chance to react, a club goes flying!
+        
+        *page_break
+        
+         **(Fight scene)**
+
+        **(Cel gets injured)**
+        
+        *page_break
+        
+        The initial club that was thrown hit Cel. That was likely pure luck on the ogre’s part that it accidentally knocked out the healer of the group.
+        
+        Her body had dropped like a ragdoll when it happened, and there’s still barely any movement. The only solace you could take was that she was still breathing. Ivy, who you had been starting to suspect might not like Cel very much, looked to be… Ah. you know that look.
+
+        That’s how you looked when Reese was attacked.
+
+        You don’t bother waiting. You, supporting her as well as you can with your strength, get Cel back to the carriage. The driver immediately picks up on the situation, and rushes back to the temple. 
+        
+        *goto ILC
+
+    *if item = "book" #You’ll fight the ogre too. You decide to read the ogre chapter of “The Flora and Fauna of Teren” on the way to be ready.
+        
+        As soon as the four of you arrive at the town, you can tell what’s happened. Everything’s so silent. Of course, just like the book had recommended. the silence was a sign that everyone in the village was hiding from the ogres. Actually…
+        
+        “How many are there…?” you ask.
+
+        “Just one” Cel tells you.
+
+        It truly is horrifying the power that just one ogre has. Teren is lucky that they reproduce as slowly as they do, or it would be completely unlivable. All of Teren… subject to the condition of this village.
+
+        If life’s taught you anything, it’s that these woods, and the things that come from them, can be quite unforgiving.
+
+        You put your arms out to stop Cel and Ivy; they’re going too fast… Ogre’s are hunting creatures, but not smart ones. It’s best to get the drop on them, rather than the other way around.
+        
+        *page_break
+        
+        Ivy doesn’t seem to understand, though, because she shoves your arm away and keeps going.
+        
+        And then a club goes flying.
+
+        “Ivy!” Cel yells.
+        
+        **(Fight scene)**
+
+        **(Ivy gets injured)**
+        
+        *page_break
+        
+        The initial club that was thrown hit Ivy. You can’t help but feel completely responsible… If you hadn’t tried to stop her, she might not have attracted that much attention.
+        
+        Her body had dropped like a ragdoll when it happened, and there’s still barely any movement. The only solace you could take was that she’s still breathing. Cel wastes no time, though.
+
+        “Help me hold her up! We need to get back to the carriage!” Cell tells you.
+
+        You follow along, hauling Ivy back to the carriage. You, supporting her as well as you can with your strength. The driver immediately picks up on the situation, and rushes back to the temple
+
+        *goto CLC
+
+*label CLC
+
+You sit in your room in complete and utter silence. What happened was directly your fault… How do these things keep happening to you? First Reese, then the murder, and now this? Are you just surrounded by death?
+
+You’re unable to stew in your thoughts for too long, however, before you hear a knock on your door. You don’t answer it, though. You’d much prefer to stew in your thoughts for right this second…
+
+The person at the door doesn’t wait for approval, though. The door opens, and Cel walks in. She’s not smiling at all.
+
+“I’m sorry” you tell her. That’s all you can say. You’re too emotionally exhausted to say anything else at this point. It just keeps happening…
+
+*page_break
+
+Cel sighs, and sits down next to you. She doesn’t say anything for a while.
+
+She looks somewhat frazzled from the Ogre problem she was dealing with earlier. She doesn’t look any better for what she has to deal with thanks to you either…
+
+Eventually, you begin to want her to say something. What words is she having such trouble finding?
+
+“You really think it’s your fault, don’t you?” She asks in the softest voice she can muster.
+
+You feel caught off guard. That’s not really what you were expecting at all. 
+
+Unable to control it, you speak.
+
+“Well, it was.”
+
+*page_break
+
+She looks like she’s thinking about something. You endure another few seconds of silence before she speaks up again.
+
+“I took a look at her; she’ll be awake tomorrow, and fine by the end of the week.” Cel says.
+
+She sits up
+
+“Please sleep well…” she requests before leaving
+
+
+*label IVC
+
+You sit in your room in complete and utter silence. What happened was directly your fault… How do these things keep happening to you? First Reese, then the murder, and now this? Are you just surrounded by death?
+
+You’re unable to stew in your thoughts for too long, however, before you hear a knock on your door. You don’t answer it, though. You’d much prefer to stew in your thoughts for right this second…
+
+The person at the door doesn’t wait for approval, though. The door opens, and Ivy walks in. She’s not smiling at all.
+
+“I’m sorry” you tell her. That’s all you can say. You’re too emotionally exhausted to say anything else at this point. It just keeps happening…
+
+*page_break
+
+Ivy leans against the door and lets out a bit of a chuckle. That’s absolutely not what you were expecting. Your head almost snaps up.
+
+Initially, you were looking down to avoid her gaze, but that shocked you out of it.
+
+“You’re laughing?” you ask.
+
+How could that even be possible? You saw her earlier when Cel was hurt; Ivy was in genuine distress. 
+
+Ivy’s expression suddenly softens a little. 
+
+“Hey, are you okay?” she asks.
+
+“Aren’t you mad? About what happened to Cel?” you ask her.
+
+*page_break
+
+She pauses, a little surprised.
+
+“You actually feel bad about that?” 
+
+You’re unable to answer her.
+
+She chuckles “You really will fit in around here.”
+
+She moves away from the doorframe and stands in front of you.
+
+“Cel’s fine; she’s already awake. She’s built a lot tougher than she looks.”
+
+She pauses.
+
+“I’ll admit, I was scared there, but don’t you go feeling guilty over the whole thing; you might tip people off to me actually caring about Cel.”
+
+With that, she leaves the room as abruptly as she entered it.
+
+
 *return

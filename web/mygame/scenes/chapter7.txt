@@ -1,8 +1,8 @@
 *comment Dummy scene to direct the flow of phase 2 branch
 
-*if P2_branch = "merc"
+*if faction = "merc"
     *gosub_scene merc-chapter7 StartChapter7
-*elseif P2_branch = "divine"
+*elseif faction = "divine"
     *gosub_scene divine-chapter7 StartChapter7
 *else
     *comment bug_continue defined in commands.js

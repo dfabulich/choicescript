@@ -339,6 +339,9 @@ You’ve grown. You can handle the dangers of the forest now in ways that you wo
 You take this realization not to fuel any hubris, but to fuel a growing child’s much-needed sense of self-confidence. 
 
 You’ve proven yourself an ally to the druid enclave of the Frontier, and are welcome here any time for the foreseeable future.
+
+*set CH3_ending "good"
+
 *finish
 
 *comment Bad Ending ------------------------------------------------------------
@@ -374,5 +377,7 @@ You try to get out the words. You try to tell her that it just doesn’t count i
 You don’t understand her druid expression, but, on that day, what she said to you finally resonated. You did what you could; you’re getting too old to keep reliving every possibility… You’ve gotta grow up.
 
 In your heart of hearts, you apologize to Reese for the last time.
+
+*set CH3_ending "bad"
 
 *finish

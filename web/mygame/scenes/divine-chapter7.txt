@@ -1,4 +1,661 @@
 *label StartChapter7
+It’s been a few months since you’ve been living at the temple and helping out with the chores. 
 
-TESTING DIVINE CHAP7
+Cel has called a meeting in the main room. Everyone has gathered around the stand. Riva is standing by the wall, Winfred is behind Cel, Ivy is in a dark corner, and Berthold is standing next to the door. 
+
+*fake_choice
+    #Riva
+        Riva offers you a small smile before focusing on Cel.
+    #Winfred
+        Winfred pats you on the back, not taking his eyes off of the stand.
+    #Ivy
+        Ivy huffs out a greeting to you, pretending not to pay attention to Cel.
+    #Berthold
+        Berthold nods to acknowledge your presents.
+        
+“The yearly gathering of all the high priests is coming up and we are hosting it this year. We have to make sure everything is perfect for their arrival.” Cel explained to the crowd. “Everyone should know their chores, if you do not, come find me and I’ll assign you something to do.”
+
+*label clean
+
+With that, everyone left the main room, leaving you and a handful of new people standing around. You can see all of your friends leaving in opposite directions.
+
+*fake_choice
+    #Cel (Knowledge)
+        
+        After the new people finished asking Cel their questions, you find her walking up the stairs to the library.
+
+        “Cel, is there anything I could do to help?” You ask.
+
+        “I’m on my way to reorganize the library. Come, you can help.” Cel replies while reaching the top of the stairs.
+        
+        The last group of travelers arrived about a week ago, it was a small group passing through. They were only staying for a few nights, but they were in the library for most of those nights. Reading up on all sorts of things and never putting the books  where they belonged. By the time they left, the library was a mess.
+        
+        *page_break
+        
+        You follow Cel into the library and take a stack of books from the table. You go through the pile looking for books you know the home for.
+        
+        *page_break
+        
+        *comment (Knowledge: Moderate(60%))
+        *set GP_arg0 Knowledge
+        *set GP_arg1 "moderate"
+        *gosub_scene general AttributeSkillCheck
+        *temp CH7D_ms_bool returnData
+        [head]Motor Skill Check @{CH7D_ms_bool Success|Failure}![/head]
+        
+        *if CH7D_ms_bool
+            *comment Pass (Minor reputation increase with the Cel):
+            
+            You remember where most of the books go and put them back. The pile gets smaller and smaller until there are only a handful of books you don’t know where to put them. 
+
+            “Good job, I can take over from here. Could you start dusting the statues and remaining shelves?” Cel takes the remaining books.
+
+            You nod before grabbing the duster and begin to dust. 
+
+        *else
+            *comment Fail (Insignificant reputation increase the Cel):
+            You realize that you don’t remember where any of these books go. You ask Cel where a few of them go before she gives you a different task.
+            
+            “Here, how about you go dust the statues and shelves? I’ll worry about the books.” Cel takes the pile of books away from you before sorting them out.
+
+            You sigh before grabbing the duster. Guess you didn’t visit the library enough to know where the books went.
+
+
+        *page_break
+
+    #Riva (Reaction)
+        
+        You see Riva going out into the garden and decide to follow her. She walks over to the gazebo and looks over a list.
+
+        “Would you like some help?” You ask as you walk up to the gazebo.
+
+        “Oh, ${name}! I didn’t hear you walk up. I wouldn’t mind some help if you are willing to give some.” She responds, looking up from her paper.
+        
+        *page_break
+        
+        “If you could, I’ve been tasked with clearing out the mockguardens from the pathways. I wouldn’t mind some help removing them.” She explains.
+
+        You nod and the two of you walk towards the front of the temple. Along the way you see a mockguarden in the path of Riva, who is currently reading the paper again. You quickly move to get her out of the way.
+        
+        *page_break
+        
+        *comment (Reaction Speed: Moderate(60%))
+        *set GP_arg0 ReactionSpeed
+        *set GP_arg1 "moderate"
+        *gosub_scene general AttributeSkillCheck
+        *temp CH7D_ms_bool returnData
+        [head]Motor Skill Check @{CH7D_ms_bool Success|Failure}![/head]
+        
+        *if CH7D_ms_bool
+            *comment Pass (Minor reputation increase with the Riva):
+            
+            You grab Riva’s arm and pull her back just before she steps into the mockgaurden. She looks at you and then where she was about to step.
+
+            “Oh! Thank you (Player_Name). I was too absorbed into where the mockgaurdens were on the map, I forgot to check where I was stepping…” She sighed while thanking you.
+
+            You and Riva work together to remove the mockgaurden from the path.
+
+
+        *else
+            
+            “Riva, look out!” You shout. Riva looks up from the paper and sees that she is about to step into a mockguarden. Everyone is also looking at her and she hides behind her paper. You have a feeling she didn’t want everyone to see her almost walk into a natural trap.
+        
+    #Winfred (Strength)
+        
+        You find Winfred moving boxes in the storage room. He is moving the food to the kitchen so the chefs can prepare for the feast. Many of the boxes look heavy, full of more ingredients than you know the name of. You wonder just how many people are showing up.
+
+        You walk up to Winfred just he sets down another box,“Do you mind if I help?” You ask him.
+
+        “Have at it, just be careful. These boxes are heavier than they look.” Winfred answers.
+        
+        *page_break
+        
+        *comment (Strength: Moderate(60%))
+        *set GP_arg0 Strength
+        *set GP_arg1 "moderate"
+        *gosub_scene general AttributeSkillCheck
+        *temp CH7D_ms_bool returnData
+        [head]Motor Skill Check @{CH7D_ms_bool Success|Failure}![/head]
+        
+        *if CH7D_ms_bool
+            *comment Pass (Minor reputation increase with the Riva):
+            
+            You pick up one of the big boxes and follow Winfred into the kitchen. You surprise even yourself with your strength and safely set the box down in the kitchen. 
+
+            “Good job! You have a lot more muscle in that thin frame than I thought!” Winfred compliments you. You smile before grabbing the next box.
+
+        *else
+            You try to pick up one of the bigger boxes, only to drop it immediately. Winfred laughs and points you in the direction of some smaller boxes. You hope there was nothing fragile in there.
+        
+    #Ivy (Improvisation)
+        
+        You spot Ivy poking around the old library. The old library is in a separate building. It used to  store the old books that no one reads anymore.That is, until one of the supports fell from because no one was upkeeping the building. Now it is off limits and all of the books have been moved to a new location.
+        
+        You have never been in the building before, only heard of it from your friends at the temple. Ivy talked about it the most, saying how it was the only peaceful spot in all of the temple.
+
+        You follow Ivy around the corner, where she pulls you into another room. It is one of the study rooms.
+        
+        *page_break
+        
+        “${name}, why are you following me?” Ivy asks, accusingly.
+      	 
+        “I saw you over by the old library and I was curious about what you were doing.” You explain.
+         
+        “I’m sneaking into that library and hiding in there for a while. I already finished my task and if anyone sees me standing around, they are going to give me more.” She explains. “Here, if you want to help me get into the old library, distract the guard as I sneak in.”
+         
+        You don’t know why you agreed, but now you are walking up to the guard as Ivy finds a place to hide.
+         
+        *page_break
+        
+        *comment (Stealth: Moderate(60%))
+        *set GP_arg0 Stealth
+        *set GP_arg1 "moderate"
+        *gosub_scene general AttributeSkillCheck
+        *temp CH7D_ms_bool returnData
+        [head]Motor Skill Check @{CH7D_ms_bool Success|Failure}![/head]
+        
+        *if CH7D_ms_bool
+            *comment Pass (Minor reputation increase with the Riva):
+            
+            “HALT! The old library is off limits for safety concerns.” The guard explains.
+            
+            “Do you mind if I ask some questions about the old library and the temple?” You ask the guard. You can see Ivy sneak through the window to the outside.
+            
+            “I wouldn’t know much, my job is to stand here and keep people out of this building.” The guard motions towards the building behind him.
+            
+            You nod, “you must have heard some things while you’ve been guarding. About what was stored in the old library and why we are not allowed in there anymore.” Ivy has made it to the building and has started climbing the side.
+            
+            *page_break
+            
+            “The only thing I know that was stored in this building was some old books. Although, I did hear a rumor that there is a hidden room that stores all of the books those heretics use. Couldn’t destroy the knowledge, so they hid them away.”The guard whispers.
+            
+            You see Ivy crawl into one of the windows in the other building. “Oh really? Do you think they are still in there?” you ask.“Who knows. Hey, shouldn’t you be cleaning instead of listening to old rumors? Get back to work.” The guard scolds you.
+
+
+        *else
+            
+            You walk up to the guard with no plan in mind.
+            
+            “HALT! The old library is off limits for safety concerns.” The guard explains.
+            
+            “Do you mind if I ask some questions about the old library and the temple?” You ask the guard. You can see Ivy sneak through the window to the outside.
+            
+            “Yes, I would mind actually. We both have jobs to do and I’m not wasting my time talking with you.” The guard huffs.
+            
+            While you are trying to come of with another excuse to distract the guard, Ivy looks over and sees your panicked face. She quickly dives behind a bush before the guard notices you looking behind him.
+            
+            *page_break
+            
+            “What are you looking at?” He turns around and doesn’t see anything.
+            
+            “Oh, I just saw… A bird, one that I’ve never seen in my home town.” You quickly come up with a lie.
+            
+            “A bird you say… Hey, aren’t you supposed to be preparing for the visitors. Go make yourself useful somewhere.” The Guard shoos you away.
+            
+            When you next see Ivy, you send her an apologetic look. She ignores you, having to do her own cleaning.
+            
+    #Bertold (Motor Skill)
+        
+        You find Berhold in the meditation room. He is cleaning the statues. You look around and see that the room is not as clean as it usually is. Most of the people who usually keep the room clean must be working on the other rooms, leaving Berthold to work on it by himself.
+        
+        “Hey Berthold, would you like some help cleaning the room?” You ask.
+        
+        Berthold hums and then points you to a bucket and cloth being used to clean the floor. Mops aren’t used in this room, something about cleaning being a form of meditation.
+        
+        You pick up the bucket and look for a corner to start wiping down the floor. While you are cleaning the corner, you bump into one of the status.
+        
+        *page_break
+        
+        *comment (Motor Skill: Moderate(60%))
+        *set GP_arg0 MotorSkill
+        *set GP_arg1 "moderate"
+        *gosub_scene general AttributeSkillCheck
+        *temp CH7D_ms_bool returnData
+        [head]Motor Skill Check @{CH7D_ms_bool Success|Failure}![/head]
+        
+        *if CH7D_ms_bool
+            *comment Pass (Minor reputation increase with the Riva):
+            
+            You quickly catch the statue and stand it back up. You look it over to make sure it didn’t get damaged before returning to your cleaning.
+            
+            “Nice catch.” You hear Berthold call out from the other side of the room. You smile at him before getting back to work.
+
+
+        *else
+            
+            You quickly move to catch it, but a small crack forms on the side of the statue. You turn the statue to make the crack less obvious. 
+            
+            You hear Berthold sigh. You look over at him to see him shaking his head before returning to his chores. You do the same, being extra careful not to bump into anything.
+        
+    #Find your own task (end loop and Courage)
+        
+        You decide to find your own task to do without the help of anyone else. You remember that many of the statues in the more forested side of the garden are getting eaten up by vines and spiderwebs
+
+        When you reached one of the statues, it looked worse than you remembered. You grab the duster and mentally prepare yourself for cleaning up the webs. Ugh… You never really liked spiders…
+        
+        *page_break
+        
+        *comment (Courage: Moderate(60%))
+        *set GP_arg0 Courage
+        *set GP_arg1 "moderate"
+        *gosub_scene general AttributeSkillCheck
+        *temp CH7D_ms_bool returnData
+        [head]Motor Skill Check @{CH7D_ms_bool Success|Failure}![/head]
+        
+        *if CH7D_ms_bool
+            *comment Pass (Minor reputation increase with the Riva):
+            
+           You clean up every statue that was being reclaimed by nature. You managed to remove all of the vines and all of the webs from the statues. Some of them are cracked or missing pieces, but none of it was because of you.
+           
+           “Oh, that’s where that statue went.” Cel walking up behind you. “I remembered we left it outside, but then we lost it many years ago. Never thought I’d see it again. Good job (Player_Name).”
+           
+           You smile as the rest of your friends come up to admire you work.
+
+
+
+        *else
+            You start by cleaning one of the smaller statues. After digging it out of the vines, you pick it up to look at it. As you are examining the statue, a spider crawls out from behind the statue and you drop it.
+            
+            You move to pick up all of the pieces before deciding that you are not picking up any more statues from now on.
+            
+            “Oh, that’s where that went.” Cel walks up behind you. “Don’t worry too much about the statue, we thought it was lost for many years.”
+            
+            You nod, but look down at the pieces.
+
+        *goto book
+        
+*goto clean
+
+*label book
+
+After asking everyone if they need help with something, you walk into the library and grab three books. You have been using your time at the Temple to learn as much as you can about the world. 
+
+You set the books down on the table and examine all of them. You only have time to read one of them and you are trying to decide which one you should read
+
+You choose
+
+*fake_choice
+    #Monsters
+        You read up on the Mogfish and the Will-O-Wisps as you have never heard of them before.
+
+        “The mogfish with orbs will stay in the mud with the orb above ground. They wait for an unsuspecting victim to walk over them, then they will open their huge maw to ensnare the unsuspecting victim and suck them in. The rest have to find other ways to get food. These ones will team up with will-o-wisps to mimic the light the other mogfish have.”
+
+        You take note on how to avoid them in the forests and write them in your journal for future reference.
+
+    #Locations
+        
+        You decide to read up on the city of Teville. Your father used to talk a lot about it and this is the first time you’ve had a book to learn more about the places he went.
+
+        “The capital city Teville is located by the Ironmount mountains on the west side of the country Teville. The capital is broken up into ten different districts. Each district is split up depending on the wealth of the people living in it. With four slums and a castle amongst the city, there is something for everyone.”
+
+        The city is much bigger than you thought and you wonder how much of the city your father saw. You want to go to Teville someday and explore it all.
+
+        
+    #Magic
+        
+        You’ve heard so much about Divine magic while living in the temple, but you realize you don’t know a lot about it. You search through the book for a chapter that explains Divine magic.
+        
+        “Divine magic is used by those blessed by the gods for harmony with the natural world. It is most common for a priest and priestess to have the blessing of their chosen god. The Flames of Sigel get their blessings from Sigel and use it to defeat the rot.”
+        
+        You realize that you still don’t know much and need to find another book.
+
+*page_break
+
+When you next found Cel, she didn’t seem to be doing anything. She is walking down the hall, fairly slowly, like she didn’t want to do anything.
+
+You walk up to her and ask the question that’s been on your mind since the meeting. “Who is going to protect the other temples if everyone is in one location?”
+
+“The King sends guards to every temple to protect them while the high priests are out. The temples also leave behind most of their lower ranking priests to run the temple while they are gone.” Cel reassures you. “In our many years of doing this, there haven't been any major incidents.”
+
+*page_break
+
+You nod. It makes sense why they have the meeting, but you can only wonder how nothing has happened during these times.
+	
+“The Zealot is also going to be there. You’ve probably heard of him, he’s the knight who saved a town from the rot by himself.” Cel continues her explanation. “He’s coming to give a speech and prepare us for future dealing with the rot. Rot patches have been appearing lately and he wants to make sure we are ready.”
+
+You remember seeing the Zealot. He was at the town that you and the temple saved from the rot.
+
+*page_break
+
+For the next few days, you’ve seen people from the other temples make their way into this one. You have never seen this many people in one place before, let alone within this temple. You question if there are enough rooms to house all of these people. You see everyone running from place to place, constantly with a task in mind. 
+
+Cel is constantly in meetings and making sure everyone is well suited. Riva is keeping the garden well kept as many priests have been out there. Winfred is making sure that the kitchen is well stocked and that everyone is well taken care of. Ivy is doing many of the chores while keeping hidden from the priests. Lastly, Berthold is hosting meditation sessions every couple of hours for each temple.
+
+*page_break
+
+You are helping out where you can, but you feel like you constantly are in the way. You try to keep the statues well dusted and the library looking neat. You now have a better idea of where the books go at least.
+
+*label search
+
+The big meeting is soon. Cel is with the other high priests seemingly getting prepared for the speech. You go find one of your friends from the temple to hang out with while you wait.
+
+*fake_choice
+    #Riva (Strength)
+        You find her tending to the plants in the greenhouse. You walk up beside her and she looks up at you.
+
+        “Hey (Player_Name),” she gives you a small smile. “Could you help me transport these vegetables to the kitchen?”
+
+        You nod and walk over to one of the baskets of vegetables.
+        
+        *page_break
+        
+        *comment (Strength: Challanging(50%))
+        *set GP_arg0 Strength
+        *set GP_arg1 "challenging"
+        *gosub_scene general AttributeSkillCheck
+        *temp CH7D_ms_bool returnData
+        [head]Motor Skill Check @{CH7D_ms_bool Success|Failure}![/head]
+        
+        *if CH7D_ms_bool
+            *comment Pass (Minor reputation increase with the Riva):
+            
+            You easily pick up the basket of vegetables and take them to the kitchen. You do a couple of trips back and forth until there are six baskets of different vegetables in the kitchen.
+
+            Your arms hurt and your back aches, but it is done. There should be enough food to last the weekend.
+            
+            *page_break
+            
+            You turn back towards the greenhouse and see Riva struggling to carry the last basket. You run on over to her and take the basket out of her hands.
+
+            “Th-thank you (Player_Name),” Riva says, out of breath.
+
+            “Usually…” She lets out a big sigh, still trying to catch her breath. “Usually Winfred helps me, but he is busy elsewhere.”
+
+            You give her a smile and take the last basket to the kitchen.
+
+        *else
+            You try to lift up the first basket, but are only able to lift it a few inches. You try again, but Riva stops you.
+
+            “I’ll call Winfred or Barthold to come grab them, don’t strain yourself before the big meeting. We have to clean up afterwards.” She says. You nod, disappointed in your own strength.
+
+    #Winfred
+        
+        You find Winfred with a crowd of people. When you walk over to see what had happened, you see that they are surrounding a person on the ground. They seemed to have injured themselves somehow.
+
+        You walk over to Winfred who looks to be concerned and confused. You look down at the person and try to see if you notice anything. 
+        
+        *page_break
+        
+        *comment (Medical: Chalenging(50%))
+        *set GP_arg0 Medical
+        *set GP_arg1 "moderate"
+        *gosub_scene general AttributeSkillCheck
+        *temp CH7D_ms_bool returnData
+        [head]Motor Skill Check @{CH7D_ms_bool Success|Failure}![/head]
+        
+        *if CH7D_ms_bool
+            *comment Pass (Minor reputation increase with the Riva):
+            
+           You look down at the injured person and notice that his leg is starting to swell.
+           
+           “He broke his leg, could one of you get me two long sticks and some cloth? And possibly some pillows?” You ask the group as you help the guy lay down so as to not agitate the injury.
+            
+            *page_break
+            
+            Not long later you are given the resources you asked for. You gently straighten out his leg and put the sticks beside it. You tie the top of the sticks to the guy’s knee and the bottom close to his ankle.
+
+            After making sure the sticks aren’t going anywhere you look back up at the crowd
+
+            “Could one of you either help me move him or grab the pillows?” You ask.
+            
+            Winfred goes to the other side of the injured priest and helps you move him to his room. The person carrying the pillows follows close behind.
+
+            Once in the room, you lay him on his bed and prop up his leg with the pillow and leave him be.
+
+            “Where did you learn how to do that?” Winfred asks you.
+
+            “I was very adventurous as a child. Everyone I knew has broken at least one bone at that time and I learned how to temporarily keep it in place while we waited for the healer.” You explained
+
+        *else
+            
+            You aren’t sure what happened, the guy seems to be in pain, but you don’t know what is causing it. 
+
+            Winfred bends down to pick him up. When the injured priest puts weight on one of his legs, he buckles and almost goes face first back to the ground.
+
+            You quickly run over and help support the other side. You guess he broke his leg.
+            
+            *page_break
+            
+            After you both take him back to his room, Winfred gives you a thankful look.
+
+            “That could have been so much worse if he fell. Thank you for helping.” Winfred gives a slight smile. You nod and return it.
+            
+    #Ivy
+        
+        You go searching for Ivy. You start with all of her usual hiding spots, the library, her room, the cove in the garden, though you can’t find her. Cel asked you to get her for the meeting coming up soon, but didn’t give any suggestions on where to look.
+
+        You decide to look in one last location, the old library. You have seen her sneak up there multiple times. You just have to find a location where no one will see you sneaking in. 
+
+        You find a wall with dense vines and is fairly hidden away. You wonder if this is how Ivy sneaks in.
+        
+        *page_break
+        
+        *comment (Acrobatics: Challanging(50%))
+        *set GP_arg0 Acrobatics
+        *set GP_arg1 "challenging"
+        *gosub_scene general AttributeSkillCheck
+        *temp CH7D_ms_bool returnData
+        [head]Motor Skill Check @{CH7D_ms_bool Success|Failure}![/head]
+        
+        *if CH7D_ms_bool
+            
+            You begin climbing up the wall, being extra careful not to fall. When reaching for the next vine, you notice that it is wrapped up in a loose brick. You instead reach for a different branch and use that to climb up. You bump into the vine and the brick falls to the, taking the vine with it.
+            
+            *page_break
+            
+            Once you reach the top, you climb in through a window. Inside you realize just how big the old library really is. You start by looking around the window.
+
+            There is a small table near the window with a stack of books on top. They look fairly new and not as dusty as the rest of the room. 
+
+            “What are you doing up here?”
+            
+            *page_break
+            
+            Ivy comes out from the shadows.
+
+            “Looking for you, the meeting is in a little bit and Cel is looking for you.” You explain.
+
+            “And? It’s just a silly little meeting where the high priests brag about how many people they saved.” Ivy scoffed.
+
+            “Well, then we can both suffer together. Besides, what would Cel say if you aren’t there?” You ask her.
+            
+            “She’d scold me about ‘how this is a very important meeting’ and that she’d be worried that I wasn’t there.” Ivy sighs.
+
+            “Alright, let’s go, I’ll show you an easier way to get down. I heard the brick fall and I would hate for you to get hurt on my behalf.” She leads you down the stairs and to another window that is closer to the ground.
+
+            After you get back to the group, they all seem amazed that you found her.
+
+        *else
+            
+            You begin climbing up the wall, being extra careful not to fall. When reaching for the next vine, you don’t notice that it is wrapped up in a loose brick. When you grab and pull on it, the brick flies out of the wall, taking the vine with it.
+            
+            *page_break
+            
+            [b] THUD [/b]
+            
+            *page_break
+            
+            You fell a few feet back to the ground. Disoriented, you look back up at the wall. Ivy pokes her head out.
+
+            She goes back inside and appears beside you. You wonder how she got there so fast.
+
+            “Are you okay?” She asks you.
+            
+            *page_break
+            
+            You try to nod, but it makes you even more disoriented. “Yeah…”
+
+            “What were you even doing climbing up the side of the old library? You know that place is off limits.” Ivy scolds you.
+
+            “What were you doing in the old library if it is off limits?” You retort. She gives you a small smile, not expecting that. “Cel was looking for you, I was trying to help.”
+
+            “For that stupid meeting? It’s not worth you getting injured to find me for that.” Ivy sighs. “Come on, let’s show Cel that you found me.
+            
+    #Barthold (end loop)
+        
+        As expected, you find Barthold having a meditation session with a few of the priests. They are set up in lines with Barthold. You stand off to the side and watch for a second before closing the door.
+        
+        You decide to
+        
+        *fake_choice
+            #Wait
+                
+                You decide to wait for the session to be over. You did not want to interrupt and meditating isn’t your favorite thing to do.
+                
+                *page_break
+
+                You were reading a book when the session finished. You saw everyone leaving the meditation room and once the last person left you went in.
+                
+                Barthold has just finished rolling up his mat when you walked in. The room is cleaner than it has been in a long time, even cleaner than when Barthold drags everyone in here to clean.
+                
+                “Why didn’t you come join us?”
+                
+                *page_break
+                
+                You turn to look at him and he is still putting away his mat.
+                
+                “Oh, you saw me? I didn’t want to interrupt.” You explain.
+
+                “I did not see you, I heard you. If you do not want to interrupt, don’t open the door or close it softer next time.” He scolds slightly. “Is there something that you wanted?”
+                
+                “I was looking for something to do or someone to talk with while we waited for the meeting. I feel slightly out of place…” You tell him.
+                
+                *page_break
+                
+                “Everyone feels out of place the first time they do anything. Don’t worry too much about it, many of our visitors don’t feel like they should be here.” Barthold explains. “Many of them have only been in their temple for a few years and are now visiting another one. They feel out of place.”
+
+                Barthold  turns to you. “Don’t let that feeling prevent you from talking to new people and understand that they may be feeling the same as you. Now come on, come help me set up with my next group” 
+
+                
+            #Join
+                
+                You quietly close the door behind you was walk to where you know the mats are. You carefully grab one and place it near the back of the group.
+
+                You meditate with them for a little bit before Barthold calls the session. Everyone begins rolling up their mats and placing them in the corner of the room. You follow suit.
+                
+                *page_break
+                
+                After they put away their mat, each priest grabs a rag and cleans the area they were sitting in. After they finish they leave.
+
+                You stay behind to help Barthold clean up the rest of the room.
+
+                “I hope you know you weren’t as quiet as you thought?” Barthold asks.
+
+                “You heard? I hope I didn’t bother anyone.” You exclaim.
+                
+                “If you do not want to bother anyone during a session, don’t open the door or close it softer next time and wait until the session is over.” He scolds slightly. “Is there something that you wanted?”
+                
+                *page_break
+                
+                “I was looking for something to do or someone to talk with while we waited for the meeting. I feel slightly out of place…” You tell him.
+
+                “Everyone feels out of place the first time they do anything. Don’t worry too much about it, many of our visitors don’t feel like they should be here.” Barthold explains. “Many of them have only been in their temple for a few years and are now visiting another one. They feel out of place.”
+
+                Barthold  turns to you. “Don’t let that feeling prevent you from talking to new people and understand that they may be feeling the same as you. Now come on, come help me set up with my next group”
+                
+                The temple’s bell rang. It is time for the meeting.
+                
+        *goto meeting
+
+*goto search
+*label meeting
+
+*page_break
+
+You gather around the stand, all of the high priests are standing behind it, but you don’t see Zeal. Out of the corner of your eye, you can see Zeal’s armor hiding in one of the side rooms. You wonder if the Sealot is in there. If the bite wasn’t taken care of.
+
+“We’re sorry to say that the Zealot isn’t feeling well and has to sit out for the meeting.” Cel explains, looking towards the crowd. “He told us the news and we are here to share as best as we can.”
+
+There are murmurs throughout the crowd. Some are wishing him to get well soon, others are theorizing what could have happened. You look in the direction of the suit of armor and see that it has left. If the Zealot is actually in that suit of armor, you wonder what could have happened.
+
+*page_break
+
+“I know everyone is disappointed that he is not here to give his speech, but that is not reason to be rowdy. The information he gave us is still very important and everyone needs to listen up.” Cel loudly spoke, making the crowd quiet down. “The rot has been appearing more frequently within the last few years. It seems that the cult of Skadon has increased their attempts and we all need to be on guard. Direwolf attacks have also become more frequent as the rot has been pushing them out of their homes. We need to all be vigilant and work together with the local guards and anyone who is willing to help. We don’t have the numbers to help everyone, we need to teach others how to help.”
+
+*page_break
+
+“Isn’t it our job to keep people safe and away from danger?!” Someone in the crowd shouted. 
+
+“Yes, but there have been more rot sightings than we have high priests. They need to learn how to protect themselves while they wait for reinforcement to come by.” Cel calmly explained.
+
+“Does that mean we’ll have to work with arcanists?” Another one shouted.
+
+“Yes. Many arcanists already know how to deal with the rot and have kept the towns safe while they waited for us to show up.”
+
+“What happened in the town that the Zealot burned down?” A female at the back of the crowd shouted.
+
+*page_break
+
+“The what?” Cel asked confused.
+
+“The town on the south side had a small infestation of rot and the Zealot burned the entire place to the ground a few weeks back.” The person calmly explained, but looking at her, you can see that there is pent up rage.
+
+“And who are you?” One of the high priests asks.
+
+“One of the remaining residents of the town. Everyone else died in the fire.” She stares straight at the priest, as if daring him to back down. “Is this what you mean by help?”
+
+*page_break
+
+“He must have had good reasons to do that, if what you say is true. This meeting is adjourned, everyone go back to what you were doing prior.” The high priest shouts.
+
+When you look back over to where the woman was, she was gone. You don’t know if she left on her own accord or if one of the guards led her out.
+
+You head to the library, in there you see many priests reading or browsing the books. You also find Cel, Ivy, and Winfred in the corner. You walk over to them.
+
+When you get there, Riva and Barthold show up and Cel drags all of you into a side room.
+
+*page_break
+
+Cel sighs, “I’m not completely sure. When the Zealot showed up, he refused to leave his armor and we could barely understand him when he talked. He stayed in his room the entire time he was here and only a select few high priests were allowed to see him.”
+
+You remember the suit of armor you saw, he must have gone to the meeting to make sure everything was set up correctly. Once he knew everything was situated, he left.
+
+“I found out I was giving the speech this morning. They gave me the information needed and sent me out there. I’m not sure what even happened.” Cel continued.
+
+Just as Cel is about to continue, Barthold gives a signal that someone is walking up. The high priest who took over for Cel walks into the room.
+
+“What is going on in here?”
+
+*page_break
+
+The priest from the meeting walks into the room. You can see that everyone is trying to come up with an excuse.
+
+“Oh… We’re splitting up the after meeting chores.” Riva explains.
+
+*fake_choice
+    #Lie and explain what chore you are doing (Improvisation)
+        
+        *page_break
+        
+        *comment (Sneak: Moderate(60%))
+        *set GP_arg0 Sneak
+        *set GP_arg1 "moderate"
+        *gosub_scene general AttributeSkillCheck
+        *temp CH7D_ms_bool returnData
+        [head]Motor Skill Check @{CH7D_ms_bool Success|Failure}![/head]
+        
+        *if CH7D_ms_bool
+           “I’m going to help the kitchen and ask what boxes of food they need for dinner.” You explain.
+
+           The high priest nods and then stares at everyone else. You think he bought it.
+
+        *else
+            “I’m… going to go to the kitchen. They may need help before dinner.” You explain.
+
+            The high priest gives you a slow nod before looking at everyone else. You are not sure if they bought it.
+
+    #Nod your head
+        
+        You nod your head, agreeing with what Riva said. The high priest stares at everyone before leaving. You are not sure if he bought it.
+        
+    #Stay quiet
+        
+        You stay quiet and stare at the wall. The high priest stares at you before leaving. You don’t think he bought it.
+        
+“Alright everyone, break and go do your chores.” Cel said slightly louder than she needed to. You go into the kitchen and help transport the food for the cooks. 
+    
+    
+
+
+
 *return
