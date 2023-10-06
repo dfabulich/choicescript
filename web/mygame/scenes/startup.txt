@@ -107,6 +107,7 @@
 *create isMockguardenDiscovered false
 *create isMogfishDiscovered     false
 *create isWOWDiscovered         false
+*create murdererKnown         false
 *comment -----------------------------------------------------------------------
 
 *comment *set GP_arg0 6
