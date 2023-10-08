@@ -1,7 +1,7 @@
 [head]Chapter 3: Druid Encounter[/head]
 The second spring after those tragic events surrounding a dear friend and a Jackaloid you’ve slowly begun to walk nearer and nearer to Frontierwood forest. 
 
-Your adventurous side could only be held down for so long, despite the…
+In spite of any…
 *fake_choice
     # Fears that may linger (Courage++)
         *set GP_arg0 "Courage"
@@ -14,38 +14,39 @@ Your adventurous side could only be held down for so long, despite the…
         *gosub_scene general IncrementSkill
 *page_break
 
-Besides, this isn’t even the same forest. The other difference now is that you refuse to drag anyone along with you; not again.
+, your adventurous side could only be held down for so long; besides, this isn’t even the same forest. The other difference now is that you refuse to drag anyone along with you; not again.
 
-Once upon a time, you hadn’t known better. Now, you’ll make better choices. You’re sure of it. From this moment onward, and for the rest of your life, you’ll make better choices.
-
-Walking alongside the rushing river, there happens to be a doe walking ahead of you, which you’ve been following… (split into 3 branches based on reasoning)
+Once upon a time, you hadn’t known better. You had that invincibility that youth granted you, the belief that nothing bad could touch you or the ones you loved. Now, you’ll make better choices. You’re sure of it. You’ve seen what terrible things could happen when you're underprepared. From this moment onward, and for the rest of your life, you will make better choices.
 *fake_choice
-    # To observe its behavior! The way each creature goes about its own routine in the forest is absolutely fascinating! (Cunning++)
+    # To observe its behavior! The way each creature goes about its own routine in the forest is absolutely fascinating!
         *comment TODO: Cunning++
-    # To see how long it takes to notice you! You’ll test your speed if it starts running… (Agility++)
+    # To see how long it takes to notice you! You’ll test your speed if it starts running…
         *comment TODO: Agility++
-    # Because you’re hungry… That doe could provide a couple days of good eating! (Brawn++)
+    # Because you’re hungry… That doe could provide a couple days of good eating!
         *comment TODO: Brawn++
 *page_break
 
 As the doe comes to a fork in the road, it turns away from either path, wandering deeper into the forest. Today, you’re feeling particularly bold, so you continue following the doe in spite of past experiences. If anything seems out of place, you’ll know when to run.
 
-Once the doe has reached a spring, it begins to transform before your very eyes! Where there was a doe just a moment prior, now stands an elven woman clad in large leaves, characteristic of a druid!
+Once the doe has reached a spring, it begins to transform before your very eyes! The doe stands on its hind legs, its warm brown pelt almost melting away to reveal tanned skin. Narrow hooves uncurl and form lithe hands and feet. A wave of long mahogany colored hair falls around her shoulders. Where there was a doe just a moment prior, now stands an elven woman clad in leaves, woven together with patches of bark-like leather and twine.  These were characteristics of a druid!
 
-If you had to guess, you’d say she was a wood elf. You haven’t seen many wood elves; a lot of them live out deep in these forests. Druids are generally a peaceful kind. The opportunity to get a closer look presents itself.
+If you had to guess, you’d say she was a wood elf. You haven’t seen many wood elves; a lot of them live out deep in these forests. Druids are generally a peaceful kind, though they don’t typically appreciate outsiders in their territories. The opportunity to get a closer look presents itself.
+
+You…
 
 *fake_choice
     # Speak to the druid (Speechcraft++)
         *set GP_arg0 "Speechcraft"
         *gosub_scene general IncrementSkill
 
-        You walk up to the druid, rather casually, barely containing your excitement. You ask her if she’s, like, a real druid; the kind that really protect the forest and sleep under the shade of the trees.
+        You walk up to the druid, rather casually, barely containing your excitement. You ask her if she’s a real druid; the kind that really protect the forest and sleep under the shade of the trees.
         
-        She seems unamused, but answers all the questions swiftly. Simple “Yes” and “No” responses. Perhaps a little inappropriately, you wonder aloud…
-        
+        She seems unamused, but answers all the questions abruptly . Simple “Yes” and “No” responses to even your longer, more complicated questions. Perhaps a little inappropriately, you wonder aloud…
+
         “Are you alright, miss?”
-        
-        And, that’s when it becomes clear. As much as druids don’t care for outsiders, this one is extra unhappy.
+
+        And, that’s when it becomes clear. As much as druids don’t care for outsiders, there is something different about this one. Something seems to have truly gotten under her skin.
+
         
         “You may hear of our woes, young sapling, if only so that they may be heard…”
     # Watch the druid (Stealth++)
@@ -55,78 +56,85 @@ If you had to guess, you’d say she was a wood elf. You haven’t seen many woo
         You hide in a relatively benign-looking bush, and stare at the druid. This is a rare opportunity; has anyone from your village ever even seen a druid? Well, now you can say you have.
         
         She sits down and lays her head back against a tree, letting out a lengthy sigh, bordering on the territory of a groan. This is odd behavior, you think, for a free spirited druid to be exhibiting. They’re supposed to be happy, from what you’ve heard.
-        
-        You wonder what she could possibly be thinking about. Could something be wrong in the forest? The idea causes you to shiver. Maybe this wasn’t such a good idea after all…
-        
-        She seems to stay that way, staring up at the branches for a couple of minutes, before lowering her head back down and locking eyes with you.
-        
+
+        You wonder what she could possibly be thinking about. Could something be wrong in the forest? Memories start to float up in your mind. A sunny day in the forest going horribly wrong. The possibility of something else terrible happening here causes you to shiver. Maybe this wasn’t such a good idea after all…
+
+        She seems to stay that way, staring up at the branches for a couple of minutes, before lowering her head back down and locking eyes with you in your hiding spot
+
         You freeze.
+
         *page_break
 
-        “Your pursuit did not go unnoticed, young sapling.”
+        “Your pursuit did not go unnoticed, little weedling .”
         
         You sheepishly waddle out of the bush. How silly could you have been? You aren’t a child anymore…
         
         “You want to know what ails me, don’t you?”
-        
+    
         You manage to meet the druid’s gaze; the emotions haven’t changed in the slightest. She just looks so dejected… You give a nervous nod.
         
-        “Very well. You have an air of silence, and our feelings have reached an excess in our hearts. You may know what ails us, young sapling… if only to ease the pressure.”
+        “Very well. You have an air of silence, and our feelings have reached an excess in our hearts. You may know what ails us, little weedling … if only to ease the pressure.”
+
     # Leave and explore deeper into the forest (Courage++)
         *set GP_arg0 "Courage"
         *gosub_scene general IncrementSkill
 
         But, your instincts tell you otherwise. Better not to disturb these peaceful people of the forest with your villager ways. They avoid outsiders for a reason, you’d imagine.
         
-        You wander in a perpendicular direction, deeper into the forest, and, oddly darker. If it gets too dark, you think, you’ll turn back. It’s still daylight, so you don’t take this as a sign of danger.
-        
-        The earthy notes of the forest slowly become stronger; quite the plague on your nostrils. That doesn’t strike you as an oddity, at first. You see movement in the pitch blackness up ahead; somehow, you manage to discount it as mere imagination.
-        
-        And then you see something whip toward you. It would’ve hit you, had you not felt a force pull you down from behind.
-        
+        You wander in a perpendicular direction, deeper into the forest. The thick canopy of leaves and branches cast wide shadows, but it almost seems too dark for the time of day. If it gets too dark, you think, you’ll turn back. It’s still mid-day , so you don’t take this as a sign of danger.
+
+        The earthy notes of the forest slowly become stronger; quite the plague on your nostrils. That doesn’t strike you as an oddity, at first. There are more trees here, more moss growing on the ground and less interference from the nearby village. It just made sense that it smelled different here.  You see movement in the pitch blackness up ahead; somehow, you manage to discount it as mere imagination.
+
+        Suddenly, you see something whip toward you. It would’ve hit you, had you not felt a force pull you down from behind.
+
         You look up, heart still pumping, to see a liquid seeping from a tree that was near you; the deep slash mark in the bark looks burnt.
-        
+
         Behind you is the druid from earlier, who had presumably pulled you back. Still holding onto your hand, she pulls you up.
-        
+
         “Run!”
+
         *page_break
 
-        And she follows her own directions. You’ve got enough sense left in you to follow them too.
+        As she takes off into the forest, you’ve got enough sense left in your terrified brain to follow. 
         
         And so you both run. Fast. You’re rather out of breath by the time the two of you return to the spring where you’d initially split directions. The druid, more in charge of her stamina, isn’t panting nearly as hard as you are.
-        
-        Your lungs are burning, and your legs are sore. The druid keeps silent until you reclaim your faculties.
-        
-        “There’s a whole Mockguarden in that part of the forest, sapling… I was hoping you’d avoid it.”
+
+        Your lungs are burning, and your legs are sore. You push away the memory of feeling the exact same way not too long ago, running for your life in the same forest. The druid keeps silent until you reclaim your faculties.
+
+        “There’s a giant mockguarden in that part of the forest, weedling … I was hoping you’d avoid it.”
+
         *page_break
 
-        As you continue to catch your breath, you take that in. A Mockguarden? Here? Is that what attacked you?
+        As you continue to catch your breath, you take that in. A mockguarden? Of course it was a mockguarden! The strangeness of the forest suddenly made sense and you quietly berate yourself for not realizing it earlier. Still, you’ve never seen a giant mockguarden. Just how large was it? 
         
-        Perhaps your fellow village folk tell you all those stories for a reason; you take a moment to brood over your inability to take warnings, before apologizing to the druid.
-        
-        “No, perhaps it was our own fault for not telling anyone. Young sapling, if you’ll indulge, you shall hear of what ails us, and spread this knowledge to your kin…”
-        
+        Perhaps your fellow village folk tell you all those stories about wandering too far for a reason; you take a moment to brood over your inability to take warnings, before apologizing to the druid.
+
+        “No, perhaps it was our own fault for not telling anyone. Little weedling , if you’ll indulge, you shall hear of what ails us, and spread this knowledge to your kin…”
+
         You affirm that you’ll hear what she has to say.
+
 *page_break
 
 Presumably, as she walks off, you’re meant to follow. You’re already in this deep, so, you might as well follow, right?
 
-As you’re led deeper into the forest, the druid introduces herself as “Milva of the Frontier Woods”. You think to correct her; it’s Frontierwood! On second thought, though, the druids probably just have a different name for it.
+As you’re led deeper into the forest, the druid introduces herself as “Milva of the Frontier Woods”. You think to correct her; it’s Frontierwood! On second thought, though, the druids probably just have a different name for it. At least it’s recognizable.
 
-Milva takes you through a somewhat larger clearing in the depths of the forest, where you see plenty more druids, going about their day. Some tend to fruiting plants, others lay in the shade; it’s a rather calm and peaceful place.
+Milva takes you through a somewhat larger clearing in the depths of the forest, where you’re shocked to see plenty more druids, going about their day. Some tend to fruiting plants, others lay in the shade; it’s a rather calm and peaceful place. You feel both proud and a little intimidated to know you’ve been brought into a druid meadow. No one in your village has ever had the honor before.
 
 The two of you end up at a more remote part of the clearing where you see a rather gruesome sight: a dying druid. At least, you hoped it was dying; the slash across its chest was too deep for you to see any end to it, and much of the skin around the wound looked charred. You pity anyone who would have to live on with that wound…
+
 *page_break
 
 Of course, this druid was in the worst condition; it didn’t take you long to notice that a small handful of similarly, if a little less severely, injured druids were laying in this area on makeshift cots with jugs of water and clusters of herbs by their heads.
 
 The sight reminded you of something you’d only seen once before: this was an infirmary. A makeshift, druid infirmary, but an infirmary nonetheless. Sickening memories of lingering rot and herbal scents mixed with present ones; you covered your mouth and looked down at your feet.
 
-These casualties, Milva explained, had become more commonplace in recent times, and were not limited to the druids. Plenty of the forest creatures had been dropping like flies too.
+“These casualties,” Milva explained, “have become more commonplace in recent times, and were not limited to us druids. Plenty of the forest creatures had been dropping like flies as well.”
 
-Why? You couldn’t understand it… Was every forest cursed? Were they all dangerous places where the peaceful and innocent went to die?
+“Why?” You say under your breath.”I don’t understand… is every forest cursed? Were they all dangerous places where the peaceful and innocent went to die?”
 
 Milva answered your panicked pleas.
+
 
 *comment Doing this before the check page because there is a bug in choicescript
 *comment that allows you to reroll random chances.
@@ -168,11 +176,15 @@ You'll
     # Convince some mercenaries at a nearby tavern to help (Simple Presence Check)
         [head]Presence Check @{CH3_Presence_bool Success|Failure}![/head]
         You make the somewhat inconsequential trek to a tavern near Frontierwood. The path leading through frontierwood is the only link between some smaller villages and the larger Davenport, so it’s a path naturally dotted with taverns and inns.
+        
         As you enter the not-so-fine establishment, you find yourself assaulted by an overwhelm of chatter, music, clinking of glasses, and other miscellaneous noises.
+        
         Fighting through your senses, you manage to spot a group of particularly well armored adults with swords, and shields, and all sorts of other dangerous looking things.
+        
         Now all you need to do is stand out.
 
         *if CH3_Presence_bool
+            
             You waste no time getting their attention. You climb up onto their central table and loudly announce your presence, to the disdain of the few of them that were talking.
             But who cares; there are more important things to be talking about.
             
@@ -187,7 +199,6 @@ You'll
             *goto CH3_Good_End
         *else
             You somewhat nervously approach one of the adults; they tower over you. You gulp and give a light tug on their sleeve. When they look down on you, your blood turns to ice.
-            
             “Need something, kid?”
             
             Woah… Stone cold. You manage to squeeze out the words to explain what’s going on in Frontierwood. The mercenary ponders your request and accepts, bringing along a few of his allies.
@@ -195,14 +206,15 @@ You'll
             It isn’t the large group of mercenaries you were hoping to gather together, but it would surely be enough, right? They were just going to be mowing down a bunch of shrooms, right? Something didn’t sit well with you, despite this…
             
             As the small group of mercenaries headed for Frontierwood, you went home and tried to ignore your worries.
+            
             *page_break
             *goto CH3_Bad_End
     #Steal some poison from the town apothecary and handle things personally (Simple Stealth & Acrobatics Check)
         [head]Stealth & Acrobatics Check @{CH3_Stealth_bool Success|Failure}![/head]
         You know of one place, and one place only, that will have what it takes to beat back this great evil. You’ll need to acquire some fungal poison, and if you’re going to acquire enough of it, you’ll need to be less-than-upstanding in your acquisition.
-
+        
         You make the rather lengthy trek back to your village and, navigating through the narrow areas between shops, slip into the apothecary’s shop through a back window. You time this just right; if someone’s in there, you’ll be caught immediately.
-
+        
         *if (CH3_Stealth_bool and CH3_Acrobatics_bool)
             Yes! Your patience is rewarded with pure silence; looks like you made it in without tripping up the shopkeep's senses!
             

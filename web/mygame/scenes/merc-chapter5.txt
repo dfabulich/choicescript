@@ -99,36 +99,28 @@ When the two of you make it to the forest, Rip leads you down a pathway. It is a
 
 *comment /// I have legit no idea how to implement this... ///
 TODO: use the reputation system here…
-*comment (If the player ran into the house, Rip rep++)
+*if CH4_murderer =  "chased"
 
-*comment “I heard a scream while I was walking home. Not very much happens here, so I decided to go check it out. You never know if it is something as simple as a mouse, or if someone has fallen. When I walked into the house, there was a body on the floor, I… I walked up to the body to see who it was… It was Lord Odel… I-I should have called the guards right then and there.” You look at the ground as you talk.
+“I heard a scream while I was walking home. Not very much happens here, so I decided to go check it out. You never know if it is something as simple as a mouse, or if someone has fallen. When I walked into the house, there was a body on the floor, I… I walked up to the body to see who it was… It was Lord Odel… I-I should have called the guards right then and there.” You look at the ground as you talk.
 
-*comment “Then what happened?”
+“Then what happened?”
 
-*comment (Chased the murderer)
+“I saw the murderer leave through the back door, and without thinking I ran after him. I must have stepped in the pool of blood. When I got out of the house I saw him go down an alleyway, I know these alleys like the back of my hand. I knew that the right after the one he ran into connected. So… I ran into that alley and cut him off. I managed to grab his arm and caught a quick look at him. After that the guards came to arrest me.”
 
-*comment “I saw the murderer leave through the back door, and without thinking I ran after him. I must have stepped in the pool of blood. When I got out of the house I saw him go down an alleyway, I know these alleys like the back of my hand. I knew that the right after the one he ran into connected. So… I ran into that alley and cut him off. I managed to grab his arm and caught a quick look at him. After that the guards came to arrest me.”
+“What did he look like?” Rip asks.
 
-*comment “What did he look like?” Rip asks.
+“I didn’t get a good look at them, but they had a scar across their eye.” You look up at Rip and he hums.
 
-*comment “I didn’t get a good look at them, but they had a scar across their eye.” You look up at Rip and he hums.
+*if CH4_murderer =  "cutOff"
+“I saw the murderer leave through the back door. Without thinking I went through the front door and ran in the direction I saw him go in. However, I couldn’t find him anywhere. When I stopped to catch my breath the guards caught me.”
 
-*comment (Lost the murderer)
+“He probably jumped over a wall or blended in with the crowd if you didn’t know what you were looking for,” Rip explains.
 
-*comment “I saw the murderer leave through the back door, and without thinking I ran after him. I must have stepped in the pool of blood. When I got out of the house I saw him go down an alleyway. I used to play in these alleys a lot as a kid and thought I knew which one it connected with. I was wrong, I went down the alley right before it and it ended in a dead end. The guards caught me before I could fix my mistake.”
+*if CH4_murderer =  "leave"
 
-*comment Rip hums in response.
+“I heard a scream coming from a house, so I… decided to leave the area. Nothing good ever happens when you get involved with something you don’t have anything to do with. I was walking away from the scream, keeping a look out for a guard, when someone bumped into me. I didn’t realize at the time it was the murderer. He took my (ITEM) and gave me the murder weapon. While I was confused, the guards grabbed me.”
 
-*comment (Tried to cut off the murderer)
-*comment “I saw the murderer leave through the back door. Without thinking I went through the front door and ran in the direction I saw him go in. However, I couldn’t find him anywhere. When I stopped to catch my breath the guards caught me.”
-
-*comment “He probably jumped over a wall or blended in with the crowd if you didn’t know what you were looking for,” Rip explains.
-
-*comment (Ignored the scream, Rip rep--)
-
-*comment ‘“I heard a scream coming from a house, so I… decided to leave the area. Nothing good ever happens when you get involved with something you don’t have anything to do with. I was walking away from the scream, keeping a look out for a guard, when someone bumped into me. I didn’t realize at the time it was the murderer. He took my (ITEM) and gave me the murder weapon. While I was confused, the guards grabbed me.”
-
-*comment Rip hums in disapproval.
+Rip hums in disapproval.
 *page_break
 
 “That does explain some things. You don’t seem like the murdering type and to pull something like that off requires a lot of planning. They made you take the blame so they could get away.” Rip looks straight in front of him.

@@ -41,7 +41,7 @@ Cel pauses for a few seconds, and then puts on a reassuring look.
     #“I’m sure you’re just glad to have sheep to help around the temple… ”
         
         Your words catch Cel completely off guard, but the expression she makes isn’t one of anger. Failing to hold back a frown, she looks away from your gaze.
- *page_break
+*page_break
  
  Cel slowly lays down, clearly not used to being awake this late into the night. You’ve heard that the dedicated of Sigil’s followers wake up with the sun. Of course, you’ve never gotten the chance to ask anyone if that’s true, but you suppose now you’ll have your answer.
  

@@ -36,7 +36,7 @@ The trees had become taller, their trunks growing nearly side by side. The thick
     Reese drags you over to a stump on the ground and proclaims “You win! You get to stand on the stump of victory!”
 *else
     Just as your dramatic sword fight was nearing its end, Reese managed to knock your branch out of your hand with a quick strike of their trusty weapon. They leaped up on a nearby stump, raising their branch to the sky with a wide smile on their face. 
-
+    
     “Ha! I won! I’m the best swordsman this town has ever seen!”
 
 You roll your eyes in a big dramatic way. It's enough to miss what happened next. 
@@ -60,13 +60,14 @@ You charge forward, shouting and yelling with the branch held high above your he
     # Rush toward the beast to tackle it.
         *comment TODO: Increment some Brawn sub-attribute
         Something in your mind snaps into focus. You throw away the branch and charge at the jackaloid with a wild battle cry. Both the monster and Reese turn when they hear you, and in a flash of movement, you collide with the jackaloid. Instinctually, you drive your shoulder into its chest, the feeling startling close to play tackling your friend. The beast, now that you're closer, isn’t much larger than yourself. 
-
+        
         The two of you go flying back. The jackaloid clearly wasn’t expecting to be confronted like this and is quickly swept up in your tackle. It yelps as all its long limbs begin wildly waving. You both fall right next to a large rock. 
-
-        Your mind is almost scrambling to catch up with what your body is doing. You never would have guessed that you would react this way in such a dire situation.         
+        
+        Your mind is almost scrambling to catch up with what your body is doing. You never would have guessed that you would react this way in such a dire situation.
+        
         *page_break
-
-        Before you know it, the heavy rock is in your hands. You think about slamming it down on the creature's face, only to realize you’ve already done that twice so far. The jackaloid yelps in pain, but it's not done yet. A large clawed hand comes up, ready to swipe at your face. 
+        
+        Before you know it, the heavy rock is in your hands. You think about slamming it down on the creature's face, only to realize you’ve already done that twice so far. The jackaloid yelps in pain, but it's not done yet. A large clawed hand comes up, ready to swipe at your face.
         
         Suddenly, you’re jerked back. Reese had grabbed you by your collar and pulled you away before the blow could land. 
         
@@ -84,7 +85,8 @@ You charge forward, shouting and yelling with the branch held high above your he
         
         You follow their path with your eyes and see it. An active beehive is clinging to a branch that is bent so severely due to the weight, it looks like it would snap at any moment. You quickly pick up your branch again and hurry over. 
         
-        The hum of the buzzing bees is unnerving. There’s so many, more than enough to completely cover your body from head to toe. It’s a good thing that the jackaloid is roughly the same size as you.        
+        The hum of the buzzing bees is unnerving. There’s so many, more than enough to completely cover your body from head to toe. It’s a good thing that the jackaloid is roughly the same size as you.
+        
         *page_break
         
         “Get ready to run!” you shout. 
@@ -104,10 +106,10 @@ You charge forward, shouting and yelling with the branch held high above your he
 As you get closer to town, you hear a voice in the forest. A low, grumbling voice, most likely a human. Do you follow? 
 
 *choice
-     # Yes
+    # Yes
         *set CH2_followed_voice true
         *goto CH2_Affirm
-     # No
+    # No
         *set CH2_followed_voice false
         *goto CH2_Reffuse
 
@@ -122,12 +124,15 @@ There doesn’t seem to be an easy path to get to him. One path has a steep drop
         You help Reese sit on the edge of the drop and check what is at the bottom of the drop. It looks to be just dirt and leaves scattered about. You jump down and help your friend down. They stagger, but you catch them and help them back to their feet.
         
         You both return to running towards the person.
+        
     # The root path looks the safest, all you need to do is avoid tripping. (Agility++)
         “Watch your step,” you tell your friend as you both begin running down the rooted path. 
         
         As the two of you are running, Reese screams out as their good foot gets caught on a root and they begin to fall down. You quickly catch your balance and help Reese get back up and continue down the path. 
+        
     # This isn’t your first time in the forest, you know how to avoid getting caught. (Cunning++)
         The two of you run down the path of the mockguardens. You make sure you stay on the closer side of the plants. This way Reese has less of a chance to run into them and you can keep an eye out. 
+        
         A rabbit jumps along the path and gets sucked into the ground. You briefly look away and make sure to avoid that spot.
 
 You burst through the trees with your friend trailing behind you, startling the man so much he nearly falls over. 
@@ -193,6 +198,7 @@ Reese’s eyes don’t leave yours. Not for a second.
         “I’ll see you soon.” you promise. Reese nods, a tentative smile on their face. It looks so strange with the tear tracks on their cheeks. 
         
         Without having the courage to say anything else, you turn and begin hurrying home.
+        
         *page_break
         
         You reach town in a bit of a haze and end up bumping into one of your neighbors. They begin to scold you, but it quickly turns into worry when they see the state of you. You’re passed off from one adult to another, each one trying to get you to speak. You don’t have the courage to say what you need to say more than once, so you wait to open your mouth until you find Reese’s parents. You spot them at the same time as you see your parents. 
@@ -202,6 +208,7 @@ Reese’s eyes don’t leave yours. Not for a second.
         “I want to see Reese before… before it’s time.” you say quietly. Your mother runs her fingers through your hair.
         
         “I know, my darling. We’ll speak with their parents. We… we want you to be able to say goodbye.”
+        
         *page_break
         
         The request comes too late. Reese is gone in a matter of days. Your last promise to them was broken.
@@ -209,8 +216,9 @@ Reese’s eyes don’t leave yours. Not for a second.
         The priest kept saying there was no hope. Later the guards, the healer, your parents and even Reese’s parents will all say there was nothing you could do. That you made the best choice you could have at that moment. 
         
         Their words won’t matter to you. All you know is loss and the stinging guilt that you hadn’t done enough. And now, you’ve lost your dearest friend.
+        
         *finish
-
+    
     # You try to help your friend
         You can’t tear your eyes away from Reese’s face. Less than an hour ago, you were both laughing and playing like nothing else mattered. You joked about the awful haircut his father had given him. They laughed at the crooked stitches on your shirt that you tried to fix yourself. The two of you planned out a wonderful future in mere minutes, talking about how you would become expert swordsman's traveling the world and protecting the innocent from harm. You talked about what it would be like to see magic, real magic, right in front of your eyes. 
         
@@ -223,8 +231,9 @@ Reese’s eyes don’t leave yours. Not for a second.
         “No! Stay back! It’s too dangerous!” he shouts. You ignore the priest and grab your friend’s hand. 
         
         You begin running once again, speeding away from the angry shouts of the priest. He may be older and stronger than you, but you're quicker than a rabbit along these familiar paths. It doesn’t take long to lose him. 
+        
         *goto CH2_Reffuse
-
+    
     # You continue to argue with the priest.
         “No!” You shout. “I-I don’t believe you. You’re lying! You have to be lying!”
         
@@ -237,24 +246,28 @@ Reese’s eyes don’t leave yours. Not for a second.
         “You have to trust me, child. I will make sure they’re taken care of. They’ll be comfortable–” 
         
         “No!” You stomp your feet on the hard packed ground. You feel like a toddler in the midst of a temper tantrum. “I’m not going with you. And you’re not going to take my friend away!”
+        
         *fake_choice
-            # You push against the priest. (Brawn++)
+            # You push against the priest.
                 *comment TODO: Increment some Brawn sub-attribute
                 You put your entire weight into the priest and manage to get him off balance.
-            # You run around the priest (Agility++)
+                
+            # You run around the priest 
                 *comment TODO: Increment some Agility sub-attribute
                 You rush around the priest, when he tries to grab you, you move your arm away from him. He tries to take another step, but gets his foot caught on a root.
-            # You grab their bag of herbs (Cunning++)
+                
+            # You grab their bag of herbs
                 *comment TODO: Increment some Cunning sub-attribute
                 You pull on their bag of herbs at their waist. Stunned, the priest tries to back away from you and the rope on the bag breaks. You quickly open the bag and throw the herbs at the fact of the priest.
-        
+
         With the priest stunned you run over to your friend. You fling your arms out and stand between him and Reese. 
         
         “You are making this harder than it should be. Come here, child! It's early, but the disease could still spread. Be careful–”
         
         “No!” you shout. “We’re going to town. Together!”
+        
         *page_break
-
+        
         “Don’t be foolish! I am sorry, but a jackaloid bite is terribly dangerous. We don’t have the means to treat it here.” The priest stepped forward, his arms open. “I promise that your friend will be well taken care of here.” 
         
         “So we’ll leave this town! We’ll go to the next town or-or we’ll find a temple or…or someone with magic! I’ll find a way to save Reese!” 
@@ -264,8 +277,9 @@ Reese’s eyes don’t leave yours. Not for a second.
         Your chest aches with each heavy beat of your heart. You can hear your pulse in your ears and taste sweat on your tongue. But you can’t back down, you can’t move. You can’t let this man take you away from your friend. 
         
         There’s a sharp snap of a branch breaking behind you. The priest’s gaze darts swiftly to the side and you watch as all the color rapidly drains from his face. Your curiosity gets the better of you, and as you turn to look, all the sudden you’re yanked forward into the priest's arms, your nose crushed against his chest. 
+        
         *page_break
-
+        
         You shout, wriggling in the man’s grasp as Reese cries out in pain once again.
         
         “Let me go!” You scream. You fight to break free with all your might. 
@@ -273,8 +287,9 @@ Reese’s eyes don’t leave yours. Not for a second.
         “W-we have to go. Now!” The priest begins to drag you away.
         
         The pure fear in the man’s voice sends a jolt of panic through you. Instead of continuing to fight, you focus on spinning around in the man’s arms to see what scared him. You wish you hadn’t. 
+        
         *page_break
-
+        
         The image of your friend's face will stay with you for years to come. The wide eye panic that contorts their once familiar face into something only seen in nightmares. Their mouth open wide in a horrendous scream, a gaping maw of raw pain and terror. All of this, splashed with bright red blood. It’s the most vibrant color you’ve ever seen in your life. It's something you’ll never forget. 
         
         The creature had followed you. Maybe you were  too slow when running away. Maybe your shouts at the priest drew it to you. No matter the cause, the jackaloid came back to finish what it started and it wasn’t going to be beaten back this time. 
@@ -282,6 +297,7 @@ Reese’s eyes don’t leave yours. Not for a second.
         You stared, unblinking, as the jackaloid clamped down on Reese’s neck. The priest had quickly given up on trying to get you to run and had picked you up instead. He tossed you over his shoulder and began running towards town with the type of reckless abandon only a man running for his life had. 
         
         Your eyes stayed focused on the spot you last saw your friend. You didn’t look away for a long time. 
+        
         *finish
     
 
@@ -314,7 +330,7 @@ Reese suddenly fell to the ground, exhausted. The mercenary quickly knelt down, 
 
 *choice
     # You refuse, wanting to stay with your friend
-        ““N-no! I don’t want to leave them. Please, don’t make me leave.” Your voice shakes as you practically beg this stranger. The mercenary looks back and forth from you Reese. She mutters something under her breath and stands. 
+        “N-no! I don’t want to leave them. Please, don’t make me leave.” Your voice shakes as you practically beg this stranger. The mercenary looks back and forth from you Reese. She mutters something under her breath and stands. 
         
         “Put pressure on the wound.” she orders. “What attacked you two, anyway?”
         
@@ -325,8 +341,9 @@ Reese suddenly fell to the ground, exhausted. The mercenary quickly knelt down, 
         Reese nods as they pull their shirt over their mouth and nose. You do the same. 
         
         “It's probably too soon for you to be contagious, but we can’t take any risks. I’ll be back. Stay here.'' With that, the mercenary takes off in a sprint. She begins shouting for help, yelling that two children have been attacked, and causing a ruckus as she goes. You watch as lanterns begin filling the streets. Some begin to head towards you. 
+        
         *page_break
-
+        
         “Help is coming soon.” You say quietly. You want to comfort your friend, to let them know that everything is going to be okay, but the words escape you.
         
         “…I want my mom.” Reese says quietly.
@@ -338,8 +355,9 @@ Reese suddenly fell to the ground, exhausted. The mercenary quickly knelt down, 
         You feel a dry lump in your throat. You answer the only way you can. “Of course you are. We… we’re going to become great swordsmen, remember? I can’t do that without you.”
         
         Even though you can’t see it, you know that Reese is smiling. Their pale, sweaty face looks almost normal in the last warm rays of the day. It's easy to pretend that it had been a normal day. That the two of you ventured off into the forest and just played in the cool shade for hours. 
+        
         *page_break
-
+        
         Next, you would have hurried home before the street lanterns were lit. Your mother would nag you about how late you were out and you’d look over your shoulder to see Reese getting the same scolding. They’d make a funny face as soon as their mother turned her back that would make you laugh. 
         
         And then, you’d do it all again the next day, and the day after that as well. One perfect summer day that was supposed to repeat itself until the fall came. And then there’d be leaf piles to jump in, new crops to plant and traders to see. 
@@ -349,18 +367,21 @@ Reese suddenly fell to the ground, exhausted. The mercenary quickly knelt down, 
         All your life, the seasons have come and gone much the same. However, it had never been boring. You always had Reese by your side. Sharing in the simple joys of life with a smile and a streak of playful mischief. 
         
         You can’t imagine facing another season, another day, without them. You refuse to.
-
+        
         *comment FIXME: This is bad, the options should not be this long. 
         *fake_choice
+            
             # “You’re my best friend, Reese. We have so much more to do together. We still need to finish that path we were creating.” 
                 *comment TODO: Increment some Agility sub-attribute
+                
             # “You’ll get through this and we’ll go on another adventure. Remember? We planned to visit Greenpeak with our parents. They needed us to help transport something.”
                 *comment TODO: Increment some Brawn sub-attribute
+                
             # “You better. Who else will I get in trouble with? We still need to plan our next trick.”
                 *comment TODO: Increment some Cunning sub-attribute
-
+                
         “You’re my best friend, Reese. We have so much more to do together.”  
-
+        
         Reese lets out a huff, almost like a laugh. They grasp your hand tightly and quickly blink away tears. 
         
         Suddenly, a rush of people swarm around you. All of them are familiar faces of the people in town. They’re all talking over each other, shouting over their shoulders and quickly covering their facing when they notice you’ve done the same. You can’t tell if they’re saying anything to you, it’s all so loud. Reese grabs your hand and squeezes. 
@@ -368,6 +389,7 @@ Reese suddenly fell to the ground, exhausted. The mercenary quickly knelt down, 
         “Move out of the way!” The mercenary’s voice parts the crowd easily. Behind her, a town guard with a large pack comes rushing through. 
         
         From there, everything feels like a blur. 
+        
         *page_break
         
         Reese is quickly assessed and then bundled up in a blanket. You’re forced to let go of their hand. 
@@ -383,8 +405,9 @@ Reese suddenly fell to the ground, exhausted. The mercenary quickly knelt down, 
         “--it’s alright, they’ll be alright. We need to get you home.” 
         
         You recognize the voice. “Dad…?”
+        
         *page_break
-
+        
         Your father rubs your back as he pushes through the crowd. “You scared me half to death. A-are you hurt? We need to–I need to find your mother. Ah, where is she…” 
         
         “Dad, is Reese going to be okay?” 
@@ -394,8 +417,9 @@ Reese suddenly fell to the ground, exhausted. The mercenary quickly knelt down, 
         “It was an accident, dad. We’ve been that far in the forest before and nothing happened. Why… why did something happen now?” You clutch onto your father who bears your weight like you were still a small child. You didn’t realize how long it’s been since he carried you like this. 
         
         “I don’t know, dear. I don’t know.” 
+        
         *page_break
-
+        
         When you get home, both your parents hold you for what feels like hours. Your mother checks you over for any wounds, treating the scraps on your knees after making you a hot bath. You fall asleep in the middle of their bed, afraid to spend any time alone after the harrowing day you had. 
         
         As the days go by, Reese’s house is noticeably empty. You ask your mother and she tells you that your friend and their parents are staying at the barracks to be close to the medic. Reese had a fever that needed to be watched. 
@@ -407,6 +431,7 @@ Reese suddenly fell to the ground, exhausted. The mercenary quickly knelt down, 
         Over a month later, your father sits you down and tells you that Reese is gone. They couldn’t beat the fever. 
         
         You don’t know how you reacted. You don’t remember it. All your fears and sorrows consumed you in that moment, creating a void in your memory. When you finally came to, exhaustion wracked your entire frame and your face felt sticky with tears. It took you a moment to realize that you were curled up on your parents bed, your head on your mothers lap. You stayed there for a long time. 
+        
         *finish
 
     # You listen to the woman and run to the barracks
@@ -425,36 +450,40 @@ Reese suddenly fell to the ground, exhausted. The mercenary quickly knelt down, 
         With one more quick look at your friend, you take off to the town. 
         
         You know the path to the barracks, but there is a lot of people on the path. You need to get there as quickly as possible.
+        
         *fake_choice
-            # I know a few side streets that will get me there. (Cunning++)
+            
+            # I know a few side streets that will get me there.
                 *comment TODO: Increment some Cunning sub-attribute
                 You run through the streets until you see an alleyway. You and Reese have used this alley many times to hide and get away from trouble. You know it like the back of your hand. 
                 
                 While you are running, you pass by Old Man Herbert. He grabs at your atm.
                 
                 “Where do you think you’re going? You still haven’t fixed the mess you and your friend had created!”
-            # It is not the safest, but Reese helped me make a pathway through town (Agility++)
+            # It is not the safest, but Reese helped me make a pathway through town.
                 *comment TODO: Increment some Agility sub-attribute
                 You run across the bridges you and Reese created on the roofs of sturdy buildings. They aren’t the most sturdy of bridges, but they do in a pinch.
                 
                 After you jump down to a balcony, an old man grabs you by the arm. 
                 
                 “I thought I told you two to stop it with the bridges! It is not safe to be running across rooftops.
-            # I don’t have time for this, I will run through the crowd. (Brawn++)
+                
+            # I don’t have time for this, I will run through the crowd.
                 *comment TODO: Increment some Brawn sub-attribute
                 You run recklessly, tripping over uneven stones and nearly bowling over a small child in your hast. People yell at you to slow down, but you don’t even spare them a glance. One man, a grumpy grandpa with a limp, snatches your arm and pulls you to an abrupt stop. 
                 
                 “Watch where you’re going! You could have knocked me over!”
-
+                
         You try and pull your arm out of his grasp, but his wiry long fingers are surprisingly strong. “Let me go! I need to get to the barracks!” you shout. 
-
+        
         “Whoa whoa, hold on kid. I don’t care where you’re going. You need to apologize–”
-
+        
         “Reese is hurt! I-I need to get to the medic!”  
-
+        
         The old man is finally startled enough to let go and you take off without looking back.
+        
         *page_break
-
+        
         The barracks is one of the few buildings in town that is always buzzing with activity. They’re always prepared for something to go wrong. 
         
         You don’t waste anytime asking for help, shouting as soon as you see one of the guards lingering outside. 
@@ -468,8 +497,9 @@ Reese suddenly fell to the ground, exhausted. The mercenary quickly knelt down, 
         You nod quickly. “M-my friend, Reese. We were playing in the forest a-and a j-jackloid attacked them.”
         
         The medic’s eyes widened. He stood quickly. “Take me to them.” 
+        
         *page_break
-
+        
         The run back to Reese was far less crowded than before. You couldn’t figure out why until you noticed the bobbing lantern lights all converging towards the spot just out of town where you left Reese and the mercenary. You started running faster. 
         
         As you got closer, you shouted at all the adults to move. Instead, you ran almost headlong into a wall of bodies. You pushed and shoved your way through the crowd, begging them to let you through. Behind you, the medic began yelling for everyone to move out of the way. Their authority eventually spurred the crowd into moving. 
@@ -477,8 +507,9 @@ Reese suddenly fell to the ground, exhausted. The mercenary quickly knelt down, 
         The mercenary was still kneeling next to Reese, who looked even more pale surrounded by so many people. Before you had a change to comfort them, the medic rushed past you and blocked your view. 
         
         In the whirlwind of adrenaline, you didn’t even notice your father break out from the crowd. Hands grasped your shoulders, pulling you in a tight hug. You squirm for a moment, but quickly hug him back just as tightly. When you turn back to the scene, Reese is being lifted into the medic’s arms. 
+        
         *page_break
-
+        
         “W-wait!” you reachout, not really knowing why you need them to stay, why you need to see your friend so desperately at this moment.
         
         “No! I need to go with them!” you shout. 
@@ -498,13 +529,15 @@ Reese suddenly fell to the ground, exhausted. The mercenary quickly knelt down, 
         “It was an accident, dad. We’ve been that far in the forest so many times before and nothing happened. Why… why did something happen now?” You clutch onto your father who bears your weight like you were still a small child. You didn’t realize how long it’s been since he carried you like this. 
         
         “I don’t know, dear. I don’t know.” 
+        
         *page_break
-
+        
         When you get home, both your parents hold you for what feels like hours. Your mother checks you over for any wounds, treating the scraps on your knees after making you a hot bath. You fall asleep in the middle of their bed, afraid to spend any time alone after the harrowing day you had. 
         
         As the days go by, Reese’s house is noticeably empty. You ask your mother and she tells you that your friend and their parents are staying at the barracks to be close to the medic. Reese had a fever that needed to be watched. 
+        
         *page_break
-
+        
         More days pass, and eventually, weeks. The house stays empty. 
         
         Everyone in town knows what happened to the two of you. The lady mercenary had left the same night she helped you, and three days later brought her group with her to hunt the beast. They cleared the forest, making sure that any packmates the jackaloid had were also found and taken care of. The forest was safe once again, but the sight of it sent a chill down your spine that you were unused too. 
@@ -512,8 +545,9 @@ Reese suddenly fell to the ground, exhausted. The mercenary quickly knelt down, 
         Over a month later, your father sits you down and tells you that Reese is gone. They couldn’t beat the fever. 
         
         You don’t know how you reacted. You don’t remember it. All your fears and sorrows consumed you in that moment, creating a void in your memory. When you finally came too, exhaustion wracked your entire frame and your face felt sticky with tears. It took you a moment to realize that you were curled up on your parents bed, your head on your mothers lap. You stayed there for a long time. 
+        
         *page_break
-
+        
         “I don’t remember the last thing I said to them.” You whisper to the fabric of your mothers skirts.
         
         “What was that, honey?”
