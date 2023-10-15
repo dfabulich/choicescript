@@ -38,13 +38,13 @@
 *create implicit_control_flow true
 
 *comment ///////// User-facing Globals /////////
-*create name "???"
-*create gender "???"
+*create name "Onyx"
+*create gender "Other"
 *create faction "None"
 *create item "murder_weapon"
 *create bought "None"
 *create coin 0
-*create puppy_name "???"
+*create puppy_name "Luna"
 
 *comment ///////// Story Globals /////////
 
@@ -130,6 +130,8 @@ What chapter?
           *goto_scene chapter3
        #Chapter 4
           *goto_scene chapter4
+      #Back
+          *goto GAMESTART
   #Phase 2
       These chapters are in an alpha state, Some systems may not be implemented
       
@@ -167,7 +169,19 @@ What chapter?
                   #Chapter 7 D
                       *set faction "divine"
                       *goto_scene chapter7
+                  #Back
                       *goto GAMESTART
 
   #TEMP: Combat Test
       *goto_scene combat_test
+  #New Chapters
+      *fake_choice
+          #Chapter 5 D
+              *set faction "divine"
+              *goto_scene chapter5
+          #Chapter 7 D
+              *set faction "divine"
+              *goto_scene chapter7
+          #Back
+              *goto GAMESTART
+      

@@ -28,12 +28,12 @@ Cel pauses for a few seconds, and then puts on a reassuring look.
 “You’ve been understandably tense since I met you, but really, you are safe now…”
 
 *fake_choice
-    #“I’m (Player_Name), of… The opposite end of this village...”
+    #“I’m ${name}, of… The opposite end of this village...”
         Cel frowns for a moment
         
         “I see… I’m so sorry…” she apologizes, not having done anything wrong.
 
-    #“(Player_Name). My name is (Player_Name). Thank you again for helping me…”
+    #“${name}. My name is ${name}. Thank you again for helping me…”
         “Of course. Those men had no right, putting you in a cell like that…”
         
         You consider how obvious it was to both her and the other person that visited you that you hadn’t done anything. With that in mind, she probably has a point.
@@ -43,9 +43,11 @@ Cel pauses for a few seconds, and then puts on a reassuring look.
         Your words catch Cel completely off guard, but the expression she makes isn’t one of anger. Failing to hold back a frown, she looks away from your gaze.
 *page_break
  
- Cel slowly lays down, clearly not used to being awake this late into the night. You’ve heard that the dedicated of Sigil’s followers wake up with the sun. Of course, you’ve never gotten the chance to ask anyone if that’s true, but you suppose now you’ll have your answer.
+Cel slowly lays down, clearly not used to being awake this late into the night. You’ve heard that the dedicated of Sigil’s followers wake up with the sun. Of course, you’ve never gotten the chance to ask anyone if that’s true, but you suppose now you’ll have your answer.
+
+You try to look on the bright side, if even a little, but, unable to shake off that terrible series of events, you take a look at the contents of your inventory…
  
- *if item = "dagger"
+*if item = "dagger"
           You pull out your dagger. It feels like so long ago that you got it… Would Cel keep helping you if she found it on your person? You don’t know enough to say, but you decide to…
           *fake_choice
               #Hide the dagger
@@ -67,17 +69,17 @@ Cel pauses for a few seconds, and then puts on a reassuring look.
                   
                   Cel doesn’t wait for your response; she gets back into sleeping position as quickly as she sat up. You guess she doesn’t mind…
                   
-*else if item = "bread"
+*elseif item = "bread"
     You turn over the bundle of bread in your hands. Bread… that’s what you got into this mess over, huh?
     
     As you feel your stomach rumble, the bread looks quite appetizing, but… You can’t possibly know how long tomorrow’s journey will be. Better to save it…
 
-*else if item = "book"
+*elseif item = "book"
     You look over the book in your hands. What even was this book? In all the chaos since you bought it, you’re not sure if you even got the chance to read it…
     
     You decide to turn through the pages of “The Flora and Fauna of Teren” until you’re tired enough to stop.
     
-*else if item = "murder_weapon"
+*elseif item = "murder_weapon"
     The knife is covered in intricate designs. Of course you kept it; you ought to get something in return for what you’ve been through.
     
 *page_break
@@ -100,38 +102,38 @@ The journey begins as soon as the two of you reach the end of town. You begin to
 
 Once you’ve boarded the carriage, you…
 
-*fake_choice
-    #Quietly await your destination….
-    *if CH3_ending = "good" #Ask Cel if it would be at all possible to check in on some old friends
-        Yes, that’s right; all those years ago, you helped out a druid enclave in this forest. Throughout the rest of your childhood, you tried to keep a habit of talking to them, though you’ve seen them less and less as you’ve gotten older…
-        
-        It seems that they’re the only ones you’ll be able to say goodbye to now, so you decide to make yourself heard.
-        
-        *page_break
-        
-        “Cel? Would it be possible for us to make a stop somewhere?” you ask.
-        
-        She looks up from her text and raises an eyebrow.
-        
-        “Well, I don’t see why we wouldn’t be able to, but… Is there a reason?”
-        
-        “I have some history with a druid enclave further down the road; figured I ought to say goodbye while I can” you explain.
-        
-        Cel ponders for a moment, but only a moment, before giving you a smile.
-        
-        “Well, I don’t see why not; just don’t be too long.”
-        
-        *page_break
-        
-        She relays your directions to the carriage drive for a while, before you, through the carriage window, see the familiar trail. You walk out, finding your way to the same spring from all those years ago.
-        
-        *page_break
-        
-        Milva and the others swarm you as soon as the news has been broken. You have a tough time keeping your promise to Cel about not taking too long, but you try to be out of there sooner than later.
-        
-        The last thing Milva tells you is to try to come back some day. These druids have all but accepted you as one of them, which is quite the honor with them. You tell them that you’ll try your best.
-        
-        As you get back into the carriage, you feel glad that you got the chance to say goodbye to Milva and the others.
+*if CH3_ending = "good"
+    You asked Cel if you could visit some old friends.
+    
+    Yes, that’s right; all those years ago, you helped out a druid enclave in this forest. Throughout the rest of your childhood, you tried to keep a habit of talking to them, though you’ve seen them less and less as you’ve gotten older…
+    
+    It seems that they’re the only ones you’ll be able to say goodbye to now, so you decide to make yourself heard.
+    
+    *page_break
+    
+    “Cel? Would it be possible for us to make a stop somewhere?” you ask.
+    
+    She looks up from her text and raises an eyebrow.
+    
+    “Well, I don’t see why we wouldn’t be able to, but… Is there a reason?”
+    
+    “I have some history with a druid enclave further down the road; figured I ought to say goodbye while I can” you explain.
+    
+    Cel ponders for a moment, but only a moment, before giving you a smile.
+    
+    “Well, I don’t see why not; just don’t be too long.”
+    
+    *page_break
+    
+    She relays your directions to the carriage drive for a while, before you, through the carriage window, see the familiar trail. You walk out, finding your way to the same spring from all those years ago.
+    
+    *page_break
+    
+    Milva and the others swarm you as soon as the news has been broken. You have a tough time keeping your promise to Cel about not taking too long, but you try to be out of there sooner than later.
+    
+    The last thing Milva tells you is to try to come back some day. These druids have all but accepted you as one of them, which is quite the honor with them. You tell them that you’ll try your best.
+    
+    As you get back into the carriage, you feel glad that you got the chance to say goodbye to Milva and the others.
 
 There’s something of a silence that seems to pervade in the carriage. There seems to be something on her mind and, evidently, you must look rather deep in thought too.
 
@@ -152,89 +154,94 @@ Would you like to talk about it? Well…
         
         You don’t give her a response; there seems to be a silent understanding between the two of you that says far more than anything either of you could speak out loud.
 
-    *if CH4_murderer = "caught" #Yes
-        “Well… there isn’t much to say. I heard a scream, I went inside, and I chased the man responsible.” you tell her
+    #Yes
         
-        “Chased? You mean…” she trails.
+        *if CH4_murderer = "caught" 
+            
+            “Well… there isn’t much to say. I heard a scream, I went inside, and I chased the man responsible.” you tell her
+            
+            “Chased? You mean…” she trails.
+            
+            “Yes, I saw him.”
+            
+            *page_break
+            
+            Cel is quiet for a minute, turning the thought over in her head. Left in anticipation, you await her thoughts.
+            
+            “Did you see his face?”
+            
+            “I did, yes.”
+            
+            *page_break
+            
+            More silence.
+            
+            Somewhat longer than before.
+            
+            What’s she thinking?
+            
+            *page_break
+            
+            “Please don’t seek him out… I’m sure it would be far more trouble than it could ever be worth…” she says, breaking her silence
+            
+            “So, you won’t let me pursue him?”
+            
+            “No… I hope you can forgive me for that.”
+            
+            The two of you sit in an awkward silence for the rest of the trip as you let that order set in.
 
-        “Yes, I saw him.”
-        
-        *page_break
-
-        Cel is quiet for a minute, turning the thought over in her head. Left in anticipation, you await her thoughts.
-        
-        “Did you see his face?”
-
-        “I did, yes.”
-        
-        *page_break
-        More silence.
-        
-        Somewhat longer than before.
-        
-        What’s she thinking?
-        
-        *page_break
-        
-        “Please don’t seek him out… I’m sure it would be far more trouble than it could ever be worth…” she says, breaking her silence
-        
-        “So, you won’t let me pursue him?”
-
-        “No… I hope you can forgive me for that.”
-        
-        The two of you sit in an awkward silence for the rest of the trip as you let that order set in.
-
-    *if CH4_murderer = "lost" #Yes
-        “Well… there isn’t much to say. I heard a scream, I went inside, and I chased the man responsible.” you tell her
-        
-        “Chased? You mean…” she trails.
-
-        “I wasn’t fast enough; I didn’t get a very good look at him.”
-        
-        *page_break
-        
-        Whatever tension had been building on Cel’s face quickly turns to relief.
-        
-        “Well, in a way, isn’t that a good thing? It would’ve been quite the weight on you if you had seen him…”
-
-        “Well… You could be right.”
-
-        Cel gives you a smile. This woman sure does smile and frown a lot, doesn’t she? That’s not a bad thing; it makes her a lot easier to figure out than others.
-        
-        *page_break
-        
-        “Well, since you didn’t see his face, that’s one less obstacle to putting all this behind you, isn’t it?” she asks.
-        
-        You look down for a moment, but quickly give her a nod. The two of you make occasional small talk for the rest of the trip.
-
-    *if CH4_murderer = "ignored" #Yes
-        
-        “Well… there isn’t much to say. I heard a scream, and tried to mind my own business…” you tell her.
-        
-        “Mind your own business? You mean you…”
-
-        “Yes, I tried to run.”
-        
-        *page_break
-        
-        She frowns for a moment, but quickly does away with it, putting on a more stern expression.
-        
-        “You shouldn’t blame yourself for that… I’m sure you were on your way to tell the guards, after all.”
-
-        “I was, but… Well, you know the rest. Bastard planted the murder weapon on me when I wasn’t even looking…”
-
-        “It truly is shameful what some people get up to…”
-        
-        “You’re telling me…”
-
-        The two of you keep relatively quiet for the rest of the trip, though you catch Cel glancing at you with worry every once in a while. From what little you’ve seen, you think she’d never be able to stop thinking about it if she were in the same situation…
+        *if CH4_murderer = "lost"
+            “Well… there isn’t much to say. I heard a scream, I went inside, and I chased the man responsible.” you tell her
+            
+            “Chased? You mean…” she trails.
+            
+            “I wasn’t fast enough; I didn’t get a very good look at him.”
+            
+            *page_break
+            
+            Whatever tension had been building on Cel’s face quickly turns to relief.
+            
+            “Well, in a way, isn’t that a good thing? It would’ve been quite the weight on you if you had seen him…”
+            
+            “Well… You could be right.”
+            
+            Cel gives you a smile. This woman sure does smile and frown a lot, doesn’t she? That’s not a bad thing; it makes her a lot easier to figure out than others.
+            
+            *page_break
+            
+            “Well, since you didn’t see his face, that’s one less obstacle to putting all this behind you, isn’t it?” she asks.
+            
+            You look down for a moment, but quickly give her a nod. The two of you make occasional small talk for the rest of the trip.
+            
+        *if CH4_murderer = "ignored"
+            
+            “Well… there isn’t much to say. I heard a scream, and tried to mind my own business…” you tell her.
+            
+            “Mind your own business? You mean you…”
+            
+            “Yes, I tried to run.”
+            
+            *page_break
+            
+            She frowns for a moment, but quickly does away with it, putting on a more stern expression.
+            
+            “You shouldn’t blame yourself for that… I’m sure you were on your way to tell the guards, after all.”
+            
+            “I was, but… Well, you know the rest. Bastard planted the murder weapon on me when I wasn’t even looking…”
+            
+            “It truly is shameful what some people get up to…”
+            
+            “You’re telling me…”
+            
+            The two of you keep relatively quiet for the rest of the trip, though you catch Cel glancing at you with worry every once in a while. From what little you’ve seen, you think she’d never be able to stop thinking about it if she were in the same situation…
 *page_break
 
-        Pretty soon, the carriage reaches its final destination. The last leg of the trip was up a little bit of an incline. If you had to guess, you’d say you were at the side of a mountain, which makes a bit of sense. You can tell that there’s a great view of the sun up here.
+Pretty soon, the carriage reaches its final destination. The last leg of the trip was up a little bit of an incline. If you had to guess, you’d say you were at the side of a mountain, which makes a bit of sense. You can tell that there’s a great view of the sun up here.
 
-        You get out of the carriage, and are met with a handful of people, who you assume are also a part of this temple.
+You get out of the carriage, and are met with a handful of people, who you assume are also a part of this temple.
 
-        One of them, a fellow on the much, much older side, gives you a bow.
+One of them, a fellow on the much, much older side, gives you a bow.
+
 *fake_choice
     #Bow back
         You’re not completely sure what this gesture means, but you’d have to imagine it’s something devotees of Sigil do as a greeting. 
@@ -316,15 +323,15 @@ The temple is rather large, so you get your own room. You don’t know anyone to
 
 *fake_choice
     #Riva’s Room
-        *set P2M_roommate = "Riva"
+        *set P2M_roommate "Riva"
     #Ivy’s Room
-        *set P2M_roommate = "Ivy"
+        *set P2M_roommate "Ivy"
     #Winfred’s Room
-        *set P2M_roommate = "Winfred"
+        *set P2M_roommate "Winfred"
     #Berthold’s Room
-        *set P2M_roommate = "Berthold"
+        *set P2M_roommate "Berthold"
     
-You hope they’re a good neighbor…
+
 
 *page_break
 
@@ -495,7 +502,7 @@ Once you’re seated, you decide to get to know the people you’ll be living wi
     #No one
         *goto MC5StoryLoopEnd
     
-*goto MC5StoryLoop
+*goto DC5StoryLoop
 *label MC5StoryLoopEnd
 
 *page_break
@@ -665,7 +672,7 @@ Do you want to help Riva with her herbs?
         
         *page_break
         
-         **(Fight scene)**
+        **(Fight scene)**
 
         **(Cel gets injured)**
         
@@ -679,9 +686,11 @@ Do you want to help Riva with her herbs?
 
         You don’t bother waiting. You, supporting her as well as you can with your strength, get Cel back to the carriage. The driver immediately picks up on the situation, and rushes back to the temple. 
         
-        *goto ILC
+        *goto IVC
 
-    *if item = "book" #You’ll fight the ogre too. You decide to read the ogre chapter of “The Flora and Fauna of Teren” on the way to be ready.
+    *if (item = "book") #You’ll fight the ogre too.
+        
+        You decide to read the ogre chapter of “The Flora and Fauna of Teren” on the way to be ready.
         
         As soon as the four of you arrive at the town, you can tell what’s happened. Everything’s so silent. Of course, just like the book had recommended. the silence was a sign that everyone in the village was hiding from the ogres. Actually…
         
@@ -755,6 +764,7 @@ She sits up
 
 “Please sleep well…” she requests before leaving
 
+*return
 
 *label IVC
 
