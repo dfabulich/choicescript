@@ -39,6 +39,12 @@ function autotester(sceneText, nav, sceneName, extraLabels) {
     this.finished = true;
   };
 
+  Scene.prototype.save_checkpoint = function test_save_checkpoint() {};
+  Scene.prototype.restore_checkpoint = function test_restore_checkpoint() {
+    if (this.secondaryMode) throw new Error(this.lineMsg() + "The *restore_checkpoint command cannot used here. (Use *redirect_scene instead?)");
+    this.finished = true;
+  };
+
   Scene.prototype.page_break = function(buttonName) {
     this.finished = false;
     this.replaceVariables(buttonName);
