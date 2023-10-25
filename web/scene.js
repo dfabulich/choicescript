@@ -3458,16 +3458,18 @@ Scene.prototype.save_checkpoint = function saveCheckpoint(slot) {
     stat = "choice_saved_checkpoint";
   }
   if (this.secondaryMode) throw new Error(this.lineMsg() + "Cannot *save_checkpoint in " + this.secondaryMode + " mode");
-  var self = this;
-  this.skipFooter = true;
-  this.finished = true;
   this.stats[stat] = true;
   this.temps.choice_just_restored_checkpoint = false;
-  saveCookie(function () {
-    self.finished = false;
-    self.skipFooter = false;
-    self.execute();
-  }, slot, this.stats, this.temps, this.lineNum+1, this.indent, this.debugMode, this.nav);
+  if (!this.testPath) {
+    var self = this;
+    this.skipFooter = true;
+    this.finished = true;
+    saveCookie(function () {
+      self.finished = false;
+      self.skipFooter = false;
+      self.execute();
+    }, slot, this.stats, this.temps, this.lineNum + 1, this.indent, this.debugMode, this.nav);
+  }
 }
 
 Scene.prototype.restore_checkpoint = function restoreCheckpoint(slot) {
@@ -3475,7 +3477,7 @@ Scene.prototype.restore_checkpoint = function restoreCheckpoint(slot) {
   this.finished = true;
   this.skipFooter = true;
   var self = this;
-  if (this.secondaryMode) {
+  if (!this.testPath && this.secondaryMode) {
     if (this.secondaryMode === 'stats') {
       restoreCheckpointFromStats(function () {
         delete self.secondaryMode;
@@ -3497,12 +3499,15 @@ Scene.prototype.restore_checkpoint = function restoreCheckpoint(slot) {
     stat = "choice_saved_checkpoint";
   }
   if (!this.stats[stat]) {
+    var certainty = this.testPath ? " could fail; we might not have" : " failed; we haven't";
     if (slot === "checkpoint") {
-      throw new Error(this.lineMsg() + "Invalid *restore_checkpoint; we haven't saved a checkpoint");
+      throw new Error(this.lineMsg() + "*restore_checkpoint" + certainty + " saved a checkpoint. Use *if " + stat);
     } else {
-      throw new Error(this.lineMsg() + "Invalid *restore_checkpoint for slot " + slot + "; we haven't reached *save_checkpoint " + slot);
+      throw new Error(this.lineMsg() + "*restore_checkpoint for slot " + slot + certainty + " reached *save_checkpoint " + slot + ". Use *if " + stat);
     }
   }
+
+  if (this.testPath) return;
 
   var forcedStats = null;
   var forcedTemps = {choice_just_restored_checkpoint: true};
@@ -3923,6 +3928,10 @@ Scene.prototype.tokenizeExpr = function tokenizeExpr(str) {
                 str = str.substr(token.length);
                 pos += token.length;
                 var item = {name:tokenType.name, value:token, pos:pos};
+                if (this.testPath && tokenType.name === "VAR" && /^choice_saved_checkpoint/i.test(token)) {
+                  // handle choice_saved_checkpoint in quicktest
+                  this.stats[token.toLowerCase()] = true;
+                }
                 if ("WHITESPACE" == tokenType.name) {
                     break;
                 } else if ("CURLY_QUOTE" == tokenType.name) {
