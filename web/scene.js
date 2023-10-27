@@ -987,7 +987,7 @@ Scene.prototype.save = function save(slot) {
         tempStatWrites = {};
       }
 
-      saveCookie(function() {}, slot, this.stats, this.temps, this.lineNum, this.indent, this.debugMode, this.nav);
+      saveCookie(function() {}, slot, this.stats, this.temps, this.lineNum, this.indent);
     }
 };
 
@@ -3023,7 +3023,7 @@ Scene.prototype.restore_game = function restore_game(data) {
             clearScreen(function() {
               restoreGame(state, null, /*userRestored*/true);
             });
-          }, "", state.stats, state.temps, state.lineNum, state.indent, this.debugMode, this.nav);
+          }, "", state.stats, state.temps, state.lineNum, state.indent);
         }
       }
     });
@@ -3079,7 +3079,7 @@ Scene.prototype.restore_password = function restore_password() {
         // we're going to pretend not to be user restored, so we get reprompted to save
         restoreGame(state, null, /*userRestored*/false);
       });
-    }, "", state.stats, state.temps, state.lineNum, state.indent, this.debugMode, this.nav);
+    }, "", state.stats, state.temps, state.lineNum, state.indent);
   });
   if (alreadyFinished) printFooter();
 };
@@ -3270,7 +3270,7 @@ Scene.prototype.save_game = function save_game(destinationSceneName) {
                 self.screenEmpty = true;
                 self.execute();
               });
-            }, slot, saveStats, {choice_reuse:"allow", choice_user_restored:true, choice_restore_name:saveName.value}, 0, 0, false, self.nav);
+            }, slot, saveStats, {choice_reuse:"allow", choice_user_restored:true, choice_restore_name:saveName.value}, 0, 0);
           });
           return;
         }
@@ -3307,7 +3307,7 @@ Scene.prototype.save_game = function save_game(destinationSceneName) {
                   }
                 });
               });
-            }, slot, saveStats, {choice_reuse:"allow", choice_user_restored:true, choice_restore_name:saveName.value}, 0, 0, false, self.nav);
+            }, slot, saveStats, {choice_reuse:"allow", choice_user_restored:true, choice_restore_name:saveName.value}, 0, 0);
           });
         });
       });
