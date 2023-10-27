@@ -32,8 +32,8 @@ _global = typeof globalThis !== "undefined" ? globalThis : this;
   _global.isFile = /^file:/.test(url);
   _global.isXul = /^chrome:/.test(url);
   try {
-    _global.greenworks = require('greenworks');
-    _global.isGreenworks = true;
+    _global.steamworksApi = require('steamworks.js');
+    _global.isSteamworks = true;
   } catch (ignored) {}
   _global.isWinOldApp = false;
   try {
@@ -81,6 +81,12 @@ function callIos(scheme, path) {
   }, 0);
 }
 
+function callMac(scheme, path) {
+  if (typeof webkit !== "undefined" && webkit.messageHandlers) {
+    return webkit.messageHandlers.choicescript.postMessage([scheme, path]);
+  }
+}
+
 function safeCall(obj, fn) {
     if (!fn) return;
     var isHeadless = typeof window == "undefined";
@@ -107,11 +113,11 @@ function safeCall(obj, fn) {
             }
         } catch (e) {
             if (e.message) {
-              window.onerror(e.message, e.fileName, e.lineNumber, e.stack);
+              window.reportError(e.message, e.fileName, e.lineNumber, e.columnNumber, e);
             } else if (e.stack) {
-              window.onerror(e.stack, e.fileName, e.lineNumber, e.stack);
+              window.reportError(e.stack, e.fileName, e.lineNumber, e.columnNumber, e);
             } else {
-              window.onerror(toJson(e, '\n'));
+              window.reportError(toJson(e, '\n'));
             }
 
             if (window.console) {
@@ -301,18 +307,21 @@ function getRemoteEmail(callback) {
   xhrAuthRequest("GET", "getuser", callback);
 }
 
-function saveCookie(callback, slot, stats, temps, lineNum, indent) {
-    var value = computeCookie(stats, temps, lineNum, indent);
+function saveCookie(callback, slot, stats, temps, lineNum, indent, deleted, undeleted) {
+    var value = computeCookie(stats, temps, lineNum, indent, deleted, undeleted);
     return writeCookie(value, slot, callback);
 }
 
-function computeCookie(stats, temps, lineNum, indent) {
+function computeCookie(stats, temps, lineNum, indent, deleted, undeleted) {
   var scene = stats.scene;
   delete stats.scene;
   if (scene) stats.sceneName = scene.name;
   var version = "UNKNOWN";
   if (typeof(window) != "undefined" && window && window.version) version = window.version;
-  var value = toJson({version:version, stats:stats, temps:temps, lineNum: lineNum, indent: indent});
+  var obj = { version: version, stats: stats, temps: temps, lineNum: lineNum, indent: indent };
+  if (deleted) obj.deleted = deleted;
+  if (undeleted) obj.undeleted = undeleted;
+  var value = toJson(obj);
   stats.scene = scene;
   return value;
 }
@@ -618,7 +627,7 @@ function mergeRemoteSaves(remoteSaveList, recordDirty, callback) {
     fetchSavesFromSlotList(initStore(), localSlotList, 0, [], function(localSaveList) {
       var localSlotMap = {};
       for (var i = 0; i < localSlotList.length; i++) {
-        localSlotMap[localSlotList[i]] = 1;
+        localSlotMap[localSlotList[i]] = i;
       }
       var remoteSlotMap = {};
       for (i = 0; i < remoteSaveList.length; i++) {
@@ -628,8 +637,10 @@ function mergeRemoteSaves(remoteSaveList, recordDirty, callback) {
       for (i = 0; i < remoteSaveList.length; i++) {
         var remoteSave = remoteSaveList[i];
         var slot = "save"+remoteSave.timestamp;
-        if (!localSlotMap[slot]) {
-          saveCookie(null, slot, remoteSave.stats, remoteSave.temps, remoteSave.lineNum, remoteSave.indent);
+        saveCookie(null, slot, remoteSave.stats, remoteSave.temps, remoteSave.lineNum, remoteSave.indent, remoteSave.deleted, remoteSave.undeleted);
+        if (typeof localSlotMap[slot] !== 'undefined') {
+          localSaveList[localSlotMap[slot]] = remoteSave;
+        } else {
           localSlotList.push(slot);
           localSaveList.push(remoteSave);
           newRemoteSaves++;

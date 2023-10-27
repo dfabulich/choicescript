@@ -19,13 +19,14 @@ software distributed under the License is distributed on an
 either express or implied.
 -->
 <head>
+<meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 <meta name = "viewport" content = "width = device-width, initial-scale = 1.0, maximum-scale = 1.0">
 <!-- INSERT correct meta values -->
 <!-- <title>Multiple Choice Example Game | My First ChoiceScript Game</title> -->
 
 <script>window.version="UNKNOWN"</script>
-<script src="../version.js"></script>
+<script src="version.js"></script>
 <script src="../persist.js"></script>
 <script src="../alertify.min.js"></script>
 <script src="../util.js"></script>
@@ -49,9 +50,11 @@ var rootDir = "../";
 <div id="advertisement">
 </div>
 <div id="header">
-  <div id="identity"><a href="#" id="email">you@example.com</a><a href="#" id="logout">Sign Out</a></div>
+  <div id="identity"><a href="#" id="email" style="display: none">you@example.com</a>
+  <a href="#" onclick="logout(); loginDiv(); return false;" id="logout" style="display: none">Sign Out</a>
+  </div>
 
-  <h1 class="gameTitle"><!-- My First ChoiceScript Game --></h1>
+  <h1 id="title" class="gameTitle"><!-- My First ChoiceScript Game --></h1>
 <h2 id="author" class="gameTitle"><!--by INSERTINSERTINSERT --></h2>
 
   <p id="headerLinks">
