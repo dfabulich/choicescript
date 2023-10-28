@@ -150,6 +150,7 @@ return r;},version:'0.2.1',enabled:false};me.enabled=alive.call(me);return me;}(
       'iosStorage',
       'localChromeStorage',
       'androidStorage',
+      'indexed_db',
       'whatwg_db', 
       'localstorage',
       'globalstorage', 
@@ -454,6 +455,75 @@ return r;},version:'0.2.1',enabled:false};me.enabled=alive.call(me);return me;}(
           });
         }
       }
+    },
+
+    indexed_db: {
+      size: -1,
+      test: function() {
+        return window.indexedDB;
+      },
+      methods: {
+        promisifyRequest: function (request) {
+          return new Promise(function(resolve, reject) {
+            request.oncomplete = request.onsuccess = function() { resolve(request.result) };
+            request.onabort = request.onerror = function() { reject(request.error) };
+          });
+        },
+
+        init: function() {
+          var storeName = this.name;
+          var request = indexedDB.open('PersistJS');
+          request.onupgradeneeded = function () { return request.result.createObjectStore(storeName); };
+          var dbp = this.promisifyRequest(request);
+          this.getStore = function (txMode, callback) {
+            return dbp.then(function (db) {
+              return callback(db.transaction(storeName, txMode).objectStore(storeName));
+            });
+          };
+        },
+
+        get: function (key, fn, scope) {
+          scope = scope || this;
+          var self = this;
+          this.getStore('readonly', function(store) {
+            self.promisifyRequest(store.get(key)).then(function (val) {
+              fn.call(scope, true, val);
+            })
+          }).catch(function(error) {
+            console.error(error);
+            fn.call(scope, false);
+          })
+        },
+
+        set: function (key, val, fn, scope) {
+          scope = scope || this;
+          var self = this;
+          this.getStore('readwrite', function (store) {
+            store.put(val, key);
+            self.promisifyRequest(store.transaction).then(function () {
+              if (fn) fn.call(scope, true, val);
+            })
+          }).catch(function (error) {
+            console.error(error);
+            if (fn) fn.call(scope, false);
+          })
+        },
+
+        remove: function (key, val, fn, scope) {
+          scope = scope || this;
+          var self = this;
+          this.getStore('readwrite', function (store) {
+            store.delete(key);
+            self.promisifyRequest(store.transaction).then(function () {
+              if (fn) fn.call(scope, true);
+            })
+          }).catch(function (error) {
+            console.error(error);
+            if (fn) fn.call(scope, false);
+          })
+        },
+
+      },
     },
 
     // whatwg db backend (webkit, Safari 3.1+)

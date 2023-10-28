@@ -785,7 +785,9 @@ function initStore() {
   if (window.store) return window.store;
   try {
     window.store = new Persist.Store(window.storeName);
-  } catch (e) {}
+  } catch (e) {
+    console.error(e);
+  }
   return window.store;
 }
 function loadAndRestoreGame(slot, forcedScene) {
