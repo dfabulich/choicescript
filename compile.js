@@ -185,6 +185,14 @@ function compile(){
       }
     }
 
+    var csAuthor = "";
+    patt = /^\*author/i;
+    for (i = 0; i < scene["lines"].length; i++) {
+      if (patt.exec(scene["lines"][i])) {
+        csAuthor = scene["lines"][i];
+      }
+    }
+
     //if we have a title, set the <h1> and <title> tags to it
     if (csTitle != "") {
       patt = /^\*title[\s]+/i
@@ -195,6 +203,14 @@ function compile(){
       if (patt.exec(bottom)) bottom = bottom.replace(patt, "<h1 class='gameTitle'>" + csTitle + "</h1>");
       console.log("");
       console.log("Game title set to: " + csTitle);
+    }
+    if (csAuthor != "") {
+      patt = /^\*author[\s]+/i
+      csAuthor = csAuthor.replace(patt, "");
+      patt = /<h2.*>.*<\/h2>/i;
+      if (patt.exec(bottom)) bottom = bottom.replace(patt, '<h2 id="author" class="gameTitle">by ' + csAuthor + "</h2>");
+      console.log("");
+      console.log("Author set to: " + csAuthor);
     }
   
   var ifidLine = scene.lines.find(line => /^\*ifid/i.test(line));
