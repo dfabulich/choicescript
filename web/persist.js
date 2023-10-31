@@ -470,20 +470,24 @@ return r;},version:'0.2.1',enabled:false};me.enabled=alive.call(me);return me;}(
           });
         },
 
+        key: function (key) {
+          return esc(this.name) + esc(key);
+        },
+
         init: function() {
-          var storeName = this.name;
           var request = indexedDB.open('PersistJS');
-          request.onupgradeneeded = function () { return request.result.createObjectStore(storeName); };
+          request.onupgradeneeded = function () { return request.result.createObjectStore('PersistJS'); };
           var dbp = this.promisifyRequest(request);
           this.getStore = function (txMode, callback) {
             return dbp.then(function (db) {
-              return callback(db.transaction(storeName, txMode).objectStore(storeName));
+              return callback(db.transaction('PersistJS', txMode).objectStore('PersistJS'));
             });
           };
         },
 
         get: function (key, fn, scope) {
           scope = scope || this;
+          key = this.key(key);
           var self = this;
           this.getStore('readonly', function(store) {
             self.promisifyRequest(store.get(key)).then(function (val) {
@@ -497,6 +501,7 @@ return r;},version:'0.2.1',enabled:false};me.enabled=alive.call(me);return me;}(
 
         set: function (key, val, fn, scope) {
           scope = scope || this;
+          key = this.key(key);
           var self = this;
           this.getStore('readwrite', function (store) {
             store.put(val, key);
@@ -511,6 +516,7 @@ return r;},version:'0.2.1',enabled:false};me.enabled=alive.call(me);return me;}(
 
         remove: function (key, val, fn, scope) {
           scope = scope || this;
+          key = this.key(key);
           var self = this;
           this.getStore('readwrite', function (store) {
             store.delete(key);
