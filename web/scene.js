@@ -4794,7 +4794,11 @@ Scene.prototype.config = function config(data) {
 
 Scene.prototype.ifid = function ifid(id) {
   if (!/^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$/.test(id)) {
-    throw new Error(this.lineMsg() + "Invalid IFID. It should have five parts, like \"a0a0a0a0-a0a0-a0a0-a0a0-a0a0a0a0a0a0\: " + id);
+    var example = "a0a0a0a0-a0a0-a0a0-a0a0-a0a0a0a0a0a0";
+    try {
+      example = crypto.randomUUID();
+    } catch (e) {}
+    throw new Error(this.lineMsg() + "Invalid IFID. It should have five parts, like \""+example+"\": " + id);
   }
   if (!/^[A-F0-9\-]{36}$/i.test(id)) {
     throw new Error(this.lineMsg() + "Invalid IFID. It should contain only numbers, letters A-F, and dashes: " + id);

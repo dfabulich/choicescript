@@ -220,6 +220,10 @@ function compile(){
     top += `<meta property="ifiction:ifid" content="${ifid}" prefix="ifiction: http://babel.ifarchive.org/protocol/iFiction/">`;
   } else {
     console.log("WARNING: No *ifid. Refreshing the browser tab will erase all progress.");
+    try {
+      var example = crypto.randomUUID();
+      console.log("  You can use this randomized IFID: *ifid", example);
+    } catch (e) {}
   }
 
   //7.2 Create the allScenes object
