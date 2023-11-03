@@ -222,7 +222,7 @@ function compile(){
     console.log("WARNING: No *ifid. Refreshing the browser tab will erase all progress.");
     try {
       var example = crypto.randomUUID();
-      console.log("  You can use this randomized IFID: *ifid", example);
+      console.log("  You can use this randomized IFID: *ifid " + example);
     } catch (e) {}
   }
 
