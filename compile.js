@@ -216,7 +216,7 @@ function compile(){
   var ifidLine = scene.lines.find(line => /^\*ifid/i.test(line));
   if (ifidLine) {
     var ifid = ifidLine.replace(/^\*ifid\s+/i, "").toUpperCase();
-    top = top.replace('window.storeName = null;', `window.storeName = "${ifid}";`)
+    top = top.replace('window.storeName = null;', `window.storeName = "CS-${ifid}";`)
     top += `<meta property="ifiction:ifid" content="${ifid}" prefix="ifiction: http://babel.ifarchive.org/protocol/iFiction/">`;
   } else {
     console.log("WARNING: No *ifid. Refreshing the browser tab will erase all progress.");
