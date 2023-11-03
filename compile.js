@@ -7,8 +7,7 @@ var loadFailed = false;
 var rootDir;
 
 if (typeof process != "undefined") {
-  var outputFile = process.argv[2];
-  if (!outputFile) throw new Error("Specify an output file on the command line");
+  var outputFile = process.argv[2] || "output.html";
   rootDir = process.argv[3];
   if (rootDir) {
     rootDir += "/";
@@ -27,6 +26,7 @@ if (typeof process != "undefined") {
   load("headless.js");
   load(rootDir+"mygame/mygame.js");
   fs.writeFileSync(outputFile, compile(), "utf8");
+  console.log('Generated', path.resolve(outputFile));
 }
 
 if (!rootDir) rootDir = "web/";
