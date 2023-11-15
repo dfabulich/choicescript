@@ -4,13 +4,13 @@
 	<title>Randomtest</title>
 </head>
 <body>
-<p>Iterations: <input type="number" id="iterations" value="10000"></p>
-<p>Seed: <input type="number" id="seed" value="0"></p>
+<p>How many times would you like to run randomtest? <input type="number" id="iterations" value="10000"></p>
+<p>Starting seed number: <input type="number" id="seed" value="0"></p>
 <p><input type="checkbox" id="avoidUsedOptions" checked> <label for="avoidUsedOptions">Avoid used options (less random; finds bugs faster)</label></p>
-<p><input type="checkbox" id="showChoices" checked> <label for="showChoices">Show choices selected during game</p>
 <p><input type="checkbox" id="showText"> <label for="showText">Show full text during game</p>
+<p><input type="checkbox" id="showChoices" checked> <label for="showChoices">Show choices selected during game</p>
 <p><input type="checkbox" id="highlightGenderPronouns"> <label for="highlightGenderPronouns">Highlight gender pronouns</p>
-<p><input type="checkbox" id="showCoverage"> <label for="showCoverage">Show line coverage statistics after test</p>
+<p><input type="checkbox" id="showCoverage"> <label for="showCoverage">After the test, show how many times each line was used</p>
 <p><input type="checkbox" id="autoScroll"> <label for="autoScroll">Automatically scroll to the bottom</p>
 <p style="display:none"><input type="checkbox" id="recordBalance"> Record data for auto() balancing</p>
 <p id="uploadPrompt" style="display:none"><input type="file" id="uploadDirectory" webkitdirectory> "Upload" choicescript folder (including randomtest.html)</p>
