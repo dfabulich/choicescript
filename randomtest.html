@@ -47,7 +47,7 @@ setInterval(function() {
     };
     document.body.appendChild(frag);
     messages = [];
-    if (queryArgs.autoScroll) window.scroll(0,document.height);
+    if (autoScroll) window.scroll(0,document.scrollingElement.scrollHeight);
   }
 }, 100);
 
@@ -109,6 +109,7 @@ if (queryArgs.autoScroll) document.getElementById("autoScroll").checked = queryA
 if (queryArgs.recordBalance) document.getElementById("recordBalance").checked = queryArgs.recordBalance;
 
 var clicked = false;
+var autoScroll;
 document.getElementById("start").onclick = function() {
   if (clicked) return;
   clicked = true;
@@ -120,6 +121,7 @@ document.getElementById("start").onclick = function() {
   var showChoices = document.getElementById("showChoices").checked;
   highlightGenderPronouns = document.getElementById("highlightGenderPronouns").checked;
   var recordBalance = document.getElementById("recordBalance").checked;
+  autoScroll = document.getElementById("autoScroll").checked;
   var isFile = "file:" === window.location.protocol;
   if (isFile) {
     var numFiles = uploadDirectory.files.length;
