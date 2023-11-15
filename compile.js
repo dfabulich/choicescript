@@ -25,7 +25,8 @@ if (typeof process != "undefined") {
   load(rootDir+"util.js");
   load("headless.js");
   load(rootDir+"mygame/mygame.js");
-  fs.writeFileSync(outputFile, compile(), "utf8");
+  var {content} = compile();
+  fs.writeFileSync(outputFile, content, "utf8");
   console.log('Generated', path.resolve(outputFile));
 }
 
@@ -267,7 +268,7 @@ function compile(){
   //8. Reassemble the document (selfnote: allScenes object seems to cause issues if not in its own pair of script tags)
   console.log("Assembling new html file...");
   var new_game = top + "<script>" + scene_object + "<\/script><script>" + jsStore + "<\/script><style>" + cssStore + "</style>" + bottom;
-  return new_game;
+  return {content: new_game, title: csTitle};
 }
 
 function addFile(name) {

@@ -99,10 +99,12 @@ function doneLoading() {
 <script src=compile.js></script>
 <script>
 function finish(compiledResult) {
-	var blob = new Blob([compiledResult], {type: "text/html"});
+	var blob = new Blob([compiledResult.content], {type: "text/html"});
 	var bloburl = URL.createObjectURL(blob);
+	var title = compiledResult.title || 'output';
+	var fileName = title.replace(/[^a-zA-Z0-9\-]/g, '_') + '.html';
 	console.log("Export Complete!");
-	document.body.insertAdjacentHTML("beforeend", "Click <a download='mygame_complete.html' href='" + bloburl + "'>here</a> to download your compiled game.");
+	document.body.insertAdjacentHTML("beforeend", "Click <a download='"+fileName+"' href='" + bloburl + "'>here</a> to download your compiled game.");
 }
 var compiledResult = compile();
 if (compiledResult) finish(compiledResult);
