@@ -1669,6 +1669,9 @@ Scene.prototype.getVar = function getVar(variable) {
         throw new Error(this.lineMsg() + "This game is missing a *title command");
       }
     }
+    if (variable.startsWith("choice_saved_checkpoint")) {
+      return !!this.stats[variable];
+    }
     if ((!this.temps.hasOwnProperty(variable))) {
         if ((!this.stats.hasOwnProperty(variable))) {
             if (variable == "implicit_control_flow") return false;
@@ -3652,6 +3655,88 @@ Scene.prototype.stat_chart = function stat_chart() {
   this.screenEmpty = false;
 };
 
+Scene.prototype.save_checkpoint = function saveCheckpoint(slot) {
+  var stat;
+  if (slot) {
+    if (!/^[a-zA-Z0-9_]+$/.test(slot)) throw new Error(this.lineMsg() + "Invalid *save_checkpoint slot, must be only letters, numbers, and _ underscores: " + slot);
+    slot = slot.toLowerCase();
+    stat = "choice_saved_checkpoint_" + slot;
+  } else {
+    slot = "checkpoint";
+    stat = "choice_saved_checkpoint";
+  }
+  if (this.secondaryMode) throw new Error(this.lineMsg() + "Cannot *save_checkpoint in " + this.secondaryMode + " mode");
+  this.stats[stat] = true;
+  this.temps.choice_just_restored_checkpoint = false;
+  if (!this.testPath) {
+    var self = this;
+    this.skipFooter = true;
+    this.finished = true;
+    saveCookie(function () {
+      self.finished = false;
+      self.skipFooter = false;
+      self.execute();
+    }, slot, this.stats, this.temps, this.lineNum + 1, this.indent, this.debugMode, this.nav);
+  }
+}
+
+Scene.prototype.restore_checkpoint = function restoreCheckpoint(slot) {
+  var stat;
+  this.finished = true;
+  this.skipFooter = true;
+  var self = this;
+  if (!this.testPath && this.secondaryMode) {
+    if (this.secondaryMode === 'stats') {
+      restoreCheckpointFromStats(function () {
+        delete self.secondaryMode;
+        delete self.saveSlot;
+        self.restore_checkpoint(slot);
+      })
+      return;
+    } else {
+      throw new Error(this.lineMsg() + "Cannot *restore_checkpoint in " + this.secondaryMode + " mode");
+    }
+  }
+
+  if (slot) {
+    if (!/^[a-zA-Z0-9_]+$/.test(slot)) throw new Error(this.lineMsg() + "Invalid *restore_checkpoint slot, must be only letters, numbers, and _ underscores: " + slot);
+    slot = slot.toLowerCase();
+    stat = "choice_saved_checkpoint_" + slot;
+  } else {
+    slot = "checkpoint";
+    stat = "choice_saved_checkpoint";
+  }
+  if (!this.stats[stat]) {
+    var certainty = this.testPath ? " could fail; we might not have" : " failed; we haven't";
+    if (slot === "checkpoint") {
+      throw new Error(this.lineMsg() + "*restore_checkpoint" + certainty + " saved a checkpoint. Use *if " + stat);
+    } else {
+      throw new Error(this.lineMsg() + "*restore_checkpoint for slot " + slot + certainty + " reached *save_checkpoint " + slot + ". Use *if " + stat);
+    }
+  }
+
+  if (this.testPath) return;
+
+  var forcedStats = null;
+  var forcedTemps = {choice_just_restored_checkpoint: true};
+  if (this.stats.checkpoint_exclusions || this.temps.checkpoint_exclusions) {
+    var exclusions = trim(this.getVar('checkpoint_exclusions').toLowerCase()).split(' ');
+    for (var i = 0; i < exclusions.length; i++) {
+      var exclusion = exclusions[i];
+      if (exclusion in this.stats) {
+        if (!forcedStats) forcedStats = {};
+        forcedStats[exclusion] = this.stats[exclusion];
+      }
+      if (exclusion in this.temps) {
+        if (!forcedTemps) forcedTemps = {};
+        forcedTemps[exclusion] = this.temps[exclusion];
+      }
+    }
+  }
+
+  loadAndRestoreGame(slot, null, forcedStats, forcedTemps);
+}
+
 Scene.prototype.parseStatChart = function parseStatChart() {
     // nextIndent: the level of indentation after the current line
     var nextIndent = null;
@@ -4051,6 +4136,10 @@ Scene.prototype.tokenizeExpr = function tokenizeExpr(str) {
                 str = str.substr(token.length);
                 pos += token.length;
                 var item = {name:tokenType.name, value:token, pos:pos};
+                if (this.testPath && tokenType.name === "VAR" && /^choice_saved_checkpoint/i.test(token)) {
+                  // handle choice_saved_checkpoint in quicktest
+                  this.stats[token.toLowerCase()] = true;
+                }
                 if ("WHITESPACE" == tokenType.name) {
                     break;
                 } else if ("CURLY_QUOTE" == tokenType.name) {
@@ -4951,5 +5040,5 @@ Scene.validCommands = {"comment":1, "goto":1, "gotoref":1, "label":1, "looplimit
     "bug":1,"link_button":1,"check_registration":1,"sound":1,"author":1,"gosub_scene":1,"achievement":1,
     "check_achievements":1,"redirect_scene":1,"print_discount":1,"purchase_discount":1,"track_event":1,
     "timer":1,"youtube":1,"product":1,"text_image":1,"ai":1,"params":1,"config":1,"ifid":1,
-    "page_break_advertisement":1, "finish_advertisement":1
+    "page_break_advertisement":1, "finish_advertisement":1, "save_checkpoint": 1, "restore_checkpoint": 1
     };

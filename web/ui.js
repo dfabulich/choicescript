@@ -120,6 +120,10 @@ function returnFromStats() {
   }
 }
 
+function restoreCheckpointFromStats(callback) {
+  safeTimeout(callback, 0);
+}
+
 function showAchievements(hideNextButton) {
   if (document.getElementById('loading')) return;
   var button = document.getElementById("achievementsButton");

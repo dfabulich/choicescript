@@ -790,7 +790,7 @@ function initStore() {
   }
   return window.store;
 }
-function loadAndRestoreGame(slot, forcedScene) {
+function loadAndRestoreGame(slot, forcedScene, forcedStats, forcedTemps) {
   function valueLoaded(ok, value) {
     safeCall(null, function() {
       var state = null;
@@ -802,7 +802,7 @@ function loadAndRestoreGame(slot, forcedScene) {
         if (typeof alertify !== "undefined") alertify.log("Failed restarting chapter. Restarting the game from scratch.");
         return restartGame();
       }
-      restoreGame(state, forcedScene);
+      restoreGame(state, forcedScene, false, forcedStats, forcedTemps);
     });
   }
   if (!slot) slot = "";
@@ -840,7 +840,7 @@ function restartGame(shouldPrompt) {
   }
 }
 
-function restoreGame(state, forcedScene, userRestored) {
+function restoreGame(state, forcedScene, userRestored, forcedStats, forcedTemps) {
     var scene;
     var secondaryMode = null;
     var saveSlot = "";
@@ -862,6 +862,16 @@ function restoreGame(state, forcedScene, userRestored) {
         scene = new Scene(startupScene, _global.stats, _global.nav, {debugMode:_global.debug, secondaryMode:secondaryMode, saveSlot:saveSlot});
     } else {
       if (forcedScene) state.stats.sceneName = forcedScene;
+      if (forcedStats) {
+        for (var stat in forcedStats) {
+          state.stats[stat] = forcedStats[stat];
+        }
+      }
+      if (forcedTemps) {
+        for (var temp in forcedTemps) {
+          state.temps[temp] = forcedTemps[temp];
+        }
+      }
       _global.stats = state.stats;
       // Someday, inflate the navigator using the state object
       scene = new Scene(state.stats.sceneName, state.stats, _global.nav, {debugMode:state.debug || _global.debug, secondaryMode:secondaryMode, saveSlot:saveSlot});
