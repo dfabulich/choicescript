@@ -79,7 +79,22 @@ startLoading();
 <noscript>
 <p>This game requires JavaScript; please enable JavaScript and refresh this page.</p>
 </noscript>
-<a id="makeyourowngames" href="https://www.choiceofgames.com/make-your-own-games/choicescript-intro/">Make your own games with ChoiceScript</a>
+<p><a id="makeyourowngames" href="https://www.choiceofgames.com/make-your-own-games/choicescript-intro/">Make your own games with ChoiceScript</a></p>
+<div id="tools"></div>
+<script type="module">
+if (window.location.hostname === 'localhost') {
+  const links = ['quicktest', 'randomtest', 'compile'];
+  await Promise.all(Object.values(links).map(async file => {
+    const link = `../../${file}.html`;
+    const response = await fetch(link);
+    if (!response.ok) throw new Error(`invalid link ${link}: ${response.status} ${response.statusText} ${await response.text()}`);
+  }));
+  window.tools.innerHTML = `
+    <p>Tests: <a href="../../quicktest.html">Quicktest</a> <a href="../../randomtest.html">Randomtest</a></p>
+    <p><a href="../../compile.html">Export to HTML</a></p>
+  `
+}
+</script>
 <dialog id="keyboardShortcuts" onclick="event.target === this && this.close()">
 <header><span>Keyboard Shortcuts</span> <form method=dialog><button>X</button></form></header>
 <div class="table">
