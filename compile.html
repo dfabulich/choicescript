@@ -97,14 +97,17 @@ function doneLoading() {
 <body>
 <div id="loading">Loading...</div>
 <script src=compile.js></script>
-<script>
+<script type="module">
+import {Zip, ZipDeflate, zipSync, strToU8} from './fflate.mjs';
 function finish(compiledResult) {
-	var blob = new Blob([compiledResult.content], {type: "text/html"});
+	const name = (compiledResult.title || 'output').replace(/[^a-zA-Z0-9\-]/g, '_');
+	const zipData = zipSync({
+		[`${name}.html`]: [strToU8(compiledResult.content), {level: 9}]
+	});
+	var blob = new Blob([zipData], {type: "application/zip"});
 	var bloburl = URL.createObjectURL(blob);
-	var title = compiledResult.title || 'output';
-	var fileName = title.replace(/[^a-zA-Z0-9\-]/g, '_') + '.html';
 	console.log("Export Complete!");
-	document.body.insertAdjacentHTML("beforeend", "Click <a download='"+fileName+"' href='" + bloburl + "'>here</a> to download your compiled game.");
+	document.body.insertAdjacentHTML("beforeend", `Click <a download='${name}.zip' href='${bloburl}'>here</a> to download your compiled game.`);
 }
 var compiledResult = compile();
 if (compiledResult) finish(compiledResult);
