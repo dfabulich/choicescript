@@ -3610,21 +3610,24 @@ window.onload=function() {
           return;
         }
         var value = Number(oldTarget.value);
-        var lastValue = oldTarget.form.querySelectorAll('input[type=radio]').length - 1;
-        if (value === lastValue) {
-          value = 0;
+        var availableValues = [...oldTarget.form.querySelectorAll('input[type=radio]:not(:disabled)')].map(e => Number(e.value));
+        var valueIndex = availableValues.indexOf(value);
+        if (value === availableValues.at(-1)) {
+          value = availableValues[0];
         } else {
-          value++;
+          value = availableValues[valueIndex + 1];
         }
         clickRadio(value);
       } else if (key === 'k') {
         var oldTarget = document.querySelector('input[type=radio]:checked');
         if (!oldTarget) return;
         var value = Number(oldTarget.value);
-        if (value === 0) {
-          value = oldTarget.form.querySelectorAll('input[type=radio]').length - 1;
+        var availableValues = [...oldTarget.form.querySelectorAll('input[type=radio]:not(:disabled)')].map(e => Number(e.value));
+        var valueIndex = availableValues.indexOf(value);
+        if (value == availableValues[0]) {
+          value = availableValues.at(-1);
         } else {
-          value--;
+          value = availableValues[valueIndex - 1];
         }
         clickRadio(value);
       } else if (!isNaN(key)) {
