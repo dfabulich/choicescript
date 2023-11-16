@@ -3675,7 +3675,9 @@ Scene.prototype.save_checkpoint = function saveCheckpoint(slot) {
     saveCookie(function () {
       self.finished = false;
       self.skipFooter = false;
-      self.execute();
+      safeTimeout(function() {
+        self.execute();
+      }, 0)
     }, slot, this.stats, this.temps, this.lineNum + 1, this.indent, this.debugMode, this.nav);
   }
 }
