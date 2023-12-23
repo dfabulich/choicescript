@@ -495,6 +495,7 @@ function fetchSavesFromSlotList(store, slotList, i, saveList, callback) {
 
 function isWebSavePossible() {
   if (!initStore()) return false;
+  if (!_global.isCogPublished) return false;
   if (/^http/.test(window.location.protocol)) {
     return document.domain == window.webSaveDomain || document.domain == "localhost";
   }

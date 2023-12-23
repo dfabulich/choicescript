@@ -182,11 +182,11 @@ function showMenu() {
     if (isWebSavePossible() && !window.isSteamApp) {
       options.push(
         { name: "Email us at " + getSupportEmail() + ".", group: "choice", contactUs: true },
-        { name: "Report a bug.", group: "choice", reportBug: true }
+        { name: "Report a bug.", group: "choice", reportBug: true },
+        { name: "Share this game with friends.", group: "choice", share: true },
       )
     }
     options.push(
-      {name:"Share this game with friends.", group:"choice", share:true},
       {name:"Email me when new games are available.", group:"choice", subscribe:true},
       {name:"Show keyboard shortcuts.", group:"choice", shortcuts:true}
     );
@@ -3374,7 +3374,7 @@ window.reportError = function(msg, file, line, column, error) {
       window.location.assign('https://www.choiceofgames.com/clear-site-data/?qee=1&path=' + encodeURIComponent(window.location.pathname));
     }
     alert(msg);
-    if (!window.storeName) return;
+    if (!isWebSavePossible()) return;
     var ok = confirm("Sorry, an error occurred.  Click OK to email error data to support.");
     if (ok) {
         var statMsg = "(unknown)";

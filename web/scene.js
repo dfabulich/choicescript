@@ -4781,7 +4781,7 @@ Scene.prototype.feedback = function scene_feedback() {
     var value = "null";
     var numberMatch = /^(\d+)/.exec(option.name);
     if (numberMatch) value = numberMatch[1]*1;
-    if (!window.storeName) {
+    if (!isWebSavePossible()) {
       self.finished = false;
       self.resetPage();
       return;
