@@ -1,15 +1,9 @@
-if (typeof load == "undefined") {
-  fs = require("fs");
-  vm = require("vm");
-  vm.runInThisContext(fs.readFileSync("headless.js"), "headless.js");
-  args = process.argv;
-  args.shift();
-  args.shift();
-} else {
-  load("headless.js");
-  args = arguments;
-  console = {log: print};
-}
+fs = require("fs");
+vm = require("vm");
+vm.runInThisContext(fs.readFileSync("headless.js"), "headless.js");
+args = process.argv;
+args.shift();
+args.shift();
 
 gameDir = args[0] || "mygame";
 beta = (args[1] === '"beta"');
@@ -121,7 +115,7 @@ var create = /^\*create +(\w+) +(.*)/;
 var result, variable, value;
 var achievements = [];
 
-var ignoredInitialCommands = {"comment":1, "author":1, "bug": 1};
+var ignoredInitialCommands = {"comment":1, "author":1, "ifid": 1};
 
 for (var i = 0; i < lines.length; i++) {
   var line = (""+lines[i]).trim();
@@ -150,6 +144,12 @@ for (var i = 0; i < lines.length; i++) {
   } else if (command == "product") {
     // ignore products for now; we compute them from check_purchases
     // *product this only has an effect on quicktest
+  } else if (command === "bug") {
+    if (beta && data === "choice_beta") {
+      continue;
+    }
+    console.error("startup.txt contains *bug");
+    process.exit(1);
   } else {
     break;
   }
@@ -195,11 +195,7 @@ logJson(stats);
 
 console.log(";\npurchases = ");
 
-if (beta) {
-  console.log("{}");
-} else {
-  logJson(purchases);
-}
+logJson(purchases);
 
 console.log(";\nachievements = ");
 logJson(achievements);
@@ -207,6 +203,8 @@ console.log(";\n");
 
 if (args[1] === '"beta"' || args[1] === '"beta-iap"') {
   console.log("beta = " + args[1] + ";\n");
+  const betaPassword = fs.readFileSync("beta-password.txt", 'utf8').trim();
+  console.log(`betaPassword = "${btoa(`beta:${betaPassword}`)}";`)
 }
 
 console.log("nav.setStartingStatsClone(stats);");
