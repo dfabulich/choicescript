@@ -5,6 +5,7 @@
   <script src=web/navigator.js></script>
   <script src=web/util.js></script>
   <script src=web/mygame/mygame.js></script>
+  <script src=mygamegenerator.js></script>
 <script>
 var oldLog = console.log;
 console.log = function() {
@@ -84,6 +85,10 @@ function slurpFile(url, throwOnError) {
 		console.log("An unknown error occurred, please email dan at fabulich.com with details");
 		exit();
 	}
+}
+
+function slurpFileLines(url, throwOnError) {
+	return slurpFile(url).split(/\r?\n/);
 }
 
 function doneLoading() {

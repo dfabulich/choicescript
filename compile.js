@@ -25,6 +25,7 @@ if (typeof process != "undefined") {
   load(rootDir+"util.js");
   load("headless.js");
   load(rootDir+"mygame/mygame.js");
+  load("mygamegenerator.js");
   var {content} = compile();
   fs.writeFileSync(outputFile, content, "utf8");
   console.log('Generated', path.resolve(outputFile));
@@ -110,7 +111,11 @@ function compile(){
   console.log("\nExtracting js data from:");
   while (doesMatch = patt.exec(game_html)) {
     console.log(doesMatch[1]);
-    next_file = safeSlurpFile(rootDir+'mygame/' + doesMatch[1]);
+    if (doesMatch[1] === 'mygame.js') {
+      next_file = generateMygame();
+    } else {
+      next_file = safeSlurpFile(rootDir + 'mygame/' + doesMatch[1]);
+    }
     if (next_file != "undefined" && next_file !== null) {
       jsStore = jsStore + "\n;\n" + next_file;
     }
