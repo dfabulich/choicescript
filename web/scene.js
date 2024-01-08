@@ -3668,18 +3668,7 @@ Scene.prototype.save_checkpoint = function saveCheckpoint(slot) {
   if (this.secondaryMode) throw new Error(this.lineMsg() + "Cannot *save_checkpoint in " + this.secondaryMode + " mode");
   this.stats[stat] = true;
   this.temps.choice_just_restored_checkpoint = false;
-  if (!this.testPath) {
-    var self = this;
-    this.skipFooter = true;
-    this.finished = true;
-    saveCookie(function () {
-      self.finished = false;
-      self.skipFooter = false;
-      safeTimeout(function() {
-        self.execute();
-      }, 0)
-    }, slot, this.stats, this.temps, this.lineNum + 1, this.indent, this.debugMode, this.nav);
-  }
+  saveCookie(function () {}, slot, this.stats, this.temps, this.lineNum + 1, this.indent, this.debugMode, this.nav);
 }
 
 Scene.prototype.restore_checkpoint = function restoreCheckpoint(slot) {
