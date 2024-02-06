@@ -3589,6 +3589,7 @@ window.onload=function() {
       function clickRadio(value) {
         var newTarget = document.querySelector('input[type=radio][value="' + value + '"]');
         if (!newTarget) return;
+        if (newTarget.disabled) return;
         newTarget.checked = true;
         newTarget.focus();
         newTarget.blur();
