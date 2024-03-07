@@ -7,7 +7,7 @@ body {
   max-width: 80ch;
   min-height: 100vh; /* keep iOS address bar from popping in and out */
   font-size: 100%;  /* reset for CWS */
-  font-family: Palatino,Georgia,"Times New Roman",serif;
+  font-family: Palatino,Cambria,Georgia,"Times New Roman",serif;
   background-color: #F7F4F1;
   color: rgba(0, 0, 0, 0.85);
   margin: 1ch auto;
