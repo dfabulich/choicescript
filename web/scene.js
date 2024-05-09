@@ -1048,7 +1048,7 @@ Scene.prototype.gosub_scene = function scene_gosub_scene(data) {
       this.stats.choice_subscene_stack = [];
     }
     this.stats.choice_subscene_stack.push({name:this.name, lineNum: this.lineNum + 1, indent: this.indent, temps: this.temps});
-    this.goto_scene(data);
+    this.goto_scene(data, true /*isGosubScene*/);
 };
 
 Scene.prototype.params = function scene_params(data) {
@@ -1228,7 +1228,11 @@ Scene.prototype.parseGotoScene = function parseGotoScene(data) {
 
 // *goto_scene foo
 //
-Scene.prototype.goto_scene = function gotoScene(data) {
+Scene.prototype.goto_scene = function gotoScene(data, isGosubScene) {
+    if (!isGosubScene && (this.stats.choice_subscene_stack || []).length) {
+      var stackFrame = this.stats.choice_subscene_stack.pop();
+      delete this.stats.choice_subscene_stack;
+    }
     var result = this.parseGotoScene(data);
 
     if (result.sceneName == this.name) {
