@@ -1231,6 +1231,7 @@ Scene.prototype.parseGotoScene = function parseGotoScene(data) {
 Scene.prototype.goto_scene = function gotoScene(data, isGosubScene) {
     if (!isGosubScene && (this.stats.choice_subscene_stack || []).length) {
       var stackFrame = this.stats.choice_subscene_stack.pop();
+      this.warning("You should *return before *goto_scene after *gosub_scene from from " + stackFrame.name + " line " + stackFrame.lineNum);
       delete this.stats.choice_subscene_stack;
     }
     var result = this.parseGotoScene(data);
