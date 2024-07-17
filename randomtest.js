@@ -252,7 +252,7 @@ if (typeof importScripts != "undefined") {
       return booleanQuestion("After the test, show how many times each line was used?", false);
     }).then(function (answer) {
       showCoverage = answer;
-      return booleanQuestion("Write output to a file (randomtest-output.txt)?", false);
+      return booleanQuestion("Write output to a file (randomtest-output.txt)?", true);
     }).then(function (answer) {
       if (answer) {
         var fs = require('fs');
