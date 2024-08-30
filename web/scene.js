@@ -3283,7 +3283,7 @@ Scene.prototype.save_game = function save_game(destinationSceneName) {
         }
 
         var shouldSubscribe = subscribeBox.checked;
-        var subscribe = shouldSubscribe && window.isHeartsChoice ? "hc" : "cog";
+        var subscribe = shouldSubscribe && (window.isHeartsChoice ? "hc" : "cog");
         var email = trim(emailInput.value);
         if (!/^\S+@\S+\.\S+$/.test(email)) {
           messageText = document.createTextNode("Sorry, \""+email+"\" is not an email address.  Please type your email address again.");
