@@ -51,6 +51,7 @@ kindleButton = function() {};
 printImage = function() {};
 showPassword = function() {};
 printDiscount = function() {};
+achieve = function() {};
 
 isRegistered = function() {return false;};
 isRegisterAllowed = function() {return false;};

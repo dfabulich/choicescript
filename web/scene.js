@@ -4537,7 +4537,7 @@ Scene.prototype.achieve = function scene_achieve(name) {
   }
   var achievement = this.nav.achievements[name];
   this.nav.achieved[name] = true;
-  if (typeof window != "undefined" && typeof achieve != "undefined") {
+  if (typeof achieve != "undefined") {
     achieve(name, achievement.title, achievement.earnedDescription);
   }
 };

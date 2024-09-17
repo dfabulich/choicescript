@@ -389,6 +389,10 @@ function configureShowText() {
     printImage = function printImage(source, alignment, alt, invert) {
       console.log('[IMAGE: ' + (alt || source) + ']');
     }
+    achieve = function achieve(name, title, description) {
+      console.log('[ACHIEVEMENT] ' + title);
+      console.log('\xa0\xa0\xa0\xa0' + description + "\n");
+    }
   } else {
     oldPrintLine = Scene.prototype.printLine;
     Scene.prototype.printLine = function randomtest_printLine(line) {
