@@ -2222,8 +2222,11 @@ Scene.prototype.link_button = function linkButton(data) {
 // how many spaces is this line indented?
 Scene.prototype.getIndent = function getIndent(line) {
     if (line === null || line === undefined) return 0;
-    var spaces = line.match(/^([ \t]*)/);
+    var spaces = line.match(/^(\s*)/);
     if (spaces === null || spaces === undefined) return 0;
+    if (/[^ \t]/.test(spaces[1])) {
+      throw new Error(this.lineMsg() + "The indentation on this line includes whitespace that is neither a space nor a tab. Delete the whitespace and replace it with spaces or tabs.");
+    }
     var whitespace = spaces[0];
     var len = whitespace.length;
     if (0 === len) return 0;
