@@ -2396,7 +2396,7 @@ test("errorTempArrayValues", function() {
     scene.loadLines("*temp_array foo 5 1 2 3 4 5 6");
     doh.assertError(Error, scene, "execute", null, "Expected 1 or 5 values for array foo not 6");
 });
-test("errorTempArrayValues", function() {
+test("errorTempArrayComplexLengthZero", function() {
   var scene = new Scene();
   scene.loadLines(dedent`
     *temp size 0
