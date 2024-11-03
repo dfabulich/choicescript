@@ -2349,6 +2349,28 @@ test("tempArrayExplicitAndComplex", function() {
     doh.is(2, scene.temps.t_arr_count, "scene.temps.t_arr_count");
     doh.is("undefined", typeof scene.temps.t_arr_3, "scene.temps.t_arr_3");
 });
+test("tempArrayExpressionVarLength", function() {
+  var scene = new Scene();
+  scene.loadLines(dedent`
+              *temp count 10
+              *temp_array t_arr count 0`);
+  scene.execute();
+  doh.is("undefined", typeof scene.temps.t_arr_0, "scene.temps.t_arr_0");
+  doh.is(0, scene.temps.t_arr_1, "scene.temps.t_arr_1");
+  doh.is(10, scene.temps.t_arr_count, "scene.temps.t_arr_count");
+});
+test("tempArrayExpressionLength", function() {
+  var scene = new Scene();
+  scene.name = "startup";
+  scene.loadLines(dedent`
+              *create_array global 2 0
+              *temp arr_ref "global"
+              *temp_array t_arr {arr_ref&"_count"} 0`);
+  scene.execute();
+  doh.is("undefined", typeof scene.temps.t_arr_0, "scene.temps.t_arr_0");
+  doh.is(0, scene.temps.t_arr_1, "scene.temps.t_arr_1");
+  doh.is(2, scene.temps.t_arr_count, "scene.temps.t_arr_count");
+});
 test("tempArrayEmpty", function() {
     var scene = new Scene();
     scene.loadLines("*temp_array t_arr 2");
@@ -2373,6 +2395,19 @@ test("errorTempArrayValues", function() {
     var scene = new Scene();
     scene.loadLines("*temp_array foo 5 1 2 3 4 5 6");
     doh.assertError(Error, scene, "execute", null, "Expected 1 or 5 values for array foo not 6");
+});
+test("errorTempArrayValues", function() {
+  var scene = new Scene();
+  scene.loadLines(dedent`
+    *temp size 0
+    *temp_array t_arr size 0`);
+  doh.assertError(Error, scene, "execute", null, "Complex temp_array lengths should only evaluate to a number greater than 0");
+});
+test("errorCreateArrayComplexLength", function() {
+  var scene = new Scene();
+  scene.name = "startup";
+  scene.loadLines("*create_array foo {myexpr} 2");
+  doh.assertError(Error, scene, "execute", null, "Create instructions shouldn't allow complex lengths");
 });
 test("deleteCreateArray", function() {
     var scene = new Scene();
