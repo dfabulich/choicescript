@@ -1586,9 +1586,21 @@ Scene.prototype.defineArray = function defineArray(command, line) {
   if (!stack.length) {
     throw new Error(this.lineMsg() + "Invalid " + command + "_array instruction, missing length: " + line);
   }
-  var length = Number(stack.shift().value);
+
+  var length_token = stack[0];
+  var length;
+  if (length_token.name === "NUMBER") {
+    length = Number(length_token.value);
+    stack.shift();
+  } else {
+    if (command === "create") {
+      throw new Error(this.lineMsg() + "Invalid create_array instruction, length must be a number: " + line);
+    }
+    length = Number(this.evaluateValueToken(stack.shift(), stack));
+  }
+
   if (length !== Math.floor(length) || length < 1) {
-    throw new Error(this.lineMsg() + "Invalid " + command + "_array instruction, length should be a whole number greater than 0: " + line);
+    throw new Error(this.lineMsg() + `Invalid ${command}_array instruction, got a length of ${length} but wanted a length greater than 0: ${line}`);
   }
 
   var token;
