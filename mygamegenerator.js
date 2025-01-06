@@ -8,6 +8,7 @@ if (typeof process !== "undefined" && typeof require !== "undefined") {
 
   gameDir = args[0] || "mygame";
   beta = args[1];
+  rootDir = null;
   try {
     console.log(generateMygame(gameDir, beta, fs));
   } catch (e) {
@@ -118,7 +119,7 @@ function generateMygame(gameDir = "mygame", beta, fs) {
     }
   }
 
-  var lines = slurpFileLines("web/" + gameDir + "/scenes/startup.txt");
+  var lines = slurpFileLines((rootDir ?? "web/") + gameDir + "/scenes/startup.txt");
   var stats = {}, purchases = {}, productMap = {};
   var scenes = ["startup"];
   var create = /^\*create +(\w+) +(.*)/;
