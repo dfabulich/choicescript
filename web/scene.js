@@ -1512,14 +1512,21 @@ Scene.prototype.abort = function() {
 // *create
 // create a new permanent stat
 Scene.prototype.create = function create(line) {
-    var result = /^(\w*)(.*)/.exec(line);
+    var result = /^(\w*)\s*(-?\d*\.?\d*)(.*)/.exec(line);
     if (!result) throw new Error(this.lineMsg() + "Invalid create instruction, no variable specified: " + line);
     var variable = result[1];
     this.validateVariable(variable);
     variable = variable.toLowerCase();
-    var expr = result[2];
+    var expr = result[2] + result[3]; // Combine the number (possibly negative) with the rest of the expression
     var stack = this.tokenizeExpr(expr);
-    if (stack.length > 1) throw new Error(this.lineMsg() + "Invalid create instruction, too many values: " + line);
+    if (stack.length > 1) {
+      if (['+','-'].includes(stack[0].value) && stack[1].name == "NUMBER") {
+        if (stack[0].value == '-') stack[1].value = "-" + stack[1].value;
+        stack.shift();
+      }else{
+        throw new Error(this.lineMsg() + "Invalid create instruction, too many values: " + line)
+      }
+    };
     this.createVariable(variable, stack[0], line);
 }
 
@@ -1532,6 +1539,7 @@ Scene.prototype.createVariable = function createVariable(variable, token, line) 
   if (!/STRING|NUMBER|VAR/.test(token.name)) complexError();
   if ("VAR" == token.name && !/^true|false$/i.test(token.value)) complexError();
   if ("STRING" == token.name && /(\$|@)!?!?{/.test(token.value)) throw new Error(this.lineMsg() + "Invalid create instruction, value must be a simple string without ${} or @{}: " + line);
+  if ("NUMBER" == token.name && !/^[-+]?\d*\.?\d+$/.test(token.value)) complexError(); // Adjusted regex to include negative numbers
   var value = this.evaluateExpr([token]);
   if (!this.created) this.created = {};
   if (this.created[variable]) throw new Error(this.lineMsg() + "Invalid create. " + variable + " was previously created on line " + this.created[variable]);

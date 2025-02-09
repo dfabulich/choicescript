@@ -6,3 +6,4 @@ This is a stats screen!
     Weakness
   text Leadership
   text Strength
+  
