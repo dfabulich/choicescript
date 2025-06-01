@@ -584,7 +584,7 @@ function clearScreen(code) {
     var container1 = document.getElementById("container1");
     if (!container1) throw new Error("<div id=container1> is missing from index.html");
 
-    if (window.animateEnabled && window.animationProperty && !window.isIosApp && !document.getElementById('container2')) {
+    if (window.animateEnabled && window.animationProperty && (!window.isIosApp || window.newIosCurl) && !document.getElementById('container2')) {
       var container2 = document.createElement("div");
       container2.setAttribute("id", "container2");
       container2.classList.add('container');
