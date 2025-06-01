@@ -649,31 +649,31 @@ function clearScreen(code) {
     }
 }
 
+function focusFirst() {
+  var text = document.getElementById("text");
+  if (text && text.firstElementChild) {
+    var focusable = text.firstElementChild;
+    if (/^img$/i.test(focusable.tagName) && focusable.complete === false) {
+      focusable.addEventListener("load", focusFirst);
+      return;
+    }
+    focusable.setAttribute("tabindex", "-1");
+    focusable.classList.add("tempfocus");
+    focusable.focus();
+    focusable.blur();
+    requestAnimationFrame(function () {
+      focusable.focus();
+      requestAnimationFrame(function () {
+        focusable.blur();
+        focusable.removeAttribute("tabindex");
+        focusable.classList.remove("tempfocus");
+      });
+    });
+  }
+}
+
 // in the iOS app, display a page curl animation
 function curl() {
-  var focusFirst = function() {
-    var text = document.getElementById("text");
-    if (text && text.firstElementChild) {
-      var focusable = text.firstElementChild;
-      if (/^img$/i.test(focusable.tagName) && focusable.complete === false) {
-        focusable.addEventListener("load", focusFirst);
-        return;
-      }
-      focusable.setAttribute("tabindex", "-1");
-      focusable.classList.add("tempfocus");
-      focusable.focus();
-      focusable.blur();
-      requestAnimationFrame(function() {
-        focusable.focus();
-        requestAnimationFrame(function() {
-          focusable.blur();
-          focusable.removeAttribute("tabindex");
-          focusable.classList.remove("tempfocus");
-        });
-      });
-    }
-  }
-
   // TODO force a reflow before curling the page
   var container2 = document.getElementById('container2');
   if (!container2) {
