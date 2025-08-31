@@ -3392,7 +3392,7 @@ Scene.prototype.stat_chart = function stat_chart() {
     var label = this.replaceVariables(row.label);
     var definition = this.replaceVariables(row.definition || "");
 
-    var statWidth, div, span, statValue;
+    var statWidth, div, span, span0, statValue;
     if (type == "text") {
       div = document.createElement("div");
       setClass(div, "statText");
@@ -3447,7 +3447,7 @@ Scene.prototype.parseStatChart = function parseStatChart() {
     // nextIndent: the level of indentation after the current line
     var nextIndent = null;
     var rows = [];
-    var line, line1, line2, line2indent;
+    var line, line1, line1indent, line2, line2indent;
     var startIndent = this.indent;
     while(isDefined(line = this.lines[++this.lineNum])) {
         if (!trim(line)) {
