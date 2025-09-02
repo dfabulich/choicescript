@@ -2604,7 +2604,7 @@ Scene.prototype.ending = function ending() {
     if (typeof window == "undefined") return;
     this.paragraph();
     var groups = [""];
-    options = [];
+    var options = [];
     options.push({name:"Play again.", group:"choice", restart:true});
     if (!window.isOmnibusApp) options.push({name:"Play more games like this.", group:"choice", moreGames:true});
     options.push({name:"Share this game with friends.", group:"choice", share:true});
