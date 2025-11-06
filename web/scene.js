@@ -4671,10 +4671,11 @@ Scene.prototype.achievement = function scene_achievement(data) {
     throw new Error(this.lineMsg()+"Invalid achievements. Adding " + points + " would add up to more than 1,000 points: " + this.achievementTotal);
   }
   var title = parsed[4];
+  var titleAllowedLength = 50;
   if (/(\$\{)/.test(title)) throw new Error(this.lineMsg()+"Invalid *achievement. ${} not permitted in achievement title: " + title);
   if (/(\@\{)/.test(title)) throw new Error(this.lineMsg()+"Invalid *achievement. @{} not permitted in achievement title: " + title);
   if (/(\[)/.test(title)) throw new Error(this.lineMsg()+"Invalid *achievement. [] not permitted in achievement title: " + title);
-  if (title.length > 30) throw new Error(this.lineMsg()+"Invalid *achievement. Title must be 30 characters or fewer: " + title);
+  if (title.length > titleAllowedLength) throw new Error(this.lineMsg() + "Invalid *achievement. Title must be " + titleAllowedLength + " characters or fewer: " + title);
 
   // Get the description from the next indented line
   var line = this.lines[++this.lineNum];
@@ -4683,10 +4684,11 @@ Scene.prototype.achievement = function scene_achievement(data) {
     throw new Error(this.lineMsg()+"Invalid *achievement. An indented description is required.");
   }
   var preEarnedDescription = trim(line);
+  var descriptionAllowedLength = 200;
   if (/(\$\{)/.test(preEarnedDescription)) throw new Error(this.lineMsg()+"Invalid *achievement. ${} not permitted in achievement description: " + preEarnedDescription);
   if (/(\@\{)/.test(preEarnedDescription)) throw new Error(this.lineMsg()+"Invalid *achievement. @{} not permitted in achievement description: " + preEarnedDescription);
   if (/(\[)/.test(preEarnedDescription)) throw new Error(this.lineMsg()+"Invalid *achievement. [] not permitted in achievement description: " + preEarnedDescription);
-  if (preEarnedDescription.length > 120) throw new Error(this.lineMsg()+"Invalid *achievement. Pre-earned description must be 120 characters or fewer: " + preEarnedDescription);
+  if (preEarnedDescription.length > descriptionAllowedLength) throw new Error(this.lineMsg() + "Invalid *achievement. Pre-earned description must be " + descriptionAllowedLength + " characters or fewer: " + preEarnedDescription);
 
   if (!visible) {
     if (preEarnedDescription.toLowerCase() != "hidden") throw new Error(this.lineMsg()+"Invalid *achievement. Hidden achievements must set their pre-earned description to 'hidden'.");
@@ -4704,7 +4706,7 @@ Scene.prototype.achievement = function scene_achievement(data) {
     if (/(\$\{)/.test(postEarnedDescription)) throw new Error(this.lineMsg()+"Invalid *achievement. ${} not permitted in achievement description: " + postEarnedDescription);
     if (/(\@\{)/.test(postEarnedDescription)) throw new Error(this.lineMsg()+"Invalid *achievement. @{} not permitted in achievement description: " + postEarnedDescription);
     if (/(\[)/.test(postEarnedDescription)) throw new Error(this.lineMsg()+"Invalid *achievement. [] not permitted in achievement description: " + postEarnedDescription);
-    if (postEarnedDescription.length > 120) throw new Error(this.lineMsg()+"Invalid *achievement. Post-earned description must be 120 characters or fewer: " + postEarnedDescription);
+    if (postEarnedDescription.length > descriptionAllowedLength) throw new Error(this.lineMsg() + "Invalid *achievement. Post-earned description must be " + descriptionAllowedLength + " characters or fewer: " + postEarnedDescription);
   } else {
     // No indent means the next line is not a post-earned description
     this.rollbackLineCoverage();
