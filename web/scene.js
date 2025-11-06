@@ -4686,7 +4686,7 @@ Scene.prototype.achievement = function scene_achievement(data) {
   if (/(\$\{)/.test(preEarnedDescription)) throw new Error(this.lineMsg()+"Invalid *achievement. ${} not permitted in achievement description: " + preEarnedDescription);
   if (/(\@\{)/.test(preEarnedDescription)) throw new Error(this.lineMsg()+"Invalid *achievement. @{} not permitted in achievement description: " + preEarnedDescription);
   if (/(\[)/.test(preEarnedDescription)) throw new Error(this.lineMsg()+"Invalid *achievement. [] not permitted in achievement description: " + preEarnedDescription);
-  if (preEarnedDescription.length > 200) throw new Error(this.lineMsg()+"Invalid *achievement. Pre-earned description must be 200 characters or fewer: " + preEarnedDescription);
+  if (preEarnedDescription.length > 120) throw new Error(this.lineMsg()+"Invalid *achievement. Pre-earned description must be 120 characters or fewer: " + preEarnedDescription);
 
   if (!visible) {
     if (preEarnedDescription.toLowerCase() != "hidden") throw new Error(this.lineMsg()+"Invalid *achievement. Hidden achievements must set their pre-earned description to 'hidden'.");
@@ -4704,7 +4704,7 @@ Scene.prototype.achievement = function scene_achievement(data) {
     if (/(\$\{)/.test(postEarnedDescription)) throw new Error(this.lineMsg()+"Invalid *achievement. ${} not permitted in achievement description: " + postEarnedDescription);
     if (/(\@\{)/.test(postEarnedDescription)) throw new Error(this.lineMsg()+"Invalid *achievement. @{} not permitted in achievement description: " + postEarnedDescription);
     if (/(\[)/.test(postEarnedDescription)) throw new Error(this.lineMsg()+"Invalid *achievement. [] not permitted in achievement description: " + postEarnedDescription);
-    if (postEarnedDescription.length > 200) throw new Error(this.lineMsg()+"Invalid *achievement. Post-earned description must be 200 characters or fewer: " + postEarnedDescription);
+    if (postEarnedDescription.length > 120) throw new Error(this.lineMsg()+"Invalid *achievement. Post-earned description must be 120 characters or fewer: " + postEarnedDescription);
   } else {
     // No indent means the next line is not a post-earned description
     this.rollbackLineCoverage();
