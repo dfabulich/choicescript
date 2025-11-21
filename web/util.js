@@ -861,6 +861,7 @@ function restoreGame(state, forcedScene, userRestored, forcedStats, forcedTemps)
     if (!isStateValid(state)) {
         var startupScene = forcedScene ? forcedScene : _global.nav.getStartupScene();
         scene = new Scene(startupScene, _global.stats, _global.nav, {debugMode:_global.debug, secondaryMode:secondaryMode, saveSlot:saveSlot});
+        trackEvent('game_start');
     } else {
       if (forcedScene) state.stats.sceneName = forcedScene;
       if (forcedStats) {
@@ -1315,5 +1316,21 @@ function remoteConfig(variable, callback) {
   } else {
     var result = (_global.androidRemoteConfig && androidRemoteConfig.remoteConfig(variable)) || null;
     return safeTimeout(function() {callback(result);}, 0);
+  }
+}
+
+function trackEvent(name, params) {
+  try {
+    console.log('trackEvent', name, params);
+    if (!params) params = {};
+    params.game_id = _global.storeName;
+    params.game_version = _global.version;
+    if (typeof nativeTrackEvent !== "undefined") {
+      window.nativeTrackEvent(name, params);
+    } else if (typeof gtag !== "undefined") {
+      gtag('event', name, params);
+    }
+  } catch (e) {
+    console.error("Error tracking event", e);
   }
 }

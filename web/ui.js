@@ -2400,6 +2400,9 @@ function achieve(name, title, description) {
       window.store.set("achieved", toJson(nav.achieved));
     })
   }
+  trackEvent('unlock_achievement', {
+    achievement_id: window.storeName + "." + name
+  });
   registerNativeAchievement(name);
   // Game Center shows a prominent banner; no need to show our own
   if (window.isIosApp && !window.isOmnibusApp) return;
