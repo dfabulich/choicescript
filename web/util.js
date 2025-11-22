@@ -1321,7 +1321,7 @@ function remoteConfig(variable, callback) {
 
 function trackEvent(name, params) {
   try {
-    console.log('trackEvent', name, params);
+    //console.log('trackEvent', name, params);
     if (!params) params = {};
     params.game_id = _global.storeName;
     params.game_version = _global.version;
