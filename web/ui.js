@@ -235,7 +235,7 @@ function showMenu() {
           curl();
         });
       } else if (option.settings) {
-        textOptionsMenu({ size: 1, color: 1, animation: window.animationProperty, sliding: window.isMobile });
+        textOptionsMenu({ size: 1, color: 1, family: 1, animation: window.animationProperty, sliding: window.isMobile });
       } else if (option.credits) {
         absolutizeAboutLink();
         aboutClick();
@@ -305,13 +305,14 @@ function setButtonTitles() {
 
 function textOptionsMenu(categories) {
   if (!categories) {
-    categories = {size:1, color:1, animation:window.animationProperty, sliding: window.isMobile};
+    categories = {size:1, color:1, family:1, animation:window.animationProperty, sliding: window.isMobile};
   }
   clearScreen(function() {
     var button = document.getElementById("menuButton");
     if (button) button.innerHTML = "Return to the Game";
     var text = document.getElementById("text");
     var oldZoom = getZoomFactor();
+    var oldFontFamily = getFontFamily();
     if (categories.settings) {
       text.innerHTML = "<p>Change the game's settings.</p>";
     } else if (categories.size && categories.color) {
@@ -339,6 +340,11 @@ function textOptionsMenu(categories) {
       if (oldZoom !== 1) {
         options.push({name:"Reset the text to its original size.", group:"choice", reset:true});
       }
+    }
+    if (categories.family) {
+      if (oldFontFamily !== "serif") options.push({ name: "Use a serif font.", group: "choice", family: "serif" });
+      if (oldFontFamily !== "sans") options.push({ name: "Use a sans-serif font.", group: "choice", family: "sans" });
+      if (oldFontFamily !== "dyslexia") options.push({ name: "Use a dyslexia-friendly font.", group: "choice", family: "dyslexia" });
     }
     if (categories.color) options.push(
       {name:"Use a black background.", group:"choice", color:"black"},
@@ -375,6 +381,8 @@ function textOptionsMenu(categories) {
       } else if (option.sliding) {
         window.slidingEnabled = option.sliding == 2;
         if (initStore()) store.set("preferredSliding", window.slidingEnabled);
+      } else if (option.family) {
+        changeFontFamily(option.family);
       } else {
         changeFontSize(option.bigger);
       }
@@ -407,6 +415,24 @@ function changeFontSize(bigger) {
   } else {
     setZoomFactor(oldZoom - 0.1);
   }
+}
+
+function getFontFamily() {
+  if (document.body.classList.contains("sans")) {
+    return "sans";
+  } else if (document.body.classList.contains("dyslexia")) {
+    return "dyslexia";
+  } else {
+    return "serif";
+  }
+}
+
+function changeFontFamily(family) {
+  document.body.classList.remove("sans", "dyslexia");
+  if (family !== "serif") {
+    document.body.classList.add(family);
+  }
+  if (initStore()) store.set("preferredFamily", family);
 }
 
 function changeBackgroundColor(color) {
@@ -3331,6 +3357,13 @@ function loadPreferences() {
         document.body.classList.add("nightmode");
       } else if (preferredBackground === "white") {
         document.body.classList.add("whitemode");
+      }
+    });
+    store.get("preferredFamily", function (ok, preferredFontFamily) {
+      if (preferredFontFamily === "sans") {
+        document.body.classList.add("sans");
+      } else if (preferredFontFamily === "dyslexia") {
+        document.body.classList.add("dyslexia");
       }
     });
     store.get("preferredAnimation", function(ok, preferredAnimation) {
