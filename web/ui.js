@@ -85,7 +85,7 @@ function printParagraph(msg, parent) {
 function showStats() {
     if (document.getElementById('loading')) return;
     var button = document.getElementById("statsButton");
-    if (button && button.innerHTML == "Return to the Game") {
+    if (button && button.getAttribute("data-return")) {
       return clearScreen(function() {
         setButtonTitles();
         loadAndRestoreGame();
@@ -128,7 +128,7 @@ function showAchievements(hideNextButton) {
   if (document.getElementById('loading')) return;
   var button = document.getElementById("achievementsButton");
   if (!button) return;
-  if (button.innerHTML == "Return to the Game") {
+  if (button.getAttribute("data-return")) {
     return clearScreen(function() {
       setButtonTitles();
       loadAndRestoreGame();
@@ -138,6 +138,7 @@ function showAchievements(hideNextButton) {
     setButtonTitles();
     var button = document.getElementById("achievementsButton");
     button.innerHTML = "Return to the Game";
+    button.setAttribute("data-return", "true");
     checkAchievements(function() {
       printAchievements(document.getElementById("text"));
       if (!hideNextButton) printButton("Next", main, false, function() {
@@ -155,7 +156,7 @@ function showMenu() {
   if (document.getElementById('loading')) return;
   var button = document.getElementById("menuButton");
   if (!button) return;
-  if (button.innerHTML == "Return to the Game") {
+  if (button.getAttribute("data-return")) {
     return clearScreen(function() {
       setButtonTitles();
       loadAndRestoreGame();
@@ -165,6 +166,7 @@ function showMenu() {
     setButtonTitles();
     var button = document.getElementById("menuButton");
     button.innerHTML = "Return to the Game";
+    button.setAttribute("data-return", "true");
     options = [{name:"Return to the game.", group:"choice", resume:true}];
     if (window.isSteamworks) {
       options.push(
@@ -286,16 +288,19 @@ function setButtonTitles() {
   button = document.getElementById("menuButton");
   if (button) {
     button.innerHTML = "Menu";
+    button.removeAttribute("data-return");
   }
   button = document.getElementById("statsButton");
   if (button) {
     button.innerHTML = "Show Stats";
+    button.removeAttribute("data-return");
   }
   button = document.getElementById("achievementsButton");
   if (button) {
     if (nav.achievementList.length) {
       button.style.display = "";
       button.innerHTML = "Achievements";
+      button.removeAttribute("data-return");
     } else {
       button.style.display = "none";
     }
@@ -310,6 +315,7 @@ function textOptionsMenu(categories) {
   clearScreen(function() {
     var button = document.getElementById("menuButton");
     if (button) button.innerHTML = "Return to the Game";
+    button.setAttribute("data-return", "true");
     var text = document.getElementById("text");
     var oldZoom = getZoomFactor();
     var oldFontFamily = getFontFamily();
@@ -837,6 +843,7 @@ function printFooter() {
   if (statsButton) {
     if (window.stats && stats.scene && stats.scene.secondaryMode == "stats") {
       statsButton.innerHTML = "Return to the Game";
+      statsButton.setAttribute("data-return", "true");
     } else {
       statsButton.innerHTML = "Show Stats";
       if (window.isAndroidApp && window.statsMode.get()) {
