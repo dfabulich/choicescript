@@ -615,12 +615,13 @@ Scene.prototype.finish = Scene.prototype.autofinish = function random_finish(but
 }
 
 Scene.prototype.oldGotoScene = Scene.prototype.goto_scene;
-Scene.prototype.goto_scene = function random_goto_scene(data) {
+Scene.prototype.goto_scene = function random_goto_scene(data, isGosubScene) {
   var result = this.parseGotoScene(data);
   var name = result.sceneName;
   if (isTrial && typeof purchases != "undefined" && purchases[name]) {
     throw new Error(this.lineMsg() + "Trying to go to scene " + name + " but that scene requires purchase");
   }
+  if (!isGosubScene && result.label) this.randomLog("*goto_scene (" + (this.lineNum + 1) + ") " + data);
   this.oldGotoScene.apply(this, arguments);
 }
 
