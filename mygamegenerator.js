@@ -223,5 +223,6 @@ function generateMygame(gameDir = "mygame", beta, fs) {
   output += ("nav.setStartingStatsClone(stats);");
   output += ("if (achievements.length) {\n  nav.loadAchievements(achievements);\n}");
   output += ("\nif (nav.loadProducts) nav.loadProducts([], purchases);\n");
+  output += ("\nisCogPublished = true;\n");
   return output;
 }

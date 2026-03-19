@@ -52,6 +52,7 @@ printImage = function() {};
 showPassword = function() {};
 printDiscount = function() {};
 achieve = function() {};
+changeBackgroundColor = function () {};
 
 isRegistered = function() {return false;};
 isRegisterAllowed = function() {return false;};

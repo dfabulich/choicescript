@@ -35,7 +35,9 @@ function autotester(sceneText, nav, sceneName, extraLabels) {
   }
 
   // Don't test for *bugs; *if cheating makes *bugs fake-reachable
-  Scene.prototype.bug = function test_bug() {
+  Scene.prototype.bug = function test_bug(msg) {
+    // skip over *bug choice_beta; it likely appears at the top of startup, to prevent pushes
+    if (msg === "choice_beta") return;
     this.finished = true;
   };
 
@@ -44,6 +46,9 @@ function autotester(sceneText, nav, sceneName, extraLabels) {
     this.replaceVariables(buttonName);
     this.resetCheckedPurchases();
   };
+  Scene.prototype.page_break_advertisement = function() {
+    this.page_break("");
+  }
   Scene.prototype.subscribe = function() {};
   Scene.prototype.feedback = function() {};
   Scene.prototype.save = function() {};
@@ -57,6 +62,7 @@ function autotester(sceneText, nav, sceneName, extraLabels) {
     }
   }
   Scene.prototype.buyButton = function (product, priceGuess, label) {
+    if (typeof this.temps["choice_purchased_" + product] === "undefined") throw new Error(this.lineMsg() + "Didn't check_purchases on this page");
     if (seen[label]) return;
     var scene = this.clone();
     scene.testPath.push(',');

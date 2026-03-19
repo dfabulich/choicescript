@@ -1285,14 +1285,18 @@ Scene.prototype.product = function product(productId) {
 }
 
 Scene.prototype.restore_purchases = function scene_restorePurchases(data) {
+  var params = data.split(" ");
+  var label = params[0];
+  if (!label) throw new Error(this.lineMsg() + "The *restore_purchases command requires a label and an optional product.");
+  var product = params[1];
   var self = this;
   var target = this.target;
   if (!target) target = document.getElementById('text');
   var button = printButton("Restore Purchases", target, false,
     function() {
       safeCall(self, function() {
-          restorePurchases(null, function() {
-            self["goto"](data);
+          restorePurchases(product, function() {
+            self["goto"](label);
             self.finished = false;
             self.resetPage();
           });
@@ -1401,9 +1405,14 @@ Scene.prototype.buyButton = function(product, priceGuess, label, title) {
     } else {
       if (price == "guess") price = priceGuess + " USD";
       var prerelease = self.getVar('choice_prerelease');
+      var isSteam = self.getVar('choice_is_steam');
       var buttonText;
       if (prerelease) {
-        buttonText = "Pre-Order " + title;
+        if (isSteam) {
+          buttonText = "Wishlist " + title + " on Steam";
+        } else {
+          buttonText = "Pre-Order " + title;
+        }
       } else {
         buttonText = "Buy "+title+" Now";
       }
@@ -1474,6 +1483,12 @@ Scene.prototype.purchase_discount = function purchase_discount(line) {
 
 Scene.prototype.buyButtonDiscount = function buyButtonDiscount(product, expectedEndDate, fullPriceGuess, discountedPriceGuess, label, title) {
   var prerelease = this.getVar('choice_prerelease');
+  var isSteam = this.getVar('choice_is_steam');
+  if (prerelease && isSteam) {
+    // Steam doesn't do pre-orders; if we're here, this is an early Steam demo.
+    // The buy button will be a wishlist button, with no discount to apply.
+    return this.buyButton(product, discountedPriceGuess, label, title);
+  }
   var discountText;
   if (prerelease) {
     discountText = "[b]Buy now before the price increases![/b]";
@@ -2178,7 +2193,7 @@ Scene.prototype.kindle_image = function kindle_image() {
 };
 
 Scene.prototype.youtube = function youtube(slug) {
-  if (typeof printYoutubeFrame !== "undefined") {
+  if (typeof window != "undefined" && window.isWeb && typeof printYoutubeFrame !== "undefined") {
     printYoutubeFrame(slug);
     this.prevLine = "block";
     this.screenEmpty = false;
@@ -3693,7 +3708,7 @@ Scene.prototype.restore_checkpoint = function restoreCheckpoint(slot) {
   var self = this;
   if (!this.testPath && this.secondaryMode) {
     if (this.secondaryMode === 'stats') {
-      restoreCheckpointFromStats(function () {
+      restoreCheckpointFromStats(slot || "", function () {
         delete self.secondaryMode;
         delete self.saveSlot;
         self.restore_checkpoint(slot);
@@ -4684,6 +4699,7 @@ Scene.prototype.achievement = function scene_achievement(data) {
   if (/(\@\{)/.test(title)) throw new Error(this.lineMsg()+"Invalid *achievement. @{} not permitted in achievement title: " + title);
   if (/(\[)/.test(title)) throw new Error(this.lineMsg()+"Invalid *achievement. [] not permitted in achievement title: " + title);
   if (title.length > titleAllowedLength) throw new Error(this.lineMsg() + "Invalid *achievement. Title must be " + titleAllowedLength + " characters or fewer: " + title);
+  if (title.length > 30) this.warning(this.lineMsg() + "Achievement title too long for Apple ("+title.length+" out of 30): " + title);
 
   // Get the description from the next indented line
   var line = this.lines[++this.lineNum];
@@ -4697,6 +4713,7 @@ Scene.prototype.achievement = function scene_achievement(data) {
   if (/(\@\{)/.test(preEarnedDescription)) throw new Error(this.lineMsg()+"Invalid *achievement. @{} not permitted in achievement description: " + preEarnedDescription);
   if (/(\[)/.test(preEarnedDescription)) throw new Error(this.lineMsg()+"Invalid *achievement. [] not permitted in achievement description: " + preEarnedDescription);
   if (preEarnedDescription.length > descriptionAllowedLength) throw new Error(this.lineMsg() + "Invalid *achievement. Pre-earned description must be " + descriptionAllowedLength + " characters or fewer: " + preEarnedDescription);
+  if (preEarnedDescription.length > 120) this.warning(this.lineMsg() + "Achievement pre-earned description too long for Apple (" + preEarnedDescription.length + " out of 120): " + preEarnedDescription);
 
   if (!visible) {
     if (preEarnedDescription.toLowerCase() != "hidden") throw new Error(this.lineMsg()+"Invalid *achievement. Hidden achievements must set their pre-earned description to 'hidden'.");
@@ -4715,6 +4732,7 @@ Scene.prototype.achievement = function scene_achievement(data) {
     if (/(\@\{)/.test(postEarnedDescription)) throw new Error(this.lineMsg()+"Invalid *achievement. @{} not permitted in achievement description: " + postEarnedDescription);
     if (/(\[)/.test(postEarnedDescription)) throw new Error(this.lineMsg()+"Invalid *achievement. [] not permitted in achievement description: " + postEarnedDescription);
     if (postEarnedDescription.length > descriptionAllowedLength) throw new Error(this.lineMsg() + "Invalid *achievement. Post-earned description must be " + descriptionAllowedLength + " characters or fewer: " + postEarnedDescription);
+    if (postEarnedDescription.length > 120) this.warning(this.lineMsg() + "Achievement pre-earned description too long for Apple (" + postEarnedDescription.length + " out of 120): " + postEarnedDescription);
   } else {
     // No indent means the next line is not a post-earned description
     this.rollbackLineCoverage();

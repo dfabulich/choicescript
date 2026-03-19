@@ -120,8 +120,14 @@ function returnFromStats() {
   }
 }
 
-function restoreCheckpointFromStats(callback) {
-  safeTimeout(callback, 0);
+function restoreCheckpointFromStats(slot, callback) {
+  if (window.isIosApp) {
+    callIos("restorecheckpointfromstats", slot);
+  } else if (window.isAndroidApp) {
+    statsMode.restoreCheckpointFromStats(slot);
+  } else {
+    safeTimeout(callback, 0);
+  }
 }
 
 function showAchievements(hideNextButton) {
@@ -181,9 +187,13 @@ function showMenu() {
       {name:"Change settings.", group:"choice", settings:true},
       {name:"Play more games like this.", group:"choice", moreGames:true}
     );
-    if (isWebSavePossible() && !window.isSteamApp) {
+    if (isWebSavePossible()) {
+      if (!window.isSteamApp) {
+        options.push(
+          { name: "Email us at " + getSupportEmail() + ".", group: "choice", contactUs: true },
+        )
+      }
       options.push(
-        { name: "Email us at " + getSupportEmail() + ".", group: "choice", contactUs: true },
         { name: "Report a bug.", group: "choice", reportBug: true },
         { name: "Share this game with friends.", group: "choice", share: true },
       )
@@ -522,13 +532,13 @@ function printAchievements(target) {
   // What if there's exactly one achievement worth exactly one point?
   if (achievedCount === 0) {
     if (hiddenCount === 0) {
-      buffer = ["You haven't unlocked any achievements yet. There are "+spell(totalAchievements)+" possible achievements, worth a total of "+totalScore+" points.<p>"];
+      buffer = ["<p>You haven't unlocked any achievements yet. There are "+spell(totalAchievements)+" possible achievements, worth a total of "+totalScore+" points.<p>"];
     } else if (hiddenCount == 1) {
-      buffer = ["You haven't unlocked any achievements yet. There are "+spell(totalAchievements)+" possible achievements (including one hidden achievement), worth a total of "+totalScore+" points.<p>"];
+      buffer = ["<p>You haven't unlocked any achievements yet. There are "+spell(totalAchievements)+" possible achievements (including one hidden achievement), worth a total of "+totalScore+" points.<p>"];
     } else if (hiddenCount == totalAchievements) {
-      buffer = ["You haven't unlocked any achievements yet. There are "+spell(totalAchievements)+" hidden achievements, worth a total of "+totalScore+" points.<p>"];
+      buffer = ["<p>You haven't unlocked any achievements yet. There are "+spell(totalAchievements)+" hidden achievements, worth a total of "+totalScore+" points.<p>"];
     } else {
-      buffer = ["You haven't unlocked any achievements yet. There are "+spell(totalAchievements)+" possible achievements (including "+spell(hiddenCount)+" hidden achievements), worth a total of "+totalScore+" points.<p>"];
+      buffer = ["<p>You haven't unlocked any achievements yet. There are "+spell(totalAchievements)+" possible achievements (including "+spell(hiddenCount)+" hidden achievements), worth a total of "+totalScore+" points.<p>"];
     }
     if (lockedBuffer.length) {
       buffer.push.apply(buffer, lockedBuffer);
@@ -536,14 +546,14 @@ function printAchievements(target) {
     }
   } else if (score == totalScore) {
     if (totalAchievements == 2) {
-      buffer = ["Congratulations! You have unlocked both achievements, earning a total of "+score+" points, a perfect score.<p>"];
+      buffer = ["<p>Congratulations! You have unlocked both achievements, earning a total of "+score+" points, a perfect score.<p>"];
     } else {
-      buffer = ["Congratulations! You have unlocked all "+spell(totalAchievements)+" achievements, earning a total of "+score+" points, a perfect score.<p>"];
+      buffer = ["<p>Congratulations! You have unlocked all "+spell(totalAchievements)+" achievements, earning a total of "+score+" points, a perfect score.<p>"];
     }
     buffer.push.apply(buffer, unlockedBuffer);
     buffer.push("<p>");
   } else {
-    buffer = ["You have unlocked "+spell(achievedCount)+" out of "+spell(totalAchievements)+" possible achievements, earning you a score of "+score+" out of a possible "+totalScore+" points.<p>"];
+    buffer = ["<p>You have unlocked "+spell(achievedCount)+" out of "+spell(totalAchievements)+" possible achievements, earning you a score of "+score+" out of a possible "+totalScore+" points.<p>"];
     buffer.push.apply(buffer, unlockedBuffer);
     var remaining = totalAchievements-achievedCount;
     if (remaining == hiddenCount) {
@@ -1221,7 +1231,7 @@ function printYoutubeFrame(slug) {
 
 function moreGames() {
     if (window.isIosApp) {
-      window.location.href = "https://choiceofgames.app.link/jBm199qZXL/";
+      window.location.href = "https://apps.apple.com/us/app/choice-of-games/id1363309257?mt=8";
     } else if (window.isAndroidApp) {
       if (window.isNookAndroidApp) {
         asyncAlert("Please search the Nook App Store for \"Choice of Games\" for more games like this!");
@@ -1387,7 +1397,8 @@ function promptForReview() {
     });
     return true;
   } else if (window.isIosApp) {
-    println("Great! Please post a review of this version of the game on the App Store. It really helps.[n/]", target);
+    var store = window.swiftAndroidGoogle ? "the Google Play Store" : "the App Store"
+    println("Great! Please post a review of this version of the game on "+store+". It really helps.[n/]", target);
     printLink(target, "#", anchorText, function(e) {
       preventDefault(e);
       try {
@@ -1552,65 +1563,23 @@ function subscribe(target, options, callback) {
       };
       var listId = window.isHeartsChoice ? "fa4134344b" : "e9cdee1aaa";
       var mailParams = "u=eba910fddc9629b2810db6182&id="+listId+"&SIGNUP="+window.storeName+"-"+platformCode()+"&EMAIL="+encodeURIComponent(email);
-      if (window.isChromeApp) {
-        chrome.permissions.contains({origins: ["http://choiceofgames.us4.list-manage.com/"]},function(isXhrAllowed) {
-          if (isXhrAllowed) {
-            var xhr = new XMLHttpRequest();
-            xhr.open("GET", 'http://choiceofgames.us4.list-manage.com/subscribe/post-json?'+mailParams, true);
-            xhr.onreadystatechange = function() {
-              if (xhr.readyState != 4) return;
-              if (xhr.status == 200) {
-                var response = JSON.parse(xhr.responseText);
-                window["jsonp"+timestamp](response);
-              } else if (xhr.status === 0) {
-                window["jsonp"+timestamp]({result:"error", msg:"There was a network error submitting your registration. Please try again later, or email subscribe@choiceofgames.com instead."});
-              } else {
-                window["jsonp"+timestamp]({result:"error", msg:"Sorry, our mail server had an error. It's our fault. Please try again later, or email subscribe@choiceofgames.com instead."});
-              }
-            };
-            xhr.send();
-          } else {
-            window.addEventListener('message', function(event) {
-              if (window["jsonp"+timestamp]) {
-                var jsonpt = window["jsonp"+timestamp];
-                window["jsonp"+timestamp] = null;
-                if (jsonpt) jsonpt(event.data);
-              }
-            });
-            var iframe = document.createElement("IFRAME");
-            iframe.setAttribute("src", "sandbox.html");
-            iframe.setAttribute("name", "sandbox");
-            iframe.onload = function() {
-              iframe.contentWindow.postMessage({email:email, game:window.storeName, platform:platformCode()}, "*");
-            };
-            document.documentElement.appendChild(iframe);
-            return;
-          }
-        });
-      } else {
-        if (isWinStoreApp || window.location.protocol == "https:") {
-          var xhr = findXhr();
-          xhr.open("GET", 'https://www.choiceofgames.com/mailchimp_proxy.php/subscribe/post-json?'+mailParams, true);
-          var done = false;
-          xhr.onreadystatechange = function() {
-            if (done) return;
-            if (xhr.readyState != 4) return;
-            done = true;
-            if (xhr.status == 200) {
-              var response = JSON.parse(xhr.responseText);
-              window["jsonp"+timestamp](response);
-            } else if (xhr.status === 0) {
-                window["jsonp"+timestamp]({result:"error", msg:"There was a network error submitting your registration. Please try again later, or email subscribe@choiceofgames.com instead."});
-            } else {
-              window["jsonp"+timestamp]({result:"error", msg:"Sorry, our mail server had an error. It's our fault. Please try again later, or email subscribe@choiceofgames.com instead."});
-            }
-          };
-          xhr.send();
+      var xhr = findXhr();
+      xhr.open("POST", 'https://www.choiceofgames.com/mailchimp_proxy.php/subscribe/post-json?'+mailParams, true);
+      var done = false;
+      xhr.onreadystatechange = function() {
+        if (done) return;
+        if (xhr.readyState != 4) return;
+        done = true;
+        if (xhr.status == 200) {
+          var response = JSON.parse(xhr.responseText);
+          window["jsonp"+timestamp](response);
+        } else if (xhr.status === 0) {
+            window["jsonp"+timestamp]({result:"error", msg:"There was a network error submitting your registration. Please try again later, or email subscribe@choiceofgames.com instead."});
         } else {
-          script.src = 'https://choiceofgames.us4.list-manage.com/subscribe/post-json?'+mailParams+'&c=jsonp' + timestamp;
-          head.appendChild(script);
+          window["jsonp"+timestamp]({result:"error", msg:"Sorry, our mail server had an error. It's our fault. Please try again later, or email subscribe@choiceofgames.com instead."});
         }
-      }
+      };
+      xhr.send();
     });
   });
 }
@@ -1725,7 +1694,7 @@ function checkPurchase(products, callback) {
             fetchEmail(function(email) {
               if (!email) return callback(ok, window.knownPurchases);
               window.store.get("knownPurchases"+email.replace(/[^A-z0-9]/g, "_"), function(ok, value) {
-                if (ok) {
+                if (ok && value) {
                   window.knownPurchases = JSON.parse(value);
                 }
                 callback(ok, window.knownPurchases);
@@ -1801,6 +1770,11 @@ function checkPurchase(products, callback) {
     var purchases = {};
     var productList = products.split(/ /);
     for (i = 0; i < productList.length; i++) {
+      if (productList[i] === "adfree" && window.isTrial) {
+        // in the demo, we have to pretend as if you haven't purchased
+        purchases["adfree"] = false;
+        continue;
+      }
       var appId = steamworksApps[productList[i]];
       var purchased = false;
       try {
@@ -1913,7 +1887,30 @@ function restorePurchases(product, callback) {
               if (error) {
                 target.innerHTML="<p>Restore failed. Please try again later, or sign in to choiceofgames.com to restore purchases.</p>";
               } else {
-                target.innerHTML="<p>Restore completed. This product is not yet purchased. You may also sign in to choiceofgames.com to restore purchases.</p>";
+                var appTitle;
+                try {
+                  var appStore = window.isIosApp ? "App Store"
+                    : window.isAmazonAndroidApp ? "Amazon Appstore"
+                    : "Google Play Store";
+                  var gameTitle = document.getElementById("title").textContent;
+                  if (window.isOmnibusApp) {
+                    var canonical = document.querySelector("link[rel=canonical]");
+                    var canonicalHref = canonical && canonical.getAttribute("href");
+                    if (/\/user-contributed\//.test(canonicalHref)) {
+                      appTitle = "Hosted Games";
+                    } else if (/\/hearts-choice\//.test(canonicalHref)) {
+                      appTitle = "Heart's Choice";
+                    } else {
+                      appTitle = "Choice of Games";
+                    }
+                  } else {
+                    appTitle = gameTitle;
+                  }
+                } catch (e) {}
+                var thisApp = appTitle ? ' the "' + appTitle + '" app': "this app";
+                target.innerHTML="<p>Restore completed. " +
+                  appStore + " records indicate that you have not purchased this product using "+thisApp+". " +
+                  "</p><p>Would you like to sign in to choiceofgames.com to restore purchases?</p>";
               }
               loginForm(document.getElementById('text'), /*optionality*/1, /*err*/null, webRestoreCallback);
               curl();
@@ -2171,9 +2168,13 @@ function getPrice(product, callback) {
       }, 500);
     }
   } else if (window.isSteamworks) {
-    if (window.productData && window.productData[product]) {
+    if (window.productData) {
       safeTimeout(function () {
-        callback.call(this, productData[product]);
+        if (window.productData[product]) {
+          callback.call(this, productData[product]);
+        } else {
+          callback.call(this, "hide");
+        }
       }, 0);
     } else {
       window.awaitSteamProductData = function() {
@@ -2471,9 +2472,32 @@ function checkAchievements(callback) {
             registerNativeAchievement(achievement);
           }
         }
-        callback();
+        try {
+          callback();
+        } catch (e) {
+          console.error("checkAchievements error running callback", e);
+        }
+        var pending = window.pendingAchievementCallbacks;
+        if (pending) {
+          window.pendingAchievementCallbacks = [];
+          for (var i = 0; i < pending.length; i++) {
+            try {
+              pending[i]();
+            } catch (e) {
+              console.error("checkAchievements error running callback", e);
+            }
+          }
+        }
       }
-      var alreadyLoadingAchievements = false;
+      var alreadyLoadingAchievements = !!window.checkAchievementCallback;
+      if (alreadyLoadingAchievements) {
+        if (!window.pendingAchievementCallbacks) {
+          window.pendingAchievementCallbacks = [];
+        }
+        window.pendingAchievementCallbacks.push(callback);
+        console.log("checkAchievements already loading, pushed pending");
+        return;
+      }
       if (ok && value) {
         var achievementRecord = jsonParse(value);
         for (var achieved in achievementRecord) {
@@ -2481,9 +2505,8 @@ function checkAchievements(callback) {
         }
       }
       if (window.isIosApp) {
-        alreadyLoadingAchievements = !!window.checkAchievementCallback;
         window.checkAchievementCallback = mergeNativeAchievements;
-        if (!alreadyLoadingAchievements) callIos("checkachievements");
+        callIos("checkachievements");
       } else if (window.isSteamworks) {
         var nativeAchievements = [];
         for (var i = 0; i < window.achievements; i++) {
@@ -2493,9 +2516,8 @@ function checkAchievements(callback) {
         }
         mergeNativeAchievements(nativeAchievements);
       } else if (window.isMacApp) {
-        alreadyLoadingAchievements = !!window.checkAchievementCallback;
         window.checkAchievementCallback = mergeNativeAchievements;
-        if (!alreadyLoadingAchievements) callMac("checkachievements");
+        callMac("checkachievements");
       } else if (window.isWinOldApp) {
         var checkWinAchievements = function () {
           var achieved = eval(window.external.GetAchieved());
@@ -2547,8 +2569,19 @@ function showFullScreenAdvertisement(callback) {
     callIos("advertisement");
     safeTimeout(callback, 0);
   } else if (window.isAndroidApp && window.adBridge) {
-    adBridge.displayFullScreenAdvertisement();
-    safeTimeout(callback, 0);
+    if (window.adBridge.supportsAdvertisementCallback && window.adBridge.supportsAdvertisementCallback()) {
+      startLoading();
+      window.advertisementCallback = function () {
+        window.advertisementCallback = null;
+        doneLoading();
+        safeTimeout(callback, 0);
+      }
+      adBridge.displayFullScreenAdvertisement();
+    } else {
+      // old omnibus app doesn't know how to call advertisementCallback
+      adBridge.displayFullScreenAdvertisement();
+      safeTimeout(callback, 0);
+    }
   } else if (window.adSupportedDebug) {
     alert("ad!");
     safeTimeout(callback, 0);
@@ -3396,6 +3429,15 @@ function loadPreferences() {
   }
 }
 
+Error.prototype.toJSON = function () {
+  return {
+    name: this.name,
+    message: this.message,
+    stack: this.stack,
+    cause: this.cause
+  };
+};
+
 window.addEventListener("error", function (event) {
     var msg = event.message;
     var file = event.source;
@@ -3407,11 +3449,16 @@ window.addEventListener("error", function (event) {
 
 window.reportError = function(msg, file, line, column, error) {
     if (window.console) {
-      window.console.error(msg);
-      if (file) window.console.error("file: " + file);
-      if (line) window.console.error("line: " + line);
-      if (column) window.console.error("column: " + column);
-      if (error) window.console.error(error);
+      if (error) {
+        window.console.error(error);
+        window.console.error(error.stack);
+        window.console.error(JSON.stringify(error));
+      } else {
+        window.console.error(msg);
+        if (file) window.console.error("file: " + file);
+        if (line) window.console.error("line: " + line);
+        if (column) window.console.error("column: " + column);
+      }
     }
     if (window.isWeb && error && error.name === "QuotaExceededError" && window.location.host === 'www.choiceofgames.com') {
       window.location.assign('https://www.choiceofgames.com/clear-site-data/?qee=1&path=' + encodeURIComponent(window.location.pathname));
@@ -3431,10 +3478,13 @@ window.reportError = function(msg, file, line, column, error) {
           body += "\nScene: " + window.stats.scene.name;
           body += "\nLine: " + (window.stats.scene.lineNum + 1);
         }
-        if (file) body += "\nJS File: " + file;
-        if (line) body += "\nJS Line: " + line;
-        if (column) body += "\nJS Column: " + column;
-        if (error) body += "\nJS Stack: " + error;
+        if (error) {
+          body += "\nJS Error: " + JSON.stringify(error);
+        } else {
+          if (file) body += "\nJS File: " + file;
+          if (line) body += "\nJS Line: " + line;
+          if (column) body += "\nJS Column: " + column;
+        }
         body += "\nUser Agent: " + navigator.userAgent;
         body += "\nLoad time: " + window.loadTime;
         if (window.Persist) body += "\nPersist: " + window.Persist.type;
@@ -3448,7 +3498,7 @@ window.reportError = function(msg, file, line, column, error) {
           supportEmailHref="mailto:"+getSupportEmail();
           supportEmailHref=supportEmailHref.replace(/\+/g,"%2B");
         } catch (e) {}
-        window.location.href=(supportEmailHref + "?subject=Error Report&body=" + encodeURIComponent(body));
+        window.location.href=(supportEmailHref + "?subject=Error Report " + window.storeName + "&body=" + encodeURIComponent(body));
     }
 }
 
@@ -3502,6 +3552,14 @@ window.onload=function() {
             callIos('close');
           } else {
             setTimeout(function() {window.closer.close()}, 0);
+          }
+        });
+      } else if (map.login) {
+        loginForm(document.getElementById('text'), /*optionality*/1, /*err*/null, function() {
+          if (window.isIosApp) {
+            callIos('close');
+          } else {
+            setTimeout(function () { window.closer.close() }, 0);
           }
         });
       } else if (map.forcedScene) {
@@ -3590,7 +3648,7 @@ window.onload=function() {
       (function() {
         if (isPrerelease()) {
           var appLinks = document.getElementById('mobileLinks');
-          if (appLinks) appLinks.style.display = 'none';
+          if (appLinks && !window.supportsAppPreordering) appLinks.style.display = 'none';
         }
         var productMap = {};
         if (typeof purchases === "object") {
@@ -3806,28 +3864,30 @@ if (window.isWeb) {
   "#emailUs { display: none; }"+
   ""+
   "#main { padding-top: 1em; }";
-  // Use UIWebView width, not screen width, on iPad
-  document.querySelector("meta[name=viewport]").setAttribute("content", "width="+window.innerWidth);
-  window.addEventListener("resize", function() {
-      document.querySelector("meta[name=viewport]").setAttribute("content", "width="+window.innerWidth);
-      // this dummy element seems to be required to get the viewport to stick
-      var dummy = document.createElement("p");
-      dummy.innerHTML = "&nbsp;";
-      document.body.appendChild(dummy);
-      window.setTimeout(function() {document.body.removeChild(dummy);}, 10);
-    }, false);
-  callIos("checkdiscounts");
-  // in a timeout because iOS may try to add to the head before mygame.js has run
-  (function(){
-    var requester = function() {
-      if (window.stats) {
-        callIos("requestscenes");
-      } else {
-        safeTimeout(requester, 1);
+  if (!window.newIosCurl) {
+    // Use UIWebView width, not screen width, on iPad
+    document.querySelector("meta[name=viewport]").setAttribute("content", "width="+window.innerWidth);
+    window.addEventListener("resize", function() {
+        document.querySelector("meta[name=viewport]").setAttribute("content", "width="+window.innerWidth);
+        // this dummy element seems to be required to get the viewport to stick
+        var dummy = document.createElement("p");
+        dummy.innerHTML = "&nbsp;";
+        document.body.appendChild(dummy);
+        window.setTimeout(function() {document.body.removeChild(dummy);}, 10);
+      }, false);
+    callIos("checkdiscounts");
+    // in a timeout because iOS may try to add to the head before mygame.js has run
+    (function(){
+      var requester = function() {
+        if (window.stats) {
+          callIos("requestscenes");
+        } else {
+          safeTimeout(requester, 1);
+        }
       }
-    }
-    if (window.isFile) safeTimeout(requester, 0);
-  })();
+      if (window.isFile) safeTimeout(requester, 0);
+    })();
+  }
 } else if (window.isAndroidApp) {
   document.getElementById("dynamic").innerHTML =
   "#text .gameTitle { display: block; }" +
@@ -3973,12 +4033,7 @@ if (window.isCef) {
       require('electron').ipcRenderer.invoke('quit');
       return;
     }
-		if (window.isTrial && adfreePurchased) {
-			alert("This is the demo version of the game, " +
-				"but you now own the full version. The demo will now exit. Your progress has been saved." +
-				" Please launch the full version of the game using Steam.");
-			require('electron').ipcRenderer.invoke('quit');
-    } else if (!window.isTrial && !adfreePurchased) {
+    if (!window.isTrial && !adfreePurchased) {
       alert("There was an error connecting to Steam. Steam must be running" +
         " to play this game. If you launched this game using Steam, try restarting Steam" +
         " or rebooting your computer. If that doesn't work, try completely uninstalling" +

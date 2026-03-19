@@ -32,6 +32,8 @@ var showChoices = true;
 var avoidUsedOptions = true;
 var recordBalance = false;
 var outputFile = undefined;
+var allowBetaBug = false;
+var requireFeedbackCommand = false;
 var slurps = {}
 function parseArgs(args) {
   for (var i = 0; i < args.length; i++) {
@@ -61,6 +63,10 @@ function parseArgs(args) {
       recordBalance = (value !== "false");
     } else if (name === "outputFile") {
       outputFile = value;
+    } else if (name === "allowBetaBug") {
+      allowBetaBug = value;
+    } else if (name === "requireFeedbackCommand") {
+      requireFeedbackCommand = (value !== "false");
     }
   }
   if (isTrial === null) {
@@ -283,7 +289,16 @@ if (typeof importScripts != "undefined") {
   load("web/util.js");
   load("headless.js");
   load("seedrandom.js");
-  load("web/"+gameName+"/"+"mygame.js");
+  if (allowBetaBug) {
+    _global.beta = true;
+  }
+  var mygamePath = "web/" + gameName + "/" + "mygame.js";
+  if (fs.existsSync(mygamePath)) {
+    load(mygamePath);
+  } else {
+    nav = new SceneNavigator(["startup"]);
+    stats = {};
+  }
 } else if (typeof args == "undefined") {
   isRhino = true;
   args = arguments;
@@ -464,6 +479,7 @@ Scene.prototype.abort = function randomtest_abort(param) {
   this.paragraph();
   this.finished = true;
   if (param === 'skip') {
+    println("SKIPPED RUN");
     throw new Error("skip run");
   }
 };
@@ -626,6 +642,7 @@ Scene.prototype.goto_scene = function random_goto_scene(data, isGosubScene) {
 }
 
 Scene.prototype.buyButton = function random_buyButton(product, priceGuess, label, title) {
+  if (typeof this.temps["choice_purchased_" + product] === "undefined") throw new Error(this.lineMsg() + "Didn't check_purchases on this page");
   println('[Buy '+title+' Now for '+priceGuess+']');
   println("");
 };
@@ -842,6 +859,7 @@ function randomtest() {
   configureShowText();
   var warnings = 0;
   var start = new Date().getTime();
+  var missingFeedback = 0;
   randomSeed *= 1;
   for (var i = 0; i < iterations; i++) {
     console.log("*****Seed " + (i+randomSeed));
@@ -865,6 +883,7 @@ function randomtest() {
         warnings += stats.choice_warnings;
         stats.choice_warnings = 0;
       }
+      if (!stats.choice_feedback_requested) missingFeedback++;
     } catch (e) {
       if (e.message == "skip run") {
         println("SKIPPED RUN " + i);
@@ -883,6 +902,17 @@ function randomtest() {
     }
   }
 
+  if (!processExit && missingFeedback) {
+    if (requireFeedbackCommand && missingFeedback === iterations) {
+      console.log("RANDOMTEST FAILED: All " + iterations + " runs missing *feedback");
+      if (typeof process != "undefined" && process.exit) {
+        process.exit(1);
+      } else {
+        processExit = true;
+      }
+    }
+  }
+
   if (!processExit) {
     if (showText) console.log("Word count: " + wordCount);
     if (showCoverage) {
@@ -894,6 +924,9 @@ function randomtest() {
           console.log(sceneName + " "+ (sceneCoverage[j] || 0) + ": " + sceneLines[j]);
         }
       }
+    }
+    if (missingFeedback) {
+      //console.log("WARNING: " + missingFeedback + " runs missing *feedback");
     }
     console.log("RANDOMTEST PASSED");
     if (warnings) console.log(warnings + " warning" + (warnings === 1 ? "": "s"));

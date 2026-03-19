@@ -206,7 +206,7 @@ function compile(){
       patt = /<title>.*<\/title>/i;
       if (patt.exec(top)) top = top.replace(patt, "<title>" + csTitle + "</title>");
       patt = /<h1.*>.*<\/h1>/i;
-      if (patt.exec(bottom)) bottom = bottom.replace(patt, "<h1 class='gameTitle'>" + csTitle + "</h1>");
+      if (patt.exec(bottom)) bottom = bottom.replace(patt, "<h1 id='title' class='gameTitle'>" + csTitle + "</h1>");
       console.log("");
       console.log("Game title set to: " + csTitle);
     }

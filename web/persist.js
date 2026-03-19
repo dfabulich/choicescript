@@ -346,7 +346,7 @@ return r;},version:'0.2.1',enabled:false};me.enabled=alive.call(me);return me;}(
 
       methods: {
         key: function(key) {
-          return esc(this.name) + esc(key);
+          return esc(this.name) + (window.isTrial ? "trial_" : "") + esc(key);
         },
 
         init: function() {
@@ -354,6 +354,7 @@ return r;},version:'0.2.1',enabled:false};me.enabled=alive.call(me);return me;}(
         },
 
         get: function(key, fn, scope) {
+          var originalKey = key;
           key = this.key(key);
 
           // if callback isn't defined, then return
@@ -366,7 +367,19 @@ return r;},version:'0.2.1',enabled:false};me.enabled=alive.call(me);return me;}(
           try {
             results = steamworks.cloud.readFile("store" + key);
             // steamworks.js fails with "" when the file doesn't exist
-            if (results === "") return fn.call(scope, !"ok");
+            if (results === "" && !window.isTrial) {
+              var trialKey = esc(this.name) + "trial_" + esc(originalKey);
+              results = steamworks.cloud.readFile("store" + trialKey);
+              if (results !== "") {
+                var fixedResults = results.replace(/^.*\n/, "");
+                if (fixedResults !== "") {
+                  steamworks.cloud.writeFile("store" + key, key + "\n" + fixedResults);
+                }
+              }
+            }
+            if (results === "") {
+              return fn.call(scope, !"ok");
+            }
             var fixedResults = results.replace(/^.*\n/, "");
             if (!fixedResults.length) return fn.call(scope, !"ok");
             fn.call(scope, "ok", results.replace(/^.*\n/, ""));
@@ -473,7 +486,83 @@ return r;},version:'0.2.1',enabled:false};me.enabled=alive.call(me);return me;}(
         init: function() {
           var request = indexedDB.open(this.name);
           request.onupgradeneeded = function () { return request.result.createObjectStore('PersistJS'); };
-          var dbp = this.promisifyRequest(request);
+          var self = this;
+          var dbp = this.promisifyRequest(request).then(function (idb) {
+            // upgrade from localstorage
+            return new Promise(function (resolve) {
+              try {
+                var keys = Object.keys(window.localStorage).filter(function (key) {
+                  return key.startsWith("PS" + storeName);
+                })
+                if (keys.length) {
+                  var store = idb.transaction('PersistJS', 'readwrite').objectStore('PersistJS');
+                  for (var i = 0; i < keys.length; i++) {
+                    var key = keys[i].split("PS")[2];
+                    var val = localStorage.getItem(keys[i])
+                    console.log('putting', key);
+                    store.put(val, key);
+                  }
+                  self.promisifyRequest(store.transaction).then(function () {
+                    for (var i = 0; i < keys.length; i++) {
+                      localStorage.removeItem(keys[i]);
+                    }
+                    resolve(idb);
+                  })
+                } else {
+                  resolve(idb);
+                }
+              } catch (cause) {
+                console.log('failed upgrading from localstorage', {cause})
+                resolve(idb);
+              }
+            });
+          }).then(function (idb) {
+            // upgrade from WebSQL
+            return new Promise(function (resolve) {
+              if (window.openDatabase) {
+                try {
+                  var db = openDatabase(
+                    storeName,
+                    1,
+                    "Persistent storage for " + storeName,
+                    B.whatwg_db.size
+                  );
+                  db.transaction(function (t) {
+                    t.executeSql("SELECT k, v from persist_data", [], function (t, results) {
+                      if (results.rows.length) {
+                        var store = idb.transaction('PersistJS', 'readwrite').objectStore('PersistJS');
+                        for (var i = 0; i < results.rows.length; i++) {
+                          var row = results.rows[i];
+                          store.put(row.v, row.k);
+                        }
+                        self.promisifyRequest(store.transaction).then(function () {
+                          db.transaction(function(t) {
+                            t.executeSql("DELETE from persist_data", [], function () {
+                              resolve(idb);
+                            }, function(t, cause) {
+                              console.log('error deleting from websql', { cause });
+                              resolve(idb);
+                            });
+                          })
+                        })
+                      } else {
+                        resolve(idb);
+                      }
+                    }, function (t, cause) {
+                      console.log('error upgrading from websql', {cause});
+                      resolve(idb);
+                    })
+                  })
+                } catch (cause) {
+                  console.log('failed upgrading from websql', { cause })
+                  resolve(idb);
+                }
+              } else {
+                resolve(idb);
+              }
+            })
+          });
+
           this.getStore = function (txMode, callback) {
             return dbp.then(function (db) {
               return callback(db.transaction('PersistJS', txMode).objectStore('PersistJS'));

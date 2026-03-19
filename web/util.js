@@ -296,7 +296,13 @@ function logout(callback) {
 function recordLogin(registered, loginId, email, callback) {
   if (initStore()) {
     if (registered) recordEmail(email);
-    window.store.set("login", loginId || 0, function() {safeCall(null, callback);});
+    window.store.set("login", loginId || 0, function() {
+      if (_global.isAndroidApp) {
+        window.receiptRequestCallback = submitReceipts;
+        androidBilling.requestReceipts();
+      }
+      safeCall(null, callback);
+    });
     window.registered = registered;
   } else {
     safeTimeout(callback, 0);
@@ -686,6 +692,7 @@ function getAppId() {
 
 function submitReceipts(receipts, callback) {
   console.log("submitReceipts: " + JSON.stringify(receipts));
+  if (!initStore()) return;
   if (!callback) callback = function(error) {
     if (window.transferPurchaseCallback) {
       window.transferPurchaseCallback(error || "done");
@@ -899,11 +906,21 @@ function redirectScene(sceneName, label, originLine) {
   clearScreen(function() {scene.execute();});
 }
 
+function restoreCheckpoint(slot) {
+  clearScreen(function() {
+    var scene = window.stats.scene;
+    delete scene.secondaryMode;
+    delete scene.saveSlot;
+    scene.restore_checkpoint(slot);
+  });
+}
+
 tempStatWrites = {};
 
 function transferTempStatWrites() {
   if (!_global.isIosApp) return;
   callIos("transferwrites", JSON.stringify(tempStatWrites));
+  tempStatWrites = {};
 }
 
 function getCookieByName(cookieName, ck) {
@@ -1132,6 +1149,10 @@ function updateSinglePaidSceneCache(sceneName, callback) {
       var url = canonicalHref + "scenes/" + fileName + "?hash="+hashes.scenes[fileName];
       xhr.open("GET", url);
       xhr.withCredentials = true;
+      if (window.beta) {
+        var betaPassword = window.betaPassword || "YmV0YTp5YXJkYXJt";
+        xhr.setRequestHeader("Authorization", "Basic " + betaPassword);
+      }
       xhr.onload = function() {
         var error;
         if (xhr.status !== 200) {
@@ -1196,7 +1217,7 @@ function updateSinglePaidSceneCache(sceneName, callback) {
 
 function updateAllPaidSceneCaches(receiptsSent) {
   if (!isStoreSceneCacheRequired()) {
-    if (window.isOmnibusApp && window.isAndroidApp) {
+    if (window.isAndroidApp) {
       window.receiptRequestCallback = submitReceipts;
       androidBilling.requestReceipts();
     }

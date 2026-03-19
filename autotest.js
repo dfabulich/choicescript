@@ -33,16 +33,20 @@ load("web/scene.js");
 load("web/navigator.js");
 load("web/util.js");
 load("headless.js");
-load("web/"+gameName+"/"+"mygame.js");
+var mygamePath = "web/" + gameName + "/" + "mygame.js";
+if (fs.existsSync(mygamePath)) {
+  load(mygamePath);
+} else {
+  nav = new SceneNavigator(["startup"]);
+  stats = {};
+}
 load("editor/embeddable-autotester.js");
 print = function print(str) {
   console.log(str);
 };
 
-nav.setStartingStatsClone(stats);
-if (typeof purchases !== "undefined") {
-  nav.loadProducts(undefined, purchases);
-}
+nav = new SceneNavigator(["startup"]);
+stats = {};
 
 var sceneList = [];
 var warnings = [];
@@ -54,14 +58,17 @@ var fullGame = false;
 if (!list.length || (list.length == 1 && !list[0])) {
   fullGame = true;
   list = [];
-  for (var i = 0; i < nav._sceneList.length; i++) {
-    addFile(nav._sceneList[i]+".txt");
-  }
   if (fileExists("web/"+gameName+"/scenes/choicescript_stats.txt")) {
     list.push("choicescript_stats.txt");
   }
   if (fileExists("web/"+gameName+"/scenes/choicescript_screenshots.txt")) {
     list.push("choicescript_screenshots.txt");
+  }
+  if (fileExists("web/" + gameName + "/scenes/screenshots.txt")) {
+    list.push("screenshots.txt");
+  }
+  if (fileExists("web/" + gameName + "/scenes/choicescript_description.txt")) {
+    list.push("choicescript_description.txt");
   }
   if (fileExists("web/"+gameName+"/scenes/choicescript_upgrade.txt")) {
     list.push("choicescript_upgrade.txt");

@@ -38,12 +38,12 @@ while (i--) {
       outputMod = fs.statSync(filePath + ".json").mtime.getTime();;
     }
     if (inputMod <= outputMod) {
-      console.log(list[i] + " up to date");
+      // console.log(list[i] + " up to date");
       continue;
     }
     writer = fs.createWriteStream(outputDir + '/' + list[i].replace(/ /g, "_") + ".json");
   }
-  console.log(list[i]);
+  // console.log(list[i]);
   var str = slurpFile(filePath);
   var scene = new Scene();
   scene.name = list[i].replace('.txt', '');
