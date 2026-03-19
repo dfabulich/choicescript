@@ -91,10 +91,14 @@ Scene.prototype.printLoop = function printLoop() {
     var line;
     for (;!this.finished && this.lineNum < this.lines.length; this.lineNum++) {
         line = this.lines[this.lineNum];
-        if (this.temps._choiceEnds[this.lineNum]) {
+        var choiceEnd = this.temps._choiceEnds[this.lineNum];
+        if (choiceEnd === 0) {
+            throw new Error(this.lineMsg() + "It is illegal to fall out of a *choice statement; you must *goto or *finish before the end of the indented block.");
+        }
+        if (choiceEnd) {
           // Skip to the end of the choice if we hit the end of an #option.
           this.rollbackLineCoverage();
-          this.lineNum = this.temps._choiceEnds[this.lineNum];
+          this.lineNum = choiceEnd;
           this.rollbackLineCoverage();
           continue;
         }
@@ -878,13 +882,11 @@ Scene.prototype.choice = function choice(data, isFakeChoice) {
       self.standardResolution(option);
     });
     this.finished = true;
-    if (allowFallthrough) {
-      if (!this.temps._choiceEnds) {
-        this.temps._choiceEnds = {};
-      }
-      for (i = 0; i < options.length; i++) {
-        this.temps._choiceEnds[options[i].line-1] = this.lineNum;
-      }
+    if (!this.temps._choiceEnds) {
+      this.temps._choiceEnds = {};
+    }
+    for (i = 0; i < options.length; i++) {
+      this.temps._choiceEnds[options[i].line-1] = allowFallthrough ? this.lineNum : 0;
     }
     this.lineNum = startLineNum;
 };
@@ -1996,10 +1998,8 @@ Scene.prototype.parseOptions = function parseOptions(startIndent, choicesRemaini
     prevOption = options[options.length-1];
     this.lineNum = this.previousNonBlankLineNum();
     if (!prevOption.endLine) prevOption.endLine = this.lineNum+1;
-    if (allowFallthrough === true) {
-      for (i = 0; i < choiceEnds.length; i++) {
-          this.temps._choiceEnds[choiceEnds[i]] = this.lineNum;
-      }
+    for (i = 0; i < choiceEnds.length; i++) {
+        this.temps._choiceEnds[choiceEnds[i]] = allowFallthrough ? this.lineNum : 0;
     }
     this.rollbackLineCoverage();
     return options;

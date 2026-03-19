@@ -663,13 +663,11 @@ Scene.prototype.choice = function choice(data, isFakeChoice) {
     var index = chooseIndex(flattenedOptions, choiceLine, this.name);
 
     var item = flattenedOptions[index];
-    if (allowFallthrough) {
-      if (!this.temps._choiceEnds) {
-        this.temps._choiceEnds = {};
-      }
-      for (var i = 0; i < options.length; i++) {
-        this.temps._choiceEnds[options[i].line-1] = this.lineNum;
-      }
+    if (!this.temps._choiceEnds) {
+      this.temps._choiceEnds = {};
+    }
+    for (var i = 0; i < options.length; i++) {
+      this.temps._choiceEnds[options[i].line-1] = allowFallthrough ? this.lineNum : 0;
     }
     this.paragraph();
     if (showChoices) {

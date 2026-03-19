@@ -2296,6 +2296,29 @@ test("realChoiceAfterFakeChoiceWithGoto", function() {
     doh.assertError(Error, scene, "standardResolution", [allOptions[1][0]], "illegal to fall out");
 })
 
+test("illegalFallOutWithSelectableIfOption", function() {
+    printed = [];
+    var text = dedent`
+        *choice
+          #1
+            1
+          *selectable_if (true) #2
+            2
+    `;
+    var scene = new Scene("test", {});
+    scene.loadLines(text);
+    var options;
+    scene.renderOptions = function(_groups, _options) {
+        options = _options;
+    };
+    scene.resetPage = function() {
+        this.finished = false;
+        this.execute();
+    };
+    scene.execute();
+    doh.assertError(Error, scene, "standardResolution", [options[0]], "illegal to fall out");
+})
+
 module("Array Creation")
 
 test("createArrayDefault", function() {
