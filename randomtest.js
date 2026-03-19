@@ -496,6 +496,10 @@ Scene.prototype.restore_game = function(data) {
   }
 };
 
+Scene.prototype.restore_checkpoint = function() {
+  throw new Error(this.lineMsg() + "Randomtest is not allowed to run *restore_checkpoint. Use \"*if (not(choice_randomtest))\" to prevent this error.");
+}
+
 Scene.prototype.advertisement = function randomtest_advertisement(durationInSeconds) {
   if (this.name === "startup") {
     throw new Error(this.lineMsg() + "*advertisement is not allowed in startup.txt");
