@@ -91,6 +91,13 @@ Scene.prototype.printLoop = function printLoop() {
     var line;
     for (;!this.finished && this.lineNum < this.lines.length; this.lineNum++) {
         line = this.lines[this.lineNum];
+        if (this.temps._choiceEnds[this.lineNum]) {
+          // Skip to the end of the choice if we hit the end of an #option.
+          this.rollbackLineCoverage();
+          this.lineNum = this.temps._choiceEnds[this.lineNum];
+          this.rollbackLineCoverage();
+          continue;
+        }
         if (!trim(line)) {
             this.paragraph();
             continue;
@@ -102,18 +109,6 @@ Scene.prototype.printLoop = function printLoop() {
             throw new Error(this.lineMsg() + "increasing indent not allowed, expected " + this.indent + " was " + indent);
         } else if (indent < this.indent) {
             this.dedent(indent);
-        }
-        // Ability to end a choice #option without goto is guarded by implicit_control_flow variable
-        if (this.temps._choiceEnds[this.lineNum] &&
-                (this.getVar("implicit_control_flow") || this.temps._fakeChoiceDepth > 0)) {
-            // Skip to the end of the choice if we hit the end of an #option
-            this.rollbackLineCoverage();
-            this.lineNum = this.temps._choiceEnds[this.lineNum];
-            this.rollbackLineCoverage();
-            if (this.temps._fakeChoiceDepth > 0) {
-                this.temps._fakeChoiceDepth--;
-            }
-            continue;
         }
         this.indent = indent;
         if (/^\s*#/.test(line)) {
@@ -868,7 +863,7 @@ Scene.prototype.runCommand = function runCommand(line) {
 // If no group is specified, don't generate a prompt message
 // if multiple groups are specified, allow the user to make multiple choices simultaneously
 //   all multi-dimensional choices must be valid (otherwise throw a parse error)
-Scene.prototype.choice = function choice(data) {
+Scene.prototype.choice = function choice(data, isFakeChoice) {
     var startLineNum = this.lineNum;
     var groups = data.split(/ /);
     for (var i = 0; i < groups.length; i++) {
@@ -876,13 +871,14 @@ Scene.prototype.choice = function choice(data) {
         throw new Error(this.lineMsg() + "invalid choice group name: " + groups[i]);
       }
     }
-    var options = this.parseOptions(this.indent, groups);
+    var allowFallthrough = (isFakeChoice === true) || this.getVar("implicit_control_flow");
+    var options = this.parseOptions(this.indent, groups, allowFallthrough);
     var self = this;
     this.renderOptions(groups, options, function(option) {
       self.standardResolution(option);
     });
     this.finished = true;
-    if (this.temps._fakeChoiceDepth > 0 || this.getVar("implicit_control_flow")) {
+    if (allowFallthrough) {
       if (!this.temps._choiceEnds) {
         this.temps._choiceEnds = {};
       }
@@ -894,11 +890,7 @@ Scene.prototype.choice = function choice(data) {
 };
 
 Scene.prototype.fake_choice = function fake_choice(data) {
-    if (this.temps._fakeChoiceDepth === undefined) {
-        this.temps._fakeChoiceDepth = 0;
-    }
-    this.temps._fakeChoiceDepth++;
-    this.choice(data);
+    this.choice(data, true);
 };
 
 Scene.prototype.standardResolution = function(option) {
@@ -1771,7 +1763,7 @@ Scene.prototype["delete_array"] = function scene_delete_array(arrayName) {
 };
 
 // during a choice, recursively parse the options
-Scene.prototype.parseOptions = function parseOptions(startIndent, choicesRemaining, expectedSubOptions) {
+Scene.prototype.parseOptions = function parseOptions(startIndent, choicesRemaining, allowFallthrough, expectedSubOptions) {
     // nextIndent: the level of indentation after the current line
     // For example, in the color/toy sample above, we start at 0
     // then the nextIndent is 2 for "red"
@@ -1978,7 +1970,7 @@ Scene.prototype.parseOptions = function parseOptions(startIndent, choicesRemaini
         options.push(option);
         if (choicesRemaining.length>1) {
             // recursive call will modify this.indent
-            option.suboptions = this.parseOptions(this.indent, choicesRemaining.slice(1), previousSubOptions);
+            option.suboptions = this.parseOptions(this.indent, choicesRemaining.slice(1), allowFallthrough, previousSubOptions);
             // now restore it
             this.indent = nextIndent;
             if (!previousSubOptions) previousSubOptions = option.suboptions;
@@ -1993,8 +1985,7 @@ Scene.prototype.parseOptions = function parseOptions(startIndent, choicesRemaini
     if (choicesRemaining.length>1 && !suboptionsEncountered) {
         throw new Error(this.lineMsg() + "invalid indent, there were subchoices remaining: [" + choicesRemaining.join(",") + "]");
     }
-    if (bodyExpected &&
-            (this.temps._fakeChoiceDepth === undefined || this.temps._fakeChoiceDepth < 1)) {
+    if (bodyExpected && allowFallthrough !== true) {
         throw new Error(this.lineMsg() + "Expected choice body");
     }
     if (!atLeastOneSelectableOption) this.conflictingOptions(this.lineMsg() + "No selectable options");
@@ -2005,8 +1996,10 @@ Scene.prototype.parseOptions = function parseOptions(startIndent, choicesRemaini
     prevOption = options[options.length-1];
     this.lineNum = this.previousNonBlankLineNum();
     if (!prevOption.endLine) prevOption.endLine = this.lineNum+1;
-    for (i = 0; i < choiceEnds.length; i++) {
-        this.temps._choiceEnds[choiceEnds[i]] = this.lineNum;
+    if (allowFallthrough === true) {
+      for (i = 0; i < choiceEnds.length; i++) {
+          this.temps._choiceEnds[choiceEnds[i]] = this.lineNum;
+      }
     }
     this.rollbackLineCoverage();
     return options;

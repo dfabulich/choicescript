@@ -647,22 +647,25 @@ Scene.prototype.buyButton = function random_buyButton(product, priceGuess, label
   println("");
 };
 
-Scene.prototype.choice = function choice(data) {
+Scene.prototype.choice = function choice(data, isFakeChoice) {
     var groups = ["choice"];
     if (data) groups = data.split(/ /);
     var choiceLine = this.lineNum;
-    var options = this.parseOptions(this.indent, groups);
+    var allowFallthrough = (isFakeChoice === true) || this.getVar("implicit_control_flow");
+    var options = this.parseOptions(this.indent, groups, allowFallthrough);
     var flattenedOptions = [];
     flattenOptions(flattenedOptions, options);
 
     var index = chooseIndex(flattenedOptions, choiceLine, this.name);
 
     var item = flattenedOptions[index];
-    if (!this.temps._choiceEnds) {
+    if (allowFallthrough) {
+      if (!this.temps._choiceEnds) {
         this.temps._choiceEnds = {};
-    }
-    for (var i = 0; i < options.length; i++) {
+      }
+      for (var i = 0; i < options.length; i++) {
         this.temps._choiceEnds[options[i].line-1] = this.lineNum;
+      }
     }
     this.paragraph();
     if (showChoices) {

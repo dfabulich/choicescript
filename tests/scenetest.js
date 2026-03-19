@@ -2262,6 +2262,40 @@ test("conditionals", function() {
     doh.is("<p>bar </p>", printed.join(""), "printed");
 })
 
+test("realChoiceAfterFakeChoiceWithGoto", function() {
+    printed = [];
+    var text = dedent`
+        *fake_choice
+          #1
+            1
+            *goto next
+          #2
+            2
+            *goto next
+        *label next
+        *choice
+          #1
+            1
+          #2
+            2
+    `;
+    var scene = new Scene("test", {});
+    scene.loadLines(text);
+    var allOptions = [];
+    scene.renderOptions = function(_groups, _options) {
+        allOptions.push(_options);
+    };
+    scene.resetPage = function() {
+        this.finished = false;
+        this.execute();
+    };
+    scene.execute();
+    doh.is(1, allOptions.length, "fake_choice ran once");
+    scene.standardResolution(allOptions[0][0]);
+    doh.is(2, allOptions.length, "real choice ran after goto");
+    doh.assertError(Error, scene, "standardResolution", [allOptions[1][0]], "illegal to fall out");
+})
+
 module("Array Creation")
 
 test("createArrayDefault", function() {

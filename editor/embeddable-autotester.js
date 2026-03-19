@@ -179,7 +179,7 @@ function autotester(sceneText, nav, sceneName, extraLabels) {
   }
   
   
-  Scene.prototype.choice = function choice(data) {
+  Scene.prototype.choice = function choice(data, isFakeChoice) {
       var groups = ["choice"];
       if (data) {
         groups = data.split(/ /);
@@ -190,12 +190,15 @@ function autotester(sceneText, nav, sceneName, extraLabels) {
         }
       }
       var choiceLine = this.lineNum;
-      var options = this.parseOptions(this.indent, groups);
-      if (!this.temps._choiceEnds) {
-        this.temps._choiceEnds = {};
-      }
-      for (i = 0; i < options.length; i++) {
-        this.temps._choiceEnds[options[i].line-1] = this.lineNum;
+      var allowFallthrough = (isFakeChoice === true) || this.getVar("implicit_control_flow");
+      var options = this.parseOptions(this.indent, groups, allowFallthrough);
+      if (allowFallthrough) {
+        if (!this.temps._choiceEnds) {
+          this.temps._choiceEnds = {};
+        }
+        for (i = 0; i < options.length; i++) {
+          this.temps._choiceEnds[options[i].line-1] = this.lineNum;
+        }
       }
       var flattenedOptions = [];
       flattenOptions(flattenedOptions, options);
