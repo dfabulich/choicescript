@@ -2644,7 +2644,7 @@ Scene.prototype.ending = function ending() {
     });
     this.paragraph();
     var groups = [""];
-    options = [];
+    var options = [];
     options.push({name:"Play again.", group:"choice", restart:true});
     if (!window.isOmnibusApp) options.push({name:"Play more games like this.", group:"choice", moreGames:true});
     options.push({name:"Share this game with friends.", group:"choice", share:true});
@@ -3627,7 +3627,7 @@ Scene.prototype.stat_chart = function stat_chart() {
     var label = this.replaceVariables(row.label);
     var definition = this.replaceVariables(row.definition || "");
 
-    var statWidth, div, span, statValue;
+    var statWidth, div, span, span0, statValue;
     if (type == "text") {
       div = document.createElement("div");
       setClass(div, "statText");
@@ -3755,7 +3755,7 @@ Scene.prototype.parseStatChart = function parseStatChart() {
     // nextIndent: the level of indentation after the current line
     var nextIndent = null;
     var rows = [];
-    var line, line1, line2, line2indent;
+    var line, line1, line1indent, line2, line2indent;
     var startIndent = this.indent;
     while(isDefined(line = this.lines[++this.lineNum])) {
         if (!trim(line)) {
