@@ -33,7 +33,7 @@ const requestHandler = (request, response) => {
     requestFile += 'index.html';
   } else if (requestFile.endsWith('mygame.js')) {
     const gameDir = path.basename(path.dirname(requestFile));
-    const mygame = child_process.execSync('node mygamegenerator.js ${gameDir}', {encoding: 'utf8'});
+    const mygame = child_process.execSync(`node mygamegenerator.js ${gameDir}`, {encoding: 'utf8'});
     fs.writeFileSync(`${dir}/web/${gameDir}/mygame.js`, mygame, 'utf8');
   }
   const stream = fs.createReadStream(requestFile);
